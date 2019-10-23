@@ -1,0 +1,14 @@
+directories:
+  output: dist
+  buildResources: assets
+files:
+  - filter:
+      - build/**/*
+      - build/**/*
+      - node_modules/**/*
+extraMetadata:
+  main: build/electron.js
+appId: com.example.electron-cra
+asar: false
+extends: react-cra
+electronVersion: 6.0.12
