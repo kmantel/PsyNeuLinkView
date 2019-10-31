@@ -3,12 +3,15 @@ const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
 const path = require('path');
 const isDev = require('electron-is-dev');
-// const { spawn } = require('spawn');
+const { spawn } = require('child_process');
 
 let mainWindow;
+let child;
 
 function spawn_rpc_server() {
-    var py_int_path = ""
+    var py_int_path = "/Users/ds70/PycharmProjects/venv/PsyNeuLink/bin/python";
+    spawn(py_int_path, [path.join(__dirname,'../src/py/rpc_server.py')]);
+
 }
 
 function createWindow() {
@@ -19,12 +22,14 @@ function createWindow() {
 }
 
 app.on('ready', function(){
+    spawn_rpc_server();
     createWindow();
 });
 
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
         app.quit();
+        child.kill()
     }
 });
 
