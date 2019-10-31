@@ -4,9 +4,6 @@ import SideBar from './sidebar'
 import GraphView from './graphview'
 import ToolTipBox from './tooltipbox'
 import ParameterControlBox from './parametercontrolbox'
-import graph from '../resources/graph'
-import _graph from '../resources/_graph'
-import BasicComponent from './test_component'
 
 export default class Workspace extends React.Component {
   constructor(props) {
@@ -135,6 +132,7 @@ export default class Workspace extends React.Component {
   }
 
   componentDidMount() {
+    console.log(window.remote);
   }
 
   componentWillUnmount() {

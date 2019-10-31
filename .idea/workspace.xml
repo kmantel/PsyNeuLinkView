@@ -3,7 +3,12 @@
   <component name="ChangeListManager">
     <list default="true" id="2575ca4d-3c3d-4615-9b7d-bedcd13ade1e" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/public/electron.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/electron.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/start-react.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/start-react.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/workspace.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/workspace.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utility/rpc_client.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/utility/rpc_client.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/yarn.lock" beforeDir="false" afterPath="$PROJECT_DIR$/yarn.lock" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -52,20 +57,23 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Node.js.scratch_api_test.js (1)">
+  <component name="RunManager" selected="Node.js.electron.js">
     <configuration name="Debug Application" type="JavascriptDebugType" uri="http://localhost:3000">
       <method v="2" />
     </configuration>
     <configuration name="api.js" type="NodeJSConfigurationType" temporary="true" nameIsGenerated="true" path-to-js-file="$PROJECT_DIR$/src/app/api.js" working-dir="$PROJECT_DIR$/src/app">
       <method v="2" />
     </configuration>
+    <configuration name="electron.js" type="NodeJSConfigurationType" temporary="true" nameIsGenerated="true" path-to-js-file="$PROJECT_DIR$/public/electron.js" working-dir="$PROJECT_DIR$/public">
+      <method v="2" />
+    </configuration>
+    <configuration name="rpc_client.js" type="NodeJSConfigurationType" temporary="true" nameIsGenerated="true" path-to-js-file="$PROJECT_DIR$/src/utility/rpc_client.js" working-dir="$PROJECT_DIR$/src/utility">
+      <method v="2" />
+    </configuration>
     <configuration name="scratch_api_test.js (1)" type="NodeJSConfigurationType" temporary="true" nameIsGenerated="true" path-to-js-file="$PROJECT_DIR$/src/app/scratch_api_test.js" working-dir="$PROJECT_DIR$/src/app">
       <method v="2" />
     </configuration>
     <configuration name="scratch_api_test.js" type="NodeJSConfigurationType" temporary="true" nameIsGenerated="true" path-to-js-file="$APPLICATION_CONFIG_DIR$/scratches/scratch_api_test.js" working-dir="$PROJECT_DIR$">
-      <method v="2" />
-    </configuration>
-    <configuration name="test_api.js" type="NodeJSConfigurationType" temporary="true" nameIsGenerated="true" path-to-js-file="$PROJECT_DIR$/src/app/test_api.js" working-dir="$PROJECT_DIR$/src/app">
       <method v="2" />
     </configuration>
     <configuration name="npm start" type="js.build_tools.npm">
@@ -80,10 +88,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Node.js.electron.js" />
+        <item itemvalue="Node.js.rpc_client.js" />
         <item itemvalue="Node.js.scratch_api_test.js (1)" />
         <item itemvalue="Node.js.scratch_api_test.js" />
         <item itemvalue="Node.js.api.js" />
-        <item itemvalue="Node.js.test_api.js" />
       </list>
     </recent_temporary>
   </component>
@@ -103,7 +112,7 @@
       <workItem from="1571775992078" duration="1461000" />
       <workItem from="1571837585293" duration="18055000" />
       <workItem from="1572020285280" duration="415000" />
-      <workItem from="1572529364207" duration="2921000" />
+      <workItem from="1572529364207" duration="8172000" />
     </task>
     <servers />
   </component>
@@ -155,13 +164,6 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/src/components/workspace.js</url>
-          <line>6</line>
-          <option name="timeStamp" value="4" />
-        </line-breakpoint>
-      </breakpoints>
       <default-breakpoints>
         <breakpoint enabled="true" type="javascript-exception" />
       </default-breakpoints>

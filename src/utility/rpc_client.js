@@ -15,7 +15,7 @@ var graph_proto = grpc.loadPackageDefinition(packageDefinition).graph;
 var script = {
     compositions: {},
     gv: ''
-};
+}
 
 function instantiate_client() {
     return new graph_proto.ServeGraph(

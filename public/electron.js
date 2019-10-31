@@ -11,12 +11,19 @@ let child;
 function spawn_rpc_server() {
     var py_int_path = "/Users/ds70/PycharmProjects/venv/PsyNeuLink/bin/python";
     spawn(py_int_path, [path.join(__dirname,'../src/py/rpc_server.py')]);
-
 }
 
 function createWindow() {
+    console.log(path.join(__dirname,'../src/utility/preload.js'));
     const { width, height } = electron.screen.getPrimaryDisplay().workAreaSize;
-    mainWindow = new BrowserWindow({width: width, height: height});
+    mainWindow = new BrowserWindow({
+        width: width,
+        height: height,
+        webPreferences: {
+            nodeIntegration: false,
+            preload: path.join(__dirname, '../src/utility/preload.js')
+        }
+    });
     mainWindow.loadURL(isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, '../build/index.html')}`);
     mainWindow.on('closed', () => mainWindow = null);
 }
