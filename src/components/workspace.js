@@ -43,7 +43,6 @@ export default class Workspace extends React.Component {
     this.file_loader.type = 'file';
     this.file_loader.onchange = async e => {
       if(e.path[0].files.length > 0) {
-        window.electron_root.restart_rpc_server();
         var filepath = e.path[0].files[0].path;
         rpc_client.load_script(filepath,function () {
           var compositions = rpc_client.script_maintainer.compositions;
