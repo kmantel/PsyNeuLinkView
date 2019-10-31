@@ -33,5 +33,15 @@ function load_script(filepath, callback=function () {}) {
     });
 }
 
+function get_json(name, callback=function() {}) {
+    var client = instantiate_client();
+    client.GetJSON({
+        name:name}, function(err, response) {
+        script.gv = JSON.parse(response.JSON);
+        callback()
+    });
+}
+
 exports.script_maintainer = script;
 exports.load_script = load_script;
+exports.get_json = get_json;

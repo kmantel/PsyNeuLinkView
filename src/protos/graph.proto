@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package graph;
+
+service ServeGraph {
+  rpc LoadScript (ScriptPath) returns (ScriptCompositions) {}
+  rpc GetCompositions (NullArgument) returns (ScriptCompositions) {}
+  rpc GetJSON (GraphName) returns (GraphJSON) {}
+}
+
+message NullArgument {
+
+}
+
+message ScriptPath {
+  string path = 1;
+}
+
+message ScriptCompositions {
+   repeated string compositions = 1;
+}
+
+message GraphName {
+  string name = 1;
+}
+
+message GraphJSON {
+  string JSON = 1;
+}
