@@ -3,46 +3,13 @@ const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
 const path = require('path');
 const isDev = require('electron-is-dev');
-const express = require('express');
-const cors = require('cors');
-
-class api {
-    constructor() {
-        var self = this;
-        this.port = 5000;
-        this.graph = null;
-        this.filepath = null;
-        this.instance = express();
-        this.instance.use(express.json());
-        this.instance.use(cors());
-        this.instance.put(
-            '/filepath',
-            (req, res) => {
-                self.filepath = req.body.filepath;
-                res.send(self.filepath);
-            }
-        );
-        this.instance.get(
-            '/filepath',
-            (req, res) => {
-                console.log('path', this.filepath);
-                res.send(this.filepath)
-            }
-        );
-        this.instance.get('/graph', (req, res) => {
-            return res.send(this.graph)
-        })
-    }
-
-    start() {
-        this.instance.listen(this.port);
-    }
-}
-
-var api_instance = new api();
-api_instance.start();
+// const { spawn } = require('spawn');
 
 let mainWindow;
+
+function spawn_rpc_server() {
+    var py_int_path = ""
+}
 
 function createWindow() {
     const { width, height } = electron.screen.getPrimaryDisplay().workAreaSize;
