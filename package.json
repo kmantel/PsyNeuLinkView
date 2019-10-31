@@ -31,7 +31,8 @@
     "electron-dev": "concurrently \"BROWSER=none yarn start\" \"wait-on http://localhost:3000 && electron .\"",
     "electron-pack": "build --em.main=build/electron.js",
     "build": "yarn react-build && yarn electron-build",
-    "preelectron-pack": "yarn build"
+    "preelectron-pack": "yarn build",
+    "postinstall": "npm rebuild --runtime=electron --target=6.0.12 --disturl=https://atom.io/download/electron"
   },
   "eslintConfig": {
     "extends": "react-app"

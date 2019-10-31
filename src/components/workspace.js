@@ -4,6 +4,8 @@ import SideBar from './sidebar'
 import GraphView from './graphview'
 import ToolTipBox from './tooltipbox'
 import ParameterControlBox from './parametercontrolbox'
+const path = require('path');
+var rpc_client = window.rpc;
 
 export default class Workspace extends React.Component {
   constructor(props) {
@@ -37,20 +39,20 @@ export default class Workspace extends React.Component {
   }
 
   set_file_loader() {
+    var self = this
     this.file_loader.type = 'file';
     this.file_loader.onchange = async e => {
-      console.log('ITS DOING SOMETHING');
-      console.log(e);
       if(e.path[0].files.length > 0) {
+        window.electron_root.restart_rpc_server();
         var filepath = e.path[0].files[0].path;
-        var uri = 'http://localhost:5000/filepath';
-        var payload = {
-          method: 'PUT',
-          headers: {"Content-Type": "application/json"},
-          body:JSON.stringify({"filepath":filepath})
-        };
-        var res = await fetch(uri, payload);
-        console.log(res)
+        rpc_client.load_script(filepath,function () {
+          var compositions = rpc_client.script_maintainer.compositions;
+          var composition = compositions[compositions.length - 1];
+          rpc_client.get_json(composition, function () {
+            var new_graph = JSON.parse(JSON.stringify(rpc_client.script_maintainer.gv));
+            self.setState({graph:new_graph})
+          })
+        })
       }
     }
   }
@@ -132,7 +134,6 @@ export default class Workspace extends React.Component {
   }
 
   componentDidMount() {
-    console.log(window.remote);
   }
 
   componentWillUnmount() {
