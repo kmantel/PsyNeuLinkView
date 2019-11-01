@@ -46,12 +46,12 @@ to your interpreter's site-packages (e.g. through pip or the setup.py install fi
 3. In the psyneulink_path field, enter the path to your local copy of the psyneulink
 repo.
 
-    
+
 Run the start.sh script, located on the top level of the PNLV repo.
 
     NOTE: You may have to set the script as executable using the command
     "chmod +x start.sh".
-          
+        
 or
 
 In your terminal, navigate to the top level of the PNLV repo and execute the command 
