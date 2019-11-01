@@ -14,6 +14,11 @@ class ServeGraphStub(object):
     Args:
       channel: A grpc.Channel.
     """
+    self.LoadCustomPnl = channel.unary_unary(
+        '/graph.ServeGraph/LoadCustomPnl',
+        request_serializer=graph__pb2.PNLPath.SerializeToString,
+        response_deserializer=graph__pb2.NullArgument.FromString,
+        )
     self.LoadScript = channel.unary_unary(
         '/graph.ServeGraph/LoadScript',
         request_serializer=graph__pb2.ScriptPath.SerializeToString,
@@ -34,6 +39,13 @@ class ServeGraphStub(object):
 class ServeGraphServicer(object):
   # missing associated documentation comment in .proto file
   pass
+
+  def LoadCustomPnl(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
 
   def LoadScript(self, request, context):
     # missing associated documentation comment in .proto file
@@ -59,6 +71,11 @@ class ServeGraphServicer(object):
 
 def add_ServeGraphServicer_to_server(servicer, server):
   rpc_method_handlers = {
+      'LoadCustomPnl': grpc.unary_unary_rpc_method_handler(
+          servicer.LoadCustomPnl,
+          request_deserializer=graph__pb2.PNLPath.FromString,
+          response_serializer=graph__pb2.NullArgument.SerializeToString,
+      ),
       'LoadScript': grpc.unary_unary_rpc_method_handler(
           servicer.LoadScript,
           request_deserializer=graph__pb2.ScriptPath.FromString,

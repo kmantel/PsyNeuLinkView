@@ -3,7 +3,11 @@
   <component name="ChangeListManager">
     <list default="true" id="2575ca4d-3c3d-4615-9b7d-bedcd13ade1e" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/install.sh" beforeDir="false" afterPath="$PROJECT_DIR$/install.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config.ini" beforeDir="false" afterPath="$PROJECT_DIR$/config.ini" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/protos/graph.proto" beforeDir="false" afterPath="$PROJECT_DIR$/src/protos/graph.proto" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/py/graph_pb2.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/py/graph_pb2.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/py/graph_pb2_grpc.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/py/graph_pb2_grpc.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/py/rpc_server.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/py/rpc_server.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -36,10 +40,11 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/protos" />
+      <recent name="$PROJECT_DIR$/src/py" />
       <recent name="$PROJECT_DIR$/src/utility/rpc" />
       <recent name="$PROJECT_DIR$/src/app" />
       <recent name="$PROJECT_DIR$/public" />
-      <recent name="$PROJECT_DIR$/src/components" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -113,7 +118,7 @@
       <workItem from="1572540904586" duration="5121000" />
       <workItem from="1572555794327" duration="454000" />
       <workItem from="1572615093451" duration="5688000" />
-      <workItem from="1572628159828" duration="476000" />
+      <workItem from="1572628159828" duration="966000" />
     </task>
     <servers />
   </component>

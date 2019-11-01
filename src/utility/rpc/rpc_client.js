@@ -49,6 +49,18 @@ function get_json(name, callback=function() {}) {
     });
 }
 
+function load_custom_pnl(filepath, callback=function () {}){
+    var client = instantiate_client()
+    client.LoadCustomPnl({
+        path:filepath}, function (err, response) {
+        if (err) {
+            throw(err)
+    }
+        callback()
+    })
+}
+
 exports.script_maintainer = script;
+exports.load_custom_pnl = load_custom_pnl;
 exports.load_script = load_script;
 exports.get_json = get_json;

@@ -3,6 +3,7 @@ syntax = "proto3";
 package graph;
 
 service ServeGraph {
+  rpc LoadCustomPnl (PNLPath) returns (NullArgument) {}
   rpc LoadScript (ScriptPath) returns (ScriptCompositions) {}
   rpc GetCompositions (NullArgument) returns (ScriptCompositions) {}
   rpc GetJSON (GraphName) returns (GraphJSON) {}
@@ -10,6 +11,10 @@ service ServeGraph {
 
 message NullArgument {
 
+}
+
+message PNLPath {
+  string path = 1;
 }
 
 message ScriptPath {

@@ -5,7 +5,7 @@ from concurrent import futures
 from redbaron import RedBaron
 import json
 import psyneulink as pnl
-
+import sys
 
 class Container():
     def __init__(self):
@@ -25,6 +25,11 @@ class Container():
 
 
 class GraphServer(graph_pb2_grpc.ServeGraphServicer):
+    def LoadCustomPnl(self, request, context):
+        filepath = request.path
+        sys.path.append(filepath)
+        return graph_pb2.NullArgument()
+
     def LoadScript(self, request, context):
         filepath = request.path
         load_script(filepath)
