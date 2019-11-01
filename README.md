@@ -34,10 +34,10 @@ To install PsyneuLinkView, either:
 
 After installing, to run PsyNeuLinkView, either:
     
-Run the start_pnlv.sh script, located on the top level of the PNLV repo.
+Run the start.sh script, located on the top level of the PNLV repo.
 
     NOTE: You may have to set the script as executable using the command
-    "chmod +x start_pnlv.sh".
+    "chmod +x start.sh".
           
 or
 
