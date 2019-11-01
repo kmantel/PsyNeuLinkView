@@ -1,4 +1,4 @@
-const path = require ('path')
+const path = require ('path');
 
 var PROTO_PATH =path.join(__dirname,'../../protos/graph.proto');
 
@@ -15,7 +15,7 @@ var packageDefinition = protoLoader.loadSync(
 var graph_proto = grpc.loadPackageDefinition(packageDefinition).graph;
 var script = {
     compositions: {},
-    gv: ''
+    gv: {}
 };
 
 function instantiate_client() {
