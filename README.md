@@ -13,6 +13,7 @@ yarn on path
     to install: brew install yarn
 
 Python 3.x with PsyNeuLink, RedBaron, and gRPC installed (does not need to be on path)
+
     
 **INSTALLATION**
 
@@ -30,9 +31,21 @@ To install PsyneuLinkView, either:
     top level of the PNLV repo in your terminal and execute the command
     "yarn"
 
+
 **RUNNING**
 
-After installing, to run PsyNeuLinkView, either:
+After installing:
+
+1. Open the config.ini file in the top level of the PsyNeuLinkView directory.
+2. In the interpreter_path field, enter the path to the binary of the python 
+interpreter used with PsyNeuLink.
+
+**The following instruction only applies if you use PsyNeuLink without having installed 
+to your interpreter's site-packages (e.g. through pip or the setup.py install file)**
+
+3. In the psyneulink_path field, enter the path to your local copy of the psyneulink
+repo.
+
     
 Run the start.sh script, located on the top level of the PNLV repo.
 
