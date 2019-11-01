@@ -4,10 +4,12 @@ const BrowserWindow = electron.BrowserWindow;
 const path = require('path');
 const isDev = require('electron-is-dev');
 const { spawn } = require('child_process');
+const ini = require('ini');
+const fs = require('fs');
 
 let mainWindow;
 var child_proc;
-var py_int_path = "/Users/ds70/PycharmProjects/venv/PsyNeuLink/bin/python";
+var py_int_path = ini.parse(fs.readFileSync(path.join(__dirname,'../config.ini'), 'utf-8')).python.interpreter_path;
 
 function spawn_rpc_server() {
     child_proc = spawn(py_int_path, [path.join(__dirname,'../src/py/rpc_server.py')]);
