@@ -27,7 +27,9 @@ class Container():
 class GraphServer(graph_pb2_grpc.ServeGraphServicer):
     def LoadScript(self, request, context):
         filepath = request.path
-        return graph_pb2.ScriptCompositions(compositions=load_script(filepath))
+        load_script(filepath)
+        print(pnl_container)
+        return graph_pb2.ScriptCompositions(compositions=pnl_container.hashable_pnl_objects['compositions'])
 
     def GetCompositions(self, request, context):
         return graph_pb2.ScriptCompositions(compositions=pnl_container.hashable_pnl_objects['compositions'])

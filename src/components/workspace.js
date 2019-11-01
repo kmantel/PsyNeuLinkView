@@ -9,9 +9,9 @@ var rpc_client = window.rpc;
 
 export default class Workspace extends React.Component {
   constructor(props) {
-    super(props)
-    var w = window.innerWidth
-    var h = window.innerHeight
+    super(props);
+    var w = window.innerWidth;
+    var h = window.innerHeight;
     this.state = {
       active_tooltip: '',
       xRes: w,
@@ -39,14 +39,16 @@ export default class Workspace extends React.Component {
   }
 
   set_file_loader() {
-    var self = this
+    var self = this;
     this.file_loader.type = 'file';
-    this.file_loader.onchange = async e => {
+    this.file_loader.onchange = e => {
       if(e.path[0].files.length > 0) {
         var filepath = e.path[0].files[0].path;
         rpc_client.load_script(filepath,function () {
           var compositions = rpc_client.script_maintainer.compositions;
           var composition = compositions[compositions.length - 1];
+          console.log(compositions);
+          console.log(composition);
           rpc_client.get_json(composition, function () {
             var new_graph = JSON.parse(JSON.stringify(rpc_client.script_maintainer.gv));
             self.setState({graph:new_graph})
@@ -73,7 +75,7 @@ export default class Workspace extends React.Component {
   set_composition(composition){
     var self = this;
     self.setState({graph:null});
-    var uri = 'http://127.0.0.1:5000/api/v1/resources/gv?name=' + composition
+    var uri = 'http://127.0.0.1:5000/api/v1/resources/gv?name=' + composition;
     self.get_request(uri,
       function(){
       console.log(self.container.json);

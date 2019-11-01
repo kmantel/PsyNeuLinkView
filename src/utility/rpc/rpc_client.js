@@ -1,4 +1,6 @@
-var PROTO_PATH ='/Users/ds70/Library/Preferences/WebStorm2019.2/scratches/graph.proto';
+const path = require ('path')
+
+var PROTO_PATH =path.join(__dirname,'../../protos/graph.proto');
 
 var grpc = require('grpc');
 var protoLoader = require('@grpc/proto-loader');
@@ -10,12 +12,11 @@ var packageDefinition = protoLoader.loadSync(
         defaults: true,
         oneofs: true
     });
-
 var graph_proto = grpc.loadPackageDefinition(packageDefinition).graph;
 var script = {
     compositions: {},
     gv: ''
-}
+};
 
 function instantiate_client() {
     return new graph_proto.ServeGraph(
@@ -28,6 +29,9 @@ function load_script(filepath, callback=function () {}) {
     var client = instantiate_client();
     client.LoadScript({
         path: filepath}, function(err, response) {
+        if (err) {
+            throw(err)
+        }
         script.compositions = response.compositions;
         callback()
     });
@@ -37,6 +41,9 @@ function get_json(name, callback=function() {}) {
     var client = instantiate_client();
     client.GetJSON({
         name:name}, function(err, response) {
+        if (err) {
+            throw(err)
+        }
         script.gv = JSON.parse(response.JSON);
         callback()
     });
