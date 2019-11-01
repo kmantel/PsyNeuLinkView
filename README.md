@@ -12,7 +12,8 @@ yarn on path
     
     to install: brew install yarn
 
-Python 3.x with PsyNeuLink, RedBaron, and gRPC installed (does not need to be on path)
+Python 3.x with PsyNeuLink (pip install psyneulink), RedBaron (pip install redbaron), gRPC (pip install grpcio), 
+and gRPC tools (pip install grpcio-tools) installed (does not need to be on path)
 
     
 **INSTALLATION**
