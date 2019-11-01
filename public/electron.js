@@ -14,7 +14,15 @@ var py_int_path = config.python.interpreter_path;
 var pnl_path = config.python.psyneulink_path;
 
 function spawn_rpc_server() {
-    child_proc = spawn(py_int_path, [path.join(__dirname,'../src/py/rpc_server.py')]);
+    child_proc = spawn(py_int_path, ['-u', path.join(__dirname,'../src/py/rpc_server.py'),pnl_path]);
+    child_proc.stdout.setEncoding('utf8');
+    child_proc.stdout.on('data', function(data){
+        console.log('py stdout: ' + data)
+    });
+    child_proc.stderr.setEncoding('utf8');
+    child_proc.stderr.on('data', function(data){
+        console.log('py stderr: ' + data)
+    });
 }
 
 function restart_rpc_server(){

@@ -4,8 +4,15 @@ import grpc
 from concurrent import futures
 from redbaron import RedBaron
 import json
-import psyneulink as pnl
 import sys
+if sys.argv[1]:
+    try:
+        print(sys.argv[1])
+        sys.path.append(sys.argv[1])
+    except:
+        pass
+
+import psyneulink as pnl
 
 class Container():
     def __init__(self):
