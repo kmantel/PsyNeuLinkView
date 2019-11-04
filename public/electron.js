@@ -45,7 +45,7 @@ function createWindow() {
 }
 
 app.on('ready', function(){
-    spawn_rpc_server();
+    // spawn_rpc_server();
     createWindow();
 });
 

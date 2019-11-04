@@ -5,13 +5,13 @@ from concurrent import futures
 from redbaron import RedBaron
 import json
 import sys
-if sys.argv[1]:
-    try:
-        print(sys.argv[1])
-        sys.path.append(sys.argv[1])
-    except:
-        pass
-
+# if sys.argv[1]:
+#     try:
+#         print(sys.argv[1])
+#         sys.path.append(sys.argv[1])
+#     except:
+#         pass
+sys.path.append('/Users/ds70/PycharmProjects/PsyNeuLink')
 import psyneulink as pnl
 
 class Container():
@@ -70,9 +70,11 @@ def get_new_pnl_objects(local_vars):
 def load_script(filepath):
     rb = RedBaron(open(filepath, 'r').read())
     rb_str = rb.dumps()
+    print(rb_str)
     pnl_container.AST = rb_str
-    exec(rb_str)
-    compositions, components = get_new_pnl_objects(locals())
+    namespace = {}
+    exec(compile(rb_str, filename="<ast>", mode="exec"), namespace)
+    compositions, components = get_new_pnl_objects(namespace)
     return pnl_container.hashable_pnl_objects['compositions']
 
 
@@ -108,7 +110,7 @@ def serve():
     server.add_insecure_port('[::]:50051')
     server.start()
     server.wait_for_termination()
-
+    server.stop()
 
 if __name__ == '__main__':
     serve()
