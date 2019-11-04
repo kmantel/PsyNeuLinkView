@@ -5,12 +5,12 @@ from concurrent import futures
 from redbaron import RedBaron
 import json
 import sys
-# if sys.argv[1]:
-#     try:
-#         print(sys.argv[1])
-#         sys.path.append(sys.argv[1])
-#     except:
-#         pass
+if sys.argv[1]:
+    try:
+        print(sys.argv[1])
+        sys.path.append(sys.argv[1])
+    except:
+        pass
 sys.path.append('/Users/ds70/PycharmProjects/PsyNeuLink')
 import psyneulink as pnl
 
