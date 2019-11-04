@@ -5,7 +5,7 @@ import GraphView from './graphview'
 import ToolTipBox from './tooltipbox'
 import ParameterControlBox from './parametercontrolbox'
 const path = require('path');
-var rpc_client = window.rpc;
+var rpc_client = new window.rpc.rpc_client();
 
 export default class Workspace extends React.Component {
   constructor(props) {
