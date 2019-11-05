@@ -26,7 +26,6 @@ class RPCClient {
     }
 
     instantiate_client() {
-        console.log(this);
         return new this.graph_proto.ServeGraph(
             'localhost:50051',
             this.grpc.credentials.createInsecure()
@@ -39,7 +38,7 @@ class RPCClient {
         client.LoadScript({
             path: filepath}, function(err, response) {
             if (err) {
-                throw(err)
+                console.log(err)
             }
             self.script_maintainer.compositions = response.compositions;
             callback()
@@ -52,7 +51,7 @@ class RPCClient {
         client.GetJSON({
             name:name}, function(err, response) {
             if (err) {
-                throw(err)
+                console.log(err)
             }
             self.script_maintainer.gv = JSON.parse(response.JSON);
             callback()
@@ -64,7 +63,7 @@ class RPCClient {
         client.LoadCustomPnl({
             path:filepath}, function (err, response) {
             if (err) {
-                throw(err)
+                console.log(err)
             }
             callback()
         })
