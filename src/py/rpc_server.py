@@ -110,7 +110,7 @@ def serve():
     server.add_insecure_port('[::]:50051')
     server.start()
     server.wait_for_termination()
-    server.stop()
+
 
 if __name__ == '__main__':
     serve()
