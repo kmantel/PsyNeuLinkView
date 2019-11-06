@@ -15,6 +15,9 @@ var child_proc;
 
 function spawn_rpc_server() {
     child_proc = spawn(py_int_path, ['-u', path.join(app_path,'/src/py/rpc_server.py'),pnl_path]);
+    child_proc.on('error', function (err) {
+        console.log('FAILED TO START PYTHON PROCESS. FOLLOWING ERROR GENERATED: ', err)
+    });
     child_proc.stdout.setEncoding('utf8');
     child_proc.stdout.on('data', function(data){
         console.log('py stdout: ' + data)
@@ -48,12 +51,7 @@ function createWindow() {
 }
 
 app.on('ready', function(){
-    try {
-        spawn_rpc_server();
-    }
-    catch (err) {
-        console.log('FAILED TO START PYTHON PROCESS. FOLLOWING ERROR GENERATED: ', err)
-    }
+    spawn_rpc_server();
     createWindow();
 });
 
