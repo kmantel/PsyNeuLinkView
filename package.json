@@ -62,7 +62,8 @@
       "build/**/*",
       "node_modules/**/*",
       "src/**/*",
-      "./config.ini"
+      "./config.ini",
+      "./config.json"
     ],
     "directories": {
       "buildResources": "assets"

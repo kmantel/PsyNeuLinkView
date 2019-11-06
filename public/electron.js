@@ -13,9 +13,9 @@ let mainWindow;
 var config = ini.parse(fs.readFileSync(path.join(app_path,'/config.ini'), 'utf-8'));
 var py_int_path = config.python.interpreter_path;
 var pnl_path = config.python.psyneulink_path;
+var child_proc;
 
 function spawn_rpc_server() {
-    var child_proc;
     child_proc = spawn(py_int_path, ['-u', path.join(app_path,'/src/py/rpc_server.py'),pnl_path]);
     child_proc.stdout.setEncoding('utf8');
     child_proc.stdout.on('data', function(data){
@@ -44,7 +44,9 @@ function createWindow() {
         }
     });
     mainWindow.loadURL(isDev ? 'http://localhost:3000' : `file://${path.join(app_path, 'build/index.html')}`);
-    mainWindow.on('closed', () => mainWindow = null);
+    mainWindow.on('closed', () =>
+        {app.quit()}
+    );
 }
 
 app.on('ready', function(){
@@ -56,6 +58,11 @@ app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
         app.quit();
     }
+});
+
+app.on('quit', () => {
+    console.log('yerr')
+    child_proc.kill()
 });
 
 app.on('activate', () => {

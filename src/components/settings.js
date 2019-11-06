@@ -9,15 +9,17 @@ const style = {
     justifyContent: "center",
 };
 
+const config_client = window.config_client;
 
 class SettingsPane extends React.Component {
     constructor(props) {
         super();
         var id_counter = 0;
-        var config = [];
-        var categories = Object.keys(props.config);
+        var config = config_client.get_config();
+        var categories = Object.keys(config);
+        var nodes = [];
         for (var i in categories){
-            config.push(
+            nodes.push(
                 {
                     id: id_counter,
                     hasCaret: false,
@@ -28,7 +30,7 @@ class SettingsPane extends React.Component {
         }
         this.state = {
             isOpen: props.isOpen,
-            nodes:config
+            nodes:nodes
         };
     }
     handleNodeClick = (nodeData, _nodePath, e) => {
@@ -50,9 +52,7 @@ class SettingsPane extends React.Component {
         this.setState(this.state)
     };
 
-    handleOptionEdit = (input) => {
-        console.log(input)
-    };
+    handleOptionEdit = (input) => {};
 
     forEachNode(nodes, callback) {
         if (nodes == null) {
@@ -65,8 +65,9 @@ class SettingsPane extends React.Component {
         }
     }
 
-    toggleDialog = () => this.setState({ isOpen: !this.state.isOpen });
+    // toggleDialog = () => this.setState({ isOpen: !this.state.isOpen });
     render() {
+        var self = this;
         var components = [
             <div key = "a">
                 <Tree
@@ -92,8 +93,15 @@ class SettingsPane extends React.Component {
                             <div key={'d'}>
                                 <EditableText
                                     placeholder={'...'}
-                                    defaultValue={this.props.config.Python.interpreter_path}
-                                    onChange={this.handleOptionEdit}
+                                    defaultValue={config_client.get_config().Python.interpreter_path}
+                                    onChange={
+                                        // TODO: GENERALIZE AND MOVE TO HANDLEOPTIONEDIT
+                                        (new_value)=>{
+                                            let newcf = {...config_client.get_config()};
+                                            newcf['Python']['interpreter_path'] = new_value
+                                            config_client.set_config(newcf)
+                                        }
+                                    }
                                 />
                             </div>,
                             <div key={'e'}>
@@ -102,7 +110,16 @@ class SettingsPane extends React.Component {
                             <div key={'f'}>
                                 <EditableText
                                     placeholder={'...'}
-                                    defaultValue={this.props.config.Python.psyneulink_path}/>
+                                    defaultValue={config_client.get_config().Python.psyneulink_path}
+                                    onChange={
+                                        // TODO: GENERALIZE AND MOVE TO HANDLEOPTIONEDIT
+                                        (new_value)=>{
+                                            let newcf = {...config_client.get_config()};
+                                            newcf['Python']['psyneulink_path'] = new_value;
+                                            config_client.set_config(newcf)
+                                        }
+                                    }
+                                />
                             </div>,
                         ]}
                         layout={[
@@ -143,8 +160,8 @@ class SettingsPane extends React.Component {
             <div>
                 <Dialog
                     icon="settings"
-                    isOpen={this.state.isOpen}
-                    onClose={this.toggleDialog}
+                    isOpen={this.props.isOpen}
+                    onClose={function (){self.props.toggleDialog()}}
                     title="Settings"
                     style={{"width":800}}
                 >

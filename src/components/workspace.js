@@ -22,7 +22,7 @@ export default class Workspace extends React.Component {
       rowTwoHorizontalFactor: Math.ceil(w/5),
       verticalFactor: Math.ceil(h*0.7),
       graph:null,
-      test_text:'hey'
+      show_settings:false
     };
     this.file_loader = document.createElement('input');
     this.container = {};
@@ -162,13 +162,22 @@ export default class Workspace extends React.Component {
         this.mouse_status = 'up'
       }
     );
-    window.addEventListener('keypress', (e) => {
-      if (e.keyCode === 21 && e.ctrlKey) {
+    window.addEventListener('keydown', (e) => {
+      console.log(e);
+      if (e.metaKey === true && e.key === 'u') {
         this.file_loader.click()
+      }
+
+      if (e.metaKey === true && e.key === ','){
+        console.log('yer');
+        this.setState({'show_settings':true});
+        console.log(this.state)
       }
     });
     window.addEventListener('resize', this.window_resize)
   }
+
+  toggleDialog = () => this.setState({ show_settings: !this.state.show_settings });
 
   render() {
     var self = this;
@@ -252,7 +261,8 @@ export default class Workspace extends React.Component {
     return (
         <div>
           <SettingsPane
-            isOpen={true}
+            isOpen={this.state.show_settings}
+            toggleDialog={this.toggleDialog}
             config={window.config}/>
           <Layout
             className={'workspace_grid'}
