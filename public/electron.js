@@ -6,13 +6,11 @@ const BrowserWindow = electron.BrowserWindow;
 const path = require('path');
 const isDev = require('electron-is-dev');
 const { spawn } = require('child_process');
-const ini = require('ini');
-const fs = require('fs');
 
 let mainWindow;
-var config = ini.parse(fs.readFileSync(path.join(app_path,'/config.ini'), 'utf-8'));
-var py_int_path = config.python.interpreter_path;
-var pnl_path = config.python.psyneulink_path;
+var config = require(path.join(app_path,'config.json'));
+var py_int_path = config.Python.interpreter_path;
+var pnl_path = config.Python.psyneulink_path;
 var child_proc;
 
 function spawn_rpc_server() {
@@ -50,7 +48,12 @@ function createWindow() {
 }
 
 app.on('ready', function(){
-    spawn_rpc_server();
+    try {
+        spawn_rpc_server();
+    }
+    catch (err) {
+        console.log('FAILED TO START PYTHON PROCESS. FOLLOWING ERROR GENERATED: ', err)
+    }
     createWindow();
 });
 
@@ -61,8 +64,12 @@ app.on('window-all-closed', () => {
 });
 
 app.on('quit', () => {
-    console.log('yerr')
-    child_proc.kill()
+    try {
+        child_proc.kill()
+    }
+    catch{
+        console.log('FAILED TO END CHILD PROCESS')
+    }
 });
 
 app.on('activate', () => {
