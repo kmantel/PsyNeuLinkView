@@ -10,7 +10,7 @@ const style = {
 
 export class ParameterControlBox extends React.Component {
   constructor(props) {
-    super()
+    super();
     this.state = {
       text: props.text,
       class: props.className !== undefined ? `parametercontrolbox ${props.className}`:'parametercontrolbox'

@@ -2,9 +2,24 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2575ca4d-3c3d-4615-9b7d-bedcd13ade1e" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/config.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/preload.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/settings.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/css/settings.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config.ini" beforeDir="false" afterPath="$PROJECT_DIR$/config.ini" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/electron.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/electron.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/layout.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/layout.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/parametercontrolbox.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/parametercontrolbox.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/workspace.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/workspace.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/protos/graph.proto" beforeDir="false" afterPath="$PROJECT_DIR$/src/protos/graph.proto" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/py/graph_pb2.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/py/graph_pb2.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/py/graph_pb2_grpc.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/py/graph_pb2_grpc.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/py/rpc_server.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/py/rpc_server.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/utility/rpc/rpc_client.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/utility/rpc/rpc_client.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utility/rpc/rpc_preload.js" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -16,6 +31,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="JavaScript File" />
+        <option value="CSS File" />
       </list>
     </option>
   </component>
@@ -29,19 +45,22 @@
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="com.intellij.ide.scratch.LRUPopupBuilder$1/New Scratch File" value="JavaScript" />
+    <property name="list.type.of.created.stylesheet" value="CSS" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="nodejs_interpreter_path" value="node" />
     <property name="nodejs_package_manager_path" value="yarn" />
+    <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
+    <property name="settings.editor.splitter.proportion" value="0.23000987" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/public" />
       <recent name="$PROJECT_DIR$/src/protos" />
       <recent name="$PROJECT_DIR$/src/py" />
       <recent name="$PROJECT_DIR$/src/utility/rpc" />
-      <recent name="$PROJECT_DIR$/src/app" />
-      <recent name="$PROJECT_DIR$/public" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -117,6 +136,8 @@
       <workItem from="1572615093451" duration="5688000" />
       <workItem from="1572628159828" duration="8567000" />
       <workItem from="1572881598625" duration="3698000" />
+      <workItem from="1572986921887" duration="5092000" />
+      <workItem from="1573051265286" duration="5740000" />
     </task>
     <servers />
   </component>

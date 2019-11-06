@@ -51,6 +51,8 @@ class GraphServer(graph_pb2_grpc.ServeGraphServicer):
         gv = get_gv_json(graph_name)
         return graph_pb2.GraphJSON(JSON=json.dumps(gv))
 
+    def Ping(self, request, context):
+        return graph_pb2.HealthStatus(status = 'Okay')
 
 pnl_container = Container()
 

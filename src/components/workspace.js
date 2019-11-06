@@ -4,6 +4,8 @@ import SideBar from './sidebar'
 import GraphView from './graphview'
 import ToolTipBox from './tooltipbox'
 import ParameterControlBox from './parametercontrolbox'
+import SettingsPane from './settings'
+
 const path = require('path');
 var rpc_client = new window.rpc.rpc_client();
 
@@ -246,46 +248,50 @@ export default class Workspace extends React.Component {
             }
           }/>
       </div>
-    ]
+    ];
     return (
-      <Layout
-        className={'workspace_grid'}
-        margin={[0, 0]}
-        layout={[
-          {
-            i: 'a',
-            x: 0,
-            y: 0,
-            w: this.state.rowOneHorizontalFactor,
-            h: this.state.verticalFactor
-          },
-          {
-            i: 'b',
-            x: this.state.rowOneHorizontalFactor,
-            y: 0,
-            w: this.state.xRes - this.state.rowOneHorizontalFactor,
-            h: this.state.verticalFactor
-          },
-          {
-            i: 'c',
-            x: 0,
-            y: this.state.verticalFactor,
-            w: this.state.rowTwoHorizontalFactor,
-            h: this.state.yRes - this.state.verticalFactor
-          },
-          {
-            i: 'd',
-            x: this.state.rowTwoHorizontalFactor,
-            y: this.state.verticalFactor,
-            w: this.state.xRes - this.state.rowTwoHorizontalFactor,
-            h: this.state.yRes - this.state.verticalFactor
-          }
-        ]}
-        cols={this.state.xRes}
-        rowHeight={1}
-        width={this.state.xRes}
-        components={components}
-      />
+        <div>
+          <SettingsPane
+            isOpen={true}/>
+          <Layout
+            className={'workspace_grid'}
+            margin={[0, 0]}
+            layout={[
+              {
+                i: 'a',
+                x: 0,
+                y: 0,
+                w: this.state.rowOneHorizontalFactor,
+                h: this.state.verticalFactor
+              },
+              {
+                i: 'b',
+                x: this.state.rowOneHorizontalFactor,
+                y: 0,
+                w: this.state.xRes - this.state.rowOneHorizontalFactor,
+                h: this.state.verticalFactor
+              },
+              {
+                i: 'c',
+                x: 0,
+                y: this.state.verticalFactor,
+                w: this.state.rowTwoHorizontalFactor,
+                h: this.state.yRes - this.state.verticalFactor
+              },
+              {
+                i: 'd',
+                x: this.state.rowTwoHorizontalFactor,
+                y: this.state.verticalFactor,
+                w: this.state.xRes - this.state.rowTwoHorizontalFactor,
+                h: this.state.yRes - this.state.verticalFactor
+              }
+            ]}
+            cols={this.state.xRes}
+            rowHeight={1}
+            width={this.state.xRes}
+            components={components}
+          />
+        </div>
     )
   }
 }

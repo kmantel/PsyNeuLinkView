@@ -6,10 +6,9 @@ import GridLayout from 'react-grid-layout'
 
 export default class Layout extends React.Component {
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
     }
-    // this.componentDidMount = this.componentDidMount.bind(this)
   }
 
   render() {

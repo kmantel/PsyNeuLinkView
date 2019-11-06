@@ -58,6 +58,7 @@ class RPCClient {
         });
     }
 
+
     load_custom_pnl(filepath, callback=function () {}){
         var client = this.instantiate_client();
         client.LoadCustomPnl({

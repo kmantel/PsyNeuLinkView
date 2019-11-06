@@ -24,4 +24,4 @@ yarn-error.log*
 /build/
 /dist/
 /node_modules/
-config.ini
+public/config.ini

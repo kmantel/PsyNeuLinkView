@@ -29,7 +29,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "electron-dev": "concurrently \"BROWSER=none yarn start\" \"wait-on http://localhost:3000 && electron .\"",
-    "electron-pack": "build --em.main=build/electron.js",
+    "electron-pack": "yarn build --em.main=build/electron.js",
     "build": "yarn react-build && yarn electron-build",
     "preelectron-pack": "yarn build",
     "postinstall": "npm rebuild --runtime=electron --target=6.0.12 --disturl=https://atom.io/download/electron"
@@ -60,7 +60,9 @@
     "appId": "com.example.electron-cra",
     "files": [
       "build/**/*",
-      "node_modules/**/*"
+      "node_modules/**/*",
+      "src/**/*",
+      "./config.ini"
     ],
     "directories": {
       "buildResources": "assets"

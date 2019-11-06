@@ -7,10 +7,15 @@ service ServeGraph {
   rpc LoadScript (ScriptPath) returns (ScriptCompositions) {}
   rpc GetCompositions (NullArgument) returns (ScriptCompositions) {}
   rpc GetJSON (GraphName) returns (GraphJSON) {}
+  rpc HealthCheck (NullArgument) returns (HealthStatus) {}
 }
 
 message NullArgument {
 
+}
+
+message HealthStatus {
+  string status = 1;
 }
 
 message PNLPath {
