@@ -2,7 +2,7 @@
     transform: translate(10px, 10px)
 }
 .pnl-panel{
-    border-radius:8px;
+    border-radius: 8px;
     padding: 5px 5px 0;
     background-color: white;
     box-shadow: 0 0 0 1px rgba(16, 22, 26, 0.15),

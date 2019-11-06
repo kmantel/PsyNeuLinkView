@@ -252,7 +252,8 @@ export default class Workspace extends React.Component {
     return (
         <div>
           <SettingsPane
-            isOpen={true}/>
+            isOpen={true}
+            config={window.config}/>
           <Layout
             className={'workspace_grid'}
             margin={[0, 0]}
