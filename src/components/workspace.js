@@ -51,8 +51,6 @@ export default class Workspace extends React.Component {
         rpc_client.load_script(filepath,function () {
           var compositions = rpc_client.script_maintainer.compositions;
           var composition = compositions[compositions.length - 1];
-          console.log(compositions);
-          console.log(composition);
           rpc_client.get_json(composition, function () {
             var new_graph = JSON.parse(JSON.stringify(rpc_client.script_maintainer.gv));
             self.setState({graph:new_graph})
@@ -82,7 +80,6 @@ export default class Workspace extends React.Component {
     var uri = 'http://127.0.0.1:5000/api/v1/resources/gv?name=' + composition;
     self.get_request(uri,
       function(){
-      console.log(self.container.json);
       self.setState({graph:self.container.json})
     })
   }
@@ -169,9 +166,7 @@ export default class Workspace extends React.Component {
       }
 
       if (e.metaKey === true && e.key === ','){
-        console.log('yer');
         this.setState({'show_settings':true});
-        console.log(this.state)
       }
     });
     window.addEventListener('resize', this.window_resize)

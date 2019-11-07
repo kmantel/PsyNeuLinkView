@@ -9,8 +9,8 @@ const { spawn } = require('child_process');
 
 let mainWindow;
 var config = require(path.join(app_path,'config.json'));
-var py_int_path = config.Python.interpreter_path;
-var pnl_path = config.Python.psyneulink_path;
+var py_int_path = config.Python['Interpreter Path'];
+var pnl_path = config.Python['PsyNeuLink Path'];
 var child_proc;
 
 function spawn_rpc_server() {
