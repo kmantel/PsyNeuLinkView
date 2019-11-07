@@ -95,14 +95,13 @@ class SettingsPane extends React.Component {
                         {cat_set[0]}
                     </div>
                 );
-                var hack = cat_set[1];
                 components.push(
                     <div key={field_id}>
-                        {hack}
                         <div className={'sizer'} style={{"width": "60%"}}>
                             <EditableText
                                 placeholder={'...'}
-                                defaultValue={Math.random()}
+                                defaultValue={cat_set[1]}
+                                value={cat_set[1]}
                                 onChange={
                                     (new_value) => {
                                         let newcf = {...this.state.config};
@@ -148,7 +147,6 @@ class SettingsPane extends React.Component {
         var components_and_layout = this.generateSettings(this.state.nodes[this.state.selectedCat]['label']);
         var components = components_and_layout['components'];
         var layout = components_and_layout['layout'];
-        console.log(layout)
         components = [
             <div key="a">
                 <Tree
