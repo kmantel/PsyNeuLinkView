@@ -31,22 +31,38 @@ export default class Workspace extends React.Component {
     this.panel_resize = this.panel_resize.bind(this);
     this.get_mouse_initial = this.get_mouse_initial.bind(this);
     this.set_tool_tip = this.set_tool_tip.bind(this);
-    this.set_components = this.set_components.bind(this);
     this.window_resize = this.window_resize.bind(this);
     this.componentDidMount = this.componentDidMount.bind(this);
     this.set_file_loader = this.set_file_loader.bind(this);
-    this.set_composition = this.set_composition.bind(this);
-    this.set_components();
     this.set_file_loader();
+  }
+
+  sleep(ms){
+    return new Promise(resolve=>{
+      setTimeout(resolve,ms)
+    })
   }
 
   set_file_loader() {
     var self = this;
     this.file_loader.type = 'file';
-    this.file_loader.onchange = e => {
+    this.file_loader.onchange = async e => {
       if(e.path[0].files.length > 0) {
         window.electron_root.restart_rpc_server(window.electron_root.child_proc);
-        rpc_client = new window.rpc.rpc_client();
+        var server_ready = false;
+        var rpc_client = new window.rpc.rpc_client();
+        while (!server_ready){
+          rpc_client.health_check(
+              function(){
+                console.log(rpc_client.most_recent_response);
+                if(rpc_client.most_recent_response.status === 'Okay'){
+                  server_ready = true;
+                  rpc_client.most_recent_response.status = null
+                }
+              }
+          );
+          await this.sleep(100);
+        }
         var filepath = e.path[0].files[0].path;
         rpc_client.load_script(filepath,function () {
           var compositions = rpc_client.script_maintainer.compositions;
@@ -72,20 +88,6 @@ export default class Workspace extends React.Component {
       //TODO: add handling for multiple compositions
     }
     return chosen_composition
-  }
-
-  set_composition(composition){
-    var self = this;
-    self.setState({graph:null});
-    var uri = 'http://127.0.0.1:5000/api/v1/resources/gv?name=' + composition;
-    self.get_request(uri,
-      function(){
-      self.setState({graph:self.container.json})
-    })
-  }
-
-  set_components() {
-    var self = this
   }
 
   set_tool_tip(text) {

@@ -11,7 +11,6 @@ if sys.argv[1]:
         sys.path.append(sys.argv[1])
     except:
         pass
-sys.path.append('/Users/ds70/PycharmProjects/PsyNeuLink')
 import psyneulink as pnl
 
 class Container():
@@ -51,8 +50,8 @@ class GraphServer(graph_pb2_grpc.ServeGraphServicer):
         gv = get_gv_json(graph_name)
         return graph_pb2.GraphJSON(JSON=json.dumps(gv))
 
-    def Ping(self, request, context):
-        return graph_pb2.HealthStatus(status = 'Okay')
+    def HealthCheck(self, request, context):
+        return graph_pb2.HealthStatus(status='Okay')
 
 pnl_container = Container()
 

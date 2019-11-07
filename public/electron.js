@@ -13,26 +13,40 @@ var py_int_path = config.Python['Interpreter Path'];
 var pnl_path = config.Python['PsyNeuLink Path'];
 var child_proc;
 
-function spawn_rpc_server() {
-    child_proc = spawn(py_int_path, ['-u', path.join(app_path,'/src/py/rpc_server.py'),pnl_path]);
-    child_proc.on('error', function (err) {
-        console.log('FAILED TO START PYTHON PROCESS. FOLLOWING ERROR GENERATED: ', err)
-    });
-    child_proc.stdout.setEncoding('utf8');
-    child_proc.stdout.on('data', function(data){
-        console.log('py stdout: ' + data)
-    });
-    child_proc.stderr.setEncoding('utf8');
-    child_proc.stderr.on('data', function(data){
-        console.log('py stderr: ' + data)
-    });
-    exports.child_proc = child_proc
+class RPCServerMaintainer{
+    child_proc = null;
+
+    spawn_rpc_server() {
+        child_proc = spawn(py_int_path, ['-u', path.join(app_path,'/src/py/rpc_server.py'),pnl_path]);
+        child_proc.on('error', function (err) {
+            console.log('FAILED TO START PYTHON PROCESS. FOLLOWING ERROR GENERATED: ', err)
+        });
+        child_proc.stdout.setEncoding('utf8');
+        child_proc.stdout.on('data', function(data){
+            console.log('py stdout: ' + data)
+        });
+        child_proc.stderr.setEncoding('utf8');
+        child_proc.stderr.on('data', function(data){
+            console.log('py stderr: ' + data)
+        });
+        this.child_proc = child_proc;
+        exports.child_proc = child_proc;
+    }
+
+    restart_rpc_server(){
+        if (this.child_proc != null){
+            this.child_proc.kill()
+        }
+        this.spawn_rpc_server()
+    }
 }
 
-function restart_rpc_server(child_proc){
-    child_proc.kill();
-    child_proc = spawn_rpc_server();
+var server_maintainer = new RPCServerMaintainer();
+
+function restart_rpc_server(){
+    server_maintainer.restart_rpc_server()
 }
+
 function createWindow() {
     console.log(path.join(app_path,'/src/utility/rpc/preload.js'));
     const { width, height } = electron.screen.getPrimaryDisplay().workAreaSize;
@@ -51,7 +65,6 @@ function createWindow() {
 }
 
 app.on('ready', function(){
-    spawn_rpc_server();
     createWindow();
 });
 

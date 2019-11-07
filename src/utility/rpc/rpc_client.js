@@ -1,14 +1,15 @@
-const path = require ('path');
+const path = require('path');
 
-var PROTO_PATH =path.join(__dirname,'../../protos/graph.proto');
+var PROTO_PATH = path.join(__dirname, '../../protos/graph.proto');
 
 class RPCClient {
-    constructor(){
+    constructor() {
         this.grpc = require('grpc');
         this.protoLoader = require('@grpc/proto-loader');
         this.packageDefinition = this.protoLoader.loadSync(
             PROTO_PATH,
-            {keepCase: true,
+            {
+                keepCase: true,
                 longs: String,
                 enums: String,
                 defaults: true,
@@ -19,6 +20,7 @@ class RPCClient {
             compositions: {},
             gv: {}
         };
+        this.most_recent_response = {'status':'test'};
         this.instantiate_client = this.instantiate_client.bind(this);
         this.load_script = this.load_script.bind(this);
         this.get_json = this.get_json.bind(this);
@@ -32,41 +34,68 @@ class RPCClient {
         );
     }
 
-    load_script(filepath, callback=function () {}) {
+    load_script(filepath, callback = function () {
+    }) {
         var client = this.instantiate_client();
         var self = this;
         client.LoadScript({
-            path: filepath}, function(err, response) {
+            path: filepath
+        }, function (err, response) {
             if (err) {
                 console.log(err)
             }
-            self.script_maintainer.compositions = response.compositions;
-            callback()
+            else{
+                self.script_maintainer.compositions = response.compositions;
+                callback()
+            }
         });
     }
 
-    get_json(name, callback=function() {}) {
+    get_json(name, callback = function () {
+    }) {
         var client = this.instantiate_client();
         var self = this;
         client.GetJSON({
-            name:name}, function(err, response) {
+            name: name
+        }, function (err, response) {
             if (err) {
                 console.log(err)
             }
-            self.script_maintainer.gv = JSON.parse(response.JSON);
-            callback()
+            else{
+                self.script_maintainer.gv = JSON.parse(response.JSON);
+                callback()
+            }
         });
     }
 
-
-    load_custom_pnl(filepath, callback=function () {}){
+    load_custom_pnl(filepath, callback = function () {
+    }) {
         var client = this.instantiate_client();
         client.LoadCustomPnl({
-            path:filepath}, function (err, response) {
+            path: filepath
+        }, function (err, response) {
             if (err) {
                 console.log(err)
             }
-            callback()
+            else {
+                callback()
+            }
+        })
+    }
+
+    health_check(callback = function () {
+    }) {
+        var self = this;
+        var client = this.instantiate_client();
+        client.HealthCheck({
+        }, function (err, response) {
+            if (err) {
+                console.log('error:', err)
+            }
+            else{
+                self.most_recent_response = response;
+                callback();
+            }
         })
     }
 }
