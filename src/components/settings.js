@@ -68,7 +68,7 @@ class SettingsPane extends React.Component {
         }
     }
 
-    generateSettings(category) {
+    generateSettingsPage(category) {
         var option_id_index = 0;
 
         function get_next_option_id() {
@@ -141,10 +141,9 @@ class SettingsPane extends React.Component {
         }
     }
 
-    // toggleDialog = () => this.setState({ isOpen: !this.state.isOpen });
     render() {
         var self = this;
-        var components_and_layout = this.generateSettings(this.state.nodes[this.state.selectedCat]['label']);
+        var components_and_layout = this.generateSettingsPage(this.state.nodes[this.state.selectedCat]['label']);
         var components = components_and_layout['components'];
         var layout = components_and_layout['layout'];
         components = [
@@ -171,99 +170,6 @@ class SettingsPane extends React.Component {
                 </div>
             </div>
         ];
-        // var components = [
-        //     <div key="a">
-        //         <Tree
-        //             contents={this.state.nodes}
-        //             onNodeClick={this.handleNodeClick}
-        //             onNodeCollapse={this.handleNodeCollapse}
-        //             onNodeExpand={this.handleNodeExpand}
-        //             className={"config_tree"}
-        //         />
-        //     </div>,
-        //     <div key="b">
-        //         <div className={'options_panel'} style={{'width': '395px', 'height': '400px'}}>
-        //             <Layout
-        //                 className={'options_grid'}
-        //                 margin={[0, 0]}
-        //                 cols={10}
-        //                 width={500}
-        //                 rowHeight={50}
-        //                 components={[
-        //                     <div key={'c'}>
-        //                         Interpreter Path
-        //                     </div>,
-        //                     <div key={'d'}>
-        //                         <div className={"sizer"} style={{"width": "60%"}}>
-        //                             <EditableText
-        //                                 placeholder={'...'}
-        //                                 defaultValue={config_client.get_config().Python.interpreter_path}
-        //                                 onChange={
-        //                                     // TODO: GENERALIZE AND MOVE TO HANDLEOPTIONEDIT
-        //                                     (new_value) => {
-        //                                         let newcf = {...config_client.get_config()};
-        //                                         newcf['Python']['interpreter_path'] = new_value;
-        //                                         config_client.set_config(newcf)
-        //                                     }
-        //                                 }
-        //                             />
-        //                         </div>
-        //                     </div>,
-        //                     <div key={'e'}>
-        //                         PsyNeuLink Path
-        //                     </div>,
-        //                     <div key={'f'}>
-        //                         <div className={"sizer"} style={{"width": "60%"}}>
-        //                             <EditableText
-        //                                 placeholder={'...'}
-        //                                 defaultValue={config_client.get_config().Python.psyneulink_path}
-        //                                 onChange={
-        //                                     // TODO: GENERALIZE AND MOVE TO HANDLEOPTIONEDIT
-        //                                     (new_value) => {
-        //                                         let newcf = {...config_client.get_config()};
-        //                                         newcf['Python']['psyneulink_path'] = new_value;
-        //                                         config_client.set_config(newcf)
-        //                                     }
-        //                                 }
-        //                                 multiline={false}
-        //                             />
-        //                         </div>
-        //                     </div>,
-        //                 ]}
-        //                 layout={[
-        //                     {
-        //                         i: 'c',
-        //                         x: 0,
-        //                         y: 0,
-        //                         w: 3,
-        //                         h: 1
-        //                     },
-        //                     {
-        //                         i: 'd',
-        //                         x: 3,
-        //                         y: 0,
-        //                         w: 7,
-        //                         h: 1
-        //                     },
-        //                     {
-        //                         i: 'e',
-        //                         x: 0,
-        //                         y: 1,
-        //                         w: 3,
-        //                         h: 1
-        //                     },
-        //                     {
-        //                         i: 'f',
-        //                         x: 3,
-        //                         y: 1,
-        //                         w: 7,
-        //                         h: 1
-        //                     },
-        //                 ]}
-        //             />
-        //         </div>
-        //     </div>
-        // ];
         return (
             <div>
                 <Dialog

@@ -143,7 +143,7 @@ export default class Workspace extends React.Component {
     window.removeEventListener('mousedown');
     window.removeEventListener('mouseup');
     window.removeEventListener('resize');
-    window.removeEventListener('onkeypress');
+    window.removeEventListener('keydown');
   }
 
   componentWillMount() {
@@ -160,7 +160,6 @@ export default class Workspace extends React.Component {
       }
     );
     window.addEventListener('keydown', (e) => {
-      console.log(e);
       if (e.metaKey === true && e.key === 'u') {
         this.file_loader.click()
       }
