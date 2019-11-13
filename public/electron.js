@@ -7,6 +7,8 @@ const BrowserWindow = electron.BrowserWindow;
 const path = require('path');
 const isDev = require('electron-is-dev');
 const { spawn } = require('child_process');
+const fs = require('fs');
+
 var log = require('electron-log');
 
 log.transports.console.level = "debug";
@@ -44,6 +46,9 @@ class RPCServerMaintainer{
 
     initialize_config(){
         var config_filepath = path.join(app_path,'config.json');
+        if (!fs.existsSync(config_filepath)){
+            fs.writeFileSync(config_filepath,JSON.stringify({}))
+        }
         var config_current = require(config_filepath);
         var config_template_filepath = path.join(app_path,'config_template.json');
         var config_template = require(config_template_filepath);
