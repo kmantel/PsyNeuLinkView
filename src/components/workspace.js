@@ -5,6 +5,7 @@ import GraphView from './graphview'
 import ToolTipBox from './tooltipbox'
 import ParameterControlBox from './parametercontrolbox'
 import SettingsPane from './settings'
+import { Spinner } from '@blueprintjs/core'
 
 const path = require('path');
 var rpc_client = new window.rpc.rpc_client();
@@ -34,6 +35,7 @@ export default class Workspace extends React.Component {
     this.window_resize = this.window_resize.bind(this);
     this.componentDidMount = this.componentDidMount.bind(this);
     this.set_file_loader = this.set_file_loader.bind(this);
+    this.load_file = this.load_file.bind(this);
     this.set_file_loader();
   }
 
@@ -43,37 +45,45 @@ export default class Workspace extends React.Component {
     })
   }
 
-  set_file_loader() {
+  async load_file(e){
     var self = this;
-    this.file_loader.type = 'file';
-    this.file_loader.onchange = async e => {
-      if(e.path[0].files.length > 0) {
-        window.electron_root.restart_rpc_server(window.electron_root.child_proc);
-        var server_ready = false;
-        var rpc_client = new window.rpc.rpc_client();
-        while (!server_ready){
-          rpc_client.health_check(
-              function(){
-                console.log(rpc_client.most_recent_response);
-                if(rpc_client.most_recent_response.status === 'Okay'){
-                  server_ready = true;
-                  rpc_client.most_recent_response.status = null
-                }
+    if(e.path[0].files.length > 0) {
+      window.electron_root.restart_rpc_server(window.electron_root.child_proc);
+      var server_ready = false;
+      var rpc_client = new window.rpc.rpc_client();
+      var server_attempt_limit = 50;
+      var server_attempt_current = 0;
+      while (!server_ready){
+        rpc_client.health_check(
+            function(){
+              if(rpc_client.most_recent_response.status === 'Okay'){
+                server_ready = true;
+                rpc_client.most_recent_response.status = null
               }
-          );
-          await this.sleep(100);
+            }
+        );
+        server_attempt_current += 1;
+        if(server_attempt_current >= server_attempt_limit){
+          throw(Error("Failed to load Python interpreter. Check path."))
         }
-        var filepath = e.path[0].files[0].path;
-        rpc_client.load_script(filepath,function () {
-          var compositions = rpc_client.script_maintainer.compositions;
-          var composition = compositions[compositions.length - 1];
-          rpc_client.get_json(composition, function () {
-            var new_graph = JSON.parse(JSON.stringify(rpc_client.script_maintainer.gv));
-            self.setState({graph:new_graph})
-          })
-        })
+        await this.sleep(300);
       }
+      var filepath = e.path[0].files[0].path;
+      rpc_client.load_script(filepath,function () {
+        var compositions = rpc_client.script_maintainer.compositions;
+        var composition = compositions[compositions.length - 1];
+        rpc_client.get_json(composition, function () {
+          var new_graph = JSON.parse(JSON.stringify(rpc_client.script_maintainer.gv));
+          self.setState({graph:new_graph})
+        })
+      })
     }
+
+  }
+
+  set_file_loader() {
+    this.file_loader.type = 'file';
+    this.file_loader.onchange = this.load_file;
   }
 
   choose_composition() {
@@ -162,11 +172,21 @@ export default class Workspace extends React.Component {
       }
     );
     window.addEventListener('keydown', (e) => {
-      if (e.metaKey === true && e.key === 'u') {
+      // Checks for OS here. Consider refactoring with Redux to set as global state variable
+      var combo_key;
+
+      if (navigator.platform.toUpperCase().includes("MAC")){
+        combo_key = e.metaKey
+      }
+      else {
+        combo_key = e.ctrlKey
+      }
+
+      if (combo_key === true && e.key === 'u') {
         this.file_loader.click()
       }
 
-      if (e.metaKey === true && e.key === ','){
+      if (combo_key === true && e.key === ','){
         this.setState({'show_settings':true});
       }
     });

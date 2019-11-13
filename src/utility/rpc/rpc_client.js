@@ -1,5 +1,7 @@
 const path = require('path');
 
+var log = require('electron-log')
+
 var PROTO_PATH = path.join(__dirname, '../../protos/graph.proto');
 
 class RPCClient {
@@ -42,7 +44,9 @@ class RPCClient {
             path: filepath
         }, function (err, response) {
             if (err) {
-                console.log(err)
+                // log.debug(err)
+                console.log(err);
+                throw(err)
             }
             else{
                 self.script_maintainer.compositions = response.compositions;
@@ -59,6 +63,7 @@ class RPCClient {
             name: name
         }, function (err, response) {
             if (err) {
+                // log.debug(err)
                 console.log(err)
             }
             else{
@@ -75,6 +80,7 @@ class RPCClient {
             path: filepath
         }, function (err, response) {
             if (err) {
+                // log.debug(err)
                 console.log(err)
             }
             else {
@@ -90,6 +96,7 @@ class RPCClient {
         client.HealthCheck({
         }, function (err, response) {
             if (err) {
+                // log.debug(err)
                 console.log('error:', err)
             }
             else{

@@ -3,6 +3,7 @@ import '../css/graphview.css'
 import * as d3 from 'd3'
 import add_context_menu from '../utility/add_context_menu'
 import { Resizable } from 're-resizable'
+import { Spinner, SVGSpinner } from '@blueprintjs/core'
 
 const context_menu = [{
   onClick: {},
@@ -22,16 +23,16 @@ const style = {
 
 class GraphView extends React.Component {
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
       class: `graph-view ${this.props.className}`,
       mounted: false,
       node_width: 40,
       node_height: 30,
       graph: this.props.graph
-    }
-    this.setGraph = this.setGraph.bind(this)
-    this.updateGraph = this.updateGraph.bind(this)
+    };
+    this.setGraph = this.setGraph.bind(this);
+    this.updateGraph = this.updateGraph.bind(this);
     this.componentDidUpdate = this.componentDidUpdate.bind(this)
   }
 
@@ -547,7 +548,9 @@ class GraphView extends React.Component {
         }
       >
       <div className={this.state.class}
-           onScroll={this.updateGraph}/>
+           onScroll={this.updateGraph}>
+      </div>
+
       </Resizable>
     )
   }

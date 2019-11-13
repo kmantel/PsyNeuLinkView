@@ -10,7 +10,9 @@
     "cors": "^2.8.5",
     "d3": "^5.12.0",
     "electron-is-dev": "^1.1.0",
+    "electron-log": "^3.0.9",
     "express": "^4.17.1",
+    "fix-path": "^2.1.0",
     "grpc": "^1.24.1",
     "grpc-web": "^1.0.6",
     "node-fetch": "^2.6.0",
@@ -28,7 +30,7 @@
     "electron-build": "electron-builder",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "electron-dev": "concurrently \"BROWSER=none yarn start\" \"wait-on http://localhost:3000 && electron .\"",
+    "electron-dev": "concurrently \"BROWSER=none yarn start\" \"wait-on http://localhost:3000 && electron .\" > /tmp/electron-app.log",
     "electron-pack": "yarn build --em.main=build/electron.js",
     "build": "yarn react-build && yarn electron-build",
     "preelectron-pack": "yarn build",
@@ -63,7 +65,8 @@
       "node_modules/**/*",
       "src/**/*",
       "./config.ini",
-      "./config.json"
+      "./config.json",
+      "!config.json"
     ],
     "directories": {
       "buildResources": "assets"

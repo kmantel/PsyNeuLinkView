@@ -5,9 +5,13 @@ from concurrent import futures
 from redbaron import RedBaron
 import json
 import sys
+import subprocess, os
+my_env = os.environ
+
+sys.path.append(os.getenv('PATH'))
+
 if sys.argv[1]:
     try:
-        print(sys.argv[1])
         sys.path.append(sys.argv[1])
     except:
         pass
@@ -39,7 +43,6 @@ class GraphServer(graph_pb2_grpc.ServeGraphServicer):
     def LoadScript(self, request, context):
         filepath = request.path
         load_script(filepath)
-        print(pnl_container)
         return graph_pb2.ScriptCompositions(compositions=pnl_container.hashable_pnl_objects['compositions'])
 
     def GetCompositions(self, request, context):
@@ -71,7 +74,6 @@ def get_new_pnl_objects(local_vars):
 def load_script(filepath):
     rb = RedBaron(open(filepath, 'r').read())
     rb_str = rb.dumps()
-    print(rb_str)
     pnl_container.AST = rb_str
     namespace = {}
     exec(compile(rb_str, filename="<ast>", mode="exec"), namespace)
@@ -84,6 +86,7 @@ def get_gv_json(name):
     pnl_container.pnl_objects['compositions'][comp]._analyze_graph()
     gv = pnl_container.pnl_objects['compositions'][comp].show_graph(output_fmt='gv',
                                                                     show_learning=True,
+                                                                    show_controller=True
                                                                     )
     gv_dict = json.loads(gv.pipe(format='json').decode('utf-8'))
     gv_dict_reduced = {

@@ -1,33 +1,45 @@
 const electron = require('electron');
 const app = electron.app;
 const app_path = app.getAppPath();
+const fixpath = require('fix-path');
 console.log(app_path);
 const BrowserWindow = electron.BrowserWindow;
 const path = require('path');
 const isDev = require('electron-is-dev');
 const { spawn } = require('child_process');
+var log = require('electron-log');
+
+log.transports.console.level = "debug";
+log.debug(process.env);
+log.debug('a problem check');
 
 let mainWindow;
-var config = require(path.join(app_path,'config.json'));
-var py_int_path = config.Python['Interpreter Path'];
-var pnl_path = config.Python['PsyNeuLink Path'];
 var child_proc;
+
+//TODO: figure out way around fixpath dependency
+fixpath();
 
 class RPCServerMaintainer{
     child_proc = null;
 
     spawn_rpc_server() {
-        child_proc = spawn(py_int_path, ['-u', path.join(app_path,'/src/py/rpc_server.py'),pnl_path]);
+        var config = require(path.join(app_path,'config.json'));
+        var py_int_path = config.Python['Interpreter Path'];
+        var pnl_path = config.Python['PsyNeuLink Path'];
+        child_proc = spawn(py_int_path, ['-u', path.join(app_path,'/src/py/rpc_server.py'),pnl_path], {shell: true});
         child_proc.on('error', function (err) {
             console.log('FAILED TO START PYTHON PROCESS. FOLLOWING ERROR GENERATED: ', err)
+            log.debug('py stdout:' + err)
         });
         child_proc.stdout.setEncoding('utf8');
         child_proc.stdout.on('data', function(data){
-            console.log('py stdout: ' + data)
+            console.log('py stdout: ' + data);
+            log.debug('py stdout:' + data)
         });
         child_proc.stderr.setEncoding('utf8');
         child_proc.stderr.on('data', function(data){
             console.log('py stderr: ' + data)
+            log.debug('py stdout:' + data)
         });
         this.child_proc = child_proc;
         exports.child_proc = child_proc;
