@@ -20,6 +20,41 @@ var child_proc;
 fixpath();
 
 class RPCServerMaintainer{
+    constructor(){
+        this.config_edited = false;
+        this.initialize_config();
+    }
+
+    obj_key_copy(template_obj, user_obj){
+        Object.keys(template_obj).forEach(
+            (key) => {
+                if (!(key in user_obj)){
+                    user_obj[key] = {...template_obj[key]};
+                    this.config_edited = true;
+                }
+            }
+        );
+        Object.keys(template_obj).forEach(
+            (key) => {
+                this.obj_key_copy(template_obj[key], user_obj[key])
+            }
+        );
+        return user_obj
+    }
+
+    initialize_config(){
+        var config_filepath = path.join(app_path,'config.json');
+        var config_current = require(config_filepath);
+        var config_template_filepath = path.join(app_path,'config_template.json');
+        var config_template = require(config_template_filepath);
+        this.config = this.obj_key_copy(config_template, config_current);
+        if (this.config_edited){
+            var cf_client_module = require(path.join(app_path,'src/utility/config/config_client.js'));
+            var cf_client = new cf_client_module.ConfigClient(config_filepath);
+            cf_client.set_config(this.config);
+        }
+    }
+
     child_proc = null;
 
     spawn_rpc_server() {
