@@ -68,7 +68,6 @@
     "asar": true,
     "asarUnpack":[
       "build/**/*",
-      "node_modules/**/*",
       "src/**/*",
       "config_template.json"
     ]

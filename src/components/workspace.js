@@ -6,9 +6,13 @@ import ToolTipBox from './tooltipbox'
 import ParameterControlBox from './parametercontrolbox'
 import SettingsPane from './settings'
 import { Spinner } from '@blueprintjs/core'
-
 const path = require('path');
-var rpc_client = new window.rpc.rpc_client();
+
+var proto_path = path.join(window.electron_root.app_path,'src','protos','graph.proto');
+
+console.log(proto_path, window.modulePath);
+
+var rpc_client = new window.rpc.rpc_client(proto_path, window.modulePath);
 
 export default class Workspace extends React.Component {
   constructor(props) {
@@ -50,7 +54,7 @@ export default class Workspace extends React.Component {
     if(e.path[0].files.length > 0) {
       window.electron_root.restart_rpc_server(window.electron_root.child_proc);
       var server_ready = false;
-      var rpc_client = new window.rpc.rpc_client();
+      var rpc_client = new window.rpc.rpc_client(proto_path, window.modulePath);
       var server_attempt_limit = 50;
       var server_attempt_current = 0;
       while (!server_ready){

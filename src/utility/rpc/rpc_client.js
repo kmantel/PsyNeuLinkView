@@ -1,13 +1,11 @@
 const path = require('path');
 
-var log = require('electron-log')
-
-var PROTO_PATH = path.join(__dirname, '../../protos/graph.proto');
-
 class RPCClient {
-    constructor() {
-        this.grpc = require('grpc');
-        this.protoLoader = require('@grpc/proto-loader');
+    constructor(proto_path, module_path) {
+        var PROTO_PATH = proto_path;
+        var log = require(path.join(module_path,'electron-log'));
+        this.grpc = require(path.join(module_path,'grpc'));
+        this.protoLoader = require(path.join(module_path,'@grpc/proto-loader'));
         this.packageDefinition = this.protoLoader.loadSync(
             PROTO_PATH,
             {
