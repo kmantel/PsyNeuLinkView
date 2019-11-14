@@ -6,22 +6,15 @@
     "@blueprintjs/core": "^3.19.1",
     "@grpc/proto-loader": "^0.5.2",
     "blueprintjs": "^0.0.8",
-    "body-parser": "^1.19.0",
-    "cors": "^2.8.5",
     "d3": "^5.12.0",
     "electron-is-dev": "^1.1.0",
     "electron-log": "^3.0.9",
-    "express": "^4.17.1",
     "fix-path": "^2.1.0",
     "grpc": "^1.24.1",
-    "grpc-web": "^1.0.6",
-    "node-fetch": "^2.6.0",
-    "python-shell": "^1.0.8",
     "re-resizable": "^6.1.0",
     "react": "^16.10.2",
     "react-dom": "^16.10.2",
     "react-grid-layout": "^0.16.6",
-    "react-resizable": "^1.8.0",
     "react-scripts": "3.2.0"
   },
   "scripts": {
@@ -69,7 +62,16 @@
     "directories": {
       "buildResources": "assets"
     },
-    "asar": false
+    "win": {
+      "target": "portable"
+    },
+    "asar": true,
+    "asarUnpack":[
+      "build/**/*",
+      "node_modules/**/*",
+      "src/**/*",
+      "config_template.json"
+    ]
   },
   "homepage": "./"
 }
