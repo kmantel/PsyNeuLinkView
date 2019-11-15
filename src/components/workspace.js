@@ -10,6 +10,8 @@ const path = require('path');
 
 var proto_path = path.join(window.electron_root.app_path,'src','protos','graph.proto');
 
+console.log(proto_path)
+
 console.log(proto_path, window.modulePath);
 
 var rpc_client = new window.rpc.rpc_client(proto_path, window.modulePath);

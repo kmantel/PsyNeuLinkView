@@ -8,6 +8,7 @@ const path = require('path');
 const isDev = require('electron-is-dev');
 const { spawn } = require('child_process');
 const fs = require('fs');
+const os = require('os');
 var adjusted_app_path;
 isDev?adjusted_app_path=app_path:adjusted_app_path=path.join(app_path,'../app.asar.unpacked');
 exports.app_path = adjusted_app_path;
@@ -15,8 +16,6 @@ var log = require('electron-log');
 
 exports.isDev = isDev;
 log.transports.console.level = "debug";
-log.debug(process.env);
-log.debug('a problem check');
 
 let mainWindow;
 var child_proc;
@@ -65,13 +64,47 @@ class RPCServerMaintainer{
 
     child_proc = null;
 
+    check_for_conda(interpreter_path) {
+        var interpreter_dir = path.dirname(interpreter_path);
+        if (os.platform() === 'win32'){
+            if (fs.existsSync(path.join(interpreter_dir,'conda-meta'))){
+                var separated_interpreter_dir = interpreter_dir.split(path.sep);
+                return separated_interpreter_dir[separated_interpreter_dir.length -1];
+            }
+        }
+        else {
+            if (fs.existsSync(path.join(interpreter_dir,'..','conda-meta'))){
+                var separated_interpreter_dir = interpreter_dir.split(path.sep);
+                return separated_interpreter_dir[separated_interpreter_dir.length - 2];
+            }
+        }
+        return false
+    }
+
     spawn_rpc_server() {
         var config = require(path.join(adjusted_app_path,'config.json'));
         var py_int_path = config.Python['Interpreter Path'];
         var pnl_path = config.Python['PsyNeuLink Path'];
-        child_proc = spawn(py_int_path, ['-u', path.join(adjusted_app_path,'/src/py/rpc_server.py'),pnl_path], {shell: true});
+        var conda_dir = this.check_for_conda(py_int_path);
+        var conda_prefix;
+        conda_dir?
+            os.platform() === 'win32'?
+                conda_prefix = '' +
+                    `${path.resolve(path.join(path.dirname(py_int_path),'..','..','Scripts','activate.bat'))} & ` +
+                    `conda activate ${conda_dir} & `
+                :
+                conda_prefix = `
+                    source $(conda info --base)/etc/profile.d/conda.sh; 
+                    conda activate ${conda_dir}; 
+                `
+            :
+            conda_prefix = '';
+        log.debug(conda_prefix + py_int_path);
+        child_proc = spawn(conda_prefix + py_int_path,
+            ['-u', path.join(adjusted_app_path,'/src/py/rpc_server.py'),
+                pnl_path], {shell: true});
         child_proc.on('error', function (err) {
-            console.log('FAILED TO START PYTHON PROCESS. FOLLOWING ERROR GENERATED: ', err)
+            console.log('FAILED TO START PYTHON PROCESS. FOLLOWING ERROR GENERATED: ', err);
             log.debug('py stdout:' + err)
         });
         child_proc.stdout.setEncoding('utf8');
