@@ -6,7 +6,7 @@ console.log(app_path);
 const BrowserWindow = electron.BrowserWindow;
 const path = require('path');
 const isDev = require('electron-is-dev');
-const { spawn } = require('child_process');
+const { spawn, exec } = require('child_process');
 const fs = require('fs');
 const os = require('os');
 var adjusted_app_path;
@@ -101,8 +101,11 @@ class RPCServerMaintainer{
             conda_prefix = '';
         log.debug(conda_prefix + py_int_path);
         child_proc = spawn(conda_prefix + py_int_path,
-            ['-u', path.join(adjusted_app_path,'/src/py/rpc_server.py'),
-                pnl_path], {shell: true});
+            ['-u', path.join(adjusted_app_path, '/src/py/rpc_server.py'),
+                pnl_path], {
+                shell: true,
+                detached: false
+            });
         child_proc.on('error', function (err) {
             console.log('FAILED TO START PYTHON PROCESS. FOLLOWING ERROR GENERATED: ', err);
             log.debug('py stdout:' + err)
@@ -121,10 +124,20 @@ class RPCServerMaintainer{
         exports.child_proc = child_proc;
     }
 
-    restart_rpc_server(){
+    kill_rpc_server(){
         if (this.child_proc != null){
-            this.child_proc.kill()
+            if (os.platform() == 'win32'){
+                exec('taskkill /pid ' + this.child_proc.pid + ' /T /F');
+                this.child_proc = null
+            }
+            else {
+                this.child_proc.kill()
+            }
         }
+    }
+
+    restart_rpc_server(){
+        this.kill_rpc_server();
         this.spawn_rpc_server()
     }
 }
@@ -157,14 +170,14 @@ app.on('ready', function(){
 });
 
 app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') {
-        app.quit();
-    }
+    server_maintainer.kill_rpc_server();
+    app.quit();
 });
 
 app.on('quit', () => {
     try {
-        child_proc.kill()
+        server_maintainer.kill_rpc_server()
+        app.quit()
     }
     catch{
         console.log('FAILED TO END CHILD PROCESS')

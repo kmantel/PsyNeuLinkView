@@ -63,7 +63,7 @@
       "buildResources": "assets"
     },
     "win": {
-      "target": "portable"
+      "target": "zip"
     },
     "asar": true,
     "asarUnpack":[
