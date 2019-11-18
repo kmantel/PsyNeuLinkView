@@ -53,6 +53,7 @@ export default class Workspace extends React.Component {
 
   async load_file(e){
     var self = this;
+    var wait_interval = 1000;
     if(e.path[0].files.length > 0) {
       window.electron_root.restart_rpc_server(window.electron_root.child_proc);
       var server_ready = false;
@@ -72,7 +73,7 @@ export default class Workspace extends React.Component {
         if(server_attempt_current >= server_attempt_limit){
           throw(Error("Failed to load Python interpreter. Check path."))
         }
-        await this.sleep(300);
+        await this.sleep(wait_interval);
       }
       var filepath = e.path[0].files[0].path;
       rpc_client.load_script(filepath,function () {

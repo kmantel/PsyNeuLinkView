@@ -114,7 +114,7 @@ class RPCServerMaintainer{
         });
         child_proc.stderr.setEncoding('utf8');
         child_proc.stderr.on('data', function(data){
-            console.log('py stderr: ' + data)
+            console.log('py stderr: ' + data);
             log.debug('py stdout:' + data)
         });
         this.child_proc = child_proc;

@@ -94,7 +94,7 @@ class GraphView extends React.Component {
         .attr('width', '100%')
         .attr('height', '99.5%')
         .attr('class', 'graph')
-        .attr('overflow', 'auto')
+        .attr('overflow', 'auto');
 
       svg.append("svg:defs").append("svg:marker")
         .attr("id", window.location.href +"/triangle_orange")
@@ -119,15 +119,25 @@ class GraphView extends React.Component {
         .attr("fill", "black");
 
       self.props.graph.objects.forEach(function (d) {
-          d.x = parseInt(d._ldraw_[2].pt[0])
-          d.y = parseInt(d._ldraw_[2].pt[1])
+          // d.x = parseInt(d._ldraw_[2].pt[0]);
+          // d.y = parseInt(d._ldraw_[2].pt[1])
+        d.x = parseInt(Math.abs(d.text.x));
+        d.y = parseInt(Math.abs(d.text.y));
+        if ('ellipse' in d) {
+          d.color = d.ellipse.stroke;
         }
-      )
+        else {
+          d.color = d.polygon.stroke;
+        }
+        d.name = d.title;
+        }
+      );
 
       self.props.graph.edges.forEach(function (d) {
-        d.tail = self.props.graph.objects[d.tail]
-        d.head = self.props.graph.objects[d.head]
-      })
+        d.tail = self.props.graph.objects[d.tail];
+        d.head = self.props.graph.objects[d.head];
+        d.color = d.path.stroke;
+      });
 
       var edge = svg.append('g')
         .attr('class', 'edge')
