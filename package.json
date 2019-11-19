@@ -22,7 +22,7 @@
     "electron-build": "electron-builder",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "electron-dev": "concurrently \"BROWSER=none yarn start\" \"wait-on http://localhost:3000 && electron .\" > /tmp/electron-app.log",
+    "electron-dev": "concurrently \"yarn start\" \"wait-on http://localhost:3000 && electron .\"",
     "electron-pack": "yarn build --em.main=build/electron.js",
     "build": "yarn react-build && yarn electron-build",
     "preelectron-pack": "yarn build",
