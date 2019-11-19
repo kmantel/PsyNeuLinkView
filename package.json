@@ -65,6 +65,9 @@
     "win": {
       "target": "zip"
     },
+    "linux": {
+      "target": "deb"
+    },
     "asar": true,
     "asarUnpack":[
       "build/**/*",

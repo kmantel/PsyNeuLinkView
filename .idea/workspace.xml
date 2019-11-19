@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2575ca4d-3c3d-4615-9b7d-bedcd13ade1e" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/public/electron.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/electron.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -121,7 +121,7 @@
       <workItem from="1574178529099" duration="119000" />
       <workItem from="1574178677748" duration="1396000" />
       <workItem from="1574191271381" duration="1665000" />
-      <workItem from="1574194913122" duration="2396000" />
+      <workItem from="1574194913122" duration="2915000" />
     </task>
     <task id="LOCAL-00001" summary="fixed problem causing windows to leave processes open on app quit">
       <created>1574197030423</created>
