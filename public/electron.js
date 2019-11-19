@@ -6,11 +6,11 @@ console.log(app_path);
 const BrowserWindow = electron.BrowserWindow;
 const path = require('path');
 const isDev = require('electron-is-dev');
-const { spawn, spawnSync } = require('child_process');
+const {spawn, spawnSync} = require('child_process');
 const fs = require('fs');
 const os = require('os');
 var adjusted_app_path;
-isDev?adjusted_app_path=app_path:adjusted_app_path=path.join(app_path,'../app.asar.unpacked');
+isDev ? adjusted_app_path = app_path : adjusted_app_path = path.join(app_path, '../app.asar.unpacked');
 exports.app_path = adjusted_app_path;
 var log = require('electron-log');
 
@@ -23,16 +23,16 @@ var child_proc;
 //TODO: figure out way around fixpath dependency
 fixpath();
 
-class RPCServerMaintainer{
-    constructor(){
+class RPCServerMaintainer {
+    constructor() {
         this.config_edited = false;
         this.initialize_config();
     }
 
-    obj_key_copy(template_obj, user_obj){
+    obj_key_copy(template_obj, user_obj) {
         Object.keys(template_obj).forEach(
             (key) => {
-                if (!(key in user_obj)){
+                if (!(key in user_obj)) {
                     user_obj[key] = {...template_obj[key]};
                     this.config_edited = true;
                 }
@@ -46,17 +46,17 @@ class RPCServerMaintainer{
         return user_obj
     }
 
-    initialize_config(){
-        var config_filepath = path.join(adjusted_app_path,'config.json');
-        if (!fs.existsSync(config_filepath)){
-            fs.writeFileSync(config_filepath,JSON.stringify({}))
+    initialize_config() {
+        var config_filepath = path.join(adjusted_app_path, 'config.json');
+        if (!fs.existsSync(config_filepath)) {
+            fs.writeFileSync(config_filepath, JSON.stringify({}))
         }
         var config_current = require(config_filepath);
-        var config_template_filepath = path.join(adjusted_app_path,'config_template.json');
+        var config_template_filepath = path.join(adjusted_app_path, 'config_template.json');
         var config_template = require(config_template_filepath);
         this.config = this.obj_key_copy(config_template, config_current);
-        if (this.config_edited){
-            var cf_client_module = require(path.join(adjusted_app_path,'src/utility/config/config_client.js'));
+        if (this.config_edited) {
+            var cf_client_module = require(path.join(adjusted_app_path, 'src/utility/config/config_client.js'));
             var cf_client = new cf_client_module.ConfigClient(config_filepath);
             cf_client.set_config(this.config);
         }
@@ -66,14 +66,13 @@ class RPCServerMaintainer{
 
     check_for_conda(interpreter_path) {
         var interpreter_dir = path.dirname(interpreter_path);
-        if (os.platform() === 'win32'){
-            if (fs.existsSync(path.join(interpreter_dir,'conda-meta'))){
+        if (os.platform() === 'win32') {
+            if (fs.existsSync(path.join(interpreter_dir, 'conda-meta'))) {
                 var separated_interpreter_dir = interpreter_dir.split(path.sep);
-                return separated_interpreter_dir[separated_interpreter_dir.length -1];
+                return separated_interpreter_dir[separated_interpreter_dir.length - 1];
             }
-        }
-        else {
-            if (fs.existsSync(path.join(interpreter_dir,'..','conda-meta'))){
+        } else {
+            if (fs.existsSync(path.join(interpreter_dir, '..', 'conda-meta'))) {
                 var separated_interpreter_dir = interpreter_dir.split(path.sep);
                 return separated_interpreter_dir[separated_interpreter_dir.length - 2];
             }
@@ -83,15 +82,15 @@ class RPCServerMaintainer{
 
     spawn_rpc_server() {
         console.log('its getting here');
-        var config = require(path.join(adjusted_app_path,'config.json'));
+        var config = require(path.join(adjusted_app_path, 'config.json'));
         var py_int_path = config.Python['Interpreter Path'];
         var pnl_path = config.Python['PsyNeuLink Path'];
         var conda_dir = this.check_for_conda(py_int_path);
         var conda_prefix;
-        conda_dir?
-            os.platform() === 'win32'?
+        conda_dir ?
+            os.platform() === 'win32' ?
                 conda_prefix = '' +
-                    `${path.resolve(path.join(path.dirname(py_int_path),'..','..','Scripts','activate.bat'))} && ` +
+                    `${path.resolve(path.join(path.dirname(py_int_path), '..', '..', 'Scripts', 'activate.bat'))} && ` +
                     `conda activate ${conda_dir} && `
                 :
                 conda_prefix = `
@@ -112,12 +111,12 @@ class RPCServerMaintainer{
             log.debug('py stdout:' + err)
         });
         child_proc.stdout.setEncoding('utf8');
-        child_proc.stdout.on('data', function(data){
+        child_proc.stdout.on('data', function (data) {
             console.log('py stdout: ' + data);
             log.debug('py stdout:' + data)
         });
         child_proc.stderr.setEncoding('utf8');
-        child_proc.stderr.on('data', function(data){
+        child_proc.stderr.on('data', function (data) {
             console.log('py stderr: ' + data);
             log.debug('py stdout:' + data)
         });
@@ -125,21 +124,22 @@ class RPCServerMaintainer{
         exports.child_proc = child_proc;
     }
 
-    kill_rpc_server(){
-        if (this.child_proc != null){
-            if (os.platform() === 'win32'){
+    kill_rpc_server() {
+        if (this.child_proc != null) {
+            if (os.platform() === 'win32') {
                 console.log('yee');
-                spawnSync("taskkill", ["/PID", this.child_proc.pid, '/F', '/T'],
-                    );
+                spawnSync("taskkill", [
+                        "/PID", this.child_proc.pid, '/F', '/T'
+                    ],
+                );
                 this.child_proc = null
-            }
-            else {
+            } else {
                 this.child_proc.kill()
             }
         }
     }
 
-    restart_rpc_server(){
+    restart_rpc_server() {
         this.kill_rpc_server();
         this.spawn_rpc_server()
     }
@@ -147,19 +147,19 @@ class RPCServerMaintainer{
 
 var server_maintainer = new RPCServerMaintainer();
 
-function restart_rpc_server(){
+function restart_rpc_server() {
     server_maintainer.restart_rpc_server()
 }
 
 function createWindow() {
-    console.log(path.join(adjusted_app_path,'/src/utility/rpc/preload.js'));
-    const { width, height } = electron.screen.getPrimaryDisplay().workAreaSize;
+    console.log(path.join(adjusted_app_path, '/src/utility/rpc/preload.js'));
+    const {width, height} = electron.screen.getPrimaryDisplay().workAreaSize;
     mainWindow = new BrowserWindow({
         width: width,
         height: height,
         webPreferences: {
             nodeIntegration: true,
-            preload: path.join(isDev?__dirname : `${adjusted_app_path}/build/`, 'preload.js')
+            preload: path.join(isDev ? __dirname : `${adjusted_app_path}/build/`, 'preload.js')
         }
     });
     mainWindow.loadURL(isDev ? 'http://localhost:3000' : `file://${path.join(adjusted_app_path, 'build/index.html')}`);
@@ -171,7 +171,7 @@ function createWindow() {
     // );
 }
 
-app.on('ready', function(){
+app.on('ready', function () {
     createWindow();
 });
 
