@@ -6,7 +6,7 @@ console.log(app_path);
 const BrowserWindow = electron.BrowserWindow;
 const path = require('path');
 const isDev = require('electron-is-dev');
-const { spawn, exec } = require('child_process');
+const { spawn, spawnSync } = require('child_process');
 const fs = require('fs');
 const os = require('os');
 var adjusted_app_path;
@@ -82,6 +82,7 @@ class RPCServerMaintainer{
     }
 
     spawn_rpc_server() {
+        console.log('its getting here');
         var config = require(path.join(adjusted_app_path,'config.json'));
         var py_int_path = config.Python['Interpreter Path'];
         var pnl_path = config.Python['PsyNeuLink Path'];
@@ -90,8 +91,8 @@ class RPCServerMaintainer{
         conda_dir?
             os.platform() === 'win32'?
                 conda_prefix = '' +
-                    `${path.resolve(path.join(path.dirname(py_int_path),'..','..','Scripts','activate.bat'))} & ` +
-                    `conda activate ${conda_dir} & `
+                    `${path.resolve(path.join(path.dirname(py_int_path),'..','..','Scripts','activate.bat'))} && ` +
+                    `conda activate ${conda_dir} && `
                 :
                 conda_prefix = `
                     source $(conda info --base)/etc/profile.d/conda.sh; 
@@ -126,8 +127,10 @@ class RPCServerMaintainer{
 
     kill_rpc_server(){
         if (this.child_proc != null){
-            if (os.platform() == 'win32'){
-                exec('taskkill /pid ' + this.child_proc.pid + ' /T /F');
+            if (os.platform() === 'win32'){
+                console.log('yee');
+                spawnSync("taskkill", ["/PID", this.child_proc.pid, '/F', '/T'],
+                    );
                 this.child_proc = null
             }
             else {
@@ -160,9 +163,12 @@ function createWindow() {
         }
     });
     mainWindow.loadURL(isDev ? 'http://localhost:3000' : `file://${path.join(adjusted_app_path, 'build/index.html')}`);
-    mainWindow.on('closed', () =>
-        {app.quit()}
-    );
+    // mainWindow.on('closed', () =>
+    //     {
+    //         server_maintainer.kill_rpc_server();
+    //         app.quit();
+    //     }
+    // );
 }
 
 app.on('ready', function(){
@@ -174,21 +180,21 @@ app.on('window-all-closed', () => {
     app.quit();
 });
 
-app.on('quit', () => {
-    try {
-        server_maintainer.kill_rpc_server()
-        app.quit()
-    }
-    catch{
-        console.log('FAILED TO END CHILD PROCESS')
-    }
-});
+// app.on('quit', () => {
+//     try {
+//         server_maintainer.kill_rpc_server();
+//         app.quit()
+//     }
+//     catch{
+//         console.log('FAILED TO END CHILD PROCESS')
+//     }
+// });
 
-app.on('activate', () => {
-    if (mainWindow === null) {
-        createWindow();
-    }
-});
+// app.on('activate', () => {
+//     if (mainWindow === null) {
+//         createWindow();
+//     }
+// });
 
 exports.restart_rpc_server = restart_rpc_server;
 exports.app_path = adjusted_app_path;

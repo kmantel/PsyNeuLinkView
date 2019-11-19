@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="2575ca4d-3c3d-4615-9b7d-bedcd13ade1e" name="Default Changelist" comment="added config.json to gitignore">
-      <change afterPath="$PROJECT_DIR$/.env" afterDir="false" />
+    <list default="true" id="2575ca4d-3c3d-4615-9b7d-bedcd13ade1e" name="Default Changelist" comment="fixed problem causing windows to leave processes open on app quit">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/yarn.lock" beforeDir="false" afterPath="$PROJECT_DIR$/yarn.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/electron.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/electron.js" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -121,7 +120,9 @@
       <workItem from="1574094810376" duration="1723000" />
       <workItem from="1574104131496" duration="6743000" />
       <workItem from="1574178529099" duration="119000" />
-      <workItem from="1574178677748" duration="246000" />
+      <workItem from="1574178677748" duration="1396000" />
+      <workItem from="1574191271381" duration="1665000" />
+      <workItem from="1574194913122" duration="2108000" />
     </task>
     <servers />
   </component>
@@ -170,6 +171,10 @@
         <option value="1" />
       </set>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="fixed problem causing windows to leave processes open on app quit" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed problem causing windows to leave processes open on app quit" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
