@@ -1,5 +1,9 @@
 {
   "name": "psyneulink_view",
+  "author": {
+    "name": "Dillon Smith",
+    "email": "Dillon.th.smith@gmail.com"
+  },
   "version": "0.1.0",
   "private": true,
   "dependencies": {
