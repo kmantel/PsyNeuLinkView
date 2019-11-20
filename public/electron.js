@@ -163,12 +163,12 @@ function createWindow() {
         }
     });
     mainWindow.loadURL(isDev ? 'http://localhost:3000' : `file://${path.join(adjusted_app_path, 'build/index.html')}`);
-    // mainWindow.on('closed', () =>
-    //     {
-    //         server_maintainer.kill_rpc_server();
-    //         app.quit();
-    //     }
-    // );
+    mainWindow.on('closed', () =>
+        {
+            server_maintainer.kill_rpc_server();
+            app.quit();
+        }
+    );
 }
 
 app.on('ready', function () {
@@ -180,15 +180,15 @@ app.on('window-all-closed', () => {
     app.quit();
 });
 
-// app.on('quit', () => {
-//     try {
-//         server_maintainer.kill_rpc_server();
-//         app.quit()
-//     }
-//     catch{
-//         console.log('FAILED TO END CHILD PROCESS')
-//     }
-// });
+app.on('quit', () => {
+    try {
+        server_maintainer.kill_rpc_server();
+        app.quit()
+    }
+    catch{
+        console.log('FAILED TO END CHILD PROCESS')
+    }
+});
 
 // app.on('activate', () => {
 //     if (mainWindow === null) {

@@ -2,7 +2,8 @@ from redbaron import RedBaron
 from enum import Enum
 
 fp = '/Users/ds70/Library/Preferences/PyCharm2019.2/scratches/scratch_AST_PARSE_EX_SCRIPT.py'
-
+fp = '/Users/ds70/PycharmProjects/PsyNeuLink/Scripts/Examples/Composition/Botvinick Model Composition.py'
+fp = '/Users/ds70/PycharmProjects/PsyNeuLink/Scripts/Examples/Composition/EVC OCM.py'
 
 class DependencyTypes(Enum):
     COMPOSITION_MANIPULATION = 0
@@ -62,10 +63,10 @@ class DependencyGraph:
 
     def get_class_hierarchy(self, root_class, class_hierarchy = None):
         if class_hierarchy is None:
-            class_hierarchy = {root_class.__name__}
+            class_hierarchy = [root_class.__name__]
         subclasses = root_class.__subclasses__()
         if subclasses:
-            class_hierarchy.update([i.__name__ for i in subclasses])
+            class_hierarchy.extend([i.__name__ for i in subclasses])
             for subclass in subclasses:
                 self.get_class_hierarchy(subclass, class_hierarchy=class_hierarchy)
         return class_hierarchy
@@ -106,6 +107,9 @@ class DependencyGraph:
     def add_mechanism(self, mechanism):
         self._mechanisms.add(mechanism)
 
+    def update_mechanisms(self, mechanisms):
+        self._mechanisms.update(mechanisms)
+
     @property
     def mechanism_dependencies(self):
         return list(self._mechanism_dependencies)
@@ -133,7 +137,7 @@ class DependencyGraph:
             }
             self._dependency_method_map[dependency_type](dn)
         else:
-            dn = self.index[fst_node]
+            dn = self.index[fst_node]['node']
         if dependee:
             dependee.add_dependency(dn)
         if dependent:
@@ -147,7 +151,7 @@ class DependencyGraph:
         script_compositions = self.fst.find_all("assign",
                                                 lambda x: x if x.find_all("atomtrailers",
                                                                           lambda x: x if x.find_all('namenode',
-                                                                                                    'Composition')
+                                                                                                    self.psyneulink_composition_classes)
                                                                           else False)
                                                 else False)
         for composition in script_compositions:
@@ -156,27 +160,62 @@ class DependencyGraph:
     def extract_composition_manipulations(self):
         for composition_node in self.compositions:
             composition_name = composition_node.fst_node.find('name').value
-            composition_calls = self.fst.find_all(
+            composition_calls = [node for node in self.fst.find_all(
                     'atomtrailers',
-                    lambda x: x if x.find('name', composition_name)
-                    else False
-            )
+                    lambda x: x if x.find('name', composition_name) and \
+                        x.find('name', composition_name).next and x.find('name', composition_name).next.type == 'dot' and \
+                        x.find('name', composition_name).next.next and x.find('name', composition_name).next.next.value in self.manipulation_methods
+                        else False
+            )]
             for call in composition_calls:
-                call_begin_node = call.find('name', composition_name)
-                if call_begin_node.next.type == 'dot' and \
-                        call_begin_node.next.next.value in self.manipulation_methods:
-                    self.add_dependency_node(
-                            call,
-                            DependencyTypes.COMPOSITION_MANIPULATION,
-                            dependent = composition_node
-                    )
+                self.add_dependency_node(
+                        call,
+                        DependencyTypes.COMPOSITION_MANIPULATION,
+                        dependent=composition_node
+                )
+
+    def unpack_call_node(self, call_node, tokens = None):
+        if not tokens:
+            tokens = []
+        try:
+            for i in call_node.value:
+                tokens = self.unpack_call_node(i, tokens)
+        except (TypeError, AttributeError):
+            tokens.append(call_node.value.value)
+        return tokens
 
     def extract_mechanisms(self):
+        script_mechanisms = self.fst.find_all("assign",
+                                                lambda x: x if x.find_all("atomtrailers",
+                                                                          lambda x: x if x.find_all('namenode',
+                                                                                                    self.psyneulink_mechanism_classes)
+                                                                          else False)
+                                                else False)
         for composition_manipulation in self.composition_manipulations:
             call = composition_manipulation.fst_node.find('call')
-            call_args = call.value
-            assert True
-
+            test = self.unpack_call_node(call)
+            call_args = call.find_all('call_argument')
+            try:
+                call_args_iterable = [arg for arg in call_args]
+            except TypeError:
+                call_args_iterable = [call_args]
+            for arg in call_args_iterable:
+                if arg.value.type == 'list':
+                    arg_iterable = [i.value for i in arg.value]
+                else:
+                    arg_iterable = [arg.value]
+                for i in arg_iterable:
+                    mechanism_assignment_node = script_mechanisms.find(
+                            "assign",
+                            lambda x: x if x.find_all('namenode', i.value)
+                            else False
+                    )
+                    if mechanism_assignment_node:
+                        self.add_dependency_node(
+                                mechanism_assignment_node,
+                                DependencyTypes.MECHANISM,
+                                dependee=composition_manipulation
+                        )
 
     def extract_mechanism_dependencies(self):
         pass
@@ -185,4 +224,5 @@ class DependencyGraph:
         pass
 
 import psyneulink
+
 dg = DependencyGraph(fp, psyneulink)
