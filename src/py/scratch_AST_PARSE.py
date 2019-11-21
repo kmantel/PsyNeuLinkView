@@ -1,14 +1,30 @@
 from redbaron import RedBaron
 from enum import Enum
 
-fp = '/Users/ds70/PycharmProjects/PsyNeuLink/Scripts/Examples/Composition/Botvinick Model Composition.py'
+# fp = '/Users/ds70/PycharmProjects/PsyNeuLink/Scripts/Examples/Composition/Botvinick Model Composition.py'
 # fp = '/Users/ds70/PycharmProjects/PsyNeuLink/Scripts/Examples/Composition/StabilityFlexibility.py'
-# fp = '/Users/ds70/PycharmProjects/PsyNeuLink/Scripts/Examples/Composition/EVC-Gratton Composition.py'
 # fp = '/Users/ds70/PycharmProjects/PsyNeuLink/Scripts/Examples/Composition/LC Control Mechanism Composition.py'
 # fp = '/Users/ds70/PycharmProjects/PsyNeuLink/Scripts/Examples/Composition/Rumelhart Semantic Network.py'
 
-ns = {}
-ns2 = {}
+# BELOW SCRIPT FAILS BECAUSE
+# rl_learning_components = rl_agent.add_reinforcement_learning_pathway([rl_agent_state, rl_agent_action])
+# REGISTERS BOTH AS ITSELF AND rl_agent.add_reinforcement_learning_pathway([rl_agent_state, rl_agent_action])
+# SO YOU GET A DUPLICATE PROJECTION ERROR
+# fp = '/Users/ds70/PycharmProjects/PsyNeuLink/Scripts/Models (Under Development)/Adaptive Replay Model.py'
+
+
+# fp = '/Users/ds70/PycharmProjects/PsyNeuLink/Scripts/Models (Under Development)/ColorMotionTask_SIMPLE.py'
+
+
+# USE BELOW FILE FOR ALIASING
+# fp = '/Users/ds70/PycharmProjects/PsyNeuLink/Scripts/Models (Under Development)/GreedyAgentModel_LLVM_TEST.py'
+
+
+# USE BELOW FILE FOR INSTANTIATION WITHIN LOOP
+# fp = '/Users/ds70/PycharmProjects/PsyNeuLink/Scripts/Examples/Composition/EVC-GrattonComposition.py'
+
+
+# fp = '/Users/ds70/PycharmProjects/PsyNeuLink/Scripts/Models (Under Development)/NeuroML Example.py'
 
 class DependencyTypes(Enum):
     COMPOSITION_MANIPULATION = 0
@@ -329,19 +345,19 @@ dg = DependencyGraph(fp, psyneulink)
 b = time.time()
 print(b-a)
 
-
+ns = {}
 for imp in dg.imports:
-    exec(imp.dumps(),ns2)
+    exec(imp.dumps(), ns)
 
 def traverse_graph(node):
     if node.dependencies:
         for i in node.dependencies:
             traverse_graph(i)
     if not dg.index[node.fst_node]['instantiated']:
-        exec(node.fst_node.dumps(), ns2)
+        exec(node.fst_node.dumps(), ns)
         dg.index[node.fst_node]['instantiated'] = True
 
 for i in dg.compositions[0].dependents:
     traverse_graph(i)
 
-ns2[dg.compositions[0].fst_node.name.value].show_graph(show_learning=True)
+ns[dg.compositions[0].fst_node.name.value].show_graph(show_learning=True)
