@@ -102,8 +102,6 @@ class DependencyGraph:
             "fromimport",
             "import"
         ])
-        for imp in self.imports:
-            exec(imp.dumps(),ns)
 
     def extract_defs(self):
         self.defs = self.fst.find_all('def',
