@@ -102,17 +102,6 @@ class DependencyGraph:
             "fromimport",
             "import"
         ])
-        # for imp in self.imports:
-        #     dotted_as_name = imp.find('dotted_as_name')
-        #     if dotted_as_name:
-        #         if not dotted_as_name.target:
-        #             self.add_assignment(dotted_as_name.dumps(), imp)
-        #         else:
-        #             self.add_assignment(dotted_as_name.target, imp)
-        #     else:
-        #         name_as_name = imp.find('name_as_name')
-        #         if name_as_name:
-        #             self.add_assignment(name_as_name.target, imp)
         for imp in self.imports:
             exec(imp.dumps(),ns)
 
