@@ -8,6 +8,7 @@ import sys
 import subprocess, os
 from xml.etree.cElementTree import fromstring
 from collections import defaultdict
+import ast_parse
 
 my_env = os.environ
 
@@ -75,11 +76,16 @@ def get_new_pnl_objects(local_vars):
 
 
 def load_script(filepath):
-    rb = RedBaron(open(filepath, 'r').read())
-    rb_str = rb.dumps()
-    pnl_container.AST = rb_str
+    pnl_container.AST = open(filepath, 'r').read()
+    dg = ast_parse.DependencyGraph(pnl_container.AST, pnl)
     namespace = {}
-    exec(compile(rb_str, filename="<ast>", mode="exec"), namespace)
+    for imp in dg.imports:
+        exec(imp.dumps(),namespace)
+    for comp in dg.compositions:
+        dg.traverse_graph_from_composition(comp, namespace)
+        composition_name = comp.fst_node.name.value
+    #     namespace[composition_name].show_graph(output_fmt='gv')
+    # exec(compile(rb_str, filename="<ast>", mode="exec"), namespace)
     compositions, components = get_new_pnl_objects(namespace)
     return pnl_container.hashable_pnl_objects['compositions']
 
