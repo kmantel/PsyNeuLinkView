@@ -326,17 +326,3 @@ class DependencyGraph:
         for composition_manipulation in [i for i in composition_node.dependents if
                                          i.node_type == DependencyTypes.COMPOSITION_MANIPULATION]:
             self.traverse_graph(composition_manipulation, namespace)
-
-#
-# import psyneulink
-# import time
-#
-# a = time.time()
-# dg = DependencyGraph(fp, psyneulink)
-# b = time.time()
-# print(b-a)
-#
-#
-#
-#
-# ns[dg.compositions[0].fst_node.name.value].show_graph(show_learning=True)
