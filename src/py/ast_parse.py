@@ -1,31 +1,6 @@
 from redbaron import RedBaron
 from enum import Enum
 
-# fp = '/Users/ds70/PycharmProjects/PsyNeuLink/Scripts/Examples/Composition/Botvinick Model Composition.py'
-# fp = '/Users/ds70/PycharmProjects/PsyNeuLink/Scripts/Examples/Composition/StabilityFlexibility.py'
-# fp = '/Users/ds70/PycharmProjects/PsyNeuLink/Scripts/Examples/Composition/LC Control Mechanism Composition.py'
-# fp = '/Users/ds70/PycharmProjects/PsyNeuLink/Scripts/Examples/Composition/Rumelhart Semantic Network.py'
-
-# BELOW SCRIPT FAILS BECAUSE
-# rl_learning_components = rl_agent.add_reinforcement_learning_pathway([rl_agent_state, rl_agent_action])
-# REGISTERS BOTH AS ITSELF AND rl_agent.add_reinforcement_learning_pathway([rl_agent_state, rl_agent_action])
-# SO YOU GET A DUPLICATE PROJECTION ERROR
-# fp = '/Users/ds70/PycharmProjects/PsyNeuLink/Scripts/Models (Under Development)/Adaptive Replay Model.py'
-
-
-# fp = '/Users/ds70/PycharmProjects/PsyNeuLink/Scripts/Models (Under Development)/ColorMotionTask_SIMPLE.py'
-
-
-# USE BELOW FILE FOR ALIASING
-# fp = '/Users/ds70/PycharmProjects/PsyNeuLink/Scripts/Models (Under Development)/GreedyAgentModel_LLVM_TEST.py'
-
-
-# USE BELOW FILE FOR INSTANTIATION WITHIN LOOP
-# fp = '/Users/ds70/PycharmProjects/PsyNeuLink/Scripts/Examples/Composition/EVC-GrattonComposition.py'
-
-
-# fp = '/Users/ds70/PycharmProjects/PsyNeuLink/Scripts/Models (Under Development)/NeuroML Example.py'
-
 class DependencyTypes(Enum):
     COMPOSITION_MANIPULATION = 0
     COMPOSITION = 1
@@ -34,9 +9,10 @@ class DependencyTypes(Enum):
     PERIPHERAL_DEPENDENCY = 4
 
 class _DependencyNode:
-    def __init__(self, fst_node):
+    def __init__(self, fst_node, node_type):
         self.dependencies = []
         self.dependents = []
+        self.node_type = node_type
         self.fst_node = fst_node
 
     def add_dependency(self, dependency):
@@ -51,7 +27,7 @@ class _DependencyNode:
         return self.fst_node.dumps()
 
 class DependencyGraph:
-    def __init__(self, fp, psyneulink_instance):
+    def __init__(self, src, psyneulink_instance):
         self.psyneulink_instance = psyneulink_instance
         self.psyneulink_composition_classes = self.get_class_hierarchy(self.psyneulink_instance.Composition)
         self.psyneulink_mechanism_classes = self.get_class_hierarchy(self.psyneulink_instance.Mechanism)
@@ -87,8 +63,7 @@ class DependencyGraph:
         self.index = {}
         self.fst = ''
         self.graph_dict = ''
-        self.filepath = fp
-        self.fst = RedBaron(open(self.filepath, 'r').read())
+        self.fst = RedBaron(src)
         self.all_assigns = self.fst.find_all('assign')
         self.all_assigns_dict = {k:v for k,v in [(i.name.value,i) for i in self.all_assigns]}
         self.parse_fst()
@@ -186,7 +161,7 @@ class DependencyGraph:
         if fst_node.type == 'assignment':
             self.add_assignment(fst_node.name.value, fst_node)
         if not fst_node in self.index:
-            dn = _DependencyNode(fst_node)
+            dn = _DependencyNode(fst_node, dependency_type)
             self.index[fst_node] = {
                 'node': dn,
                 'instantiated': False
@@ -337,27 +312,31 @@ class DependencyGraph:
         for node in primary_nodes:
             self.get_peripheral_dependencies(node)
 
-import psyneulink
-import time
+    def traverse_graph(self, node, namespace):
+        for imp in self.imports:
+            exec(imp.dumps(), namespace)
+        if node.dependencies:
+            for i in node.dependencies:
+                self.traverse_graph(i, namespace)
+        if not self.index[node.fst_node]['instantiated']:
+            exec(node.fst_node.dumps(), namespace)
+            self.index[node.fst_node]['instantiated'] = True
 
-a = time.time()
-dg = DependencyGraph(fp, psyneulink)
-b = time.time()
-print(b-a)
+    def traverse_graph_from_composition(self, composition_node, namespace):
+        for composition_manipulation in [i for i in composition_node.dependents if
+                                         i.node_type == DependencyTypes.COMPOSITION_MANIPULATION]:
+            self.traverse_graph(composition_manipulation, namespace)
 
-ns = {}
-for imp in dg.imports:
-    exec(imp.dumps(), ns)
-
-def traverse_graph(node):
-    if node.dependencies:
-        for i in node.dependencies:
-            traverse_graph(i)
-    if not dg.index[node.fst_node]['instantiated']:
-        exec(node.fst_node.dumps(), ns)
-        dg.index[node.fst_node]['instantiated'] = True
-
-for i in dg.compositions[0].dependents:
-    traverse_graph(i)
-
-ns[dg.compositions[0].fst_node.name.value].show_graph(show_learning=True)
+#
+# import psyneulink
+# import time
+#
+# a = time.time()
+# dg = DependencyGraph(fp, psyneulink)
+# b = time.time()
+# print(b-a)
+#
+#
+#
+#
+# ns[dg.compositions[0].fst_node.name.value].show_graph(show_learning=True)
