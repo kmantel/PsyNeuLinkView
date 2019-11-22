@@ -1,12 +1,14 @@
 from redbaron import RedBaron
 from enum import Enum
 
+
 class DependencyTypes(Enum):
     COMPOSITION_MANIPULATION = 0
     COMPOSITION = 1
     MECHANISM = 2
     PROJECTION = 3
     PERIPHERAL_DEPENDENCY = 4
+
 
 class _DependencyNode:
     def __init__(self, fst_node, node_type):
@@ -25,6 +27,7 @@ class _DependencyNode:
 
     def __repr__(self):
         return self.fst_node.dumps()
+
 
 class DependencyGraph:
     def __init__(self, src, psyneulink_instance):
@@ -65,10 +68,11 @@ class DependencyGraph:
         self.graph_dict = ''
         self.fst = RedBaron(src)
         self.all_assigns = self.fst.find_all('assign')
-        self.all_assigns_dict = {k:v for k,v in [(i.name.value,i) for i in self.all_assigns]}
+        self.all_assigns_dict = {k: v for k, v in [(i.name.value, i) for i in self.all_assigns]}
+        self.src_executed = ''
         self.parse_fst()
 
-    def get_class_hierarchy(self, root_class, class_hierarchy = None):
+    def get_class_hierarchy(self, root_class, class_hierarchy=None):
         if class_hierarchy is None:
             class_hierarchy = [root_class.__name__]
         subclasses = root_class.__subclasses__()
@@ -95,8 +99,10 @@ class DependencyGraph:
         ])
 
     def extract_defs(self):
+        # only extract top level defs. Ones nested within definitions of other Classes or Functions will be picked up
+        # in the outer def's instantiation
         self.defs = self.fst.find_all('def',
-                                      lambda x: x if len(x.path().path)==1 else False)
+                                      lambda x: x if len(x.path().path) == 1 else False)
         for _def in self.defs:
             self.add_assignment(_def.name, _def)
         assert True
@@ -193,13 +199,17 @@ class DependencyGraph:
     def extract_composition_manipulations(self):
         for composition_node in self.compositions:
             composition_name = composition_node.fst_node.find('name').value
-            composition_calls = [node for node in self.fst.find_all(
-                    'atomtrailers',
+            composition_calls = [
+                node for node in self.fst.find_all(
+                    ['atomtrailers','assignment'],
                     lambda x: x if x.find('name', composition_name) and \
-                        x.find('name', composition_name).next and x.find('name', composition_name).next.type == 'dot' and \
-                        x.find('name', composition_name).next.next and x.find('name', composition_name).next.next.value in self.manipulation_methods
-                        else False
-            )]
+                                   x.find('name', composition_name).next and x.find('name',
+                                                                                    composition_name).next.type ==
+                                   'dot' and \
+                                   x.find('name', composition_name).next.next and x.find('name',
+                                                                                         composition_name).next.next.value in self.manipulation_methods
+                    else False,
+                    recursive=False)]
             for call in composition_calls:
                 self.add_dependency_node(
                         call,
@@ -215,7 +225,7 @@ class DependencyGraph:
                 if i in self._assignments:
                     assignment = self._assignments[i]
                 elif i in self.all_assigns_dict:
-                    assignment =  self.all_assigns_dict[i]
+                    assignment = self.all_assigns_dict[i]
                 else:
                     assignment = None
                 if assignment:
@@ -232,19 +242,19 @@ class DependencyGraph:
         for j in [i for i in node.value if i.type == 'getitem' or i.type == 'call']:
             self.unpack_node(j, tokens)
 
-    def unpack_node(self, node, tokens = None):
+    def unpack_node(self, node, tokens=None):
         # if AtomtrailersNode, check first name node and unpack GetitemNodes and CallNodes
         if tokens is None:
             tokens = []
         try:
             if node.type == 'atomtrailers':
                 self.handle_atom_trailers(node, tokens)
-            elif hasattr(node.value,'type') \
-                and node.value.type == 'atomtrailers':
+            elif hasattr(node.value, 'type') \
+                    and node.value.type == 'atomtrailers':
                 self.handle_atom_trailers(node.value, tokens)
             else:
                 for i in node.value:
-                    if hasattr(i.value,'type') \
+                    if hasattr(i.value, 'type') \
                             and i.value.type == 'atomtrailers':
                         self.handle_atom_trailers(i.value, tokens)
                     elif isinstance(i.value, str):
@@ -253,18 +263,18 @@ class DependencyGraph:
                     else:
                         self.unpack_node(i, tokens)
         except (TypeError, AttributeError):
-            if not node.value.type in ['int','float','binary',
-                                       'string','raw_string','binary_string']:
+            if not node.value.type in ['int', 'float', 'binary',
+                                       'string', 'raw_string', 'binary_string']:
                 tokens.append(node.value.dumps())
         return tokens
 
     def extract_mechanisms(self):
         script_mechanisms = self.fst.find_all("assign",
-                                                lambda x: x if x.find_all("atomtrailers",
-                                                                          lambda x: x if x.find_all('namenode',
-                                                                                                    self.psyneulink_mechanism_classes)
-                                                                          else False)
-                                                else False)
+                                              lambda x: x if x.find_all("atomtrailers",
+                                                                        lambda x: x if x.find_all('namenode',
+                                                                                                  self.psyneulink_mechanism_classes)
+                                                                        else False)
+                                              else False)
         for composition_manipulation in self.composition_manipulations:
             call = composition_manipulation.fst_node.find('call')
             call_args = self.unpack_node(call)
@@ -283,11 +293,11 @@ class DependencyGraph:
 
     def extract_projections(self):
         script_mechanisms = self.fst.find_all("assign",
-                                                lambda x: x if x.find_all("atomtrailers",
-                                                                          lambda x: x if x.find_all('namenode',
-                                                                                                    self.psyneulink_projection_classes)
-                                                                          else False)
-                                                else False)
+                                              lambda x: x if x.find_all("atomtrailers",
+                                                                        lambda x: x if x.find_all('namenode',
+                                                                                                  self.psyneulink_projection_classes)
+                                                                        else False)
+                                              else False)
         for composition_manipulation in self.composition_manipulations:
             call = composition_manipulation.fst_node.find('call')
             call_args = self.unpack_node(call)
@@ -312,17 +322,45 @@ class DependencyGraph:
         for node in primary_nodes:
             self.get_peripheral_dependencies(node)
 
-    def traverse_graph(self, node, namespace):
+    def execute_imports(self, namespace):
         for imp in self.imports:
+            self.src_executed += imp.dumps() + '\n'
             exec(imp.dumps(), namespace)
+
+    def traverse_graph(self,
+                       node,
+                       namespace,
+                       referring_composition,
+                       enclosing_composition):
         if node.dependencies:
             for i in node.dependencies:
-                self.traverse_graph(i, namespace)
+                if i == referring_composition or \
+                        not i.node_type == DependencyTypes.COMPOSITION:
+                    self.traverse_graph(i, namespace, referring_composition, enclosing_composition)
+                else:
+                    self.traverse_graph_from_composition(i,
+                                                         namespace,
+                                                         enclosing_composition = referring_composition)
         if not self.index[node.fst_node]['instantiated']:
+            self.src_executed += node.fst_node.dumps() + '\n'
             exec(node.fst_node.dumps(), namespace)
             self.index[node.fst_node]['instantiated'] = True
 
-    def traverse_graph_from_composition(self, composition_node, namespace):
+    def traverse_graph_from_composition(self,
+                                        composition_node,
+                                        namespace,
+                                        enclosing_composition = None):
+        if not enclosing_composition:
+            composition_manipulation_blacklist = []
+        else:
+            composition_manipulation_blacklist = [i for i in enclosing_composition.dependents if i.node_type ==
+                                                  DependencyTypes.COMPOSITION_MANIPULATION]
         for composition_manipulation in [i for i in composition_node.dependents if
-                                         i.node_type == DependencyTypes.COMPOSITION_MANIPULATION]:
-            self.traverse_graph(composition_manipulation, namespace)
+                                         i.node_type == DependencyTypes.COMPOSITION_MANIPULATION and not
+                                         i in composition_manipulation_blacklist]:
+            self.traverse_graph(
+                    composition_manipulation,
+                    namespace,
+                    composition_node,
+                    enclosing_composition
+            )

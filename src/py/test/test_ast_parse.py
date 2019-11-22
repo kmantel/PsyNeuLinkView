@@ -33,7 +33,9 @@ class TestSuite:
                   'c.add_projection(p)'
         dg = ast_parse.DependencyGraph(src_str, psyneulink)
         assert len(dg.projections) == 1
-        assert dg.projections[0].fst_node.dumps() == 'p = psyneulink.MappingProjection(\n        sender=m1,\n        receiver=m2\n)'
+        assert dg.projections[0].fst_node.dumps() == 'p = psyneulink.MappingProjection(\n' \
+                                                     '        sender=m1,\n' \
+                                                     '        receiver=m2\n)'
 
     @pytest.mark.parametrize("filepath",[
             './pnl_scripts/Adaptive Replay Model.py',
@@ -49,8 +51,9 @@ class TestSuite:
     def test_actual_scripts(self, filepath):
         src_str = open(filepath, 'r').read()
         dg = ast_parse.DependencyGraph(src_str, psyneulink)
+        namespace = {}
+        dg.execute_imports(namespace)
         for comp in dg.compositions:
-            namespace = {}
             dg.traverse_graph_from_composition(comp, namespace)
             composition_name = comp.fst_node.name.value
             namespace[composition_name].show_graph(output_fmt='gv')
