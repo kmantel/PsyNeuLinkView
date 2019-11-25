@@ -38,22 +38,21 @@ class TestSuite:
                                                      '        receiver=m2\n)'
 
     @pytest.mark.parametrize("filepath",[
-            './pnl_scripts/Adaptive Replay Model.py',
-            './pnl_scripts/Botvinick Model Composition.py',
-            './pnl_scripts/ColorMotionTask_SIMPLE.py',
-            './pnl_scripts/EVC-Gratton Composition.py',
-            './pnl_scripts/GreedyAgentModel_LLVM_TEST.py',
-            './pnl_scripts/LC Control Mechanism Composition.py',
-            './pnl_scripts/NeuroML Example.py',
+            # './pnl_scripts/Adaptive Replay Model.py',
+            # './pnl_scripts/Botvinick Model Composition.py',
+            # './pnl_scripts/ColorMotionTask_SIMPLE.py',
+            # './pnl_scripts/EVC-Gratton Composition.py',
+            # './pnl_scripts/GreedyAgentModel_LLVM_TEST.py',
+            # './pnl_scripts/LC Control Mechanism Composition.py',
+            # './pnl_scripts/NeuroML Example.py',
             './pnl_scripts/Rumelhart Semantic Network.py',
-            './pnl_scripts/StabilityFlexibility.py'
+            # './pnl_scripts/StabilityFlexibility.py'
         ])
     def test_actual_scripts(self, filepath):
         src_str = open(filepath, 'r').read()
         dg = ast_parse.DependencyGraph(src_str, psyneulink)
         namespace = {}
-        dg.execute_imports(namespace)
+        dg.execute_ast(namespace)
         for comp in dg.compositions:
-            dg.traverse_graph_from_composition(comp, namespace)
             composition_name = comp.fst_node.name.value
             namespace[composition_name].show_graph(output_fmt='gv')

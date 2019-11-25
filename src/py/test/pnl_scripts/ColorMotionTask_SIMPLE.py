@@ -26,8 +26,8 @@ c.show_graph(show_node_structure=ALL)
 stimuli = {color_input: [0,1,0],
               motion_input: [1,0,1]}
 
-# c.run(inputs=stimuli)
+c.run(inputs=stimuli)
 # print (c.results)
-print (c.json_summary())
+print (c.json_summary)
 
 

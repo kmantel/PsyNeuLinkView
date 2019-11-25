@@ -79,13 +79,7 @@ def load_script(filepath):
     pnl_container.AST = open(filepath, 'r').read()
     dg = ast_parse.DependencyGraph(pnl_container.AST, pnl)
     namespace = {}
-    dg.execute_imports(namespace)
-    for comp in dg.compositions:
-        dg.traverse_graph_from_composition(comp, namespace)
-        # composition_name = comp.fst_node.name.value
-    #     namespace[composition_name].show_graph(output_fmt='gv')
-    # exec(compile(rb_str, filename="<ast>", mode="exec"), namespace)
-    # compositions, components = get_new_pnl_objects(namespace)
+    dg.execute_ast(namespace)
     get_new_pnl_objects(namespace)
     return pnl_container.hashable_pnl_objects['compositions']
 
@@ -149,11 +143,6 @@ def get_gv_json(name):
                                                                     show_learning=True,
                                                                     show_controller=True
                                                                     )
-#     gv_dict = json.loads(gv.pipe(format='json').decode('utf-8'))
-#     gv_dict_reduced = {
-#         'objects': gv_dict['objects'],
-#         'edges': gv_dict['edges']
-#     }
     gv_svg = gv.pipe(format='svg')
     gv_svg_dict = etree_to_dict(fromstring(gv_svg.decode()))
     correct_dict(gv_svg_dict)
@@ -161,17 +150,6 @@ def get_gv_json(name):
 
     max_x = 0
     max_y = 0
-#     for object in gv_dict_reduced['objects']:
-# #         x, y = object['pos'].split(',')
-#         x = float(object['ellipse']['cx'])
-#         y = float(object['ellipse']['cy'])
-#         if x > max_x:
-#             max_x = x
-#         if y > max_y:
-#             max_y = y
-#     gv_dict_reduced['max_x'] = max_x * 0.25 + max_x
-#     gv_dict_reduced['max_y'] = max_y * 0.25 + max_y
-#     return gv_dict_reduced
     for object in gv_d['objects']:
         x = abs(float(object['text']['x']))
         y = abs(float(object['text']['y']))
