@@ -91,7 +91,8 @@ export default class Workspace extends React.Component {
 
   set_file_loader() {
     this.file_loader.type = 'file';
-    this.file_loader.onchange = this.load_file;
+    this.file_loader.onclick = function (e) {e.path[0].value = null;};
+    this.file_loader.oninput = this.load_file;
   }
 
   choose_composition() {
