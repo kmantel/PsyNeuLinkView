@@ -2,11 +2,12 @@ import pytest
 import ast_parse
 import psyneulink
 
+
 class TestSuite:
     def test_single_composition(self):
         src_str = 'import psyneulink\n\n' \
                   'c = psyneulink.Composition()'
-        dg = ast_parse.DependencyGraph(src_str,psyneulink)
+        dg = ast_parse.DependencyGraph(src_str, psyneulink)
         assert len(dg.compositions) == 1
         assert dg.compositions[0].fst_node.dumps() == 'c = psyneulink.Composition()'
 
@@ -15,7 +16,7 @@ class TestSuite:
                   'c = psyneulink.Composition()\n' \
                   'm = psyneulink.TransferMechanism()\n' \
                   'c.add_node(m)'
-        dg = ast_parse.DependencyGraph(src_str,psyneulink)
+        dg = ast_parse.DependencyGraph(src_str, psyneulink)
         assert len(dg.mechanisms) == 1
         assert dg.mechanisms[0].fst_node.dumps() == 'm = psyneulink.TransferMechanism()'
 
@@ -37,17 +38,18 @@ class TestSuite:
                                                      '        sender=m1,\n' \
                                                      '        receiver=m2\n)'
 
-    @pytest.mark.parametrize("filepath",[
-            # './pnl_scripts/Adaptive Replay Model.py',
-            # './pnl_scripts/Botvinick Model Composition.py',
-            # './pnl_scripts/ColorMotionTask_SIMPLE.py',
-            # './pnl_scripts/EVC-Gratton Composition.py',
-            # './pnl_scripts/GreedyAgentModel_LLVM_TEST.py',
-            # './pnl_scripts/LC Control Mechanism Composition.py',
-            # './pnl_scripts/NeuroML Example.py',
-            './pnl_scripts/Rumelhart Semantic Network.py',
-            # './pnl_scripts/StabilityFlexibility.py'
-        ])
+    @pytest.mark.parametrize("filepath", [
+        './pnl_scripts/Adaptive Replay Model.py',
+        './pnl_scripts/Botvinick Model Composition.py',
+        './pnl_scripts/ColorMotionTask_SIMPLE.py',
+        './pnl_scripts/EVC-Gratton Composition.py',
+        './pnl_scripts/GreedyAgentModel_LLVM_TEST.py',
+        './pnl_scripts/LC Control Mechanism Composition.py',
+        './pnl_scripts/NeuroML Example.py',
+        './pnl_scripts/Rumelhart Semantic Network.py',
+        './pnl_scripts/StabilityFlexibility.py',
+        './pnl_scripts/bi-percepts.py'
+    ])
     def test_actual_scripts(self, filepath):
         src_str = open(filepath, 'r').read()
         dg = ast_parse.DependencyGraph(src_str, psyneulink)

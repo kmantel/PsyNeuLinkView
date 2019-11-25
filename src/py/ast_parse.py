@@ -110,13 +110,13 @@ class DependencyGraph:
         ]
         fluid_fst = RedBaron(self.fst.dumps())
         blacklisted_calls = fluid_fst.find_all("name", lambda x: x if x.value in composition_call_blacklist and
-                                                                        hasattr(
-                                                                                x.previous.previous,
-                                                                                'value'
-                                                                        ) and
-                                                                        x.previous.previous.value in \
-                                                                        composition_names else False
-                                                 )
+                                                                      hasattr(
+                                                                              x.previous.previous,
+                                                                              'value'
+                                                                      ) and
+                                                                      x.previous.previous.value in \
+                                                                      composition_names else False
+                                               )
         for call in blacklisted_calls:
             if not call.parent == fluid_fst:
                 call.parent.replace('pass')
@@ -227,9 +227,9 @@ class DependencyGraph:
 
     def extract_mechanisms(self):
         script_mechanisms = self.fst.find_all("atomtrailers",
-                                                lambda x: x if x.find_all('namenode',
-                                                                          self.psyneulink_mechanism_classes)
-                                                else False)
+                                              lambda x: x if x.find_all('namenode',
+                                                                        self.psyneulink_mechanism_classes)
+                                              else False)
         for mechanism in script_mechanisms:
             if not mechanism.parent == self.fst:
                 self.add_dependency_node(mechanism.parent, DependencyTypes.MECHANISM)
@@ -238,9 +238,9 @@ class DependencyGraph:
 
     def extract_projections(self):
         script_projections = self.fst.find_all("atomtrailers",
-                                                lambda x: x if x.find_all('namenode',
-                                                                          self.psyneulink_projection_classes)
-                                                else False)
+                                               lambda x: x if x.find_all('namenode',
+                                                                         self.psyneulink_projection_classes)
+                                               else False)
         for projection in script_projections:
             if not projection.parent == self.fst:
                 self.add_dependency_node(projection.parent, DependencyTypes.PROJECTION)
@@ -251,12 +251,17 @@ class DependencyGraph:
         blacklist = [
             'run',
             'execute',
-            'show_graph'
+            'show_graph',
+            'plot',
+            'set_xlabel',
+            'set_ylabel',
+            'set_title',
+            'subplots'
         ]
         for i in self.fst:
-            if not i.find('name',
-                          blacklist,
-                          recursive = True) and not i.find('assert',
-                                                           recursive = True):
+            if not i.find('name', blacklist, recursive=True) and not \
+                    i.find('assert', recursive=True):
                 self.src_executed += i.dumps() + '\n'
                 exec(i.dumps(), namespace)
+            else:
+                assert True
