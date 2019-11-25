@@ -66,9 +66,6 @@
     "directories": {
       "buildResources": "assets"
     },
-    "win": {
-      "target": "zip"
-    },
     "linux": {
       "target": "snap"
     },

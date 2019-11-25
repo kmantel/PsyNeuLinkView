@@ -29,7 +29,8 @@ class GraphView extends React.Component {
       mounted: false,
       node_width: 40,
       node_height: 30,
-      graph: this.props.graph
+      graph: this.props.graph,
+      spinner_visible: false
     };
     this.setGraph = this.setGraph.bind(this);
     this.updateGraph = this.updateGraph.bind(this);
@@ -41,9 +42,16 @@ class GraphView extends React.Component {
 
   componentDidUpdate(prevProps, prevState, snapshot) {
     if (!(this.props.graph===prevProps.graph)){
-      d3.selectAll('svg').remove()
-      this.setGraph()
-      this.updateGraph()
+      if (this.props.graph==="loading"){
+        d3.selectAll('svg').remove();
+        this.setState({"spinner_visible":true})
+      }
+      else {
+        d3.selectAll('svg').remove();
+        this.setState({"spinner_visible":false});
+        this.setGraph();
+        this.updateGraph();
+      }
     }
   }
 
@@ -560,7 +568,12 @@ class GraphView extends React.Component {
       <div className={this.state.class}
            onScroll={this.updateGraph}>
       </div>
-
+        <div className={'spinner'}  style={{"position":"absolute"}}>
+          {this.state.spinner_visible ?
+              <Spinner/>:
+              <div/>
+          }
+        </div>
       </Resizable>
     )
   }

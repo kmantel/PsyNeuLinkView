@@ -55,6 +55,7 @@ export default class Workspace extends React.Component {
     var self = this;
     var wait_interval = 1000;
     if(e.path[0].files.length > 0) {
+      self.setState({graph:"loading"});
       window.electron_root.restart_rpc_server(window.electron_root.child_proc);
       var server_ready = false;
       var rpc_client = new window.rpc.rpc_client(proto_path, window.modulePath);
