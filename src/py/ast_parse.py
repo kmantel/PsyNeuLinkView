@@ -247,6 +247,13 @@ class DependencyGraph:
             else:
                 self.add_dependency_node(projection, DependencyTypes.PROJECTION)
 
+    def execute_node(self, node, namespace):
+        self.src_executed += node.dumps() + '\n'
+        exec(node.dumps(), namespace)
+
+    def skip_node(self, node):
+        pass
+
     def execute_ast(self, namespace):
         blacklist = [
             'run',
@@ -261,7 +268,6 @@ class DependencyGraph:
         for i in self.fst:
             if not i.find('name', blacklist, recursive=True) and not \
                     i.find('assert', recursive=True):
-                self.src_executed += i.dumps() + '\n'
-                exec(i.dumps(), namespace)
-            else:
+                self.execute_node(i, namespace)
+            elif i.type in {'if', 'while', 'for'}:
                 assert True

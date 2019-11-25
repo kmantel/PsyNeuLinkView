@@ -39,15 +39,15 @@ class TestSuite:
                                                      '        receiver=m2\n)'
 
     @pytest.mark.parametrize("filepath", [
-        './pnl_scripts/Adaptive Replay Model.py',
-        './pnl_scripts/Botvinick Model Composition.py',
-        './pnl_scripts/ColorMotionTask_SIMPLE.py',
-        './pnl_scripts/EVC-Gratton Composition.py',
-        './pnl_scripts/GreedyAgentModel_LLVM_TEST.py',
-        './pnl_scripts/LC Control Mechanism Composition.py',
-        './pnl_scripts/NeuroML Example.py',
-        './pnl_scripts/Rumelhart Semantic Network.py',
-        './pnl_scripts/StabilityFlexibility.py',
+        # './pnl_scripts/Adaptive Replay Model.py',
+        # './pnl_scripts/Botvinick Model Composition.py',
+        # './pnl_scripts/ColorMotionTask_SIMPLE.py',
+        # './pnl_scripts/EVC-Gratton Composition.py',
+        # './pnl_scripts/GreedyAgentModel_LLVM_TEST.py',
+        # './pnl_scripts/LC Control Mechanism Composition.py',
+        # './pnl_scripts/NeuroML Example.py',
+        # './pnl_scripts/Rumelhart Semantic Network.py',
+        # './pnl_scripts/StabilityFlexibility.py',
         './pnl_scripts/bi-percepts.py'
     ])
     def test_actual_scripts(self, filepath):
