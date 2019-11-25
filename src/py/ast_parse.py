@@ -111,7 +111,7 @@ class DependencyGraph:
         # only extract top level defs. Ones nested within definitions of other Classes or Functions will be picked up
         # in the outer def's instantiation
         self.defs = self.fst.find_all('def',
-                                      lambda x: x if len(x.path().path) == 1 else False)
+                                      recursive=False)
         for _def in self.defs:
             self.add_assignment(_def.name, _def)
         assert True
