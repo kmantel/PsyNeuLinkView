@@ -79,14 +79,14 @@ def load_script(filepath):
     pnl_container.AST = open(filepath, 'r').read()
     dg = ast_parse.DependencyGraph(pnl_container.AST, pnl)
     namespace = {}
-    for imp in dg.imports:
-        exec(imp.dumps(),namespace)
+    dg.execute_imports(namespace)
     for comp in dg.compositions:
         dg.traverse_graph_from_composition(comp, namespace)
-        composition_name = comp.fst_node.name.value
+        # composition_name = comp.fst_node.name.value
     #     namespace[composition_name].show_graph(output_fmt='gv')
     # exec(compile(rb_str, filename="<ast>", mode="exec"), namespace)
-    compositions, components = get_new_pnl_objects(namespace)
+    # compositions, components = get_new_pnl_objects(namespace)
+    get_new_pnl_objects(namespace)
     return pnl_container.hashable_pnl_objects['compositions']
 
 

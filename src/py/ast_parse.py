@@ -17,6 +17,26 @@ class _DependencyNode:
         self.node_type = node_type
         self.fst_node = fst_node
 
+    def add_dependencies(self, dependencies):
+        try:
+            for d in iter(dependencies):
+                self.add_dependency(d)
+                d.add_dependent(self)
+        except TypeError:
+            d = dependencies
+            self.add_dependency(d)
+            d.add_dependent(self)
+
+    def add_dependents(self, dependents):
+        try:
+            for d in iter(dependents):
+                self.add_dependent(d)
+                d.add_dependency(self)
+        except TypeError:
+            d = dependents
+            self.add_dependent(d)
+            d.add_dependency(self)
+
     def add_dependency(self, dependency):
         if not dependency in self.dependencies:
             self.dependencies.append(dependency)
@@ -52,17 +72,6 @@ class DependencyGraph:
             DependencyTypes.PROJECTION: self.add_projection,
             DependencyTypes.PERIPHERAL_DEPENDENCY: self.add_peripheral_dependency,
         }
-        self.manipulation_methods = [
-            'add_node',
-            'add_nodes',
-            'add_projection',
-            'add_projections',
-            'add_linear_processing_pathway',
-            'add_linear_learning_pathway',
-            'add_reinforcement_learning_pathway',
-            'add_td_learning_pathway',
-            'add_backpropagation_learning_pathway',
-        ]
         self.index = {}
         self.fst = ''
         self.graph_dict = ''
@@ -162,8 +171,8 @@ class DependencyGraph:
     def add_dependency_node(self,
                             fst_node,
                             dependency_type,
-                            dependent=None,
-                            dependency=None):
+                            dependents=None,
+                            dependencies=None):
         if fst_node.type == 'assignment':
             self.add_assignment(fst_node.name.value, fst_node)
         if not fst_node in self.index:
@@ -175,12 +184,10 @@ class DependencyGraph:
             self._dependency_method_map[dependency_type](dn)
         else:
             dn = self.index[fst_node]['node']
-        if dependent:
-            dn.add_dependent(dependent)
-            dependent.add_dependency(dn)
-        if dependency:
-            dn.add_dependency(dependency)
-            dependency.add_dependent(dn)
+        if dependents:
+            dn.add_dependents(dependents)
+        if dependencies:
+            dn.add_dependencies(dependencies)
         return dn
 
     def extract_path_operations(self):
@@ -197,24 +204,52 @@ class DependencyGraph:
             self.add_dependency_node(composition, DependencyTypes.COMPOSITION)
 
     def extract_composition_manipulations(self):
+        node_manipulation_methods = [
+            'add_node',
+            'add_nodes',
+            'add_linear_processing_pathway',
+            'add_linear_learning_pathway',
+            'add_reinforcement_learning_pathway',
+            'add_td_learning_pathway',
+            'add_backpropagation_learning_pathway',
+        ]
+        projection_manipulation_methods = [
+            'add_projection',
+            'add_projections'
+        ]
+        manipulation_methods = node_manipulation_methods + projection_manipulation_methods
         for composition_node in self.compositions:
             composition_name = composition_node.fst_node.find('name').value
-            composition_calls = [
+            node_manipulation_calls = [
                 node for node in self.fst.find_all(
-                    ['atomtrailers','assignment'],
-                    lambda x: x if x.find('name', composition_name) and \
-                                   x.find('name', composition_name).next and x.find('name',
-                                                                                    composition_name).next.type ==
-                                   'dot' and \
-                                   x.find('name', composition_name).next.next and x.find('name',
-                                                                                         composition_name).next.next.value in self.manipulation_methods
-                    else False,
-                    recursive=False)]
-            for call in composition_calls:
+                        ['atomtrailers', 'assignment'],
+                        lambda x: x if x.find('name', composition_name) and \
+                            x.find('name', node_manipulation_methods)
+                        else False,
+                        recursive=False)
+            ]
+            projection_manipulation_calls = [
+                node for node in self.fst.find_all(
+                        ['atomtrailers', 'assignment'],
+                        lambda x: x if x.find('name', composition_name) and \
+                            x.find('name', projection_manipulation_methods)
+                        else False,
+                        recursive=False)
+            ]
+            node_manipulation_dependency_nodes = []
+            for call in node_manipulation_calls:
+                dn = self.add_dependency_node(
+                        call,
+                        DependencyTypes.COMPOSITION_MANIPULATION,
+                        dependencies=composition_node
+                )
+                node_manipulation_dependency_nodes.append(dn)
+
+            for call in projection_manipulation_calls:
                 self.add_dependency_node(
                         call,
                         DependencyTypes.COMPOSITION_MANIPULATION,
-                        dependency=composition_node
+                        dependencies=[composition_node] + node_manipulation_dependency_nodes
                 )
 
     def get_peripheral_dependencies(self, node):
@@ -232,7 +267,7 @@ class DependencyGraph:
                     self.add_dependency_node(
                             assignment,
                             DependencyTypes.PERIPHERAL_DEPENDENCY,
-                            dependent=self.index[node]['node']
+                            dependents=self.index[node]['node']
                     )
                     self.get_peripheral_dependencies(assignment)
         pass
@@ -288,7 +323,7 @@ class DependencyGraph:
                     self.add_dependency_node(
                             mechanism_assignment_node,
                             DependencyTypes.MECHANISM,
-                            dependent=composition_manipulation
+                            dependents=composition_manipulation
                     )
 
     def extract_projections(self):
@@ -311,7 +346,7 @@ class DependencyGraph:
                     self.add_dependency_node(
                             projection_assignment_node,
                             DependencyTypes.PROJECTION,
-                            dependent=composition_manipulation
+                            dependents=composition_manipulation
                     )
 
     def extract_mechanism_dependencies(self):

@@ -3,6 +3,9 @@
   <component name="ChangeListManager">
     <list default="true" id="2575ca4d-3c3d-4615-9b7d-bedcd13ade1e" name="Default Changelist" comment="added config.json to gitignore">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/css/layout.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/css/layout.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/css/settings.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/css/settings.css" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -122,6 +125,8 @@
       <workItem from="1574201193917" duration="645000" />
       <workItem from="1574273564385" duration="77000" />
       <workItem from="1574274040629" duration="1000" />
+      <workItem from="1574457557826" duration="25000" />
+      <workItem from="1574457621623" duration="1550000" />
     </task>
     <servers />
   </component>
