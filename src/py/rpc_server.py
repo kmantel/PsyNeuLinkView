@@ -149,17 +149,6 @@ def get_gv_json(name):
     gv_d = parse_corrected_dict(gv_svg_dict)
     gv_d['max_x'] = float(gv_svg_dict['svg']['width'].replace('pt',''))
     gv_d['max_y'] = float(gv_svg_dict['svg']['height'].replace('pt', ''))
-    # max_x = 0
-    # max_y = 0
-    # for object in gv_d['objects']:
-    #     x = abs(float(object['text']['x']))
-    #     y = abs(float(object['text']['y']))
-    #     if x > max_x:
-    #         max_x = x
-    #     if y > max_y:
-    #         max_y = y
-    # gv_d['max_x'] = max_x * 0.25 + max_x
-    # gv_d['max_y'] = max_y * 0.25 + max_y
     return gv_d
 
 def serve():
