@@ -31,7 +31,6 @@ export default class Workspace extends React.Component {
       graph:null,
       show_settings:false
     };
-    this.file_loader = document.createElement('input');
     this.container = {};
     this.choose_composition = this.choose_composition.bind(this);
     this.componentWillMount = this.componentWillMount.bind(this);
@@ -40,9 +39,7 @@ export default class Workspace extends React.Component {
     this.set_tool_tip = this.set_tool_tip.bind(this);
     this.window_resize = this.window_resize.bind(this);
     this.componentDidMount = this.componentDidMount.bind(this);
-    this.set_file_loader = this.set_file_loader.bind(this);
     this.load_file = this.load_file.bind(this);
-    this.set_file_loader();
     this.setMenu();
   }
 
@@ -76,7 +73,7 @@ export default class Workspace extends React.Component {
             label:'Open',
             accelerator: 'CmdOrCtrl+u',
               click(e){
-
+                self.file_selection_dialog()
               }
           },
           isMac ? { role: 'close' } : { role: 'quit' }
@@ -89,10 +86,19 @@ export default class Workspace extends React.Component {
             label:'Preferences',
             accelerator: 'CmdOrCtrl+,',
             click(){
+              self.setState({'show_settings':true});
             }
           }
         ],
       },
+      {
+        label: 'View',
+        submenu: [
+          {
+            role: 'viewMenu'
+          }
+        ]
+      }
     ]);
     electron.Menu.setApplicationMenu(menu);
     // exports.menu_bindings = menu_bindings;
@@ -104,48 +110,49 @@ export default class Workspace extends React.Component {
     })
   }
 
-  async load_file(e){
+  file_selection_dialog(){
     var self = this;
-    var wait_interval = 1000;
-    if(e.path[0].files.length > 0) {
-      self.setState({graph:"loading"});
-      window.electron_root.restart_rpc_server(window.electron_root.child_proc);
-      var server_ready = false;
-      var rpc_client = new window.rpc.rpc_client(proto_path, window.modulePath);
-      var server_attempt_limit = 50;
-      var server_attempt_current = 0;
-      while (!server_ready){
-        rpc_client.health_check(
-            function(){
-              if(rpc_client.most_recent_response.status === 'Okay'){
-                server_ready = true;
-                rpc_client.most_recent_response.status = null
-              }
-            }
-        );
-        server_attempt_current += 1;
-        if(server_attempt_current >= server_attempt_limit){
-          throw(Error("Failed to load Python interpreter. Check path."))
-        }
-        await this.sleep(wait_interval);
-      }
-      var filepath = e.path[0].files[0].path;
-      rpc_client.load_script(filepath,function () {
-        var compositions = rpc_client.script_maintainer.compositions;
-        var composition = compositions[compositions.length - 1];
-        rpc_client.get_json(composition, function () {
-          var new_graph = JSON.parse(JSON.stringify(rpc_client.script_maintainer.gv));
-          self.setState({graph:new_graph})
-        })
-      })
+    var filepath = window.dialog.showOpenDialogSync(
+        {},
+        {}
+    );
+    if (filepath !== undefined){
+      self.load_file(filepath[0])
     }
-
   }
 
-  set_file_loader() {
-    this.file_loader.type = 'file';
-    this.file_loader.onclick = function (e) {e.path[0].value = null;};
-    this.file_loader.oninput = this.load_file;
+  async load_file(filepath){
+    var self = this;
+    var wait_interval = 1000;
+    self.setState({graph:"loading"});
+    window.electron_root.restart_rpc_server(window.electron_root.child_proc);
+    var server_ready = false;
+    var rpc_client = new window.rpc.rpc_client(proto_path, window.modulePath);
+    var server_attempt_limit = 50;
+    var server_attempt_current = 0;
+    while (!server_ready){
+      rpc_client.health_check(
+          function(){
+            if(rpc_client.most_recent_response.status === 'Okay'){
+              server_ready = true;
+              rpc_client.most_recent_response.status = null
+            }
+          }
+      );
+      server_attempt_current += 1;
+      if(server_attempt_current >= server_attempt_limit){
+        throw(Error("Failed to load Python interpreter. Check path."))
+      }
+      await this.sleep(wait_interval);
+    }
+    rpc_client.load_script(filepath,function () {
+      var compositions = rpc_client.script_maintainer.compositions;
+      var composition = compositions[compositions.length - 1];
+      rpc_client.get_json(composition, function () {
+        var new_graph = JSON.parse(JSON.stringify(rpc_client.script_maintainer.gv));
+        self.setState({graph:new_graph})
+      })
+    })
   }
 
   choose_composition() {
@@ -213,7 +220,6 @@ export default class Workspace extends React.Component {
   }
 
   componentWillUnmount() {
-    window.removeEventListener('openfiledialog')
     window.removeEventListener('mousemove');
     window.removeEventListener('mousedown');
     window.removeEventListener('mouseup');
@@ -222,10 +228,6 @@ export default class Workspace extends React.Component {
   }
 
   componentWillMount() {
-    window.addEventListener('openfiledialog', (e) => {
-          this.file_loader.click()
-        }
-    );
     window.addEventListener('mousedown', (e) => {
         this.mouse_status = 'down'
       }
@@ -239,23 +241,6 @@ export default class Workspace extends React.Component {
       }
     );
     window.addEventListener('keydown', (e) => {
-      // Checks for OS here. Consider refactoring with Redux to set as global state variable
-      var combo_key;
-
-      if (navigator.platform.toUpperCase().includes("MAC")){
-        combo_key = e.metaKey
-      }
-      else {
-        combo_key = e.ctrlKey
-      }
-
-      if (combo_key === true && e.key === 'u') {
-        this.file_loader.click()
-      }
-
-      if (combo_key === true && e.key === ','){
-        this.setState({'show_settings':true});
-      }
     });
     window.addEventListener('resize', this.window_resize)
   }

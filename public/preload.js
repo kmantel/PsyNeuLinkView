@@ -1,8 +1,9 @@
 const path = require('path');
 const remote = require('electron').remote;
 const electron_root = remote.require('./electron');
+const dialog = remote.dialog;
 
-
+window.dialog = dialog;
 window.isDev = electron_root.isDev;
 var modulePath;
 if (window.isDev) {
