@@ -133,6 +133,12 @@ class GraphView extends React.Component {
         d.y = parseInt(Math.abs(d.text.y));
         if ('ellipse' in d) {
           d.color = d.ellipse.stroke;
+          if ('stroke-width' in d.ellipse){
+            d.stroke_width = parseInt(d.ellipse['stroke-width'])
+          }
+          else {
+            d.stroke_width = 1
+          }
         }
         else {
           d.color = d.polygon.stroke;
@@ -179,24 +185,27 @@ class GraphView extends React.Component {
         })
 
       var node = svg.append('g')
-        .attr('class', 'node')
-        .selectAll('ellipse')
-        .data(self.props.graph.objects)
-        .enter()
-        .append('ellipse')
-        .attr('rx', nodeWidth)
-        .attr('ry', nodeHeight)
-        .attr('cx', function (d) {
-          return d.x
-        })
-        .attr('cy', function (d) {
-          return d.y
-        })
-        .attr('fill', 'white')
-        .attr('stroke', function (d){
-          return d.color
-        })
-        .call(d3.drag()
+          .attr('class', 'node')
+          .selectAll('ellipse')
+          .data(self.props.graph.objects)
+          .enter()
+          .append('ellipse')
+          .attr('rx', nodeWidth)
+          .attr('ry', nodeHeight)
+          .attr('cx', function (d) {
+            return d.x
+          })
+          .attr('cy', function (d) {
+            return d.y
+          })
+          .attr('fill', 'white')
+          .attr('stroke-width', function (d) {
+            return d.stroke_width
+          })
+          .attr('stroke', function (d) {
+            return d.color
+          })
+          .call(d3.drag()
           .on('drag', drag_node))
 
       var labelOffset = 5

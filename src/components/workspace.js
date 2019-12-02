@@ -10,7 +10,7 @@ const path = require('path');
 
 var proto_path = path.join(window.electron_root.app_path,'src','protos','graph.proto');
 
-console.log(proto_path)
+console.log(proto_path);
 
 console.log(proto_path, window.modulePath);
 
@@ -43,6 +43,59 @@ export default class Workspace extends React.Component {
     this.set_file_loader = this.set_file_loader.bind(this);
     this.load_file = this.load_file.bind(this);
     this.set_file_loader();
+    this.setMenu();
+  }
+
+  setMenu() {
+    const electron = window.remote;
+    const isMac =  navigator.platform.toUpperCase().includes("MAC");
+    electron.systemPreferences.setUserDefault('NSDisabledDictationMenuItem', 'boolean', true);
+    electron.systemPreferences.setUserDefault('NSDisabledCharacterPaletteMenuItem', 'boolean', true);
+    electron.systemPreferences.setUserDefault('NSDisabledEmoji&SymbolsMenuItem', 'boolean', true);
+    var self = this;
+    var menu = electron.Menu.buildFromTemplate([
+      // { role: 'appMenu' }
+      ...(isMac ? [{
+        label: "PsyNeuLinkView",
+        submenu: [
+          { role: 'about' },
+          { type: 'separator' },
+          { role: 'services' },
+          { type: 'separator' },
+          { role: 'hide' },
+          { role: 'hideothers' },
+          { role: 'unhide' },
+          { type: 'separator' },
+          { role: 'quit' }
+        ]
+      }] : []),
+      {
+        label: 'File',
+        submenu: [
+          {
+            label:'Open',
+            accelerator: 'CmdOrCtrl+u',
+              click(e){
+
+              }
+          },
+          isMac ? { role: 'close' } : { role: 'quit' }
+        ],
+      },
+      {
+        label: 'Edit',
+        submenu: [
+          {
+            label:'Preferences',
+            accelerator: 'CmdOrCtrl+,',
+            click(){
+            }
+          }
+        ],
+      },
+    ]);
+    electron.Menu.setApplicationMenu(menu);
+    // exports.menu_bindings = menu_bindings;
   }
 
   sleep(ms){
@@ -160,6 +213,7 @@ export default class Workspace extends React.Component {
   }
 
   componentWillUnmount() {
+    window.removeEventListener('openfiledialog')
     window.removeEventListener('mousemove');
     window.removeEventListener('mousedown');
     window.removeEventListener('mouseup');
@@ -168,6 +222,10 @@ export default class Workspace extends React.Component {
   }
 
   componentWillMount() {
+    window.addEventListener('openfiledialog', (e) => {
+          this.file_loader.click()
+        }
+    );
     window.addEventListener('mousedown', (e) => {
         this.mouse_status = 'down'
       }
