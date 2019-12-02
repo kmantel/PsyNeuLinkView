@@ -173,45 +173,43 @@ class SettingsPane extends React.Component {
             </div>
         ];
         return (
-            <div className = "Hm">
-                <Resizable>
-                    <Dialog
-                        icon="settings"
-                        isOpen={this.props.isOpen}
-                        onClose={function () {
-                            self.props.toggleDialog()
-                        }}
-                        title="Settings"
-                        style={{"width": 600}}
-                        usePortal={false}
-                    >
-                            <Layout
-                                className={'workspace_grid'}
-                                margin={[0, 0]}
-                                cols={580}
-                                width={580}
-                                rowHeight={400}
-                                components={components}
-                                layout={[
-                                    {
-                                        i: 'a',
-                                        x: 0,
-                                        y: 0,
-                                        w: 150,
-                                        h: 1
-                                    },
-                                    {
-                                        i: 'b',
-                                        x: 160,
-                                        y: 0,
-                                        w: 420,
-                                        h: 1
-                                    },
-                                ]}
-                            />
-                    </Dialog>
-                </Resizable>
-            </div>
+            <Resizable>
+                <Dialog
+                    icon="settings"
+                    isOpen={this.props.isOpen}
+                    onClose={function () {
+                        self.props.toggleDialog()
+                    }}
+                    title="Settings"
+                    style={{"width": 600}}
+                    usePortal={false}
+                >
+                        <Layout
+                            className={'workspace_grid'}
+                            margin={[0, 0]}
+                            cols={580}
+                            width={580}
+                            rowHeight={400}
+                            components={components}
+                            layout={[
+                                {
+                                    i: 'a',
+                                    x: 0,
+                                    y: 0,
+                                    w: 150,
+                                    h: 1
+                                },
+                                {
+                                    i: 'b',
+                                    x: 160,
+                                    y: 0,
+                                    w: 420,
+                                    h: 1
+                                },
+                            ]}
+                        />
+                </Dialog>
+            </Resizable>
         );
     }
 }
