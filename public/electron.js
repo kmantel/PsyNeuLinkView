@@ -26,6 +26,12 @@ fixpath();
 class RPCServerMaintainer {
     constructor() {
         this.config_edited = false;
+        os.platform() === 'win32' ?
+            this.config_filedir = path.join(os.homedir(), 'AppData', 'PsyNeuLinkView')
+            :
+            this.config_filedir = path.join(os.homedir(), 'Library', 'Preferences', 'PsyNeuLinkView');
+        this.config_filepath = path.join(this.config_filedir, 'config.json');
+        exports.config_filepath = this.config_filepath
         this.initialize_config();
     }
 
@@ -47,17 +53,20 @@ class RPCServerMaintainer {
     }
 
     initialize_config() {
-        var config_filepath = path.join(adjusted_app_path, 'config.json');
-        if (!fs.existsSync(config_filepath)) {
-            fs.writeFileSync(config_filepath, JSON.stringify({}))
+
+        if (!fs.existsSync(this.config_filepath)) {
+            if (!fs.existsSync(this.config_filedir)){
+                fs.mkdirSync(this.config_filedir)
+            }
+            fs.writeFileSync(this.config_filepath, JSON.stringify({}))
         }
-        var config_current = require(config_filepath);
+        var config_current = require(this.config_filepath);
         var config_template_filepath = path.join(adjusted_app_path, 'config_template.json');
         var config_template = require(config_template_filepath);
         this.config = this.obj_key_copy(config_template, config_current);
         if (this.config_edited) {
             var cf_client_module = require(path.join(adjusted_app_path, 'src/utility/config/config_client.js'));
-            var cf_client = new cf_client_module.ConfigClient(config_filepath);
+            var cf_client = new cf_client_module.ConfigClient(this.config_filepath);
             cf_client.set_config(this.config);
         }
     }
@@ -82,11 +91,12 @@ class RPCServerMaintainer {
 
     spawn_rpc_server() {
         console.log('its getting here');
-        var config = require(path.join(adjusted_app_path, 'config.json'));
+        var config = require(this.config_filepath);
         var py_int_path = config.Python['Interpreter Path'];
         var pnl_path = config.Python['PsyNeuLink Path'];
         var conda_dir = this.check_for_conda(py_int_path);
         var conda_prefix;
+        var self = this;
         conda_dir ?
             os.platform() === 'win32' ?
                 conda_prefix = '' +
@@ -100,40 +110,38 @@ class RPCServerMaintainer {
             :
             conda_prefix = '';
         log.debug(conda_prefix + py_int_path);
-        child_proc = spawn(conda_prefix + py_int_path,
+        this.child_proc = spawn(conda_prefix + py_int_path,
             ['-u', path.join(adjusted_app_path, '/src/py/rpc_server.py'),
                 pnl_path], {
                 shell: true,
                 detached: false
             });
-        child_proc.on('error', function (err) {
+        this.child_proc.on('error', function (err) {
             console.log('FAILED TO START PYTHON PROCESS. FOLLOWING ERROR GENERATED: ', err);
             log.debug('py stdout:' + err)
         });
-        child_proc.stdout.setEncoding('utf8');
-        child_proc.stdout.on('data', function (data) {
+        this.child_proc.stdout.setEncoding('utf8');
+        this.child_proc.stdout.on('data', function (data) {
             console.log('py stdout: ' + data);
             log.debug('py stdout:' + data)
         });
-        child_proc.stderr.setEncoding('utf8');
-        child_proc.stderr.on('data', function (data) {
+        this.child_proc.stderr.setEncoding('utf8');
+        this.child_proc.stderr.on('data', function (data) {
             console.log('py stderr: ' + data);
             log.debug('py stdout:' + data)
         });
-        this.child_proc = child_proc;
-        exports.child_proc = child_proc;
     }
 
-    kill_rpc_server() {
-        if (this.child_proc != null) {
+    kill_rpc_server(child_proc = this.child_proc) {
+        if (child_proc != null) {
             if (os.platform() === 'win32') {
                 spawnSync("taskkill", [
-                        "/PID", this.child_proc.pid, '/F', '/T'
+                        "/PID", child_proc.pid, '/F', '/T'
                     ],
                 );
-                this.child_proc = null
+                child_proc = null
             } else {
-                this.child_proc.kill()
+                child_proc.kill()
             }
         }
     }

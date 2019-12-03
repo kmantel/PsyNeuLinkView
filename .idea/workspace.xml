@@ -3,12 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="2575ca4d-3c3d-4615-9b7d-bedcd13ade1e" name="Default Changelist" comment="added config.json to gitignore">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/public/electron.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/electron.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/settings.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/settings.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/workspace.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/workspace.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/py/rpc_server.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/py/rpc_server.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/py/test/test_ast_parse.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/py/test/test_ast_parse.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -69,7 +65,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Attach to Node.js/Chrome.Debug Render">
+  <component name="RunManager" selected="Node.js.Debug Main">
     <configuration name="Debug Application" type="JavascriptDebugType" uri="http://localhost:3000">
       <method v="2" />
     </configuration>
@@ -133,7 +129,7 @@
       <workItem from="1574457621623" duration="1550000" />
       <workItem from="1574778387207" duration="12639000" />
       <workItem from="1575315207919" duration="461000" />
-      <workItem from="1575383538912" duration="1753000" />
+      <workItem from="1575383538912" duration="6519000" />
     </task>
     <servers />
   </component>
