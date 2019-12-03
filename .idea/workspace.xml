@@ -3,11 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="2575ca4d-3c3d-4615-9b7d-bedcd13ade1e" name="Default Changelist" comment="added config.json to gitignore">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/electron.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/electron.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/settings.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/settings.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/workspace.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/workspace.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/css/settings.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/css/settings.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utility/config/config_client.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/utility/config/config_client.js" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -133,7 +129,7 @@
       <workItem from="1574778387207" duration="12639000" />
       <workItem from="1575315207919" duration="461000" />
       <workItem from="1575383538912" duration="6519000" />
-      <workItem from="1575393270114" duration="6758000" />
+      <workItem from="1575393270114" duration="10627000" />
     </task>
     <servers />
   </component>

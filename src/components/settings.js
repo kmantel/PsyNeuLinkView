@@ -37,13 +37,15 @@ class SettingsPane extends React.Component {
             selectedCat: 0,
             config: config
         };
+        this.buildSettingsTemplate = this.buildSettingsTemplate.bind(this);
+        this.generateSettingsPage = this.generateSettingsPage.bind(this);
     }
 
     handleNodeClick = (nodeData, _nodePath, e) => {
         this.forEachNode(this.state.nodes, n => (n.isSelected = false));
         nodeData.isSelected = true;
         this.setState(this.state);
-        this.setState({"selectedCat":nodeData.id});
+        this.setState({"selectedCat": nodeData.id});
     };
 
     handleNodeCollapse = (nodeData) => {
@@ -70,7 +72,7 @@ class SettingsPane extends React.Component {
         }
     }
 
-    generateSettingsPage(category) {
+    buildSettingsTemplate() {
         var self = this;
         var option_id_index = 0;
 
@@ -81,91 +83,178 @@ class SettingsPane extends React.Component {
         }
 
         var current_config = {...this.state.config};
-
-        //TODO: Add support for hierarchical nesting of arbitrary depth (currently only supports depth of 2)
-        var category_settings = Object.entries(
-            {...current_config[category]}
-        );
-        var components = [];
-        var layout = [];
-        var layout_depth_index = 0;
-        category_settings.forEach(
-            (cat_set) => {
-                var label_id = get_next_option_id();
-                var field_id = get_next_option_id();
-                var button_id = get_next_option_id();
-                components.push(
-                    <div key={label_id}>
-                        {cat_set[0]}
-                    </div>
-                );
-                components.push(
-                    <div key={field_id}>
-                        <div className={'sizer'}>
-                            <EditableText
-                                placeholder={'...'}
-                                defaultValue={cat_set[1]}
-                                value={cat_set[1]}
-                                onChange={
-                                    (new_value) => {
-                                        let newcf = {...this.state.config};
-                                        current_config[category][cat_set[0]] = new_value;
-                                        this.setState({config: current_config});
-                                        config_client.set_config(current_config)
-                                    }
+        var categories = Object.keys(current_config);
+        categories['Python'] = {
+            'components': [
+                <div key={'id_1'}>
+                    {'Interpreter Path'}
+                </div>,
+                <div key={'id_2'}>
+                    <div className={'sizer'}>
+                        <EditableText
+                            placeholder={'...'}
+                            defaultValue={current_config['Python']['Interpreter Path']}
+                            value={current_config['Python']['Interpreter Path']}
+                            onChange={
+                                (new_value) => {
+                                    current_config['Python']['Interpreter Path'] = new_value;
+                                    this.setState({config: current_config});
+                                    config_client.set_config(current_config)
                                 }
-                            />
-                        </div>
-                    </div>
-                );
-                components.push(
-                    <div key={button_id}>
-                        <Icon
-                            icon={"folder-open"}
-                            color={"gray"}
-                            style={{
-                                cursor:"pointer"
-                            }}
-                            onClick={function () {
-                                console.log('for now this doesnt do anything')
-                            }}
+                            }
                         />
                     </div>
-                );
-                layout.push(
-                    {
-                        i: label_id,
-                        x: 0,
-                        y: layout_depth_index,
-                        w: 150,
-                        h: 1
-                    }
-                );
-                layout.push(
-                    {
-                        i: field_id,
-                        x: 150,
-                        y: layout_depth_index,
-                        w: 400,
-                        h: 1
-                    }
-                );
-                layout.push(
-                    {
-                        i: button_id,
-                        x: 570,
-                        y: layout_depth_index,
-                        w: 60,
-                        h: 1
-                    }
-                );
-                layout_depth_index += 1;
-            }
-        );
-        return {
-            'components':components,
-            'layout':layout
-        }
+                </div>,
+                <div key={'id_3'}>
+                    <Icon
+                        icon={"folder-open"}
+                        color={"gray"}
+                        style={{
+                            cursor: "pointer"
+                        }}
+                        onClick={function () {
+                            window.dialog.showOpenDialog(
+                                {
+                                    properties: ['openFile']
+                                }
+                            ).then((paths) => {
+                                current_config['Python']['Interpreter Path'] = paths.filePaths[0];
+                                self.setState({config: current_config});
+                                config_client.set_config(current_config);
+                            })
+                        }}
+                    />
+                </div>,
+                <div key={'id_4'}>
+                    {'PsyNeuLink Path'}
+                </div>,
+                <div key={'id_5'}>
+                    <div className={'sizer'}>
+                        <EditableText
+                            placeholder={'...'}
+                            defaultValue={current_config['Python']['PsyNeuLink Path']}
+                            value={current_config['Python']['PsyNeuLink Path']}
+                            onChange={
+                                (new_value) => {
+                                    let newcf = {...this.state.config};
+                                    current_config['Python']['PsyNeuLink Path'] = new_value;
+                                    this.setState({config: current_config});
+                                    config_client.set_config(current_config)
+                                }
+                            }
+                        />
+                    </div>
+                </div>,
+                <div key={'id_6'}>
+                    <Icon
+                        icon={"folder-open"}
+                        color={"gray"}
+                        style={{
+                            cursor: "pointer"
+                        }}
+                        onClick={function () {
+                            window.dialog.showOpenDialog(
+                                {
+                                    properties: ['openDirectory']
+                                }
+                            ).then((paths) => {
+                                current_config['Python']['PsyNeuLink Path'] = paths.filePaths[0];
+                                self.setState({config: current_config});
+                                config_client.set_config(current_config);
+                            })
+                        }}
+                    />
+                </div>,
+            ],
+            'layout': [
+                {
+                    i: 'id_1',
+                    x: 0,
+                    y: 0,
+                    w: 150,
+                    h: 1
+                },
+                {
+                    i: 'id_2',
+                    x: 150,
+                    y: 0,
+                    w: 400,
+                    h: 1
+                },
+                {
+                    i: 'id_3',
+                    x: 570,
+                    y: 0,
+                    w: 60,
+                    h: 1
+                },
+                {
+                    i: 'id_4',
+                    x: 0,
+                    y: 1,
+                    w: 150,
+                    h: 1
+                },
+                {
+                    i: 'id_5',
+                    x: 150,
+                    y: 1,
+                    w: 400,
+                    h: 1
+                },
+                {
+                    i: 'id_6',
+                    x: 570,
+                    y: 1,
+                    w: 60,
+                    h: 1
+                },
+            ]
+        };
+        categories['Other'] = {
+            'components': [
+                <div key={'id_7'}>
+                    {'Fake Param'}
+                </div>,
+                <div key={'id_8'}>
+                    <div className={'sizer'}>
+                        <EditableText
+                            placeholder={'...'}
+                            defaultValue={current_config['Other']['Fake Param']}
+                            onChange={
+                                (new_value) => {
+                                    let newcf = {...this.state.config};
+                                    current_config['Other']['Fake Param'] = new_value;
+                                    this.setState({config: current_config});
+                                    config_client.set_config(current_config)
+                                }
+                            }
+                        />
+                    </div>
+                </div>
+            ],
+            'layout': [
+                {
+                    i: 'id_7',
+                    x: 0,
+                    y: 0,
+                    w: 150,
+                    h: 1
+                },
+                {
+                    i: 'id_8',
+                    x: 150,
+                    y: 0,
+                    w: 400,
+                    h: 1
+                }
+            ]
+        };
+        return categories
+    }
+
+    generateSettingsPage(category) {
+        return this.buildSettingsTemplate()[category]
     }
 
     render() {
@@ -208,30 +297,30 @@ class SettingsPane extends React.Component {
                 style={{"width": 800}}
                 usePortal={true}
             >
-                    <Layout
-                        className={'workspace_grid'}
-                        margin={[0, 0]}
-                        cols={780}
-                        width={780}
-                        rowHeight={400}
-                        components={components}
-                        layout={[
-                            {
-                                i: 'a',
-                                x: 0,
-                                y: 0,
-                                w: 150,
-                                h: 1
-                            },
-                            {
-                                i: 'b',
-                                x: 160,
-                                y: 0,
-                                w: 620,
-                                h: 1
-                            },
-                        ]}
-                    />
+                <Layout
+                    className={'workspace_grid'}
+                    margin={[0, 0]}
+                    cols={780}
+                    width={780}
+                    rowHeight={400}
+                    components={components}
+                    layout={[
+                        {
+                            i: 'a',
+                            x: 0,
+                            y: 0,
+                            w: 150,
+                            h: 1
+                        },
+                        {
+                            i: 'b',
+                            x: 160,
+                            y: 0,
+                            w: 620,
+                            h: 1
+                        },
+                    ]}
+                />
             </Dialog>
         );
     }
