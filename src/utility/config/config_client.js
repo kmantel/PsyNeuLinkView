@@ -7,7 +7,14 @@ class ConfigClient{
         this.get_config = this.get_config.bind(this);
         this.set_config = this.set_config.bind(this);
     }
+    reinitialize_config(){
+        // hot reload config every time
+        delete require.cache[require.resolve(this.filepath)]
+        this.config = require(this.filepath)
+    }
     get_config(){
+        this.reinitialize_config();
+        console.log(this.config);
         var cf = this.config;
         return {...cf};
     }

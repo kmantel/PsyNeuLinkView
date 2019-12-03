@@ -52,13 +52,16 @@ class RPCServerMaintainer {
         return user_obj
     }
 
-    initialize_config() {
+    create_new_config(){
+        if (!fs.existsSync(this.config_filedir)){
+            fs.mkdirSync(this.config_filedir)
+        }
+        fs.writeFileSync(this.config_filepath, JSON.stringify({}))
+    }
 
+    initialize_config() {
         if (!fs.existsSync(this.config_filepath)) {
-            if (!fs.existsSync(this.config_filedir)){
-                fs.mkdirSync(this.config_filedir)
-            }
-            fs.writeFileSync(this.config_filepath, JSON.stringify({}))
+            this.create_new_config()
         }
         var config_current = require(this.config_filepath);
         var config_template_filepath = path.join(adjusted_app_path, 'config_template.json');
@@ -103,10 +106,9 @@ class RPCServerMaintainer {
                     `${path.resolve(path.join(path.dirname(py_int_path), '..', '..', 'Scripts', 'activate.bat'))} && ` +
                     `conda activate ${conda_dir} && `
                 :
-                conda_prefix = `
-                    source $(conda info --base)/etc/profile.d/conda.sh; 
-                    conda activate ${conda_dir}; 
-                `
+                conda_prefix = '' +
+                    `source ${path.resolve(path.join(path.dirname(py_int_path),'..','..','..','etc','profile.d','conda.sh'))} && ` +
+                    `conda activate ${conda_dir};`
             :
             conda_prefix = '';
         log.debug(conda_prefix + py_int_path);

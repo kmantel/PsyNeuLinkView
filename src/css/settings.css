@@ -12,8 +12,17 @@
     border-bottom-width: 1px;
 }
 
+.bp3-dialog-header {
+    min-height: 30px;
+}
+
 .bp3-dialog {
     background-color: #f9f3e8;
+    border-radius: 0px;
+}
+
+.bp3-editable-text {
+    width: 100%
 }
 
 .options_panel {

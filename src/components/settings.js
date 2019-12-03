@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {Dialog, Tree, EditableText, Callout} from '@blueprintjs/core'
+import {Dialog, Tree, EditableText, Callout, Icon} from '@blueprintjs/core'
 import Layout from "./layout";
 import '../css/settings.css'
 import {Resizable} from "re-resizable";
@@ -71,6 +71,7 @@ class SettingsPane extends React.Component {
     }
 
     generateSettingsPage(category) {
+        var self = this;
         var option_id_index = 0;
 
         function get_next_option_id() {
@@ -92,6 +93,7 @@ class SettingsPane extends React.Component {
             (cat_set) => {
                 var label_id = get_next_option_id();
                 var field_id = get_next_option_id();
+                var button_id = get_next_option_id();
                 components.push(
                     <div key={label_id}>
                         {cat_set[0]}
@@ -116,21 +118,44 @@ class SettingsPane extends React.Component {
                         </div>
                     </div>
                 );
+                components.push(
+                    <div key={button_id}>
+                        <Icon
+                            icon={"folder-open"}
+                            color={"gray"}
+                            style={{
+                                cursor:"pointer"
+                            }}
+                            onClick={function () {
+                                console.log('for now this doesnt do anything')
+                            }}
+                        />
+                    </div>
+                );
                 layout.push(
                     {
                         i: label_id,
                         x: 0,
                         y: layout_depth_index,
-                        w: 3,
+                        w: 150,
                         h: 1
                     }
                 );
                 layout.push(
                     {
                         i: field_id,
-                        x: 3,
+                        x: 150,
                         y: layout_depth_index,
-                        w: 6,
+                        w: 400,
+                        h: 1
+                    }
+                );
+                layout.push(
+                    {
+                        i: button_id,
+                        x: 570,
+                        y: layout_depth_index,
+                        w: 60,
                         h: 1
                     }
                 );
@@ -159,12 +184,12 @@ class SettingsPane extends React.Component {
                 />
             </div>,
             <div key="b">
-                <div className={'options_panel'} style={{'width': '100%', 'height': '100%'}}>
+                <div className={'options_panel'} style={{'width': '620', 'height': '100%'}}>
                     <Layout
                         className={'options_grid'}
                         margin={[0, 0]}
-                        cols={10}
-                        width={420}
+                        cols={620}
+                        width={620}
                         rowHeight={50}
                         components={components}
                         layout={layout}
@@ -180,14 +205,14 @@ class SettingsPane extends React.Component {
                     self.props.toggleDialog()
                 }}
                 title="Settings"
-                style={{"width": 600}}
+                style={{"width": 800}}
                 usePortal={true}
             >
                     <Layout
                         className={'workspace_grid'}
                         margin={[0, 0]}
-                        cols={580}
-                        width={580}
+                        cols={780}
+                        width={780}
                         rowHeight={400}
                         components={components}
                         layout={[
@@ -202,7 +227,7 @@ class SettingsPane extends React.Component {
                                 i: 'b',
                                 x: 160,
                                 y: 0,
-                                w: 420,
+                                w: 620,
                                 h: 1
                             },
                         ]}

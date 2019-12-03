@@ -72,7 +72,7 @@ export default class Workspace extends React.Component {
                 submenu: [
                     {
                         label: 'Open',
-                        accelerator: 'CmdOrCtrl+u',
+                        accelerator: 'CmdOrCtrl+o',
                         click(e) {
                             self.file_selection_dialog()
                         }
@@ -88,6 +88,39 @@ export default class Workspace extends React.Component {
                 label: 'Edit',
                 submenu: [
                     {
+                        label: 'Undo',
+                        accelerator: 'CmdOrCtrl+Z',
+                        role: 'undo'
+                    },
+                    {
+                        label: 'Redo',
+                        accelerator: 'Shift+CmdOrCtrl+Z',
+                        role: 'redo'
+                    },
+                    {
+                        type: 'separator'
+                    },
+                    {
+                        label: 'Cut',
+                        accelerator: 'CmdOrCtrl+X',
+                        role: 'cut'
+                    },
+                    {
+                        label: 'Copy',
+                        accelerator: 'CmdOrCtrl+C',
+                        role: 'copy'
+                    },
+                    {
+                        label: 'Paste',
+                        accelerator: 'CmdOrCtrl+V',
+                        role: 'paste'
+                    },
+                    {
+                        label: 'Select All',
+                        accelerator: 'CmdOrCtrl+A',
+                        role: 'selectall'
+                    },
+                    {
                         label: 'Preferences',
                         accelerator: 'CmdOrCtrl+,',
                         click() {
@@ -100,7 +133,7 @@ export default class Workspace extends React.Component {
                 label: 'View',
                 submenu: [
                     {
-                        role: 'viewMenu'
+                        role: 'toggleDevTools'
                     }
                 ]
             }
