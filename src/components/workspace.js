@@ -76,6 +76,10 @@ export default class Workspace extends React.Component {
                 self.file_selection_dialog()
               }
           },
+          // {
+          //   label:'Recently Opened',
+          //   role:'recentDocuments'
+          // },
           isMac ? { role: 'close' } : { role: 'quit' }
         ],
       },
@@ -122,6 +126,7 @@ export default class Workspace extends React.Component {
   }
 
   async load_file(filepath){
+    window.electron_root.addRecentDocument(filepath)
     var self = this;
     var wait_interval = 1000;
     self.setState({graph:"loading"});

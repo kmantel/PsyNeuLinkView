@@ -10,7 +10,6 @@
     "@blueprintjs/core": "^3.19.1",
     "@grpc/proto-loader": "^0.5.2",
     "blueprintjs": "^0.0.8",
-    "d3": "^5.12.0",
     "electron-is-dev": "^1.1.0",
     "electron-log": "^3.0.9",
     "fix-path": "^2.1.0",
@@ -48,6 +47,7 @@
     ]
   },
   "devDependencies": {
+    "d3": "^5.12.0",
     "react": "^16.10.2",
     "concurrently": "^5.0.0",
     "electron": "^6.0.12",

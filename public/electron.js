@@ -127,7 +127,6 @@ class RPCServerMaintainer {
     kill_rpc_server() {
         if (this.child_proc != null) {
             if (os.platform() === 'win32') {
-                console.log('yee');
                 spawnSync("taskkill", [
                         "/PID", this.child_proc.pid, '/F', '/T'
                     ],
@@ -198,3 +197,4 @@ app.on('quit', () => {
 
 exports.restart_rpc_server = restart_rpc_server;
 exports.app_path = adjusted_app_path;
+exports.addRecentDocument = app.addRecentDocument;

@@ -63,13 +63,12 @@ class GraphServer(graph_pb2_grpc.ServeGraphServicer):
 pnl_container = Container()
 
 
-def get_new_pnl_objects(local_vars):
-    local_vars_list = list(local_vars.values())
-    prev_local_vars = pnl_container.localvars
-    prev_local_vars_list = list(prev_local_vars.values())
-    local_var_diff = [i for i in local_vars_list if not i in prev_local_vars_list]
-    compositions = {i.name: i for i in local_var_diff if isinstance(i, pnl.Composition)}
-    components = {i.name: i for i in local_var_diff if isinstance(i, pnl.Component)}
+def get_new_pnl_objects(namespace):
+    compositions = {}
+    for cat in pnl.CompositionRegistry:
+        for comp_name in pnl.CompositionRegistry[cat][1]:
+            compositions.update({comp_name:pnl.CompositionRegistry[cat][1][comp_name]})
+    components = {i.name: i for i in namespace if isinstance(i, pnl.Component)}
     pnl_container.pnl_objects['compositions'].update(compositions)
     pnl_container.pnl_objects['components'].update(components)
     return compositions, components
