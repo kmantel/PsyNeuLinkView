@@ -92,7 +92,7 @@ class SettingsPane extends React.Component {
                 <div key={'id_2'}>
                     <div className={'sizer'}>
                         <EditableText
-                            placeholder={'...'}
+                            placeholder={'location of Python interpreter executable file'}
                             defaultValue={current_config['Python']['Interpreter Path']}
                             value={current_config['Python']['Interpreter Path']}
                             onChange={
@@ -114,13 +114,17 @@ class SettingsPane extends React.Component {
                         }}
                         onClick={function () {
                             window.dialog.showOpenDialog(
+                                window.getCurrentWindow(),
                                 {
                                     properties: ['openFile']
                                 }
                             ).then((paths) => {
-                                current_config['Python']['Interpreter Path'] = paths.filePaths[0];
-                                self.setState({config: current_config});
-                                config_client.set_config(current_config);
+                                var pathArray = paths.filePaths;
+                                if (pathArray.length > 0){
+                                    current_config['Python']['Interpreter Path'] = paths.filePaths[0];
+                                    self.setState({config: current_config});
+                                    config_client.set_config(current_config);
+                                }
                             })
                         }}
                     />
@@ -131,7 +135,7 @@ class SettingsPane extends React.Component {
                 <div key={'id_5'}>
                     <div className={'sizer'}>
                         <EditableText
-                            placeholder={'...'}
+                            placeholder={'location of PsyNeuLink directory (if not in Python site packages)'}
                             defaultValue={current_config['Python']['PsyNeuLink Path']}
                             value={current_config['Python']['PsyNeuLink Path']}
                             onChange={
@@ -154,13 +158,17 @@ class SettingsPane extends React.Component {
                         }}
                         onClick={function () {
                             window.dialog.showOpenDialog(
+                                window.getCurrentWindow(),
                                 {
                                     properties: ['openDirectory']
                                 }
                             ).then((paths) => {
-                                current_config['Python']['PsyNeuLink Path'] = paths.filePaths[0];
-                                self.setState({config: current_config});
-                                config_client.set_config(current_config);
+                                var pathArray = paths.filePaths;
+                                if (pathArray.length > 0) {
+                                    current_config['Python']['PsyNeuLink Path'] = paths.filePaths[0];
+                                    self.setState({config: current_config});
+                                    config_client.set_config(current_config);
+                                }
                             })
                         }}
                     />
@@ -183,9 +191,8 @@ class SettingsPane extends React.Component {
                 },
                 {
                     i: 'id_3',
-                    x: 570,
+                    x: 580,
                     y: 0,
-                    w: 60,
                     h: 1
                 },
                 {
@@ -204,50 +211,10 @@ class SettingsPane extends React.Component {
                 },
                 {
                     i: 'id_6',
-                    x: 570,
+                    x: 580,
                     y: 1,
-                    w: 60,
                     h: 1
                 },
-            ]
-        };
-        categories['Other'] = {
-            'components': [
-                <div key={'id_7'}>
-                    {'Fake Param'}
-                </div>,
-                <div key={'id_8'}>
-                    <div className={'sizer'}>
-                        <EditableText
-                            placeholder={'...'}
-                            defaultValue={current_config['Other']['Fake Param']}
-                            onChange={
-                                (new_value) => {
-                                    let newcf = {...this.state.config};
-                                    current_config['Other']['Fake Param'] = new_value;
-                                    this.setState({config: current_config});
-                                    config_client.set_config(current_config)
-                                }
-                            }
-                        />
-                    </div>
-                </div>
-            ],
-            'layout': [
-                {
-                    i: 'id_7',
-                    x: 0,
-                    y: 0,
-                    w: 150,
-                    h: 1
-                },
-                {
-                    i: 'id_8',
-                    x: 150,
-                    y: 0,
-                    w: 400,
-                    h: 1
-                }
             ]
         };
         return categories
@@ -279,7 +246,7 @@ class SettingsPane extends React.Component {
                         margin={[0, 0]}
                         cols={620}
                         width={620}
-                        rowHeight={50}
+                        rowHeight={25}
                         components={components}
                         layout={layout}
                     />
@@ -293,7 +260,7 @@ class SettingsPane extends React.Component {
                 onClose={function () {
                     self.props.toggleDialog()
                 }}
-                title="Settings"
+                title="Preferences"
                 style={{"width": 800}}
                 usePortal={true}
             >

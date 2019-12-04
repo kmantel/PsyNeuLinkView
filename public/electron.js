@@ -23,6 +23,17 @@ var child_proc;
 //TODO: figure out way around fixpath dependency
 fixpath();
 
+// process.on("uncaughtException", (err) => {
+//     electron.dialog.showMessageBox(
+//         electron.dialog.getCurrentWindow(),
+//         {
+//             type: 'error',
+//             message: err.message
+//         }
+//     );
+//     }
+// );
+
 class RPCServerMaintainer {
     constructor() {
         this.config_edited = false;
@@ -93,10 +104,12 @@ class RPCServerMaintainer {
     }
 
     spawn_rpc_server() {
-        console.log('its getting here');
         var config = require(this.config_filepath);
         var py_int_path = config.Python['Interpreter Path'];
         var pnl_path = config.Python['PsyNeuLink Path'];
+        if (!py_int_path){
+            throw Error('Python interpreter path is not set. Set Python interpreter path in preferences to continue.')
+        }
         var conda_dir = this.check_for_conda(py_int_path);
         var conda_prefix;
         var self = this;
@@ -131,7 +144,7 @@ class RPCServerMaintainer {
         this.child_proc.stderr.on('data', function (data) {
             console.log('py stderr: ' + data);
             log.debug('py stdout:' + data)
-        });
+            });
     }
 
     kill_rpc_server(child_proc = this.child_proc) {
@@ -176,6 +189,13 @@ function createWindow() {
         {
             server_maintainer.kill_rpc_server();
             app.quit();
+        }
+    );
+    mainWindow.on("uncaughtException", (err) => {
+            electron.dialog.showErrorBox(
+                'error',
+                err.message
+            )
         }
     );
 }

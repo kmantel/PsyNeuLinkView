@@ -6,6 +6,9 @@ import ToolTipBox from './tooltipbox'
 import ParameterControlBox from './parametercontrolbox'
 import SettingsPane from './settings'
 import {Spinner} from '@blueprintjs/core'
+import {Resizable} from "re-resizable";
+
+const config_client = window.config_client;
 
 const path = require('path');
 
@@ -44,6 +47,14 @@ export default class Workspace extends React.Component {
         this.setMenu();
     }
 
+    // check_config() {
+    //     console.log('yes')
+    //     console.log(!{...window.config_client.get_config()}['Python']['Interpreter Path']);
+    //     if (){
+    //         this.setState({show_settings: true})
+    //     }
+    // }
+
     setMenu() {
         const electron = window.remote;
         const isMac = navigator.platform.toUpperCase().includes("MAC");
@@ -52,7 +63,6 @@ export default class Workspace extends React.Component {
         electron.systemPreferences.setUserDefault('NSDisabledEmoji&SymbolsMenuItem', 'boolean', true);
         var self = this;
         var menu = electron.Menu.buildFromTemplate([
-            // { role: 'appMenu' }
             ...(isMac ? [{
                 label: "PsyNeuLinkView",
                 submenu: [
@@ -77,10 +87,6 @@ export default class Workspace extends React.Component {
                             self.file_selection_dialog()
                         }
                     },
-                    // {
-                    //   label:'Recently Opened',
-                    //   role:'recentDocuments'
-                    // },
                     isMac ? {role: 'close'} : {role: 'quit'}
                 ],
             },
@@ -150,51 +156,88 @@ export default class Workspace extends React.Component {
 
     file_selection_dialog() {
         var self = this;
-        var filepath = window.dialog.showOpenDialogSync(
+        var filepath = window.dialog.showOpenDialog(
+            window.getCurrentWindow(),
             {
-              filters: [
-                { name: 'Python', extensions: ['py'] }
-              ]
+                filters: [
+                    {name: 'Python', extensions: ['py']}
+                ]
             }
-        );
-        if (filepath !== undefined) {
-            self.load_file(filepath[0])
-        }
+        ).then((paths) => {
+                var pathArray = paths.filePaths;
+                if (pathArray.length > 0) {
+                    self.load_file(pathArray[0])
+                }
+            }
+        )
     }
 
+    // componentDidCatch(error, errorInfo) {
+    //     console.log(error)
+    //     console.log(errorInfo)
+    // }
+
     async load_file(filepath) {
-        window.electron_root.addRecentDocument(filepath)
-        var self = this;
-        var wait_interval = 1000;
-        self.setState({graph: "loading"});
-        window.electron_root.restart_rpc_server(window.electron_root.child_proc);
-        var server_ready = false;
-        var rpc_client = new window.rpc.rpc_client(proto_path, window.modulePath);
-        var server_attempt_limit = 50;
-        var server_attempt_current = 0;
-        while (!server_ready) {
-            rpc_client.health_check(
-                function () {
-                    if (rpc_client.most_recent_response.status === 'Okay') {
-                        server_ready = true;
-                        rpc_client.most_recent_response.status = null
+        try {
+            window.electron_root.addRecentDocument(filepath);
+            var self = this;
+            var wait_interval = 2000;
+            self.setState({graph: "loading"});
+            window.electron_root.restart_rpc_server();
+            await this.sleep(wait_interval);
+            var server_ready = false;
+            var rpc_client = new window.rpc.rpc_client(proto_path, window.modulePath);
+            var server_attempt_limit = 5;
+            var server_attempt_current = 0;
+            while (!server_ready) {
+                rpc_client.health_check(
+                    function () {
+                        if (rpc_client.most_recent_response.status === 'Okay') {
+                            server_ready = true;
+                            rpc_client.most_recent_response.status = null
+                        }
                     }
+                );
+                server_attempt_current += 1;
+                console.log(server_attempt_current);
+                if (server_attempt_current >= server_attempt_limit) {
+                    self.setState({'graph': null});
+                    throw new ErrorEvent("",
+                        {
+                            error: new Error("Failed to load Python interpreter. Check path."),
+                            message: "Failed to load Python interpreter. Check path."
+                        }
+                    )
+                }
+                await this.sleep(wait_interval);
+            }
+            rpc_client.load_script(filepath, function () {
+                var compositions = rpc_client.script_maintainer.compositions;
+                var composition = compositions[compositions.length - 1];
+                rpc_client.get_json(composition, function () {
+                    var new_graph = JSON.parse(JSON.stringify(rpc_client.script_maintainer.gv));
+                    self.setState({graph: new_graph})
+                })
+            });
+            console.log(rpc_client.health_check())
+        } catch (e) {
+            self.setState({graph: null},
+                () => {
+                    window.dialog.showMessageBox(
+                        window.getCurrentWindow(),
+                        {
+                            type: 'error',
+                            message: 'The program encountered an error while attempting to load graph. \n' +
+                                '\n' +
+                                `Message: ${e.cause !== undefined ?
+                                    e.cause.message
+                                    :
+                                    e.message}`
+                        }
+                    );
                 }
             );
-            server_attempt_current += 1;
-            if (server_attempt_current >= server_attempt_limit) {
-                throw(Error("Failed to load Python interpreter. Check path."))
-            }
-            await this.sleep(wait_interval);
         }
-        rpc_client.load_script(filepath, function () {
-            var compositions = rpc_client.script_maintainer.compositions;
-            var composition = compositions[compositions.length - 1];
-            rpc_client.get_json(composition, function () {
-                var new_graph = JSON.parse(JSON.stringify(rpc_client.script_maintainer.gv));
-                self.setState({graph: new_graph})
-            })
-        })
     }
 
     choose_composition() {
@@ -285,9 +328,18 @@ export default class Workspace extends React.Component {
         window.addEventListener('resize', this.window_resize)
     }
 
-    toggleDialog = () => this.setState({show_settings: !this.state.show_settings});
+    toggleDialog = () => {
+        var interpreter_path_is_blank = !{...window.config_client.get_config()}['Python']['Interpreter Path'];
+        if (!interpreter_path_is_blank){
+            this.setState({show_settings: !this.state.show_settings});
+        }
+    };
 
     render() {
+        var interpreter_path_is_blank = !{...window.config_client.get_config()}['Python']['Interpreter Path'];
+        if (!this.state.show_settings && interpreter_path_is_blank){
+            this.setState({show_settings:true})
+        }
         var self = this;
         var padding = 10;
         var components = [

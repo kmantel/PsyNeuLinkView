@@ -9,7 +9,7 @@ class ConfigClient{
     }
     reinitialize_config(){
         // hot reload config every time
-        delete require.cache[require.resolve(this.filepath)]
+        delete require.cache[require.resolve(this.filepath)];
         this.config = require(this.filepath)
     }
     get_config(){

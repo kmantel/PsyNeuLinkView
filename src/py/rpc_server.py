@@ -14,11 +14,12 @@ my_env = os.environ
 
 sys.path.append(os.getenv('PATH'))
 
-if sys.argv[1]:
+if len(sys.argv) > 1:
     try:
         sys.path.append(sys.argv[1])
     except:
         pass
+
 import psyneulink as pnl
 
 class Container():

@@ -12,6 +12,8 @@ if (window.isDev) {
 else {
     modulePath = path.join(electron_root.app_path,'../app.asar/node_modules');
 }
+
+window.getCurrentWindow = remote.getCurrentWindow;
 window.modulePath = modulePath;
 window.electron_root = electron_root;
 

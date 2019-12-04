@@ -12,12 +12,14 @@ var log = require('electron-log');
 log.transports.console.level = "debug";
 console.log('hey');
 
-function App() {
-  return (
-    <div className = "app">
-      <Workspace/>
-    </div>
-  );
+export default class App extends React.Component{
+  render() {
+    return (
+        <div className = "app">
+          <Workspace/>
+        </div>
+    );
+  }
 }
 
-export default App;
+// export default App;
