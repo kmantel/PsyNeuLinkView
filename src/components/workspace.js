@@ -5,19 +5,10 @@ import GraphView from './graphview'
 import ToolTipBox from './tooltipbox'
 import ParameterControlBox from './parametercontrolbox'
 import SettingsPane from './settings'
-import {Spinner} from '@blueprintjs/core'
-import {Resizable} from "re-resizable";
-
-const config_client = window.config_client;
+import ErrorDispatcher from "../utility/errors/dispatcher";
 
 const path = require('path');
-
 var proto_path = path.join(window.electron_root.app_path, 'src', 'protos', 'graph.proto');
-
-console.log(proto_path);
-
-console.log(proto_path, window.modulePath);
-
 var rpc_client = new window.rpc.rpc_client(proto_path, window.modulePath);
 
 export default class Workspace extends React.Component {
@@ -35,6 +26,7 @@ export default class Workspace extends React.Component {
             graph: null,
             show_settings: false
         };
+        this.dispatcher = new ErrorDispatcher(this);
         this.container = {};
         this.choose_composition = this.choose_composition.bind(this);
         this.componentWillMount = this.componentWillMount.bind(this);
@@ -43,17 +35,10 @@ export default class Workspace extends React.Component {
         this.set_tool_tip = this.set_tool_tip.bind(this);
         this.window_resize = this.window_resize.bind(this);
         this.componentDidMount = this.componentDidMount.bind(this);
-        this.load_file = this.load_file.bind(this);
+        this.validate_server_status_and_load_script = this.validate_server_status_and_load_script.bind(this);
+        this.handleErrors = this.handleErrors.bind(this);
         this.setMenu();
     }
-
-    // check_config() {
-    //     console.log('yes')
-    //     console.log(!{...window.config_client.get_config()}['Python']['Interpreter Path']);
-    //     if (){
-    //         this.setState({show_settings: true})
-    //     }
-    // }
 
     setMenu() {
         const electron = window.remote;
@@ -166,77 +151,93 @@ export default class Workspace extends React.Component {
         ).then((paths) => {
                 var pathArray = paths.filePaths;
                 if (pathArray.length > 0) {
-                    self.load_file(pathArray[0])
+                    self.validate_server_status_and_load_script(pathArray[0])
                 }
             }
         )
     }
 
-    // componentDidCatch(error, errorInfo) {
-    //     console.log(error)
-    //     console.log(errorInfo)
-    // }
-
-    async load_file(filepath) {
-        try {
-            window.electron_root.addRecentDocument(filepath);
-            var self = this;
-            var wait_interval = 2000;
-            self.setState({graph: "loading"});
-            window.electron_root.restart_rpc_server();
-            await this.sleep(wait_interval);
-            var server_ready = false;
-            var rpc_client = new window.rpc.rpc_client(proto_path, window.modulePath);
-            var server_attempt_limit = 5;
-            var server_attempt_current = 0;
-            while (!server_ready) {
-                rpc_client.health_check(
-                    function () {
-                        if (rpc_client.most_recent_response.status === 'Okay') {
-                            server_ready = true;
-                            rpc_client.most_recent_response.status = null
-                        }
+    async validate_server_status(wait_interval, attempt_limit) {
+        var server_ready = false;
+        var server_attempt_current = 0;
+        var self = this;
+        while (!server_ready) {
+            rpc_client.health_check(
+                function () {
+                    if (rpc_client.most_recent_response.status === 'Okay') {
+                        server_ready = true;
+                        rpc_client.most_recent_response.status = null
                     }
+                }
+            );
+            server_attempt_current += 1;
+            if (server_attempt_current >= attempt_limit) {
+                self.dispatcher.capture(
+                    {
+                        error: "Failed to load Python interpreter. Check path."
+                    },
+                    self.setState({'graph': null})
                 );
-                server_attempt_current += 1;
-                console.log(server_attempt_current);
-                if (server_attempt_current >= server_attempt_limit) {
-                    self.setState({'graph': null});
-                    throw new ErrorEvent("",
-                        {
-                            error: new Error("Failed to load Python interpreter. Check path."),
-                            message: "Failed to load Python interpreter. Check path."
+                return false
+            }
+            await this.sleep(wait_interval);
+        }
+        return true
+    }
+
+    load_script(filepath) {
+        var rpc_client = new window.rpc.rpc_client(proto_path, window.modulePath);
+        var self = this;
+        rpc_client.load_script(filepath, (err) => {
+                if (err) {
+                    self.dispatcher.capture({
+                            error: "Python interpreter crashed while loading script. ",
+                            message:
+                                `Message: ${err.cause !== undefined ?
+                                    err.cause.message
+                                    :
+                                    err.message}`
+                        },
+                        {graph: null}
+                    )
+                } else {
+                    var compositions = rpc_client.script_maintainer.compositions;
+                    var composition = compositions[compositions.length - 1];
+                    rpc_client.get_json(composition, function (err) {
+                            if (err) {
+                                self.dispatcher.capture({
+                                        error: "Python interpreter crashed while loading script.",
+                                        message:
+                                            `Message: ${err.cause !== undefined ?
+                                                err.cause.message
+                                                :
+                                                err.message}`
+                                    },
+                                    {graph: null}
+                                );
+                                return false
+                            }
+                            var new_graph = JSON.parse(JSON.stringify(rpc_client.script_maintainer.gv));
+                            self.setState({graph: new_graph})
                         }
                     )
                 }
-                await this.sleep(wait_interval);
             }
-            rpc_client.load_script(filepath, function () {
-                var compositions = rpc_client.script_maintainer.compositions;
-                var composition = compositions[compositions.length - 1];
-                rpc_client.get_json(composition, function () {
-                    var new_graph = JSON.parse(JSON.stringify(rpc_client.script_maintainer.gv));
-                    self.setState({graph: new_graph})
-                })
-            });
-            console.log(rpc_client.health_check())
-        } catch (e) {
-            self.setState({graph: null},
-                () => {
-                    window.dialog.showMessageBox(
-                        window.getCurrentWindow(),
-                        {
-                            type: 'error',
-                            message: 'The program encountered an error while attempting to load graph. \n' +
-                                '\n' +
-                                `Message: ${e.cause !== undefined ?
-                                    e.cause.message
-                                    :
-                                    e.message}`
-                        }
-                    );
-                }
-            );
+        );
+    }
+
+    async validate_server_status_and_load_script(filepath) {
+        window.electron_root.addRecentDocument(filepath);
+        window.electron_root.restart_rpc_server();
+        var self = this;
+        self.setState({graph: "loading"});
+        if (
+            await self.validate_server_status(
+                2000,
+                5
+            )
+        ) {
+            self.load_script(filepath)
         }
     }
 
@@ -276,7 +277,6 @@ export default class Workspace extends React.Component {
             rowOneHorizontalFactor: (old_r1_h_factor / old_xRes) * w,
             rowTwoHorizontalFactor: (old_r2_h_factor / old_xRes) * w,
             verticalFactor: (old_v_factor / old_yRes) * h,
-            // graph:_graph,
             test_width: 500
         });
         this.forceUpdate()
@@ -330,15 +330,19 @@ export default class Workspace extends React.Component {
 
     toggleDialog = () => {
         var interpreter_path_is_blank = !{...window.config_client.get_config()}['Python']['Interpreter Path'];
-        if (!interpreter_path_is_blank){
+        if (!interpreter_path_is_blank) {
             this.setState({show_settings: !this.state.show_settings});
         }
     };
 
+    handleErrors() {
+        this.dispatcher.emit()
+    }
+
     render() {
         var interpreter_path_is_blank = !{...window.config_client.get_config()}['Python']['Interpreter Path'];
-        if (!this.state.show_settings && interpreter_path_is_blank){
-            this.setState({show_settings:true})
+        if (!this.state.show_settings && interpreter_path_is_blank) {
+            this.setState({show_settings: true})
         }
         var self = this;
         var padding = 10;

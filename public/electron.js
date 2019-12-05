@@ -2,7 +2,6 @@ const electron = require('electron');
 const app = electron.app;
 const app_path = app.getAppPath();
 const fixpath = require('fix-path');
-console.log(app_path);
 const BrowserWindow = electron.BrowserWindow;
 const path = require('path');
 const isDev = require('electron-is-dev');
@@ -18,21 +17,9 @@ exports.isDev = isDev;
 log.transports.console.level = "debug";
 
 let mainWindow;
-var child_proc;
 
 //TODO: figure out way around fixpath dependency
 fixpath();
-
-// process.on("uncaughtException", (err) => {
-//     electron.dialog.showMessageBox(
-//         electron.dialog.getCurrentWindow(),
-//         {
-//             type: 'error',
-//             message: err.message
-//         }
-//     );
-//     }
-// );
 
 class RPCServerMaintainer {
     constructor() {
@@ -42,7 +29,7 @@ class RPCServerMaintainer {
             :
             this.config_filedir = path.join(os.homedir(), 'Library', 'Preferences', 'PsyNeuLinkView');
         this.config_filepath = path.join(this.config_filedir, 'config.json');
-        exports.config_filepath = this.config_filepath
+        exports.config_filepath = this.config_filepath;
         this.initialize_config();
     }
 
@@ -107,12 +94,9 @@ class RPCServerMaintainer {
         var config = require(this.config_filepath);
         var py_int_path = config.Python['Interpreter Path'];
         var pnl_path = config.Python['PsyNeuLink Path'];
-        if (!py_int_path){
-            throw Error('Python interpreter path is not set. Set Python interpreter path in preferences to continue.')
-        }
         var conda_dir = this.check_for_conda(py_int_path);
-        var conda_prefix;
         var self = this;
+        var conda_prefix;
         conda_dir ?
             os.platform() === 'win32' ?
                 conda_prefix = '' +
@@ -143,7 +127,7 @@ class RPCServerMaintainer {
         this.child_proc.stderr.setEncoding('utf8');
         this.child_proc.stderr.on('data', function (data) {
             console.log('py stderr: ' + data);
-            log.debug('py stdout:' + data)
+            log.debug('py stdout:' + data);
             });
     }
 
@@ -218,12 +202,6 @@ app.on('quit', () => {
         console.log('FAILED TO END CHILD PROCESS')
     }
 });
-
-// app.on('activate', () => {
-//     if (mainWindow === null) {
-//         createWindow();
-//     }
-// });
 
 exports.restart_rpc_server = restart_rpc_server;
 exports.app_path = adjusted_app_path;

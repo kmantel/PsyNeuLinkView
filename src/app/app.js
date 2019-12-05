@@ -10,7 +10,6 @@ import Workspace from '../components/workspace'
 var log = require('electron-log');
 
 log.transports.console.level = "debug";
-console.log('hey');
 
 export default class App extends React.Component{
   render() {

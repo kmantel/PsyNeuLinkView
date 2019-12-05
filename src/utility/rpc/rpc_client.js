@@ -42,9 +42,7 @@ class RPCClient {
             path: filepath
         }, function (err, response) {
             if (err) {
-                // log.debug(err)
-                console.log(err);
-                throw(err)
+                callback(err)
             }
             else{
                 self.script_maintainer.compositions = response.compositions;
@@ -61,8 +59,7 @@ class RPCClient {
             name: name
         }, function (err, response) {
             if (err) {
-                // log.debug(err)
-                console.log(err)
+                callback(err)
             }
             else{
                 self.script_maintainer.gv = JSON.parse(response.JSON);

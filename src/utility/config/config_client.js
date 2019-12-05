@@ -14,7 +14,6 @@ class ConfigClient{
     }
     get_config(){
         this.reinitialize_config();
-        console.log(this.config);
         var cf = this.config;
         return {...cf};
     }
