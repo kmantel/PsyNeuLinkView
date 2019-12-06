@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Debug Main" type="NodeJSConfigurationType" application-parameters="--remote-debugging-port=9222" path-to-node="$PROJECT_DIR$/node_modules/.bin/electron" node-parameters="." working-dir="$PROJECT_DIR$">
+  <configuration default="false" name="Debug Main" type="NodeJSConfigurationType" application-parameters="--remote-debugging-port=9222" path-to-node="$PROJECT_DIR$/../PsyNeuLinkView/node_modules/.bin/electron" node-parameters="." working-dir="$PROJECT_DIR$/../PsyNeuLinkView">
     <method v="2" />
   </configuration>
 </component>

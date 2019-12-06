@@ -1,15 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="2575ca4d-3c3d-4615-9b7d-bedcd13ade1e" name="Default Changelist" comment="added config.json to gitignore">
-      <change afterPath="$PROJECT_DIR$/src/utility/errors/dispatcher.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/electron.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/electron.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/app.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/workspace.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/workspace.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utility/config/config_client.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/utility/config/config_client.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utility/rpc/rpc_client.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/utility/rpc/rpc_client.js" afterDir="false" />
-    </list>
+    <list default="true" id="2575ca4d-3c3d-4615-9b7d-bedcd13ade1e" name="Default Changelist" comment="added config.json to gitignore" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -28,16 +20,17 @@
     </option>
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../PsyNeuLinkView" />
     <option name="RESET_MODE" value="HARD" />
   </component>
   <component name="ProjectId" id="1SWn9buTTCS3s5uC6iOy9vxUTXN" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="com.intellij.ide.scratch.LRUPopupBuilder$1/New Scratch File" value="JavaScript" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/node_modules/.bin/electron" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../PsyNeuLinkView/node_modules/.bin/electron" />
     <property name="list.type.of.created.stylesheet" value="CSS" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
@@ -69,8 +62,11 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Node.js.Debug Main">
+  <component name="RunManager" selected="Node.js.test_script.js">
     <configuration name="Debug Application" type="JavascriptDebugType" uri="http://localhost:3000">
+      <method v="2" />
+    </configuration>
+    <configuration name="test_script.js" type="NodeJSConfigurationType" temporary="true" nameIsGenerated="true" path-to-js-file="$APPLICATION_CONFIG_DIR$/scratches/test_script.js" working-dir="$PROJECT_DIR$/../PsyNeuLinkView">
       <method v="2" />
     </configuration>
     <configuration name="npm start" type="js.build_tools.npm">
@@ -87,8 +83,14 @@
       <item itemvalue="Attach to Node.js/Chrome.Debug Render" />
       <item itemvalue="JavaScript Debug.Debug Application" />
       <item itemvalue="Node.js.Debug Main" />
+      <item itemvalue="Node.js.test_script.js" />
       <item itemvalue="npm.npm start" />
     </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Node.js.test_script.js" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SvnConfiguration">
     <configuration />
@@ -135,7 +137,8 @@
       <workItem from="1575315207919" duration="461000" />
       <workItem from="1575383538912" duration="6519000" />
       <workItem from="1575393270114" duration="33486000" />
-      <workItem from="1575556199718" duration="16495000" />
+      <workItem from="1575556199718" duration="18956000" />
+      <workItem from="1575641564755" duration="10271000" />
     </task>
     <servers />
   </component>
@@ -194,21 +197,18 @@
           <option name="timeStamp" value="1" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/src/components/workspace.js</url>
+          <url>file://$PROJECT_DIR$/../PsyNeuLinkView/src/components/workspace.js</url>
           <line>190</line>
-          <properties lambdaOrdinal="-1" />
           <option name="timeStamp" value="3" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/src/components/workspace.js</url>
+          <url>file://$PROJECT_DIR$/../PsyNeuLinkView/src/components/workspace.js</url>
           <line>189</line>
-          <properties lambdaOrdinal="-1" />
           <option name="timeStamp" value="4" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/src/utility/rpc/rpc_client.js</url>
+          <url>file://$PROJECT_DIR$/../PsyNeuLinkView/src/utility/rpc/rpc_client.js</url>
           <line>55</line>
-          <properties lambdaOrdinal="-1" />
           <option name="timeStamp" value="5" />
         </line-breakpoint>
       </breakpoints>
