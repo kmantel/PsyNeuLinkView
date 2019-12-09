@@ -85,7 +85,7 @@ class RPCInterface {
         fs.stat(path_to_check,
             (err, stat) => {
                 if (!stat) {
-                    this.execute_script('',interpreter_path)
+                    this.execute_script('', interpreter_path)
                 } else {
                     this.find_conda_binary(interpreter_path)
                 }
@@ -93,8 +93,8 @@ class RPCInterface {
         return false
     }
 
-    find_conda_binary(original_interpreter_path, path_to_check='') {
-        if (!path_to_check){
+    find_conda_binary(original_interpreter_path, path_to_check = '') {
+        if (!path_to_check) {
             path_to_check = path.join(original_interpreter_path, '..');
         }
         var one_level_up = path.join(path_to_check, '..');
@@ -133,7 +133,7 @@ class RPCInterface {
         )
     }
 
-    construct_prefix(env_name, binary_path, interpreter_path){
+    construct_prefix(env_name, binary_path, interpreter_path) {
         var interpreter_path = interpreter_path
         var conda_prefix = '' +
             `source ${binary_path} && ` +
@@ -144,10 +144,14 @@ class RPCInterface {
     }
 
     execute_script(prefix = '', interpreter_path) {
+        var pnl_path = this.config['Python']['PsyNeuLink Path'];
+        pnl_path = pnl_path ? pnl_path : '';
         console.log(prefix, interpreter_path);
         this.child_proc = spawn(prefix + interpreter_path,
-            ['-u','/Users/ds70/WebstormProjects/PsyNeuLinkView/src/py/rpc_server.py',
-                ''], {
+            ['-u',
+                path.join(adjusted_app_path, 'src', 'py', 'rpc_server.py'),
+                pnl_path
+            ], {
                 shell: true,
                 detached: false
             });
@@ -207,8 +211,7 @@ function createWindow() {
         }
     });
     mainWindow.loadURL(isDev ? 'http://localhost:3000' : `file://${path.join(adjusted_app_path, 'build/index.html')}`);
-    mainWindow.on('closed', () =>
-        {
+    mainWindow.on('closed', () => {
             server_maintainer.kill_rpc_server();
             app.quit();
         }
@@ -235,8 +238,7 @@ app.on('quit', () => {
     try {
         server_maintainer.kill_rpc_server();
         app.quit()
-    }
-    catch{
+    } catch {
         console.log('FAILED TO END CHILD PROCESS')
     }
 });
