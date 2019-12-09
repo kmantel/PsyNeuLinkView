@@ -33,6 +33,7 @@ class RPCInterface {
         this.config_filepath = path.join(this.config_filedir, 'config.json');
         exports.config_filepath = this.config_filepath;
         this.initialize_config();
+        this.child_procs = [];
     }
 
     obj_key_copy(template_obj, user_obj) {
@@ -82,6 +83,16 @@ class RPCInterface {
         } else {
             path_to_check = path.join(interpreter_dir, '..', 'conda-meta')
         }
+
+        log.debug('' +
+            'check_conda' +
+            '\n ' +
+            '\n' +
+            `interpreter_dir: ${interpreter_dir}` +
+            '\n' +
+            `interpreter_dir: ${path_to_check}`
+        )
+
         fs.stat(path_to_check,
             (err, stat) => {
                 if (!stat) {
@@ -99,6 +110,20 @@ class RPCInterface {
         }
         var one_level_up = path.join(path_to_check, '..');
         var possible_conda_binary = path.join(path_to_check, 'etc', 'profile.d', 'conda.sh');
+
+        log.debug('' +
+            'find_conda_binary' +
+            '\n ' +
+            '\n' +
+            `original_interpreter_path: ${original_interpreter_path}` +
+            '\n' +
+            `path_to_check: ${path_to_check}` +
+            '\n' +
+            `one_level_up: ${one_level_up}` +
+            '\n' +
+            `possible_conda_binary: ${possible_conda_binary}`
+        );
+
         fs.stat(possible_conda_binary,
             (err, stat) => {
                 if (!stat) {
@@ -116,6 +141,21 @@ class RPCInterface {
         var path_to_check = path.join(interpreter_dir, '..');
         var env_path_len = path_to_check.length;
         var binary_path = binary_path;
+
+        log.debug('' +
+            'find_env_name' +
+            '\n ' +
+            '\n' +
+            `interpreter_dir: ${interpreter_dir}` +
+            '\n' +
+            `path_to_check: ${path_to_check}` +
+            '\n' +
+            `env_path_len: ${env_path_len}` +
+            '\n' +
+            `binary_path: ${binary_path}`
+        );
+
+
         exec(`source ${binary_path} && conda env list`,
             (err, stdout, stderr) => {
                 var envs = stdout.split('\n');
@@ -138,6 +178,16 @@ class RPCInterface {
         var conda_prefix = '' +
             `source ${binary_path} && ` +
             `conda activate ${env_name} && `;
+
+        log.debug('' +
+            'construct_prefix' +
+            '\n ' +
+            '\n' +
+            `interpreter_path: ${interpreter_path}` +
+            '\n' +
+            `conda_prefix: ${conda_prefix}`
+        );
+
         this.execute_script(
             conda_prefix, interpreter_path
         )
@@ -146,7 +196,23 @@ class RPCInterface {
     execute_script(prefix = '', interpreter_path) {
         var pnl_path = this.config['Python']['PsyNeuLink Path'];
         pnl_path = pnl_path ? pnl_path : '';
-        console.log(prefix, interpreter_path);
+
+        log.debug('' +
+            'execute_script' +
+            '\n ' +
+            '\n' +
+            `prefix: ${prefix}` +
+            '\n' +
+            `interpreter_path: ${interpreter_path}` +
+            '\n' +
+            `pnl_path: ${pnl_path}` +
+            '\n' +
+            `full command: ${['-u',
+                path.join(adjusted_app_path, 'src', 'py', 'rpc_server.py'),
+                pnl_path
+            ]}`
+        );
+
         this.child_proc = spawn(prefix + interpreter_path,
             ['-u',
                 path.join(adjusted_app_path, 'src', 'py', 'rpc_server.py'),
@@ -166,6 +232,7 @@ class RPCInterface {
         this.child_proc.stderr.on('data', function (data) {
             log.debug('py stdout:' + data);
         });
+        this.child_procs.push(this.child_proc);
     }
 
     spawn_rpc_server() {

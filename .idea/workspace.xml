@@ -4,6 +4,7 @@
     <list default="true" id="2575ca4d-3c3d-4615-9b7d-bedcd13ade1e" name="Default Changelist" comment="added config.json to gitignore">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/public/electron.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/electron.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/workspace.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/workspace.js" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -84,8 +85,8 @@
     </configuration>
     <list>
       <item itemvalue="Attach to Node.js/Chrome.Debug Render" />
-      <item itemvalue="JavaScript Debug.Debug Application" />
       <item itemvalue="Node.js.Debug Main" />
+      <item itemvalue="JavaScript Debug.Debug Application" />
       <item itemvalue="Node.js.test_script.js" />
       <item itemvalue="npm.npm start" />
     </list>
@@ -213,13 +214,11 @@
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/components/workspace.js</url>
           <line>162</line>
-          <properties lambdaOrdinal="-1" />
           <option name="timeStamp" value="11" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/components/workspace.js</url>
           <line>231</line>
-          <properties lambdaOrdinal="-1" />
           <option name="timeStamp" value="12" />
         </line-breakpoint>
       </breakpoints>
