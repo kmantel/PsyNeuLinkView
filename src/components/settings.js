@@ -43,10 +43,12 @@ class SettingsPane extends React.Component {
     }
 
     handleNodeClick = (nodeData, _nodePath, e) => {
-        this.forEachNode(this.state.nodes, n => (n.isSelected = false));
-        nodeData.isSelected = true;
-        this.setState(this.state);
-        this.setState({"selectedCat": nodeData.id});
+        if (this.generateSettingsPage(nodeData.label)){
+            this.forEachNode(this.state.nodes, n => (n.isSelected = false));
+            nodeData.isSelected = true;
+            this.setState(this.state);
+            this.setState({"selectedCat": nodeData.id});
+        }
     };
 
     handleNodeCollapse = (nodeData) => {
@@ -142,8 +144,8 @@ class SettingsPane extends React.Component {
                     />
                 </div>,
                 <div key={keys.interpreterPathIndicator}>
-                    <IndicatorLight
-                        status={'unsure'}/>
+                    {/*<IndicatorLight*/}
+                    {/*    status={'unsure'}/>*/}
                 </div>,
                 <div key={keys.pnlPathLabel}>
                     {'PsyNeuLink Path'}

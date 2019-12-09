@@ -208,51 +208,6 @@ class RPCInterface {
         this.check_conda(py_int_path);
     }
 
-    // spawn_rpc_server() {
-    //     var config = require(this.config_filepath);
-    //     var py_int_path = config.Python['Interpreter Path'];
-    //     var pnl_path = config.Python['PsyNeuLink Path'];
-    //     var self = this;
-    //     var conda_prefix;
-    //     var conda_binary_path = false;
-    //     var conda_env_dir = this.get_conda_env_dir(py_int_path);
-    //     if (conda_env_dir) {
-    //         conda_binary_path = this.find_conda_binarySync(py_int_path)
-    //     }
-    //     console.log(conda_env_dir, conda_binary_path);
-    //     var conda_env_name = this.get_env_name(conda_env_dir, conda_binary_path);
-    //     console.log('env name', conda_env_dir);
-    //     conda_binary_path ?
-    //         os.platform() === 'win32' ?
-    //             conda_prefix = '' +
-    //                 `${path.resolve(path.join(path.dirname(py_int_path), '..', '..', 'Scripts', 'activate.bat'))} && ` +
-    //                 `conda activate ${conda_env_name} && `
-    //             :
-    //             conda_prefix = '' +
-    //                 `source ${conda_binary_path} && ` +
-    //                 `conda activate ${conda_env_name} && `
-    //         :
-    //         conda_prefix = '';
-    //     log.debug(conda_prefix + py_int_path);
-    //     this.child_proc = spawn(conda_prefix + py_int_path,
-    //         ['-u', path.join(this.app_path, '/src/py/rpc_server.py'),
-    //             pnl_path], {
-    //             shell: true,
-    //             detached: false
-    //         });
-    //     this.child_proc.on('error', function (err) {
-    //         log.debug('py stdout:' + err)
-    //     });
-    //     this.child_proc.stdout.setEncoding('utf8');
-    //     this.child_proc.stdout.on('data', function (data) {
-    //         log.debug('py stdout:' + data)
-    //     });
-    //     this.child_proc.stderr.setEncoding('utf8');
-    //     this.child_proc.stderr.on('data', function (data) {
-    //         log.debug('py stdout:' + data);
-    //     });
-    // }
-
     kill_rpc_server(child_proc = this.child_proc) {
         if (child_proc != null) {
             if (os.platform() === 'win32') {

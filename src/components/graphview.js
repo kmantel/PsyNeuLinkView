@@ -13,7 +13,7 @@ const context_menu = [{
         onClick: {},
         text: 'Placeholder 2'
     }
-]
+];
 
 const style = {
     display: "flex",
@@ -60,7 +60,7 @@ class GraphView extends React.Component {
 
     componentDidMount() {
         this.setGraph();
-        window.addEventListener('resize', this.updateGraph)
+        window.addEventListener('resize', this.updateGraph);
         add_context_menu('.graph-view', context_menu)
     }
 
@@ -68,22 +68,21 @@ class GraphView extends React.Component {
         var self = this;
         if (!([null, undefined, "loading"].includes(self.state.graph))) {
             var percentage;
-            var graph = document.querySelector('.graph-view .graph')
+            var graph = document.querySelector('.graph-view .graph');
             var view_rect = document.querySelector('.graph-view')
-                .getBoundingClientRect()
+                .getBoundingClientRect();
             var graph_rect = document.querySelector('.graph-view g.node')
                 .getBBox();
-            var total_graph_height = graph_rect.height + graph_rect.y
+            var total_graph_height = graph_rect.height + graph_rect.y;
             if (total_graph_height > view_rect.height) {
-                percentage = Math.ceil((total_graph_height / (view_rect.height)) * 100)
+                percentage = Math.ceil((total_graph_height / (view_rect.height)) * 100);
                 graph.setAttribute('height', `${percentage}%`)
             } else {
                 graph.setAttribute('height', '100%')
             }
-
-            var total_graph_width = graph_rect.width + graph_rect.x
+            var total_graph_width = graph_rect.width + graph_rect.x;
             if (total_graph_width > view_rect.width) {
-                percentage = Math.ceil((total_graph_width / view_rect.width) * 100)
+                percentage = Math.ceil((total_graph_width / view_rect.width) * 100);
                 graph.setAttribute('width', `${percentage}%`)
             } else {
                 graph.setAttribute('width', '100%')
@@ -92,10 +91,10 @@ class GraphView extends React.Component {
     }
 
     setGraph() {
-        var self = this
+        var self = this;
         if (self.props.graph) {
-            let nodeWidth = self.state.node_width
-            let nodeHeight = self.state.node_height
+            let nodeWidth = self.state.node_width;
+            let nodeHeight = self.state.node_height;
             var svg = d3.select('.graph-view')
                 .append('svg')
                 .attr('width', '100%')
@@ -126,8 +125,6 @@ class GraphView extends React.Component {
                 .attr("fill", "black");
 
             self.props.graph.objects.forEach(function (d) {
-                    // d.x = parseInt(d._ldraw_[2].pt[0]);
-                    // d.y = parseInt(d._ldraw_[2].pt[1])
                     d.x = parseInt(Math.abs(d.text.x));
                     d.y = parseInt(Math.abs(d.text.y));
                     if ('ellipse' in d) {
@@ -171,15 +168,15 @@ class GraphView extends React.Component {
                 .attr('stroke-width', 1)
                 .attr('stroke', function (d) {
                     return d.color
-                })
+                });
 
             d3.selectAll('g.edge line')
                 .each(function () {
-                    var d3Element = d3.select(this)
-                    var color = d3Element.attr('stroke')
+                    var d3Element = d3.select(this);
+                    var color = d3Element.attr('stroke');
                     d3Element
                         .attr('marker-end', 'url(#' + window.location.href + `/triangle_${color})`)
-                })
+                });
 
             var node = svg.append('g')
                 .attr('class', 'node')
@@ -203,9 +200,9 @@ class GraphView extends React.Component {
                     return d.color
                 })
                 .call(d3.drag()
-                    .on('drag', drag_node))
+                    .on('drag', drag_node));
 
-            var labelOffset = 5
+            var labelOffset = 5;
             var label = svg.append('g')
                 .attr('class', 'label')
                 .selectAll('text')
@@ -224,19 +221,19 @@ class GraphView extends React.Component {
                     return d.name
                 })
                 .call(d3.drag()
-                    .on('drag', drag_node))
+                    .on('drag', drag_node));
 
             function offset_point(x1, y1, x2, y2, nodeWidth, nodeHeight) {
-                var adjusted_x = x2 - x1
-                var adjusted_y = y2 - y1
-                var dist_between_centers = Math.sqrt(adjusted_x ** 2 + adjusted_y ** 2)
-                var phi = Math.atan2(adjusted_y, adjusted_x)
-                var a = nodeWidth
-                var b = nodeHeight
-                var radius_at_point = a * b / Math.sqrt(a ** 2 * Math.sin(phi) ** 2 + b ** 2 * Math.cos(phi) ** 2)
-                var e_radius = dist_between_centers - radius_at_point - 5
-                var new_x = (e_radius * Math.cos(phi) + x1)
-                var new_y = (e_radius * Math.sin(phi) + y1)
+                var adjusted_x = x2 - x1;
+                var adjusted_y = y2 - y1;
+                var dist_between_centers = Math.sqrt(adjusted_x ** 2 + adjusted_y ** 2);
+                var phi = Math.atan2(adjusted_y, adjusted_x);
+                var a = nodeWidth;
+                var b = nodeHeight;
+                var radius_at_point = a * b / Math.sqrt(a ** 2 * Math.sin(phi) ** 2 + b ** 2 * Math.cos(phi) ** 2);
+                var e_radius = dist_between_centers - radius_at_point - 5;
+                var new_x = (e_radius * Math.cos(phi) + x1);
+                var new_y = (e_radius * Math.sin(phi) + y1);
                 return {
                     x: new_x,
                     y: new_y
@@ -244,16 +241,15 @@ class GraphView extends React.Component {
             }
 
             var view_rect = document.querySelector('.graph-view')
-                .getBoundingClientRect()
+                .getBoundingClientRect();
             var graph_rect = document.querySelector('g.node')
-                .getBBox()
-            var widthOffset = (view_rect.width / 2) - (graph_rect.width / 2)
-            var heightOffset = (view_rect.height / 2) - (graph_rect.height / 2)
-
+                .getBBox();
+            var widthOffset = (view_rect.width / 2) - (graph_rect.width / 2);
+            var heightOffset = (view_rect.height / 2) - (graph_rect.height / 2);
             self.props.graph.objects.forEach(function (d) {
-                d.x = (view_rect.width * 0.95) * (d.x / (self.props.graph.max_x))
+                d.x = (view_rect.width * 0.95) * (d.x / (self.props.graph.max_x));
                 d.y = (view_rect.height * 0.95) * (d.y / (self.props.graph.max_y))
-            })
+            });
 
             node
                 .attr('cx', function (d) {
@@ -261,18 +257,18 @@ class GraphView extends React.Component {
                 })
                 .attr('cy', function (d) {
                     return d.y
-                })
+                });
 
             graph_rect = document.querySelector('g.node')
-                .getBBox()
-            widthOffset = graph_rect.x - ((view_rect.width / 2) - (graph_rect.width / 2))
-            heightOffset = (view_rect.height / 2) - (graph_rect.height / 2)
+                .getBBox();
+            widthOffset = graph_rect.x - ((view_rect.width / 2) - (graph_rect.width / 2));
+            heightOffset = (view_rect.height / 2) - (graph_rect.height / 2);
 
             self.props.graph.objects.forEach(function (d) {
-                    d.x -= widthOffset
+                    d.x -= widthOffset;
                     d.y = view_rect.height - (d.y + heightOffset)
                 }
-            )
+            );
 
             node
                 .attr('cx', function (d) {
@@ -280,7 +276,7 @@ class GraphView extends React.Component {
                 })
                 .attr('cy', function (d) {
                     return d.y
-                })
+                });
 
             label
                 .attr('x', function (d) {
@@ -288,22 +284,22 @@ class GraphView extends React.Component {
                 })
                 .attr('y', function (d) {
                     return d.y + labelOffset
-                })
+                });
 
-            var labels = Array.from(d3.selectAll('g.label text')._groups[0])
-            var nodes = Array.from(d3.selectAll('g.node ellipse')._groups[0])
+            var labels = Array.from(d3.selectAll('g.label text')._groups[0]);
+            var nodes = Array.from(d3.selectAll('g.node ellipse')._groups[0]);
             var node_label_arrays = nodes.map(function (e, i) {
                 return [e, labels[i]]
-            })
-            var node_label_mapping = {}
+            });
+            var node_label_mapping = {};
             node_label_arrays.forEach(function (e) {
-                node_label_mapping[e[0]] = e[1]
-                var ellipseWidth = d3.select(e[0]).attr('rx')
-                var labelWidth = e[1].getBBox().width
+                node_label_mapping[e[0]] = e[1];
+                var ellipseWidth = d3.select(e[0]).attr('rx');
+                var labelWidth = e[1].getBBox().width;
                 if (labelWidth >= ellipseWidth) {
                     d3.select(e[0]).attr('rx', labelWidth)
                 }
-            })
+            });
 
             edge
                 .attr('x1', function (d) {
@@ -326,7 +322,7 @@ class GraphView extends React.Component {
                             return n === d.head
                         })
                             .attr('ry')
-                    ).x
+                    ).x;
                     return x2
                     // return d.head.x
                 })
@@ -344,34 +340,34 @@ class GraphView extends React.Component {
                             return n === d.head
                         })
                             .attr('ry')
-                    ).y
+                    ).y;
                     return y2
                     // return d.head.y
                 });
 
             function drag_node(d) {
                 let graph_dimensions = document.querySelector('.graph-view .graph')
-                    .getBoundingClientRect()
+                    .getBoundingClientRect();
 
                 var width = parseFloat(node.filter((n) => {
                         return n === d
                     }
-                ).attr('rx'))
+                ).attr('rx'));
 
                 var height = parseFloat(node.filter((n) => {
                         return n === d
                     }
-                ).attr('ry'))
+                ).attr('ry'));
 
                 let bounds = {
                     x_min: width,
                     x_max: graph_dimensions.width - width,
                     y_min: height,
                     y_max: graph_dimensions.height - height
-                }
+                };
 
-                d.x = d3.event.x
-                d.y = d3.event.y
+                d.x = d3.event.x;
+                d.y = d3.event.y;
                 if (d.x < bounds.x_min) {
                     d.x = bounds.x_min
                 } else if (d.x > bounds.x_max) {
@@ -386,13 +382,13 @@ class GraphView extends React.Component {
                     return n === d
                 })
                     .attr('cx', d.x)
-                    .attr('cy', d.y)
+                    .attr('cy', d.y);
 
                 label.filter(function (l) {
                     return l === d
                 })
                     .attr('x', d.x)
-                    .attr('y', d.y + labelOffset)
+                    .attr('y', d.y + labelOffset);
 
                 edge.filter(function (l) {
                     return l.tail === d
@@ -413,7 +409,7 @@ class GraphView extends React.Component {
                                 return n === d.head
                             })
                                 .attr('ry')
-                        ).x
+                        ).x;
                         return x2
                     })
                     .attr('y2', function (d) {
@@ -430,9 +426,9 @@ class GraphView extends React.Component {
                                 return n === d.head
                             })
                                 .attr('ry')
-                        ).y
+                        ).y;
                         return y2
-                    })
+                    });
 
                 edge.filter(function (l) {
                     return l.head === d
@@ -451,7 +447,7 @@ class GraphView extends React.Component {
                                 return n === d.head
                             })
                                 .attr('ry')
-                        ).x
+                        ).x;
                         return x2
                     })
                     .attr('y2', function (d) {
@@ -468,7 +464,7 @@ class GraphView extends React.Component {
                                 return n === d.head
                             })
                                 .attr('ry')
-                        ).y
+                        ).y;
                         return y2
                     })
 
