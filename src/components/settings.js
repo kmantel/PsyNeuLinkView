@@ -2,6 +2,7 @@ import * as React from 'react'
 import {Dialog, Tree, EditableText, Spinner, Callout, Icon} from '@blueprintjs/core'
 import Layout from "./layout";
 import '../css/settings.css'
+import IndicatorLight from "./indicator_light";
 import {Resizable} from "re-resizable";
 import ResizableDialog from "./resizable_dialog"
 
@@ -141,18 +142,8 @@ class SettingsPane extends React.Component {
                     />
                 </div>,
                 <div key={keys.interpreterPathIndicator}>
-                    <Icon
-                        icon={'tick-circle'}
-                        color={'green'}
-                        icon={'help'}
-                        color={'gray'}
-                        icon={'error'}
-                        color={'red'}
-                    />
-                    {/*<Spinner*/}
-                    {/*    small={true}*/}
-                    {/*    size={Spinner.SIZE_SMALL}*/}
-                    {/*/>*/}
+                    <IndicatorLight
+                        status={'unsure'}/>
                 </div>,
                 <div key={keys.pnlPathLabel}>
                     {'PsyNeuLink Path'}

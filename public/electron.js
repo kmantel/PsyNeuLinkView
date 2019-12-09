@@ -5,9 +5,10 @@ const fixpath = require('fix-path');
 const BrowserWindow = electron.BrowserWindow;
 const path = require('path');
 const isDev = require('electron-is-dev');
-const {spawn, spawnSync, execSync} = require('child_process');
+const {spawn, spawnSync, exec, execSync} = require('child_process');
 const fs = require('fs');
 const os = require('os');
+// var { RPCInterface } = require('/Users/ds70/WebstormProjects/PsyNeuLinkView/src/utility/rpc/rpc_interface.js');
 var adjusted_app_path;
 isDev ? adjusted_app_path = app_path : adjusted_app_path = path.join(app_path, '../app.asar.unpacked');
 exports.app_path = adjusted_app_path;
@@ -21,8 +22,9 @@ let mainWindow;
 //TODO: figure out way around fixpath dependency
 fixpath();
 
-class RPCServerMaintainer {
+class RPCInterface {
     constructor() {
+        this.app_path = app_path;
         this.config_edited = false;
         os.platform() === 'win32' ?
             this.config_filedir = path.join(os.homedir(), 'AppData', 'PsyNeuLinkView')
@@ -50,8 +52,8 @@ class RPCServerMaintainer {
         return user_obj
     }
 
-    create_new_config(){
-        if (!fs.existsSync(this.config_filedir)){
+    create_new_config() {
+        if (!fs.existsSync(this.config_filedir)) {
             fs.mkdirSync(this.config_filedir)
         }
         fs.writeFileSync(this.config_filepath, JSON.stringify({}))
@@ -62,102 +64,90 @@ class RPCServerMaintainer {
             this.create_new_config()
         }
         var config_current = require(this.config_filepath);
-        var config_template_filepath = path.join(adjusted_app_path, 'config_template.json');
+        var config_template_filepath = path.join(this.app_path, 'config_template.json');
         var config_template = require(config_template_filepath);
         this.config = this.obj_key_copy(config_template, config_current);
         if (this.config_edited) {
-            var cf_client_module = require(path.join(adjusted_app_path, 'src/utility/config/config_client.js'));
+            var cf_client_module = require(path.join(this.app_path, 'src/utility/config/config_client.js'));
             var cf_client = new cf_client_module.ConfigClient(this.config_filepath);
             cf_client.set_config(this.config);
         }
     }
 
-    child_proc = null;
-
-    get_env_name(env_path, conda_binary_path) {
-        var env_name;
-        var env_path_len = env_path.length;
-        var envs = decodeURIComponent(
-            escape(
-                execSync(
-                    `source ${conda_binary_path} && conda env list`
-                )
-            )
-        ).split('\n');
-        for (var i in envs) {
-            var i_len = envs[i].length;
-            if (i_len >= env_path_len) {
-                if (envs[i].slice(i_len - env_path_len - 1, i_len) == ` ${env_path}`) {
-                    var env_name_re = new RegExp(/\w*/);
-                    var env_name = envs[i].match(env_name_re)[0];
-                    return env_name;
-                }
-            }
-        }
-    };
-
-    get_conda_env_dir(interpreter_path) {
+    check_conda(interpreter_path) {
         var interpreter_dir = path.dirname(interpreter_path);
+        var path_to_check;
         if (os.platform() === 'win32') {
-            if (fs.existsSync(path.join(interpreter_dir, 'conda-meta'))) {
-                return interpreter_dir;
-            }
+            path_to_check = path.join(interpreter_dir, 'conda-meta')
         } else {
-            if (fs.existsSync(path.join(interpreter_dir, '..', 'conda-meta'))) {
-                return path.join(interpreter_dir, '..');
-            }
+            path_to_check = path.join(interpreter_dir, '..', 'conda-meta')
         }
+        fs.stat(path_to_check,
+            (err, stat) => {
+                if (!stat) {
+                    this.execute_script('',interpreter_path)
+                } else {
+                    this.find_conda_binary(interpreter_path)
+                }
+            });
         return false
     }
 
-    check_for_base_env(env_name, conda_binary_path) {
-
-    }
-
-    find_conda_binary(filepath) {
-        return fs.existsSync(
-            path.join(path.dirname(filepath),'..','etc','profile.d','conda.sh')
-        ) ?
-            path.join(path.dirname(filepath),'..','etc','profile.d','conda.sh')
-            :
-            fs.existsSync(
-                path.join(path.dirname(filepath),'..')
-            ) && path.join(path.dirname(filepath),'..') !== path.dirname(filepath)
-                ? this.find_conda_binary( path.join(path.dirname(filepath),'..') ) :
-                false
-    }
-
-
-
-    spawn_rpc_server() {
-        var config = require(this.config_filepath);
-        var py_int_path = config.Python['Interpreter Path'];
-        var pnl_path = config.Python['PsyNeuLink Path'];
-        var self = this;
-        var conda_prefix;
-        var conda_binary_path = false;
-        var conda_env_dir = this.get_conda_env_dir(py_int_path);
-        if (conda_env_dir) {
-            conda_binary_path = this.find_conda_binary(py_int_path)
+    find_conda_binary(original_interpreter_path, path_to_check='') {
+        if (!path_to_check){
+            path_to_check = path.join(original_interpreter_path, '..');
         }
-        console.log(conda_env_dir, conda_binary_path);
-        var conda_env_name = this.get_env_name(conda_env_dir, conda_binary_path);
-        console.log('env name', conda_env_dir);
-        conda_binary_path ?
-            os.platform() === 'win32' ?
-                conda_prefix = '' +
-                    `${path.resolve(path.join(path.dirname(py_int_path), '..', '..', 'Scripts', 'activate.bat'))} && ` +
-                    `conda activate ${conda_env_name} && `
-                :
-                conda_prefix = '' +
-                    `source ${conda_binary_path} && ` +
-                    `conda activate ${conda_env_name} && `
-            :
-            conda_prefix = '';
-        log.debug(conda_prefix + py_int_path);
-        this.child_proc = spawn(conda_prefix + py_int_path,
-            ['-u', path.join(adjusted_app_path, '/src/py/rpc_server.py'),
-                pnl_path], {
+        var one_level_up = path.join(path_to_check, '..');
+        var possible_conda_binary = path.join(path_to_check, 'etc', 'profile.d', 'conda.sh');
+        fs.stat(possible_conda_binary,
+            (err, stat) => {
+                if (!stat) {
+                    if (!(one_level_up === path_to_check)) {
+                        this.find_conda_binary(original_interpreter_path, one_level_up)
+                    }
+                } else {
+                    this.find_env_name(original_interpreter_path, possible_conda_binary)
+                }
+            })
+    }
+
+    find_env_name(interpreter_path, binary_path) {
+        var interpreter_dir = path.dirname(interpreter_path);
+        var path_to_check = path.join(interpreter_dir, '..');
+        var env_path_len = path_to_check.length;
+        var binary_path = binary_path;
+        exec(`source ${binary_path} && conda env list`,
+            (err, stdout, stderr) => {
+                var envs = stdout.split('\n');
+                for (var i in envs) {
+                    var i_len = envs[i].length;
+                    if (i_len >= env_path_len) {
+                        if (envs[i].slice(i_len - env_path_len - 1, i_len) == ` ${path_to_check}`) {
+                            var env_name_re = new RegExp(/\w*/);
+                            var env_name = envs[i].match(env_name_re)[0];
+                            this.construct_prefix(env_name, binary_path, interpreter_path);
+                        }
+                    }
+                }
+            }
+        )
+    }
+
+    construct_prefix(env_name, binary_path, interpreter_path){
+        var interpreter_path = interpreter_path
+        var conda_prefix = '' +
+            `source ${binary_path} && ` +
+            `conda activate ${env_name} && `;
+        this.execute_script(
+            conda_prefix, interpreter_path
+        )
+    }
+
+    execute_script(prefix = '', interpreter_path) {
+        console.log(prefix, interpreter_path);
+        this.child_proc = spawn(prefix + interpreter_path,
+            ['-u','/Users/ds70/WebstormProjects/PsyNeuLinkView/src/py/rpc_server.py',
+                ''], {
                 shell: true,
                 detached: false
             });
@@ -171,7 +161,13 @@ class RPCServerMaintainer {
         this.child_proc.stderr.setEncoding('utf8');
         this.child_proc.stderr.on('data', function (data) {
             log.debug('py stdout:' + data);
-            });
+        });
+    }
+
+    spawn_rpc_server() {
+        var config = require(this.config_filepath);
+        var py_int_path = config.Python['Interpreter Path'];
+        this.check_conda(py_int_path);
     }
 
     kill_rpc_server(child_proc = this.child_proc) {
@@ -194,7 +190,7 @@ class RPCServerMaintainer {
     }
 }
 
-var server_maintainer = new RPCServerMaintainer();
+var server_maintainer = new RPCInterface(app_path);
 
 function restart_rpc_server() {
     server_maintainer.restart_rpc_server()

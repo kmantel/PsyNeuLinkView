@@ -24,7 +24,8 @@ export default class Workspace extends React.Component {
             rowTwoHorizontalFactor: Math.ceil(w / 5),
             verticalFactor: Math.ceil(h * 0.7),
             graph: null,
-            show_settings: false
+            show_settings: false,
+            mouse:null
         };
         this.dispatcher = new ErrorDispatcher(this);
         this.container = {};
@@ -37,6 +38,7 @@ export default class Workspace extends React.Component {
         this.componentDidMount = this.componentDidMount.bind(this);
         this.validate_server_status_and_load_script = this.validate_server_status_and_load_script.bind(this);
         this.handleErrors = this.handleErrors.bind(this);
+        this.saveMouseData = this.saveMouseData.bind(this);
         this.setMenu();
     }
 
@@ -227,10 +229,10 @@ export default class Workspace extends React.Component {
     }
 
     async validate_server_status_and_load_script(filepath) {
+        var self = this;
         self.setState({graph: "loading"});
         window.electron_root.addRecentDocument(filepath);
         window.electron_root.restart_rpc_server();
-        var self = this;
         if (
             await self.validate_server_status(
                 2000,
@@ -303,7 +305,7 @@ export default class Workspace extends React.Component {
     }
 
     componentWillUnmount() {
-        window.removeEventListener('mousemove');
+        window.removeEventListener('mousemove', this.saveMouseData);
         window.removeEventListener('mousedown');
         window.removeEventListener('mouseup');
         window.removeEventListener('resize');
@@ -311,12 +313,10 @@ export default class Workspace extends React.Component {
     }
 
     componentWillMount() {
+        window.addEventListener('mousemove', this.saveMouseData
+        );
         window.addEventListener('mousedown', (e) => {
                 this.mouse_status = 'down'
-            }
-        );
-        window.addEventListener('mousemove', (e) => {
-                this.setState({mouse: e})
             }
         );
         window.addEventListener('mouseup', (e) => {
@@ -326,6 +326,10 @@ export default class Workspace extends React.Component {
         window.addEventListener('keydown', (e) => {
         });
         window.addEventListener('resize', this.window_resize)
+    }
+
+    saveMouseData(e) {
+        this.setState({mouse: e})
     }
 
     toggleDialog = () => {
