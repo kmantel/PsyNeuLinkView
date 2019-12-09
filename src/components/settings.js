@@ -1,7 +1,8 @@
 import * as React from 'react'
-import {Dialog, Tree, EditableText, Callout, Icon} from '@blueprintjs/core'
+import {Dialog, Tree, EditableText, Spinner, Callout, Icon} from '@blueprintjs/core'
 import Layout from "./layout";
 import '../css/settings.css'
+import IndicatorLight from "./indicator_light";
 import {Resizable} from "re-resizable";
 import ResizableDialog from "./resizable_dialog"
 
@@ -42,10 +43,12 @@ class SettingsPane extends React.Component {
     }
 
     handleNodeClick = (nodeData, _nodePath, e) => {
-        this.forEachNode(this.state.nodes, n => (n.isSelected = false));
-        nodeData.isSelected = true;
-        this.setState(this.state);
-        this.setState({"selectedCat": nodeData.id});
+        if (this.generateSettingsPage(nodeData.label)){
+            this.forEachNode(this.state.nodes, n => (n.isSelected = false));
+            nodeData.isSelected = true;
+            this.setState(this.state);
+            this.setState({"selectedCat": nodeData.id});
+        }
     };
 
     handleNodeCollapse = (nodeData) => {
@@ -82,14 +85,25 @@ class SettingsPane extends React.Component {
             return current_id
         }
 
+        var keys = {
+            'interpreterPathLabel': '0',
+            'interpreterPathField': '1',
+            'interpreterPathIcon': '2',
+            'interpreterPathIndicator': '3',
+            'pnlPathLabel': '4',
+            'pnlPathField': '5',
+            'pnlPathIcon': '6',
+            'pnlPathIndicator': '7'
+        };
+
         var current_config = {...this.state.config};
         var categories = Object.keys(current_config);
         categories['Python'] = {
             'components': [
-                <div key={'id_1'}>
+                <div key={keys.interpreterPathLabel}>
                     {'Interpreter Path'}
                 </div>,
-                <div key={'id_2'}>
+                <div key={keys.interpreterPathField}>
                     <div className={'sizer'}>
                         <EditableText
                             placeholder={'location of Python interpreter executable file'}
@@ -105,7 +119,7 @@ class SettingsPane extends React.Component {
                         />
                     </div>
                 </div>,
-                <div key={'id_3'}>
+                <div key={keys.interpreterPathIcon}>
                     <Icon
                         icon={"folder-open"}
                         color={"gray"}
@@ -120,7 +134,7 @@ class SettingsPane extends React.Component {
                                 }
                             ).then((paths) => {
                                 var pathArray = paths.filePaths;
-                                if (pathArray.length > 0){
+                                if (pathArray.length > 0) {
                                     current_config['Python']['Interpreter Path'] = paths.filePaths[0];
                                     self.setState({config: current_config});
                                     config_client.set_config(current_config);
@@ -129,10 +143,14 @@ class SettingsPane extends React.Component {
                         }}
                     />
                 </div>,
-                <div key={'id_4'}>
+                <div key={keys.interpreterPathIndicator}>
+                    {/*<IndicatorLight*/}
+                    {/*    status={'unsure'}/>*/}
+                </div>,
+                <div key={keys.pnlPathLabel}>
                     {'PsyNeuLink Path'}
                 </div>,
-                <div key={'id_5'}>
+                <div key={keys.pnlPathField}>
                     <div className={'sizer'}>
                         <EditableText
                             placeholder={'location of PsyNeuLink directory (if not in Python site packages)'}
@@ -149,7 +167,7 @@ class SettingsPane extends React.Component {
                         />
                     </div>
                 </div>,
-                <div key={'id_6'}>
+                <div key={keys.pnlPathIcon}>
                     <Icon
                         icon={"folder-open"}
                         color={"gray"}
@@ -176,42 +194,50 @@ class SettingsPane extends React.Component {
             ],
             'layout': [
                 {
-                    i: 'id_1',
+                    i: keys.interpreterPathLabel,
                     x: 0,
                     y: 0,
                     w: 150,
                     h: 1
                 },
                 {
-                    i: 'id_2',
+                    i: keys.interpreterPathField,
                     x: 150,
                     y: 0,
                     w: 400,
                     h: 1
                 },
                 {
-                    i: 'id_3',
-                    x: 580,
+                    i: keys.interpreterPathIcon,
+                    x: 560,
                     y: 0,
-                    h: 1
+                    h: 1,
+                    w: 20
                 },
                 {
-                    i: 'id_4',
+                    i: keys.interpreterPathIndicator,
+                    x: 600,
+                    y: 0,
+                    h: 1,
+                    w: 20
+                },
+                {
+                    i: keys.pnlPathLabel,
                     x: 0,
                     y: 1,
                     w: 150,
                     h: 1
                 },
                 {
-                    i: 'id_5',
+                    i: keys.pnlPathField,
                     x: 150,
                     y: 1,
                     w: 400,
                     h: 1
                 },
                 {
-                    i: 'id_6',
-                    x: 580,
+                    i: keys.pnlPathIcon,
+                    x: 560,
                     y: 1,
                     h: 1
                 },
@@ -240,12 +266,12 @@ class SettingsPane extends React.Component {
                 />
             </div>,
             <div key="b">
-                <div className={'options_panel'} style={{'width': '620', 'height': '100%'}}>
+                <div className={'options_panel'} style={{'width': '700', 'height': '100%'}}>
                     <Layout
                         className={'options_grid'}
                         margin={[0, 0]}
-                        cols={620}
-                        width={620}
+                        cols={700}
+                        width={700}
                         rowHeight={25}
                         components={components}
                         layout={layout}
@@ -261,14 +287,14 @@ class SettingsPane extends React.Component {
                     self.props.toggleDialog()
                 }}
                 title="Preferences"
-                style={{"width": 800}}
+                style={{"width": 840}}
                 usePortal={true}
             >
                 <Layout
                     className={'workspace_grid'}
                     margin={[0, 0]}
-                    cols={780}
-                    width={780}
+                    cols={820}
+                    width={820}
                     rowHeight={400}
                     components={components}
                     layout={[
@@ -283,7 +309,7 @@ class SettingsPane extends React.Component {
                             i: 'b',
                             x: 160,
                             y: 0,
-                            w: 620,
+                            w: 660,
                             h: 1
                         },
                     ]}

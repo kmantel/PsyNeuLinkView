@@ -1,29 +1,12 @@
-const electron = require('electron');
-const app = electron.app;
-const app_path = app.getAppPath();
-const fixpath = require('fix-path');
-const BrowserWindow = electron.BrowserWindow;
-const path = require('path');
-const isDev = require('electron-is-dev');
 const {spawn, spawnSync, exec, execSync} = require('child_process');
-const fs = require('fs');
+const log = require('electron-log');
+const path = require('path');
 const os = require('os');
-// var { RPCInterface } = require('/Users/ds70/WebstormProjects/PsyNeuLinkView/src/utility/rpc/rpc_interface.js');
-var adjusted_app_path;
-isDev ? adjusted_app_path = app_path : adjusted_app_path = path.join(app_path, '../app.asar.unpacked');
-exports.app_path = adjusted_app_path;
-var log = require('electron-log');
+const fs = require('fs');
 
-exports.isDev = isDev;
-log.transports.console.level = "debug";
-
-let mainWindow;
-
-//TODO: figure out way around fixpath dependency
-fixpath();
 
 class RPCInterface {
-    constructor() {
+    constructor(app_path) {
         this.app_path = app_path;
         this.config_edited = false;
         os.platform() === 'win32' ?
@@ -74,6 +57,61 @@ class RPCInterface {
         }
     }
 
+    child_proc = null;
+
+    get_env_name(env_path, conda_binary_path) {
+        var env_name;
+        var env_path_len = env_path.length;
+        var envs = decodeURIComponent(
+            escape(
+                execSync(
+                    `source ${conda_binary_path} && conda env list`
+                )
+            )
+        ).split('\n');
+        for (var i in envs) {
+            var i_len = envs[i].length;
+            if (i_len >= env_path_len) {
+                if (envs[i].slice(i_len - env_path_len - 1, i_len) == ` ${env_path}`) {
+                    var env_name_re = new RegExp(/\w*/);
+                    var env_name = envs[i].match(env_name_re)[0];
+                    return env_name;
+                }
+            }
+        }
+    };
+
+    get_conda_env_dir(interpreter_path) {
+        var interpreter_dir = path.dirname(interpreter_path);
+        if (os.platform() === 'win32') {
+            if (fs.existsSync(path.join(interpreter_dir, 'conda-meta'))) {
+                return interpreter_dir;
+            }
+        } else {
+            if (fs.existsSync(path.join(interpreter_dir, '..', 'conda-meta'))) {
+                return path.join(interpreter_dir, '..');
+            }
+        }
+        return false
+    }
+
+    check_for_base_env(env_name, conda_binary_path) {
+
+    }
+
+    find_conda_binarySync(filepath) {
+        return fs.existsSync(
+            path.join(path.dirname(filepath), '..', 'etc', 'profile.d', 'conda.sh')
+        ) ?
+            path.join(path.dirname(filepath), '..', 'etc', 'profile.d', 'conda.sh')
+            :
+            fs.existsSync(
+                path.join(path.dirname(filepath), '..')
+            ) && path.join(path.dirname(filepath), '..') !== path.dirname(filepath)
+                ? this.find_conda_binarySync(path.join(path.dirname(filepath), '..')) :
+                false
+    }
+
     check_conda(interpreter_path) {
         var interpreter_dir = path.dirname(interpreter_path);
         var path_to_check;
@@ -85,7 +123,7 @@ class RPCInterface {
         fs.stat(path_to_check,
             (err, stat) => {
                 if (!stat) {
-                    this.execute_script('', interpreter_path)
+                    this.execute_script('',interpreter_path)
                 } else {
                     this.find_conda_binary(interpreter_path)
                 }
@@ -93,8 +131,8 @@ class RPCInterface {
         return false
     }
 
-    find_conda_binary(original_interpreter_path, path_to_check = '') {
-        if (!path_to_check) {
+    find_conda_binary(original_interpreter_path, path_to_check='') {
+        if (!path_to_check){
             path_to_check = path.join(original_interpreter_path, '..');
         }
         var one_level_up = path.join(path_to_check, '..');
@@ -133,7 +171,7 @@ class RPCInterface {
         )
     }
 
-    construct_prefix(env_name, binary_path, interpreter_path) {
+    construct_prefix(env_name, binary_path, interpreter_path){
         var interpreter_path = interpreter_path
         var conda_prefix = '' +
             `source ${binary_path} && ` +
@@ -144,14 +182,10 @@ class RPCInterface {
     }
 
     execute_script(prefix = '', interpreter_path) {
-        var pnl_path = this.config['Python']['PsyNeuLink Path'];
-        pnl_path = pnl_path ? pnl_path : '';
         console.log(prefix, interpreter_path);
         this.child_proc = spawn(prefix + interpreter_path,
-            ['-u',
-                path.join(adjusted_app_path, 'src', 'py', 'rpc_server.py'),
-                pnl_path
-            ], {
+            ['-u','/Users/ds70/WebstormProjects/PsyNeuLinkView/src/py/rpc_server.py',
+                ''], {
                 shell: true,
                 detached: false
             });
@@ -194,55 +228,4 @@ class RPCInterface {
     }
 }
 
-var server_maintainer = new RPCInterface(app_path);
-
-function restart_rpc_server() {
-    server_maintainer.restart_rpc_server()
-}
-
-function createWindow() {
-    const {width, height} = electron.screen.getPrimaryDisplay().workAreaSize;
-    mainWindow = new BrowserWindow({
-        width: width,
-        height: height,
-        webPreferences: {
-            nodeIntegration: true,
-            preload: path.join(isDev ? __dirname : `${adjusted_app_path}/build/`, 'preload.js')
-        }
-    });
-    mainWindow.loadURL(isDev ? 'http://localhost:3000' : `file://${path.join(adjusted_app_path, 'build/index.html')}`);
-    mainWindow.on('closed', () => {
-            server_maintainer.kill_rpc_server();
-            app.quit();
-        }
-    );
-    mainWindow.on("uncaughtException", (err) => {
-            electron.dialog.showErrorBox(
-                'error',
-                err.message
-            )
-        }
-    );
-}
-
-app.on('ready', function () {
-    createWindow();
-});
-
-app.on('window-all-closed', () => {
-    server_maintainer.kill_rpc_server();
-    app.quit();
-});
-
-app.on('quit', () => {
-    try {
-        server_maintainer.kill_rpc_server();
-        app.quit()
-    } catch {
-        console.log('FAILED TO END CHILD PROCESS')
-    }
-});
-
-exports.restart_rpc_server = restart_rpc_server;
-exports.app_path = adjusted_app_path;
-exports.addRecentDocument = app.addRecentDocument;
+exports.RPCInterface = RPCInterface;
