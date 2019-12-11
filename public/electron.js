@@ -8,7 +8,6 @@ const isDev = require('electron-is-dev');
 const {spawn, spawnSync, exec, execSync} = require('child_process');
 const fs = require('fs');
 const os = require('os');
-// var { RPCInterface } = require('/Users/ds70/WebstormProjects/PsyNeuLinkView/src/utility/rpc/rpc_interface.js');
 var adjusted_app_path;
 isDev ? adjusted_app_path = app_path : adjusted_app_path = path.join(app_path, '../app.asar.unpacked');
 exports.app_path = adjusted_app_path;
@@ -76,7 +75,39 @@ class RPCInterface {
         }
     }
 
-    check_conda(interpreter_path) {
+    spawn_rpc_server() {
+        console.log('spawn');
+        var config = require(this.config_filepath);
+        var py_int_path = config.Python['Interpreter Path'];
+        this.check_conda(py_int_path,
+            (err, stat, interpreter_path) => {
+                if (!stat) {
+                    this.execute_script('', interpreter_path)
+                } else {
+                    this.find_conda_binary(
+                        interpreter_path,
+                        (err, stat, one_level_up, path_to_check, original_interpreter_path, possible_conda_binary) => {
+                            if (one_level_up === path_to_check) {
+                                this.execute_script(original_interpreter_path)
+                            } else {
+                                this.find_env_name(original_interpreter_path, possible_conda_binary,
+                                    (err, stdout, stderr, env_name, binary_path, interpreter_path) => {
+                                        this.construct_prefix(env_name, binary_path, interpreter_path,
+                                            (conda_prefix, interpreter_path) => {
+                                                this.execute_script(conda_prefix, interpreter_path)
+                                            }
+                                        );
+                                    }
+                                )
+                            }
+                        }
+                    )
+                }
+            }
+        );
+    }
+
+    check_conda(interpreter_path, callback) {
         var interpreter_dir = path.dirname(interpreter_path);
         var path_to_check;
         if (isWin) {
@@ -96,16 +127,12 @@ class RPCInterface {
 
         fs.stat(path_to_check,
             (err, stat) => {
-                if (!stat) {
-                    this.execute_script('', interpreter_path)
-                } else {
-                    this.find_conda_binary(interpreter_path)
-                }
+                callback(err, stat, interpreter_path);
             });
         return false
     }
 
-    find_conda_binary(original_interpreter_path, path_to_check = '') {
+    find_conda_binary(original_interpreter_path, callback, path_to_check = '') {
         if (!path_to_check) {
             path_to_check = path.join(original_interpreter_path, '..');
         }
@@ -127,20 +154,17 @@ class RPCInterface {
 
         fs.stat(possible_conda_binary,
             (err, stat) => {
-                if (!stat) {
+                if (!stat && !(one_level_up === path_to_check)) {
                     if (!(one_level_up === path_to_check)) {
-                        this.find_conda_binary(original_interpreter_path, one_level_up)
-                    }
-                    else {
-                        this.execute_script(original_interpreter_path)
+                        this.find_conda_binary(original_interpreter_path, callback, one_level_up)
                     }
                 } else {
-                    this.find_env_name(original_interpreter_path, possible_conda_binary)
+                    callback(err, stat, one_level_up, path_to_check, original_interpreter_path, possible_conda_binary);
                 }
             })
     }
 
-    find_env_name(interpreter_path, binary_path) {
+    find_env_name(interpreter_path, binary_path, callback) {
         var interpreter_dir = path.dirname(interpreter_path);
         var path_to_check = path.join(interpreter_dir, '..');
         var env_path_len = path_to_check.length;
@@ -169,7 +193,7 @@ class RPCInterface {
                         if (envs[i].slice(i_len - env_path_len - 1, i_len) == ` ${path_to_check}`) {
                             var env_name_re = new RegExp(/\w*/);
                             var env_name = envs[i].match(env_name_re)[0];
-                            this.construct_prefix(env_name, binary_path, interpreter_path);
+                            callback(err, stdout, stderr, env_name, binary_path, interpreter_path);
                         }
                     }
                 }
@@ -177,7 +201,7 @@ class RPCInterface {
         )
     }
 
-    construct_prefix(env_name, binary_path, interpreter_path) {
+    construct_prefix(env_name, binary_path, interpreter_path, callback) {
         var interpreter_path = interpreter_path
         var conda_prefix = '' +
             `source ${binary_path} && ` +
@@ -192,9 +216,7 @@ class RPCInterface {
             `conda_prefix: ${conda_prefix}`
         );
 
-        this.execute_script(
-            conda_prefix, interpreter_path
-        )
+        callback(conda_prefix, interpreter_path);
     }
 
     execute_script(prefix = '', interpreter_path) {
@@ -244,13 +266,6 @@ class RPCInterface {
         this.child_proc.stderr.on('data', function (data) {
             log.debug('py stdout:' + data);
         });
-    }
-
-    spawn_rpc_server() {
-        console.log('spawn');
-        var config = require(this.config_filepath);
-        var py_int_path = config.Python['Interpreter Path'];
-        this.check_conda(py_int_path);
     }
 
     kill_rpc_server() {
