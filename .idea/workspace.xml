@@ -2,13 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="00985d93-5b94-4b5c-82f7-e7117ff7b2e0" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/css/indicatorlight.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/py/validate_interpreter.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/electron.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/electron.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/indicator_light.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/indicator_light.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/settings.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/settings.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/workspace.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/workspace.js" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -59,7 +53,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1576083903803</updated>
-      <workItem from="1576083906384" duration="9766000" />
+      <workItem from="1576083906384" duration="10275000" />
     </task>
     <servers />
   </component>

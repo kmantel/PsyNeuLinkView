@@ -266,7 +266,7 @@ class RPCInterface {
                 [prefix + interpreter_path,
                     [
                         '-u',
-                        path.join(adjusted_app_path, 'src', 'py', 'rpc_server.py'),
+                        `"${path.join(adjusted_app_path, 'src', 'py', 'rpc_server.py')}"`,
                         pnl_path
                     ]
                 ]
@@ -275,7 +275,7 @@ class RPCInterface {
         this.child_proc = spawn(prefix + interpreter_path,
             [
                 '-u',
-                path.join(adjusted_app_path, 'src', 'py', 'rpc_server.py'),
+                `"${path.join(adjusted_app_path, 'src', 'py', 'rpc_server.py')}"`,
                 pnl_path
             ],
             {
