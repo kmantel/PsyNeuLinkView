@@ -151,6 +151,7 @@ export default class Workspace extends React.Component {
                 ]
             }
         ).then((paths) => {
+                console.log('hm');
                 var pathArray = paths.filePaths;
                 if (pathArray.length > 0) {
                     self.validate_server_status_and_load_script(pathArray[0])
@@ -188,7 +189,7 @@ export default class Workspace extends React.Component {
     }
 
     load_script(filepath) {
-        var rpc_client = new window.rpc.rpc_client(proto_path, window.modulePath);
+        // var rpc_client = new window.rpc.rpc_client(proto_path, window.modulePath);
         var self = this;
         rpc_client.load_script(filepath, (err) => {
                 if (err) {
@@ -236,7 +237,7 @@ export default class Workspace extends React.Component {
         if (
             await self.validate_server_status(
                 2000,
-                5
+                10
             )
         ) {
             self.load_script(filepath)
