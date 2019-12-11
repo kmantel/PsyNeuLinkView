@@ -30,6 +30,11 @@ button.bp3-button.settings_button {
     margin-right: 10px;
     margin-top: 20px;
     min-width: 80px;
+    outline: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 .bp3-editable-text {
