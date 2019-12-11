@@ -307,26 +307,12 @@ export default class Workspace extends React.Component {
 
     componentWillUnmount() {
         window.removeEventListener('mousemove', this.saveMouseData);
-        // window.removeEventListener('mousedown');
-        // window.removeEventListener('mouseup');
         window.removeEventListener('resize', this.window_resize);
-        // window.removeEventListener('keydown');
     }
 
     componentWillMount() {
-        window.addEventListener('mousemove', this.saveMouseData
-        );
-        // // window.addEventListener('mousedown', (e) => {
-        // //         this.mouse_status = 'down'
-        // //     }
-        // // );
-        // // window.addEventListener('mouseup', (e) => {
-        // //         this.mouse_status = 'up'
-        // //     }
-        // // );
-        // window.addEventListener('keydown', (e) => {
-        // });
-        window.addEventListener('resize', this.window_resize)
+        window.addEventListener('mousemove', this.saveMouseData);
+        window.addEventListener('resize', this.window_resize);
     }
 
     saveMouseData(e) {
