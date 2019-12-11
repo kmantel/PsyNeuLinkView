@@ -8,6 +8,7 @@ const isDev = require('electron-is-dev');
 const {spawn, spawnSync, exec, execSync} = require('child_process');
 const fs = require('fs');
 const os = require('os');
+const config_client = require(path.join(app_path, 'src/utility/config/config_client.js'));
 var adjusted_app_path;
 isDev ? adjusted_app_path = app_path : adjusted_app_path = path.join(app_path, '../app.asar.unpacked');
 exports.app_path = adjusted_app_path;
@@ -32,6 +33,7 @@ class RPCInterface {
             this.config_filedir = path.join(os.homedir(), 'Library', 'Preferences', 'PsyNeuLinkView');
         this.config_filepath = path.join(this.config_filedir, 'config.json');
         exports.config_filepath = this.config_filepath;
+        this.config_client = new config_client.ConfigClient(this.config_filepath);
         this.validate_interpreter_path = this.validate_interpreter_path.bind(this);
         this.initialize_config();
         this.child_procs = [];
@@ -70,9 +72,7 @@ class RPCInterface {
         var config_template = require(config_template_filepath);
         this.config = this.obj_key_copy(config_template, config_current);
         if (this.config_edited) {
-            var cf_client_module = require(path.join(this.app_path, 'src/utility/config/config_client.js'));
-            var cf_client = new cf_client_module.ConfigClient(this.config_filepath);
-            cf_client.set_config(this.config);
+            this.config_client.set_config(this.config);
         }
     }
 
@@ -107,7 +107,7 @@ class RPCInterface {
     }
 
     spawn_rpc_server() {
-        var config = require(this.config_filepath);
+        var config = this.config_client.get_config();
         var py_int_path = config.Python['Interpreter Path'];
         this.check_conda(py_int_path,
             (err, stat, interpreter_path) => {
@@ -232,9 +232,9 @@ class RPCInterface {
     }
 
     construct_prefix(env_name, binary_path, interpreter_path, callback) {
-        var interpreter_path = interpreter_path
+        var interpreter_path = interpreter_path;
         var conda_prefix = '' +
-            `source ${binary_path} && ` +
+            `source "${binary_path}" && ` +
             `conda activate ${env_name} && `;
 
         log.debug('' +
@@ -250,7 +250,8 @@ class RPCInterface {
     }
 
     execute_pnl_script(prefix = '', interpreter_path) {
-        var pnl_path = this.config['Python']['PsyNeuLink Path'];
+        var config = this.config_client.get_config();
+        var pnl_path = config['Python']['PsyNeuLink Path'];
         pnl_path = pnl_path ? pnl_path : '';
         log.debug('' +
             'execute_script' +
@@ -267,7 +268,7 @@ class RPCInterface {
                     [
                         '-u',
                         `"${path.join(adjusted_app_path, 'src', 'py', 'rpc_server.py')}"`,
-                        pnl_path
+                        `"${pnl_path}"`
                     ]
                 ]
             }`
@@ -276,7 +277,7 @@ class RPCInterface {
             [
                 '-u',
                 `"${path.join(adjusted_app_path, 'src', 'py', 'rpc_server.py')}"`,
-                pnl_path
+                `"${pnl_path}"`
             ],
             {
                 shell: true,
@@ -297,7 +298,8 @@ class RPCInterface {
     }
 
     execute_validation_script(prefix = '', interpreter_path, callback){
-        var pnl_path = this.config['Python']['PsyNeuLink Path'];
+        var config = this.config_client.get_config();
+        var pnl_path = config['Python']['PsyNeuLink Path'];
         pnl_path = pnl_path ? pnl_path : '';
         log.debug('' +
             'execute_validation_script' +
@@ -310,18 +312,17 @@ class RPCInterface {
             `pnl_path: ${pnl_path}` +
             '\n' +
             `full command: ${
-                [prefix + interpreter_path,
+                [prefix + `"${interpreter_path}"`,
                     [
                         '-u',
-                        path.join(adjusted_app_path, 'src', 'py', 'validate_interpreter.py'),
-                        pnl_path
+                        `${path.join(adjusted_app_path, 'src', 'py', 'validate_interpreter.py')}`,
+                        `${pnl_path}`
                     ]
                 ]
             }`
         );
 
-        var launch_interpreter_validater_cmd = `${prefix + interpreter_path} -u ${path.join(adjusted_app_path, 'src', 'py', 'validate_interpreter.py')} ${pnl_path}`;
-        log.debug(`LAUNCH INTERPRETER VALIDATER CMD: ${launch_interpreter_validater_cmd}`);
+        var launch_interpreter_validater_cmd = `${prefix} "${interpreter_path}" -u "${path.join(adjusted_app_path, 'src', 'py', 'validate_interpreter.py')}" "${pnl_path}"`;
         exec(launch_interpreter_validater_cmd,
             {
                 shell: true,
@@ -332,6 +333,7 @@ class RPCInterface {
             }
         );
     }
+
     kill_rpc_server() {
         if (this.child_proc != null) {
             if (isWin) {
@@ -358,6 +360,10 @@ var server_maintainer = new RPCInterface(app_path);
 
 function restart_rpc_server() {
     server_maintainer.restart_rpc_server()
+}
+
+function validate_interpreter_path(filepath, callback){
+    server_maintainer.validate_interpreter_path(filepath, callback)
 }
 
 function createWindow() {
@@ -404,7 +410,7 @@ app.on('quit', () => {
 });
 
 exports.server_maintainer = server_maintainer;
-exports.restart_rpc_server = server_maintainer.restart_rpc_server;
-exports.validate_interpreter_path = server_maintainer.validate_interpreter_path;
+exports.restart_rpc_server = restart_rpc_server;
+exports.validate_interpreter_path = validate_interpreter_path;
 exports.app_path = adjusted_app_path;
 exports.addRecentDocument = app.addRecentDocument;
