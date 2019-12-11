@@ -21,6 +21,17 @@
     border-radius: 0px;
 }
 
+.bp3-dialog.settings-dialog{
+    padding-bottom: 5px;
+}
+
+button.bp3-button.settings_button {
+    float: right;
+    margin-right: 10px;
+    margin-top: 20px;
+    min-width: 80px;
+}
+
 .bp3-editable-text {
     width: 100%
 }

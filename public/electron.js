@@ -13,6 +13,7 @@ var adjusted_app_path;
 isDev ? adjusted_app_path = app_path : adjusted_app_path = path.join(app_path, '../app.asar.unpacked');
 exports.app_path = adjusted_app_path;
 var log = require('electron-log');
+var isWin = os.platform() === 'win32';
 
 exports.isDev = isDev;
 log.transports.console.level = "debug";
@@ -26,7 +27,7 @@ class RPCInterface {
     constructor() {
         this.app_path = app_path;
         this.config_edited = false;
-        os.platform() === 'win32' ?
+        isWin ?
             this.config_filedir = path.join(os.homedir(), 'AppData', 'PsyNeuLinkView')
             :
             this.config_filedir = path.join(os.homedir(), 'Library', 'Preferences', 'PsyNeuLinkView');
@@ -78,7 +79,7 @@ class RPCInterface {
     check_conda(interpreter_path) {
         var interpreter_dir = path.dirname(interpreter_path);
         var path_to_check;
-        if (os.platform() === 'win32') {
+        if (isWin) {
             path_to_check = path.join(interpreter_dir, 'conda-meta')
         } else {
             path_to_check = path.join(interpreter_dir, '..', 'conda-meta')
@@ -255,7 +256,7 @@ class RPCInterface {
     kill_rpc_server() {
         if (this.child_proc != null) {
             console.log('YES');
-            if (os.platform() === 'win32') {
+            if (isWin) {
                 spawnSync("taskkill", [
                         "/PID", this.child_proc.pid, '/F', '/T'
                     ],

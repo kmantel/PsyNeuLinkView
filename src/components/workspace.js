@@ -431,6 +431,7 @@ export default class Workspace extends React.Component {
             <div>
                 <SettingsPane
                     isOpen={this.state.show_settings}
+                    // isOpen={true}
                     toggleDialog={this.toggleDialog}
                     config={window.config}/>
                 <Layout

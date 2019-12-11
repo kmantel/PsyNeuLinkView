@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {Dialog, Tree, EditableText, Spinner, Callout, Icon} from '@blueprintjs/core'
+import {Dialog, Tree, EditableText, Spinner, Callout, Icon, Button} from '@blueprintjs/core'
 import Layout from "./layout";
 import '../css/settings.css'
 import IndicatorLight from "./indicator_light";
@@ -40,10 +40,17 @@ class SettingsPane extends React.Component {
         };
         this.buildSettingsTemplate = this.buildSettingsTemplate.bind(this);
         this.generateSettingsPage = this.generateSettingsPage.bind(this);
+        this.componentDidUpdate = this.componentDidUpdate.bind(this);
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot){
+        if (prevProps.isOpen !== this.props.isOpen){
+            console.log(prevProps)
+        }
     }
 
     handleNodeClick = (nodeData, _nodePath, e) => {
-        if (this.generateSettingsPage(nodeData.label)){
+        if (this.generateSettingsPage(nodeData.label)) {
             this.forEachNode(this.state.nodes, n => (n.isSelected = false));
             nodeData.isSelected = true;
             this.setState(this.state);
@@ -113,7 +120,7 @@ class SettingsPane extends React.Component {
                                 (new_value) => {
                                     current_config['Python']['Interpreter Path'] = new_value;
                                     this.setState({config: current_config});
-                                    config_client.set_config(current_config)
+                                    // config_client.set_config(current_config)
                                 }
                             }
                         />
@@ -158,10 +165,9 @@ class SettingsPane extends React.Component {
                             value={current_config['Python']['PsyNeuLink Path']}
                             onChange={
                                 (new_value) => {
-                                    let newcf = {...this.state.config};
-                                    current_config['Python']['PsyNeuLink Path'] = new_value;
+                                    current_config['Python']['Interpreter Path'] = new_value;
                                     this.setState({config: current_config});
-                                    config_client.set_config(current_config)
+                                    // config_client.set_config(current_config)
                                 }
                             }
                         />
@@ -281,13 +287,17 @@ class SettingsPane extends React.Component {
         ];
         return (
             <Dialog
+                className={"settings-dialog"}
                 icon="settings"
                 isOpen={this.props.isOpen}
                 onClose={function () {
                     self.props.toggleDialog()
                 }}
                 title="Preferences"
-                style={{"width": 840}}
+                style={{
+                    "width": 840,
+                    "height": 490
+                }}
                 usePortal={true}
             >
                 <Layout
@@ -314,6 +324,41 @@ class SettingsPane extends React.Component {
                         },
                     ]}
                 />
+                <div class={"ButtonDiv"}>
+                    <Button
+                        className={"settings_button"}
+                        onClick={
+                            function () {
+                                config_client.set_config(self.state.config);
+                                self.props.toggleDialog();
+                            }
+                        }
+                    >
+                        OK
+                    </Button>
+                    <Button
+                        className={"settings_button"}
+                        onClick={
+                            function () {
+                                config_client.set_config(self.state.config);
+                            }
+                        }
+                    >
+                        Apply
+                    </Button>
+                    <Button
+                        className={"settings_button"}
+                        onClick={
+                            function () {
+                                self.props.toggleDialog();
+                                self.setState({config:config_client.get_config()})
+                            }
+                        }
+                    >
+                        Cancel
+                    </Button>
+
+                </div>
             </Dialog>
         );
     }
