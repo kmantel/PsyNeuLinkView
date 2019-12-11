@@ -237,7 +237,7 @@ export default class Workspace extends React.Component {
         if (
             await self.validate_server_status(
                 2000,
-                10
+                5
             )
         ) {
             self.load_script(filepath)

@@ -32,6 +32,7 @@ class RPCInterface {
             this.config_filedir = path.join(os.homedir(), 'Library', 'Preferences', 'PsyNeuLinkView');
         this.config_filepath = path.join(this.config_filedir, 'config.json');
         exports.config_filepath = this.config_filepath;
+        this.validate_interpreter_path = this.validate_interpreter_path.bind(this);
         this.initialize_config();
         this.child_procs = [];
     }
@@ -75,26 +76,55 @@ class RPCInterface {
         }
     }
 
-    spawn_rpc_server() {
-        console.log('spawn');
-        var config = require(this.config_filepath);
-        var py_int_path = config.Python['Interpreter Path'];
+    validate_interpreter_path(filepath, callback) {
+        var py_int_path = filepath;
         this.check_conda(py_int_path,
             (err, stat, interpreter_path) => {
                 if (!stat) {
-                    this.execute_script('', interpreter_path)
+                    this.execute_validation_script('', interpreter_path, callback)
                 } else {
                     this.find_conda_binary(
                         interpreter_path,
                         (err, stat, one_level_up, path_to_check, original_interpreter_path, possible_conda_binary) => {
                             if (one_level_up === path_to_check) {
-                                this.execute_script(original_interpreter_path)
+                                this.execute_validation_script('', interpreter_path, callback)
                             } else {
                                 this.find_env_name(original_interpreter_path, possible_conda_binary,
                                     (err, stdout, stderr, env_name, binary_path, interpreter_path) => {
                                         this.construct_prefix(env_name, binary_path, interpreter_path,
                                             (conda_prefix, interpreter_path) => {
-                                                this.execute_script(conda_prefix, interpreter_path)
+                                                this.execute_validation_script(conda_prefix, interpreter_path, callback)
+                                            }
+                                        );
+                                    }
+                                )
+                            }
+                        }
+                    )
+                }
+            }
+        );
+    }
+
+    spawn_rpc_server() {
+        var config = require(this.config_filepath);
+        var py_int_path = config.Python['Interpreter Path'];
+        this.check_conda(py_int_path,
+            (err, stat, interpreter_path) => {
+                if (!stat) {
+                    this.execute_pnl_script('', interpreter_path)
+                } else {
+                    this.find_conda_binary(
+                        interpreter_path,
+                        (err, stat, one_level_up, path_to_check, original_interpreter_path, possible_conda_binary) => {
+                            if (one_level_up === path_to_check) {
+                                this.execute_pnl_script(original_interpreter_path)
+                            } else {
+                                this.find_env_name(original_interpreter_path, possible_conda_binary,
+                                    (err, stdout, stderr, env_name, binary_path, interpreter_path) => {
+                                        this.construct_prefix(env_name, binary_path, interpreter_path,
+                                            (conda_prefix, interpreter_path) => {
+                                                this.execute_pnl_script(conda_prefix, interpreter_path)
                                             }
                                         );
                                     }
@@ -219,7 +249,7 @@ class RPCInterface {
         callback(conda_prefix, interpreter_path);
     }
 
-    execute_script(prefix = '', interpreter_path) {
+    execute_pnl_script(prefix = '', interpreter_path) {
         var pnl_path = this.config['Python']['PsyNeuLink Path'];
         pnl_path = pnl_path ? pnl_path : '';
         log.debug('' +
@@ -242,8 +272,6 @@ class RPCInterface {
                 ]
             }`
         );
-        a += 1;
-        console.log('THIS IS THE INCREMENTER', a);
         this.child_proc = spawn(prefix + interpreter_path,
             [
                 '-u',
@@ -268,9 +296,44 @@ class RPCInterface {
         });
     }
 
+    execute_validation_script(prefix = '', interpreter_path, callback){
+        var pnl_path = this.config['Python']['PsyNeuLink Path'];
+        pnl_path = pnl_path ? pnl_path : '';
+        log.debug('' +
+            'execute_validation_script' +
+            '\n ' +
+            '\n' +
+            `prefix: ${prefix}` +
+            '\n' +
+            `interpreter_path: ${interpreter_path}` +
+            '\n' +
+            `pnl_path: ${pnl_path}` +
+            '\n' +
+            `full command: ${
+                [prefix + interpreter_path,
+                    [
+                        '-u',
+                        path.join(adjusted_app_path, 'src', 'py', 'validate_interpreter.py'),
+                        pnl_path
+                    ]
+                ]
+            }`
+        );
+
+        var launch_interpreter_validater_cmd = `${prefix + interpreter_path} -u ${path.join(adjusted_app_path, 'src', 'py', 'validate_interpreter.py')} ${pnl_path}`;
+        log.debug(`LAUNCH INTERPRETER VALIDATER CMD: ${launch_interpreter_validater_cmd}`);
+        exec(launch_interpreter_validater_cmd,
+            {
+                shell: true,
+                detached: true
+            },
+            (err, stdout, stderr)=>{
+                callback(err, stdout, stderr);
+            }
+        );
+    }
     kill_rpc_server() {
         if (this.child_proc != null) {
-            console.log('YES');
             if (isWin) {
                 spawnSync("taskkill", [
                         "/PID", this.child_proc.pid, '/F', '/T'
@@ -279,7 +342,6 @@ class RPCInterface {
                 this.child_proc = null
             } else {
                 process.kill(-this.child_proc.pid);
-                console.log(this.child_proc);
                 // this.child_proc.kill();
                 this.child_proc = null;
             }
@@ -288,7 +350,7 @@ class RPCInterface {
 
     restart_rpc_server() {
         this.kill_rpc_server();
-        this.spawn_rpc_server()
+        this.spawn_rpc_server();
     }
 }
 
@@ -342,6 +404,7 @@ app.on('quit', () => {
 });
 
 exports.server_maintainer = server_maintainer;
-exports.restart_rpc_server = restart_rpc_server;
+exports.restart_rpc_server = server_maintainer.restart_rpc_server;
+exports.validate_interpreter_path = server_maintainer.validate_interpreter_path;
 exports.app_path = adjusted_app_path;
 exports.addRecentDocument = app.addRecentDocument;

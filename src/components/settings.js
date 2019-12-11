@@ -13,6 +13,7 @@ const style = {
 };
 
 const config_client = window.config_client;
+const validate_interpreter_path = window.electron_root.validate_interpreter_path;
 
 class SettingsPane extends React.Component {
     constructor(props) {
@@ -36,15 +37,18 @@ class SettingsPane extends React.Component {
             isOpen: props.isOpen,
             nodes: nodes,
             selectedCat: 0,
-            config: config
+            config: config,
+            interpreterPathStatus: 'unsure'
         };
         this.buildSettingsTemplate = this.buildSettingsTemplate.bind(this);
         this.generateSettingsPage = this.generateSettingsPage.bind(this);
         this.componentDidUpdate = this.componentDidUpdate.bind(this);
+        this.checkInterpreterPath = this.checkInterpreterPath.bind(this);
+        this.checkInterpreterPath(config['Python']['Interpreter Path']);
     }
 
-    componentDidUpdate(prevProps, prevState, snapshot){
-        if (prevProps.isOpen !== this.props.isOpen){
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (prevProps.isOpen !== this.props.isOpen) {
             console.log(prevProps)
         }
     }
@@ -79,6 +83,29 @@ class SettingsPane extends React.Component {
         for (const node of nodes) {
             this.forEachNode(node.childNodes, callback);
             callback(node)
+        }
+    }
+
+    checkInterpreterPath(filepath){
+        var self = this;
+        if (!filepath){
+            self.setState({interpreterPathStatus:'unsure'});
+        }
+        else{
+            self.setState({interpreterPathStatus:'loading'});
+            self.forceUpdate();
+            validate_interpreter_path(
+                filepath,
+                (err, stdout, stderr) => {
+                    if(err){
+                        self.setState({interpreterPathStatus:'bad'})
+                    }
+                    else{
+                        self.setState({interpreterPathStatus:'good'})
+                    }
+                    self.forceUpdate();
+                }
+            )
         }
     }
 
@@ -119,8 +146,8 @@ class SettingsPane extends React.Component {
                             onChange={
                                 (new_value) => {
                                     current_config['Python']['Interpreter Path'] = new_value;
-                                    this.setState({config: current_config});
-                                    // config_client.set_config(current_config)
+                                    self.setState({config: current_config});
+                                    self.checkInterpreterPath(new_value);
                                 }
                             }
                         />
@@ -144,15 +171,16 @@ class SettingsPane extends React.Component {
                                 if (pathArray.length > 0) {
                                     current_config['Python']['Interpreter Path'] = paths.filePaths[0];
                                     self.setState({config: current_config});
-                                    config_client.set_config(current_config);
+                                    self.checkInterpreterPath(current_config['Python']['Interpreter Path'])
                                 }
                             })
                         }}
                     />
                 </div>,
                 <div key={keys.interpreterPathIndicator}>
-                    {/*<IndicatorLight*/}
-                    {/*    status={'unsure'}/>*/}
+                    <IndicatorLight
+                        className={'interpreter-indicator-light'}
+                        status={self.state.interpreterPathStatus}/>
                 </div>,
                 <div key={keys.pnlPathLabel}>
                     {'PsyNeuLink Path'}
@@ -191,7 +219,7 @@ class SettingsPane extends React.Component {
                                 if (pathArray.length > 0) {
                                     current_config['Python']['PsyNeuLink Path'] = paths.filePaths[0];
                                     self.setState({config: current_config});
-                                    config_client.set_config(current_config);
+                                    // config_client.set_config(current_config);
                                 }
                             })
                         }}
@@ -351,7 +379,7 @@ class SettingsPane extends React.Component {
                         onClick={
                             function () {
                                 self.props.toggleDialog();
-                                self.setState({config:config_client.get_config()})
+                                self.setState({config: config_client.get_config()})
                             }
                         }
                     >
