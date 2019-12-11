@@ -109,7 +109,7 @@ class RPCInterface {
             path_to_check = path.join(original_interpreter_path, '..');
         }
         var one_level_up = path.join(path_to_check, '..');
-        var possible_conda_binary = path.join(path_to_check, 'etc', 'profile.d', 'conda.sh');
+        var possible_conda_binary = path.join(path_to_check, 'activate');
 
         log.debug('' +
             'find_conda_binary' +
