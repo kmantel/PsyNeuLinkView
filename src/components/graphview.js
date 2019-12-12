@@ -65,9 +65,9 @@ class GraphView extends React.Component {
     }
 
     updateGraph() {
-        if (!([null, undefined, "loading"].includes(this.state.graph))) {
-            var percentage;
-            var graph = document.querySelector('.graph-view .graph');
+        var percentage;
+        var graph = document.querySelector('.graph-view .graph');
+        if (graph){
             var view_rect = document.querySelector('.graph-view')
                 .getBoundingClientRect();
             var graph_rect = document.querySelector('.graph-view g.node')
