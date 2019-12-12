@@ -156,6 +156,7 @@ def serve():
     graph_pb2_grpc.add_ServeGraphServicer_to_server(GraphServer(), server)
     server.add_insecure_port('[::]:50051')
     server.start()
+    print('PYTHON SERVER READY')
     server.wait_for_termination()
 
 

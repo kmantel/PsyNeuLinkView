@@ -230,18 +230,23 @@ export default class Workspace extends React.Component {
     }
 
     async validate_server_status_and_load_script(filepath) {
+        var filepath = filepath;
         var self = this;
         self.setState({graph: "loading"});
         window.electron_root.addRecentDocument(filepath);
-        window.electron_root.restart_rpc_server();
-        if (
-            await self.validate_server_status(
-                2000,
-                5
-            )
-        ) {
-            self.load_script(filepath)
-        }
+        window.electron_root.restart_rpc_server(
+            ()=>{
+                self.load_script(filepath)
+            },
+            // ()=>{
+            //     self.dispatcher.capture(
+            //         {
+            //             error: "Failed to load Python interpreter. Check path."
+            //         },
+            //         self.setState({'graph': null})
+            //     );
+            // }
+        );
     }
 
     choose_composition() {

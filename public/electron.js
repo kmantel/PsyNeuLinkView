@@ -107,25 +107,25 @@ class RPCInterface {
         );
     }
 
-    spawn_rpc_server() {
+    spawn_rpc_server(callback, errorhandler) {
         var config = this.config_client.get_config();
         var py_int_path = config.Python['Interpreter Path'];
         this.check_conda(py_int_path,
             (err, stat, interpreter_path) => {
                 if (!stat) {
-                    this.execute_pnl_script('', interpreter_path)
+                    this.start_server('', interpreter_path, callback, errorhandler)
                 } else {
                     this.find_conda_binary(
                         interpreter_path,
                         (err, stat, one_level_up, path_to_check, original_interpreter_path, possible_conda_binary) => {
                             if (one_level_up === path_to_check) {
-                                this.execute_pnl_script(original_interpreter_path)
+                                this.start_server('', original_interpreter_path, callback, errorhandler)
                             } else {
                                 this.find_env_name(original_interpreter_path, possible_conda_binary,
                                     (err, stdout, stderr, env_name, binary_path, interpreter_path) => {
                                         this.construct_prefix(env_name, binary_path, interpreter_path,
                                             (conda_prefix, interpreter_path) => {
-                                                this.execute_pnl_script(conda_prefix, interpreter_path)
+                                                this.start_server(conda_prefix, interpreter_path, callback, errorhandler)
                                             }
                                         );
                                     }
@@ -260,7 +260,8 @@ class RPCInterface {
         );
     }
 
-    execute_pnl_script(prefix = '', interpreter_path) {
+    start_server(prefix = '', interpreter_path, callback, errorhandler) {
+        var callback = callback;
         var config = this.config_client.get_config();
         var pnl_path = config['Python']['PsyNeuLink Path'];
         pnl_path = pnl_path ? pnl_path : '';
@@ -277,7 +278,7 @@ class RPCInterface {
             `full command: ${
                 [prefix + interpreter_path,
                     [
-                        '-u',
+                        '-u -W ignore',
                         `"${path.join(adjusted_app_path, 'src', 'py', 'rpc_server.py')}"`,
                         `"${pnl_path}"`
                     ]
@@ -286,7 +287,7 @@ class RPCInterface {
         );
         this.child_proc = spawn(prefix + interpreter_path,
             [
-                '-u',
+                '-u -W ignore',
                 `"${path.join(adjusted_app_path, 'src', 'py', 'rpc_server.py')}"`,
                 `"${pnl_path}"`
             ],
@@ -300,11 +301,19 @@ class RPCInterface {
         });
         this.child_proc.stdout.setEncoding('utf8');
         this.child_proc.stdout.on('data', function (data) {
-            log.debug('py stdout:' + data)
+            if (data.trim() === 'PYTHON SERVER READY'){
+                if (callback){
+                    log.debug('py stdout:' + data);
+                    callback()
+                }
+            }
         });
         this.child_proc.stderr.setEncoding('utf8');
         this.child_proc.stderr.on('data', function (data) {
-            log.debug('py stdout:' + data);
+            if (errorhandler){
+                errorhandler()
+            }
+            log.debug('py stderr:' + data);
         });
     }
 
@@ -361,16 +370,16 @@ class RPCInterface {
         }
     }
 
-    restart_rpc_server() {
+    restart_rpc_server(callback, errorhandler) {
         this.kill_rpc_server();
-        this.spawn_rpc_server();
+        this.spawn_rpc_server(callback, errorhandler);
     }
 }
 
 var server_maintainer = new RPCInterface(app_path);
 
-function restart_rpc_server() {
-    server_maintainer.restart_rpc_server()
+function restart_rpc_server(callback, errorhandler) {
+    server_maintainer.restart_rpc_server(callback, errorhandler)
 }
 
 function validate_interpreter_path(filepath, callback){
