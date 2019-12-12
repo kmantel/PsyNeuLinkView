@@ -355,7 +355,7 @@ class RPCInterface {
     }
 
     kill_rpc_server() {
-        if (this.child_proc != null) {
+        if (this.child_proc && this.child_proc.connected) {
             if (isWin) {
                 spawnSync("taskkill", [
                         "/PID", this.child_proc.pid, '/F', '/T'

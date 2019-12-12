@@ -65,7 +65,6 @@ class GraphView extends React.Component {
     }
 
     updateGraph() {
-        var self = this;
         var percentage;
         var graph = document.querySelector('.graph-view .graph');
         var view_rect = document.querySelector('.graph-view')
