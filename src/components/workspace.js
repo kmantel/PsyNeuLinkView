@@ -350,6 +350,7 @@ export default class Workspace extends React.Component {
                     onResizeStart={this.get_mouse_initial}
                     onResize={function (e, direction, ref, d) {
                         self.panel_resize('rowOneHorizontalFactor', 'verticalFactor', e, direction, ref, d)
+                        window.dispatchEvent(new Event('resize'));
                     }}
                     onResizeStop={function (e, direction, ref, d) {
                         self.panel_resize('rowOneHorizontalFactor', 'verticalFactor', e, direction, ref, d)
@@ -368,6 +369,7 @@ export default class Workspace extends React.Component {
                     onResizeStart={this.get_mouse_initial}
                     onResize={function (e, direction, ref, d) {
                         self.panel_resize('rowOneHorizontalFactor', 'verticalFactor', e, direction, ref, d)
+                        window.dispatchEvent(new Event('resize'));
                     }}
                     onResizeStop={function (e, direction, ref, d) {
                         self.panel_resize('rowOneHorizontalFactor', 'verticalFactor', e, direction, ref, d)
@@ -391,6 +393,7 @@ export default class Workspace extends React.Component {
                     }}
                     onResize={function (e, direction, ref, d) {
                         self.panel_resize('rowTwoHorizontalFactor', 'verticalFactor', e, direction, ref, d)
+                        window.dispatchEvent(new Event('resize'));
                     }}
                     size={
                         {
@@ -409,6 +412,7 @@ export default class Workspace extends React.Component {
                     }}
                     onResize={function (e, direction, ref, d) {
                         self.panel_resize('rowTwoHorizontalFactor', 'verticalFactor', e, direction, ref, d)
+                        window.dispatchEvent(new Event('resize'));
                     }}
                     size={
                         {

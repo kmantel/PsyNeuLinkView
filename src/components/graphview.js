@@ -66,27 +66,25 @@ class GraphView extends React.Component {
 
     updateGraph() {
         var self = this;
-        if (!([null, undefined, "loading"].includes(self.state.graph))) {
-            var percentage;
-            var graph = document.querySelector('.graph-view .graph');
-            var view_rect = document.querySelector('.graph-view')
-                .getBoundingClientRect();
-            var graph_rect = document.querySelector('.graph-view g.node')
-                .getBBox();
-            var total_graph_height = graph_rect.height + graph_rect.y;
-            if (total_graph_height > view_rect.height) {
-                percentage = Math.ceil((total_graph_height / (view_rect.height)) * 100);
-                graph.setAttribute('height', `${percentage}%`)
-            } else {
-                graph.setAttribute('height', '100%')
-            }
-            var total_graph_width = graph_rect.width + graph_rect.x;
-            if (total_graph_width > view_rect.width) {
-                percentage = Math.ceil((total_graph_width / view_rect.width) * 100);
-                graph.setAttribute('width', `${percentage}%`)
-            } else {
-                graph.setAttribute('width', '100%')
-            }
+        var percentage;
+        var graph = document.querySelector('.graph-view .graph');
+        var view_rect = document.querySelector('.graph-view')
+            .getBoundingClientRect();
+        var graph_rect = document.querySelector('.graph-view g.node')
+            .getBBox();
+        var total_graph_height = graph_rect.height + graph_rect.y;
+        if (total_graph_height > view_rect.height) {
+            percentage = Math.ceil((total_graph_height / (view_rect.height)) * 100) + 5;
+            graph.setAttribute('height', `${percentage}%`)
+        } else {
+            graph.setAttribute('height', '100%')
+        }
+        var total_graph_width = graph_rect.width + graph_rect.x;
+        if (total_graph_width > view_rect.width) {
+            percentage = Math.ceil((total_graph_width / view_rect.width) * 100) + 5;
+            graph.setAttribute('width', `${percentage}%`)
+        } else {
+            graph.setAttribute('width', '100%')
         }
     }
 
@@ -572,9 +570,7 @@ class GraphView extends React.Component {
                     this.props.size
                 }
             >
-                <div className={this.state.class}
-                     onScroll={this.updateGraph}>
-                </div>
+                <div className={this.state.class}/>
                 <div className={'spinner'}
                      style={
                          {

@@ -9,9 +9,11 @@
     padding:0px !important;
     /*grid-column-start: 2;*/
     /*grid-row-start: 1;*/
-    overflow: auto;
-}
 
+}
+.graph-view.pnl-panel{
+    overflow: scroll;
+}
 .outer_svg{
     justify-content: center;
     align-content: center;
