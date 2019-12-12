@@ -6,7 +6,6 @@ import ToolTipBox from './tooltipbox'
 import ParameterControlBox from './parametercontrolbox'
 import SettingsPane from './settings'
 import ErrorDispatcher from "../utility/errors/dispatcher";
-
 const path = require('path');
 var proto_path = path.join(window.electron_root.app_path, 'src', 'protos', 'graph.proto');
 var rpc_client = new window.rpc.rpc_client(proto_path, window.modulePath);
@@ -123,10 +122,24 @@ export default class Workspace extends React.Component {
                 ],
             },
             {
-                label: 'View',
+                label: 'Help',
                 submenu: [
                     {
                         role: 'toggleDevTools'
+                    },
+                    {
+                        label: 'Open Debug Log',
+                        accelerator: 'CmdOrCtrl+L',
+                        click() {
+                            window.electron_root.open_log_file();
+                        }
+                    },
+                    {
+                        label: 'Show Debug Log in Finder',
+                        accelerator: 'CmdOrCtrl+Shift+L',
+                        click() {
+                            window.electron_root.open_log_folder();
+                        }
                     }
                 ]
             }

@@ -391,6 +391,14 @@ function validate_interpreter_path(filepath, callback){
     server_maintainer.validate_interpreter_path(filepath, callback)
 }
 
+function open_log_file(){
+    exec(`open ${path.join(os.homedir(),'Library','Logs','psyneulinkview','log.log')}`)
+}
+
+function open_log_folder(){
+    exec(`open ${path.join(os.homedir(),'Library','Logs','psyneulinkview')}`)
+}
+
 function createWindow() {
     const {width, height} = electron.screen.getPrimaryDisplay().workAreaSize;
     mainWindow = new BrowserWindow({
@@ -434,6 +442,8 @@ app.on('quit', () => {
     }
 });
 
+exports.open_log_file = open_log_file;
+exports.open_log_folder = open_log_folder;
 exports.server_maintainer = server_maintainer;
 exports.restart_rpc_server = restart_rpc_server;
 exports.validate_interpreter_path = validate_interpreter_path;
