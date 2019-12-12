@@ -355,17 +355,22 @@ class RPCInterface {
     }
 
     kill_rpc_server() {
-        if (this.child_proc && this.child_proc.connected) {
-            if (isWin) {
-                spawnSync("taskkill", [
-                        "/PID", this.child_proc.pid, '/F', '/T'
-                    ],
-                );
-                this.child_proc = null
-            } else {
-                process.kill(-this.child_proc.pid);
-                // this.child_proc.kill();
-                this.child_proc = null;
+        if (this.child_proc) {
+            try {
+                if (isWin) {
+                    spawnSync("taskkill", [
+                            "/PID", this.child_proc.pid, '/F', '/T'
+                        ],
+                    );
+                    this.child_proc = null
+                } else {
+                    process.kill(-this.child_proc.pid);
+                    // this.child_proc.kill();
+                    this.child_proc = null;
+                }
+            }
+            catch (e) {
+                
             }
         }
     }
