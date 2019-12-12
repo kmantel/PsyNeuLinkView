@@ -38,7 +38,7 @@ class SettingsPane extends React.Component {
             nodes: nodes,
             selectedCat: 0,
             config: config,
-            interpreterPathStatus: 'unsure'
+            interpreterPathStatus: 'loading'
         };
         this.buildSettingsTemplate = this.buildSettingsTemplate.bind(this);
         this.generateSettingsPage = this.generateSettingsPage.bind(this);

@@ -103,7 +103,7 @@ class GraphView extends React.Component {
                 .attr('overflow', 'auto');
 
             svg.append("svg:defs").append("svg:marker")
-                .attr("id", window.location.href + "/triangle_orange")
+                .attr("id", "triangle_orange")
                 .attr("refX", 6)
                 .attr("refY", 6)
                 .attr("markerWidth", 30)
@@ -114,7 +114,7 @@ class GraphView extends React.Component {
                 .attr("fill", "orange");
 
             svg.append("svg:defs").append("svg:marker")
-                .attr("id", window.location.href + "/triangle_black")
+                .attr("id", "triangle_black")
                 .attr("refX", 6)
                 .attr("refY", 6)
                 .attr("markerWidth", 30)
@@ -175,7 +175,7 @@ class GraphView extends React.Component {
                     var d3Element = d3.select(this);
                     var color = d3Element.attr('stroke');
                     d3Element
-                        .attr('marker-end', 'url(#' + window.location.href + `/triangle_${color})`)
+                        .attr('marker-end', `url(#triangle_${color})`)
                 });
 
             var node = svg.append('g')

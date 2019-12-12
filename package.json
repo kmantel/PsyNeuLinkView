@@ -10,6 +10,7 @@
     "@blueprintjs/core": "^3.19.1",
     "@grpc/proto-loader": "^0.5.2",
     "blueprintjs": "^0.0.8",
+    "compare-versions": "^3.5.1",
     "electron-is-dev": "^1.1.0",
     "electron-log": "^3.0.9",
     "fix-path": "^2.1.0",

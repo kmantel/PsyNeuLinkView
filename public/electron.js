@@ -9,6 +9,7 @@ const {spawn, spawnSync, exec, execSync} = require('child_process');
 const fs = require('fs');
 const os = require('os');
 const config_client = require(path.join(app_path, 'src/utility/config/config_client.js'));
+const compareVersions = require('compare-versions');
 var adjusted_app_path;
 isDev ? adjusted_app_path = app_path : adjusted_app_path = path.join(app_path, '../app.asar.unpacked');
 exports.app_path = adjusted_app_path;
@@ -233,20 +234,30 @@ class RPCInterface {
 
     construct_prefix(env_name, binary_path, interpreter_path, callback) {
         var interpreter_path = interpreter_path;
-        var conda_prefix = '' +
-            `source "${binary_path}" && ` +
-            `conda activate ${env_name} && `;
-
-        log.debug('' +
-            'construct_prefix' +
-            '\n ' +
-            '\n' +
-            `interpreter_path: ${interpreter_path}` +
-            '\n' +
-            `conda_prefix: ${conda_prefix}`
+        exec(`source "${binary_path}" && conda --version`,
+            (err, stdout, stderr) => {
+                var activation_command;
+                if (compareVersions(stdout.replace('conda','').trim(),'4.6.0') >= 0){
+                    activation_command = 'conda activate'
+                }
+                else {
+                    activation_command = 'source activate'
+                }
+                log.debug('ACTIVATION COMMAND', activation_command);
+                var conda_prefix = '' +
+                    `source "${binary_path}" && ` +
+                    `${activation_command} ${env_name} && `;
+                log.debug('' +
+                    'construct_prefix' +
+                    '\n ' +
+                    '\n' +
+                    `interpreter_path: ${interpreter_path}` +
+                    '\n' +
+                    `conda_prefix: ${conda_prefix}`
+                );
+                callback(conda_prefix, interpreter_path);
+            }
         );
-
-        callback(conda_prefix, interpreter_path);
     }
 
     execute_pnl_script(prefix = '', interpreter_path) {

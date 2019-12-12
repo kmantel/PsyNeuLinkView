@@ -1,5 +1,6 @@
 import * as React from 'react'
 import { Spinner, Icon } from '@blueprintjs/core'
+import '../css/indicatorlight.css'
 
 export default class IndicatorLight extends React.Component {
     constructor(props) {
