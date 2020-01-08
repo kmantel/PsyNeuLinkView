@@ -5,10 +5,11 @@ import add_context_menu from '../utility/add_context_menu'
 import {Resizable} from 're-resizable'
 import {Spinner, SVGSpinner} from '@blueprintjs/core'
 
-const context_menu = [{
-    onClick: {},
-    text: 'Placeholder 1'
-},
+const context_menu = [
+    {
+        onClick: {},
+        text: 'Placeholder 1'
+    },
     {
         onClick: {},
         text: 'Placeholder 2'
@@ -573,6 +574,42 @@ class GraphView extends React.Component {
             })
     }
 
+    get_canvas_bounding_box(){
+        var graph_bounding_box, graph_dom_rect, canvas_bounding_box;
+        graph_bounding_box = document.querySelector('.graph').getBBox();
+        graph_dom_rect = document.querySelector('.graph').getBoundingClientRect();
+        canvas_bounding_box = {
+            x: graph_bounding_box.x,
+            y: graph_bounding_box.y,
+            width: graph_dom_rect.width,
+            height: graph_dom_rect.height
+        };
+        return canvas_bounding_box;
+    }
+
+    get_graph_bounding_box(){
+        var node_bounding_box, label_bounding_box, graph_bounding_box, x, y, width, height;
+        node_bounding_box = document.querySelector('.graph-view .node').getBBox();
+        label_bounding_box = document.querySelector('.graph-view .label').getBBox();
+        x = Math.min(node_bounding_box.x, label_bounding_box.x);
+        y = Math.min(node_bounding_box.y, label_bounding_box.y);
+        width = Math.max(
+            node_bounding_box.x + node_bounding_box.width,
+            label_bounding_box.x + label_bounding_box.width
+        ) - x;
+        height = y + Math.max(
+            node_bounding_box.y + node_bounding_box.height,
+            label_bounding_box.y + label_bounding_box.height
+        ) - y;
+        graph_bounding_box = {
+            x:x,
+            y:y,
+            width: width,
+            height: height
+        };
+        return graph_bounding_box
+    }
+
     setGraph() {
         var self = this;
         if (self.props.graph) {
@@ -588,7 +625,7 @@ class GraphView extends React.Component {
             // this.fit_graph_to_workspace(node);
             this.center_graph(node, edge, label, 5);
             this.apply_select_boxes(svg);
-            this.resize_nodes_to_label_text()
+            // this.resize_nodes_to_label_text();
             self.updateGraph()
         }
     }
