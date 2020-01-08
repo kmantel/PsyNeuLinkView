@@ -29,14 +29,13 @@ class RPCInterface {
         this.app_path = app_path;
         this.config_edited = false;
         isWin ?
-            this.config_filedir = path.join(os.homedir(), 'AppData', 'PsyNeuLinkView')
+            this.config_filedir = path.join(os.homedir(), 'AppData', 'Roaming', 'PsyNeuLinkView')
             :
             this.config_filedir = path.join(os.homedir(), 'Library', 'Preferences', 'PsyNeuLinkView');
         this.config_filepath = path.join(this.config_filedir, 'config.json');
         exports.config_filepath = this.config_filepath;
-        this.config_client = new config_client.ConfigClient(this.config_filepath);
-        this.validate_interpreter_path = this.validate_interpreter_path.bind(this);
         this.initialize_config();
+        this.validate_interpreter_path = this.validate_interpreter_path.bind(this);
         this.child_procs = [];
     }
 
@@ -72,6 +71,7 @@ class RPCInterface {
         var config_template_filepath = path.join(this.app_path, 'config_template.json');
         var config_template = require(config_template_filepath);
         this.config = this.obj_key_copy(config_template, config_current);
+        this.config_client = new config_client.ConfigClient(this.config_filepath);
         if (this.config_edited) {
             this.config_client.set_config(this.config);
         }
@@ -293,7 +293,7 @@ class RPCInterface {
             ],
             {
                 shell: true,
-                detached: true
+                detached: isWin? false : true
             }
         );
         this.child_proc.on('error', function (err) {

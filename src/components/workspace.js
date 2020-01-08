@@ -44,9 +44,11 @@ export default class Workspace extends React.Component {
     setMenu() {
         const electron = window.remote;
         const isMac = navigator.platform.toUpperCase().includes("MAC");
-        electron.systemPreferences.setUserDefault('NSDisabledDictationMenuItem', 'boolean', true);
-        electron.systemPreferences.setUserDefault('NSDisabledCharacterPaletteMenuItem', 'boolean', true);
-        electron.systemPreferences.setUserDefault('NSDisabledEmoji&SymbolsMenuItem', 'boolean', true);
+        if (isMac) {
+            electron.systemPreferences.setUserDefault('NSDisabledDictationMenuItem', 'boolean', true);
+            electron.systemPreferences.setUserDefault('NSDisabledCharacterPaletteMenuItem', 'boolean', true);
+            electron.systemPreferences.setUserDefault('NSDisabledEmoji&SymbolsMenuItem', 'boolean', true);
+        }
         var self = this;
         var menu = electron.Menu.buildFromTemplate([
             ...(isMac ? [{
