@@ -528,24 +528,29 @@ class GraphView extends React.Component {
         ).attr('ry'));
 
         let bounds = {
-            x_min: width,
-            x_max: graph_dimensions.width - width,
-            y_min: height,
-            y_max: graph_dimensions.height - height
+            x_min: width * this.scaling,
+            x_max: graph_dimensions.width - width * this.scaling,
+            y_min: height * this.scaling,
+            y_max: graph_dimensions.height - height * this.scaling
         };
+
+        var event = d3.event
+        console.log(event)
 
         d.x = d3.event.x;
         d.y = d3.event.y;
-        // if (d.x < bounds.x_min) {
-        //     d.x = bounds.x_min
-        // } else if (d.x > bounds.x_max) {
-        //     d.x = bounds.x_max
-        // }
-        // if (d.y < bounds.y_min) {
-        //     d.y = bounds.y_min
-        // } else if (d.y > bounds.y_max) {
-        //     d.y = bounds.y_max
-        // }
+        console.log(d.x);
+        console.log(d.y);
+        if (d.x * this.scaling < bounds.x_min) {
+            d.x = bounds.x_min / this.scaling
+        } else if (d.x  * this.scaling > bounds.x_max) {
+            d.x = bounds.x_max / this.scaling
+        }
+        if (d.y  * this.scaling < bounds.y_min) {
+            d.y = bounds.y_min / this.scaling
+        } else if (d.y  * this.scaling > bounds.y_max) {
+            d.y = bounds.y_max / this.scaling
+        }
         node.filter(function (n) {
             return n === d
         })
