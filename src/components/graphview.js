@@ -507,6 +507,46 @@ class GraphView extends React.Component {
             });
     }
 
+    correct_projection_lengths_for_ellipse_sizes(node, edge){
+        var self = this;
+        edge
+            .attr('x2', function (d) {
+                var x2 = self.get_offset_between_ellipses(
+                    d.tail.x,
+                    d.tail.y,
+                    d.head.x,
+                    d.head.y,
+                    node.filter(function (n) {
+                        return n === d.head
+                    })
+                        .attr('rx'),
+                    node.filter(function (n) {
+                        return n === d.head
+                    })
+                        .attr('ry')
+                ).x;
+                return x2
+            })
+            .attr('y2', function (d) {
+                var y2 = self.get_offset_between_ellipses(
+                    d.tail.x,
+                    d.tail.y,
+                    d.head.x,
+                    d.head.y,
+                    node.filter(function (n) {
+                        return n === d.head
+                    })
+                        .attr('rx'),
+                    node.filter(function (n) {
+                        return n === d.head
+                    })
+                        .attr('ry')
+                ).y;
+                return y2
+            }
+            )
+    }
+
     drag_node(d, node, label, edge){
         var self = this;
         var graph_dimensions = self.get_canvas_bounding_box();
@@ -757,9 +797,9 @@ class GraphView extends React.Component {
             let nodeWidth = self.state.node_width;
             let nodeHeight = self.state.node_height;
             var svg = this.createSVG();
-            this.appendDefs(svg);
             this.associateVisualInformationWithGraphNodes();
             this.associateVisualInformationWithGraphEdges();
+            this.appendDefs(svg);
             var edge = this.drawProjections(svg);
             var node = this.drawNodes(svg, nodeWidth, nodeHeight, (d)=>{self.drag_node(d, node, label, edge)});
             var label = this.drawLabels(svg, 5, (d)=>{self.drag_node(d, node, label, edge)});
@@ -767,8 +807,8 @@ class GraphView extends React.Component {
             this.scale_graph_to_fit(node, label, edge);
             this.center_graph(node, label, edge);
             this.resize_nodes_to_label_text();
-            window.get_graph_box = this.get_graph_bounding_box;
-            window.get_canvas_box = this.get_canvas_bounding_box;
+            this.correct_projection_lengths_for_ellipse_sizes(node, edge);
+            this.updateGraph();
         }
     }
 
