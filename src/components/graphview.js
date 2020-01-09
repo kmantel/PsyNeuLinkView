@@ -102,27 +102,22 @@ class GraphView extends React.Component {
     }
 
     appendDefs(svg){
-        svg.append("svg:defs").append("svg:marker")
-            .attr("id", "triangle_orange")
-            .attr("refX", 6)
-            .attr("refY", 6)
-            .attr("markerWidth", 30)
-            .attr("markerHeight", 30)
-            .attr("orient", "auto")
-            .append("path")
-            .attr("d", "M 0 0 12 6 0 12 3 6")
-            .attr("fill", "orange");
-
-        svg.append("svg:defs").append("svg:marker")
-            .attr("id", "triangle_black")
-            .attr("refX", 6)
-            .attr("refY", 6)
-            .attr("markerWidth", 30)
-            .attr("markerHeight", 30)
-            .attr("orient", "auto")
-            .append("path")
-            .attr("d", "M 0 0 12 6 0 12 3 6")
-            .attr("fill", "black");
+        var colors = ["black", "orange", "blue"];
+        var svg = svg;
+        colors.forEach(
+            color => {
+                svg.append("svg:defs").append("svg:marker")
+                    .attr("id", `triangle_${color}`)
+                    .attr("refX", 6)
+                    .attr("refY", 6)
+                    .attr("markerWidth", 30)
+                    .attr("markerHeight", 30)
+                    .attr("orient", "auto")
+                    .append("path")
+                    .attr("d", "M 0 0 12 6 0 12 3 6")
+                    .attr("fill", color);
+            }
+        );
     }
 
     associateVisualInformationWithGraphNodes(){
@@ -432,7 +427,7 @@ class GraphView extends React.Component {
             var ellipseWidth = d3.select(e[0]).attr('rx');
             var labelWidth = e[1].getBBox().width;
             if (labelWidth >= ellipseWidth) {
-                d3.select(e[0]).attr('rx', labelWidth)
+                d3.select(e[0]).attr('rx', labelWidth/2+10)
             }
         });
     }
@@ -514,29 +509,21 @@ class GraphView extends React.Component {
 
     drag_node(d, node, label, edge){
         var self = this;
-        // let graph_dimensions = document.querySelector('.graph-view .graph')
-        //     .getBoundingClientRect();
         var graph_dimensions = self.get_canvas_bounding_box();
         var width = parseFloat(node.filter((n) => {
                 return n === d
             }
         ).attr('rx'));
-
         var height = parseFloat(node.filter((n) => {
                 return n === d
             }
         ).attr('ry'));
-
         let bounds = {
             x_min: width * this.scaling,
             x_max: graph_dimensions.width - width * this.scaling,
             y_min: height * this.scaling,
             y_max: graph_dimensions.height - height * this.scaling
         };
-
-        var event = d3.event
-        console.log(event)
-
         d.x = d3.event.x;
         d.y = d3.event.y;
         console.log(d.x);
@@ -779,7 +766,7 @@ class GraphView extends React.Component {
             this.apply_select_boxes(svg);
             this.scale_graph_to_fit(node, label, edge);
             this.center_graph(node, label, edge);
-            // this.resize_nodes_to_label_text();
+            this.resize_nodes_to_label_text();
             window.get_graph_box = this.get_graph_bounding_box;
             window.get_canvas_box = this.get_canvas_bounding_box;
         }
