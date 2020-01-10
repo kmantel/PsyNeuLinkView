@@ -33,8 +33,10 @@ class GraphView extends React.Component {
             graph: this.props.graph,
             spinner_visible: false,
         };
-        this.scaling = 1;
+        this.scaling_factor = 1;
+        this.fill_proportion = 0.75;
         this.setGraph = this.setGraph.bind(this);
+        this.scale_graph = this.scale_graph.bind(this);
         this.updateGraph = this.updateGraph.bind(this);
         this.componentDidUpdate = this.componentDidUpdate.bind(this)
     }
@@ -67,28 +69,26 @@ class GraphView extends React.Component {
     }
 
     updateGraph() {
-        var percentage;
-        var graph = document.querySelector('.graph-view .graph');
-        if (graph){
-            var view_rect = document.querySelector('.graph-view')
-                .getBoundingClientRect();
-            var graph_rect = document.querySelector('.graph-view g.node')
-                .getBBox();
-            var total_graph_height = graph_rect.height + graph_rect.y;
-            if (total_graph_height > view_rect.height) {
-                percentage = Math.ceil((total_graph_height / (view_rect.height)) * 100) + 5;
-                graph.setAttribute('height', `${percentage}%`)
-            } else {
-                graph.setAttribute('height', '100%')
-            }
-            var total_graph_width = graph_rect.width + graph_rect.x;
-            if (total_graph_width > view_rect.width) {
-                percentage = Math.ceil((total_graph_width / view_rect.width) * 100) + 5;
-                graph.setAttribute('width', `${percentage}%`)
-            } else {
-                graph.setAttribute('width', '100%')
+        var horizontal_overflow, vertical_overflow;
+        horizontal_overflow = this.canvas_bounding_box.width * this.fill_proportion >= this.graph_bounding_box.width;
+        vertical_overflow = this.canvas_bounding_box.height * this.fill_proportion >= this.graph_bounding_box.height;
+        if (horizontal_overflow) {
+            var horizontal_offset = -1 * (this.canvas_bounding_box.width - this.get_canvas_bounding_box().width) / 2;
+            if (horizontal_offset !== 0) {
+                this.move_graph(horizontal_offset, 0, this.node, this.label, this.edge)
             }
         }
+        if (vertical_overflow) {
+            var vertical_offset = -1 * (this.canvas_bounding_box.height - this.get_canvas_bounding_box().height) / 2;
+            if (vertical_offset !== 0) {
+                this.move_graph(0, vertical_offset, this.node, this.label, this.edge)
+            }
+        }
+        if (!horizontal_overflow || !vertical_overflow) {
+            this.scale_graph_to_fit(this.fill_proportion);
+            this.center_graph(this.node, this.label, this.edge);
+        }
+        this.canvas_bounding_box=this.get_canvas_bounding_box();
     }
 
     createSVG(){
@@ -277,6 +277,8 @@ class GraphView extends React.Component {
 
     move_graph(horizontal_offset, vertical_offset, node, label, edge){
         var self = this;
+        horizontal_offset /= this.scaling_factor;
+        vertical_offset /= this.scaling_factor;
         self.props.graph.objects.forEach(function (d) {
                 d.x += horizontal_offset;
                 d.y += vertical_offset;
@@ -340,81 +342,6 @@ class GraphView extends React.Component {
             });
     }
 
-    // center_graph(node, label, edge, labelOffset){
-    //     var self = this
-    //     var view_rect = document.querySelector('.graph-view')
-    //         .getBoundingClientRect();
-    //     var graph_rect = document.querySelector('g.node')
-    //         .getBBox();
-    //     var widthOffset = graph_rect.x - ((view_rect.width / 2) - (graph_rect.width / 2));
-    //     var heightOffset = (view_rect.height / 2) - (graph_rect.height / 2);
-    //
-    //     self.props.graph.objects.forEach(function (d) {
-    //             d.x -= widthOffset;
-    //             d.y = view_rect.height - (d.y + heightOffset)
-    //         } //this is wonky. why are we subtracting offset from x instead of adding and why are we doing this strange operation with y
-    //     );
-    //
-    //     node
-    //         .attr('cx', function (d) {
-    //             return d.x
-    //         })
-    //         .attr('cy', function (d) {
-    //             return d.y
-    //         });
-    //
-    //     label
-    //         .attr('x', function (d) {
-    //             return d.x
-    //         })
-    //         .attr('y', function (d) {
-    //             return d.y + labelOffset
-    //         });
-    //     edge
-    //         .attr('x1', function (d) {
-    //             return d.tail.x
-    //         })
-    //         .attr('y1', function (d) {
-    //             return d.tail.y
-    //         })
-    //         .attr('x2', function (d) {
-    //             var x2 = self.get_offset_between_ellipses(
-    //                 d.tail.x,
-    //                 d.tail.y,
-    //                 d.head.x,
-    //                 d.head.y,
-    //                 node.filter(function (n) {
-    //                     return n === d.head
-    //                 })
-    //                     .attr('rx'),
-    //                 node.filter(function (n) {
-    //                     return n === d.head
-    //                 })
-    //                     .attr('ry')
-    //             ).x;
-    //             return x2
-    //             // return d.head.x
-    //         })
-    //         .attr('y2', function (d) {
-    //             var y2 = self.get_offset_between_ellipses(
-    //                 d.tail.x,
-    //                 d.tail.y,
-    //                 d.head.x,
-    //                 d.head.y,
-    //                 node.filter(function (n) {
-    //                     return n === d.head
-    //                 })
-    //                     .attr('rx'),
-    //                 node.filter(function (n) {
-    //                     return n === d.head
-    //                 })
-    //                     .attr('ry')
-    //             ).y;
-    //             return y2
-    //             // return d.head.y
-    //         });
-    // }
-
     resize_nodes_to_label_text(){
         var labels = Array.from(d3.selectAll('g.label text')._groups[0]);
         var nodes = Array.from(d3.selectAll('g.node ellipse')._groups[0]);
@@ -427,7 +354,7 @@ class GraphView extends React.Component {
             var ellipseWidth = d3.select(e[0]).attr('rx');
             var labelWidth = e[1].getBBox().width;
             if (labelWidth >= ellipseWidth) {
-                d3.select(e[0]).attr('rx', labelWidth/2+10)
+                d3.select(e[0]).attr('rx', Math.floor(labelWidth/2)+10)
             }
         });
     }
@@ -549,34 +476,42 @@ class GraphView extends React.Component {
 
     drag_node(d, node, label, edge){
         var self = this;
-        var graph_dimensions = self.get_canvas_bounding_box();
-        var width = parseFloat(node.filter((n) => {
+        var canvas_dimensions = self.get_canvas_bounding_box();
+        var node_x_radius = parseFloat(node.filter((n) => {
                 return n === d
             }
-        ).attr('rx'));
-        var height = parseFloat(node.filter((n) => {
+        ).attr('rx')) * this.scaling_factor;
+        var node_y_radius = parseFloat(node.filter((n) => {
                 return n === d
             }
-        ).attr('ry'));
+        ).attr('ry')) * this.scaling_factor;
         let bounds = {
-            x_min: width * this.scaling,
-            x_max: graph_dimensions.width - width * this.scaling,
-            y_min: height * this.scaling,
-            y_max: graph_dimensions.height - height * this.scaling
+            x_min: node_x_radius,
+            x_max: canvas_dimensions.width - node_x_radius,
+            y_min: node_y_radius,
+            y_max: canvas_dimensions.height - node_y_radius
         };
         d.x = d3.event.x;
         d.y = d3.event.y;
-        console.log(d.x);
-        console.log(d.y);
-        if (d.x * this.scaling < bounds.x_min) {
-            d.x = bounds.x_min / this.scaling
-        } else if (d.x  * this.scaling > bounds.x_max) {
-            d.x = bounds.x_max / this.scaling
+        var canvas_width = canvas_dimensions.width;
+        var interpolated_width = canvas_width/this.scaling_factor;
+        var interpolated_x_start = canvas_width/2 - interpolated_width/2;
+        var original_x = ((d.x-interpolated_x_start)/interpolated_width) * canvas_width;
+
+        var canvas_height = canvas_dimensions.height;
+        var interpolated_height = canvas_height/this.scaling_factor;
+        var interpolated_y_start = canvas_height/2 - interpolated_height/2;
+        var original_y = ((d.y-interpolated_y_start)/interpolated_height) * canvas_height;
+
+        if (original_x < bounds.x_min) {
+            d.x = Math.floor((node_x_radius/canvas_width)*interpolated_width+interpolated_x_start)
+        } else if (original_x > bounds.x_max) {
+            d.x = Math.floor((canvas_width-node_x_radius)/canvas_width*interpolated_width+interpolated_x_start)
         }
-        if (d.y  * this.scaling < bounds.y_min) {
-            d.y = bounds.y_min / this.scaling
-        } else if (d.y  * this.scaling > bounds.y_max) {
-            d.y = bounds.y_max / this.scaling
+        if (original_y < bounds.y_min) {
+            d.y = Math.floor((node_y_radius/canvas_height)*interpolated_height+interpolated_y_start)
+        } else if (original_y > bounds.y_max) {
+            d.y = Math.floor(((canvas_height-node_y_radius)/canvas_height)*interpolated_height+interpolated_y_start)
         }
         node.filter(function (n) {
             return n === d
@@ -693,33 +628,37 @@ class GraphView extends React.Component {
         this.move_graph(horizontal_offset, vertical_offset, node, label, edge)
     }
 
-    scale_graph_to_fit(node, label, edge){
-        var canvas_bounding_box, graph_bounding_box, target_width, target_height, scaling_factor, node_selector, label_selector, edge_selector;
-        canvas_bounding_box = this.get_canvas_bounding_box();
-        graph_bounding_box = this.get_graph_bounding_box();
-        target_width = Math.floor(canvas_bounding_box.width * .99);
-        target_height = Math.floor(canvas_bounding_box.height * .99);
-        scaling_factor = Math.min(
-            Math.floor(((target_width / graph_bounding_box.width) * 100)) / 100,
-            Math.floor(((target_height / graph_bounding_box.height) * 100)) / 100,
-        );
-        this.scaling = scaling_factor;
+    scale_graph(scaling_factor){
+        var node_selector, label_selector, edge_selector;
+        this.scaling_factor = scaling_factor;
         node_selector = document.querySelector('g.node');
         node_selector.style.transform = `scale(${scaling_factor})`;
         label_selector = document.querySelector('g.label');
         label_selector.style.transform = `scale(${scaling_factor})`;
         edge_selector = document.querySelector('g.edge');
         edge_selector.style.transform = `scale(${scaling_factor})`;
-        return scaling_factor
+    }
+
+    scale_graph_to_fit(proportion){
+        var canvas_bounding_box, graph_bounding_box, target_width, target_height, scaling_factor;
+        this.scale_graph(1);
+        canvas_bounding_box = this.get_canvas_bounding_box();
+        graph_bounding_box = this.get_graph_bounding_box();
+        target_width = Math.floor(canvas_bounding_box.width * proportion * .99);
+        target_height = Math.floor(canvas_bounding_box.height * proportion * .99);
+        scaling_factor = Math.min(
+            Math.floor(((target_width / graph_bounding_box.width) * 100)) / 100,
+            Math.floor(((target_height / graph_bounding_box.height) * 100)) / 100,
+        );
+        this.scale_graph(scaling_factor)
     }
 
     get_canvas_bounding_box(){
-        var graph_bounding_box, graph_dom_rect, canvas_bounding_box;
-        graph_bounding_box = document.querySelector('.graph').getBBox();
+        var graph_dom_rect, canvas_bounding_box;
         graph_dom_rect = document.querySelector('.graph').getBoundingClientRect();
         canvas_bounding_box = {
-            x: graph_bounding_box.x,
-            y: graph_bounding_box.y,
+            x: graph_dom_rect.x,
+            y: graph_dom_rect.y,
             width: graph_dom_rect.width,
             height: graph_dom_rect.height
         };
@@ -727,13 +666,14 @@ class GraphView extends React.Component {
     }
 
     get_graph_bounding_box(){
-        var node_bounding_box, node_dom_rect, label_bounding_box, label_dom_rect, graph_bounding_box, x, y, width, height;
+        var canvas_bounding_box, node_bounding_box, node_dom_rect, label_bounding_box, label_dom_rect, graph_bounding_box, x, y, width, height;
+        canvas_bounding_box = this.get_canvas_bounding_box();
         node_bounding_box = document.querySelector('.graph-view .node').getBBox();
         node_dom_rect = document.querySelector('.graph-view .node').getBoundingClientRect();
         label_bounding_box = document.querySelector('.graph-view .label').getBBox();
         label_dom_rect = document.querySelector('.graph-view .label').getBoundingClientRect();
-        x = Math.min(node_bounding_box.x, label_bounding_box.x);
-        y = Math.min(node_bounding_box.y, label_bounding_box.y);
+        x = Math.min(node_dom_rect.x, label_dom_rect.x) - canvas_bounding_box.x;
+        y = Math.min(node_dom_rect.y, label_dom_rect.y) - canvas_bounding_box.y;
 
         if ((node_dom_rect.width >= label_dom_rect.width && node_bounding_box.x <= label_bounding_box.x) ||
         (node_dom_rect.width <= label_dom_rect.width && node_bounding_box.x >= label_bounding_box.x)) {
@@ -784,10 +724,8 @@ class GraphView extends React.Component {
         var graph_bounding_box, canvas_bounding_box, vertical_offset, horizontal_offset;
         graph_bounding_box = this.get_graph_bounding_box();
         canvas_bounding_box = this.get_canvas_bounding_box();
-        console.log(this.scaling);
-        horizontal_offset = 0-graph_bounding_box.x + (canvas_bounding_box.width - graph_bounding_box.width) / 2 / this.scaling - this.state.node_width * this.scaling / 2;
-        vertical_offset = 0-graph_bounding_box.y + (canvas_bounding_box.height - graph_bounding_box.height) / 2 / this.scaling;
-        console.log(horizontal_offset, vertical_offset);
+        horizontal_offset = 0-graph_bounding_box.x + (canvas_bounding_box.width-graph_bounding_box.width)/2;
+        vertical_offset = 0-graph_bounding_box.y + (canvas_bounding_box.height-graph_bounding_box.height)/2;
         this.move_graph(horizontal_offset, vertical_offset, node, label, edge)
     }
 
@@ -803,12 +741,20 @@ class GraphView extends React.Component {
             var edge = this.drawProjections(svg);
             var node = this.drawNodes(svg, nodeWidth, nodeHeight, (d)=>{self.drag_node(d, node, label, edge)});
             var label = this.drawLabels(svg, 5, (d)=>{self.drag_node(d, node, label, edge)});
-            this.apply_select_boxes(svg);
-            this.scale_graph_to_fit(node, label, edge);
+            this.scale_graph(1);
+            this.node = node;
+            this.label = label;
+            this.edge = edge;
             this.center_graph(node, label, edge);
+            this.scale_graph_to_fit(this.fill_proportion);
             this.resize_nodes_to_label_text();
             this.correct_projection_lengths_for_ellipse_sizes(node, edge);
-            this.updateGraph();
+            this.apply_select_boxes(svg);
+            this.graph_bounding_box = this.get_graph_bounding_box();
+            this.canvas_bounding_box = this.get_canvas_bounding_box();
+            window.scale = this.scale_graph;
+            window.graph_bounds = this.get_graph_bounding_box;
+            window.canvas_bounds = this.get_canvas_bounding_box;
         }
     }
 

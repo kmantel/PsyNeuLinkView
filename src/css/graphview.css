@@ -79,3 +79,7 @@ svg *::selection {
 svg *::-moz-selection {
     background:transparent;
 }
+
+g.node, g.label, g.edge {
+    transform-origin: center;
+}
