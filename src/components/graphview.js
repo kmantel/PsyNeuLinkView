@@ -34,10 +34,15 @@ class GraphView extends React.Component {
             spinner_visible: false,
         };
         this.scaling_factor = 1;
-        this.fill_proportion = 0.75;
+        this.fill_proportion = 1;
+        this.get_canvas_bounding_box = this.get_canvas_bounding_box.bind(this);
+        this.get_graph_bounding_box = this.get_graph_bounding_box.bind(this);
         this.setGraph = this.setGraph.bind(this);
+        this.capture_keys = this.capture_keys.bind(this);
         this.scale_graph = this.scale_graph.bind(this);
+        this.scale_graph_to_fit = this.scale_graph_to_fit.bind(this);
         this.updateGraph = this.updateGraph.bind(this);
+        this.capture_wheel = this.capture_wheel.bind(this);
         this.componentDidUpdate = this.componentDidUpdate.bind(this)
     }
 
@@ -59,34 +64,83 @@ class GraphView extends React.Component {
     }
 
     componentWillUnmount() {
-        window.removeEventListener('resize', this.updateGraph)
+        window.removeEventListener('resize', this.updateGraph);
+        window.removeEventListener('wheel', this.capture_wheel);
+        window.removeEventListener('keydown', this.capture_keys)
     }
 
     componentDidMount() {
         this.setGraph();
         window.addEventListener('resize', this.updateGraph);
+        window.addEventListener('wheel', this.capture_wheel);
+        window.addEventListener('keydown', this.capture_keys);
         add_context_menu('.graph-view', context_menu)
+    }
+
+    capture_keys(e){
+        if (e.metaKey){
+            if (e.key === '+' || e.key === '=') {
+                this.nudge_graph_larger();
+            }
+            else if (e.key === '-'){
+                this.nudge_graph_smaller();
+            }
+        }
+    }
+
+    capture_wheel(e){
+        console.log(e);
+        if (e.metaKey && this.mouse_inside_graph_bounds(e)){
+            if (e.deltaY > 0){
+                this.nudge_graph_larger()
+            }
+            else if (e.deltaY < 0){
+                this.nudge_graph_smaller()
+            }
+        }
+    }
+
+    mouse_inside_graph_bounds(e){
+        var canvas_bounds = this.get_canvas_bounding_box();
+        if (
+            e.clientX >= canvas_bounds.x && e.clientX <= canvas_bounds.x + canvas_bounds.width &&
+            e.clientY >= canvas_bounds.y && e.clientY <= canvas_bounds.y + canvas_bounds.height
+        ){
+            return true
+        }
+        else {
+            return false
+        }
+    }
+
+    nudge_graph_larger(){
+        this.scale_graph_to_fit(this.fill_proportion + 0.03)
+    }
+
+    nudge_graph_smaller(){
+        if (this.fill_proportion - 0.03 > 0){
+            this.scale_graph_to_fit(this.fill_proportion - 0.03)
+        }
     }
 
     updateGraph() {
         var horizontal_overflow, vertical_overflow;
-        horizontal_overflow = this.canvas_bounding_box.width * this.fill_proportion >= this.graph_bounding_box.width;
-        vertical_overflow = this.canvas_bounding_box.height * this.fill_proportion >= this.graph_bounding_box.height;
-        if (horizontal_overflow) {
+        horizontal_overflow = this.graph_bounding_box.width * this.fill_proportion >= this.canvas_bounding_box.width;
+        vertical_overflow = this.graph_bounding_box.height * this.fill_proportion >= this.canvas_bounding_box.height;
+        if (!horizontal_overflow) {
             var horizontal_offset = -1 * (this.canvas_bounding_box.width - this.get_canvas_bounding_box().width) / 2;
             if (horizontal_offset !== 0) {
                 this.move_graph(horizontal_offset, 0, this.node, this.label, this.edge)
             }
         }
-        if (vertical_overflow) {
+        if (!vertical_overflow) {
             var vertical_offset = -1 * (this.canvas_bounding_box.height - this.get_canvas_bounding_box().height) / 2;
             if (vertical_offset !== 0) {
                 this.move_graph(0, vertical_offset, this.node, this.label, this.edge)
             }
         }
-        if (!horizontal_overflow || !vertical_overflow) {
+        if (horizontal_overflow || vertical_overflow) {
             this.scale_graph_to_fit(this.fill_proportion);
-            this.center_graph(this.node, this.label, this.edge);
         }
         this.canvas_bounding_box=this.get_canvas_bounding_box();
     }
@@ -641,6 +695,7 @@ class GraphView extends React.Component {
 
     scale_graph_to_fit(proportion){
         var canvas_bounding_box, graph_bounding_box, target_width, target_height, scaling_factor;
+        this.fill_proportion = proportion;
         this.scale_graph(1);
         canvas_bounding_box = this.get_canvas_bounding_box();
         graph_bounding_box = this.get_graph_bounding_box();
@@ -650,7 +705,8 @@ class GraphView extends React.Component {
             Math.floor(((target_width / graph_bounding_box.width) * 100)) / 100,
             Math.floor(((target_height / graph_bounding_box.height) * 100)) / 100,
         );
-        this.scale_graph(scaling_factor)
+        this.scale_graph(scaling_factor);
+        this.center_graph(this.node, this.label, this.edge);
     }
 
     get_canvas_bounding_box(){
@@ -745,16 +801,17 @@ class GraphView extends React.Component {
             this.node = node;
             this.label = label;
             this.edge = edge;
-            this.center_graph(node, label, edge);
             this.scale_graph_to_fit(this.fill_proportion);
             this.resize_nodes_to_label_text();
             this.correct_projection_lengths_for_ellipse_sizes(node, edge);
+            this.center_graph(this.node, this.label, this.edge);
             this.apply_select_boxes(svg);
             this.graph_bounding_box = this.get_graph_bounding_box();
             this.canvas_bounding_box = this.get_canvas_bounding_box();
             window.scale = this.scale_graph;
             window.graph_bounds = this.get_graph_bounding_box;
             window.canvas_bounds = this.get_canvas_bounding_box;
+            window.scale_to_fit = this.scale_graph_to_fit;
         }
     }
 
