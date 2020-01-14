@@ -33,8 +33,10 @@ class GraphView extends React.Component {
             graph: this.props.graph,
             spinner_visible: false,
         };
+        this.centerpoint_offset = {x:0,y:0};
         this.scaling_factor = 1;
         this.fill_proportion = 1;
+        this.center_graph_on_point = this.center_graph_on_point.bind(this);
         this.get_canvas_bounding_box = this.get_canvas_bounding_box.bind(this);
         this.get_graph_bounding_box = this.get_graph_bounding_box.bind(this);
         this.setGraph = this.setGraph.bind(this);
@@ -126,8 +128,14 @@ class GraphView extends React.Component {
     }
 
     nudge_graph_larger(){
-        this.scale_graph_to_fit(this.fill_proportion + 0.03)
-        console.log(this.get_graph_bounding_box().x)
+        var pre_resize_bounds, post_resize_bounds;
+        pre_resize_bounds = this.get_graph_bounding_box();
+        this.scale_graph_to_fit(this.fill_proportion + 0.03);
+        post_resize_bounds = this.get_graph_bounding_box();
+        return {
+            'pre':pre_resize_bounds,
+            'post':post_resize_bounds
+        }
     }
 
     nudge_graph_smaller(){
@@ -719,7 +727,7 @@ class GraphView extends React.Component {
             Math.floor(((target_height / graph_bounding_box.height) * 100)) / 100,
         );
         this.scale_graph(scaling_factor);
-        this.center_graph(this.node, this.label, this.edge);
+        this.center_graph_on_point();
     }
 
     get_canvas_bounding_box(){
@@ -774,12 +782,16 @@ class GraphView extends React.Component {
         return graph_bounding_box
     }
 
-    center_graph(node, label, edge){
-        var graph_bounding_box, canvas_bounding_box, vertical_offset, horizontal_offset;
+    center_graph_on_point(centerpoint_offset=this.centerpoint_offset){
+        var centerpoint, graph_bounding_box, canvas_bounding_box, vertical_offset, horizontal_offset, node, label, edge;
+        node = this.node;
+        label = this.label;
+        edge = this.edge;
         graph_bounding_box = this.get_graph_bounding_box();
         canvas_bounding_box = this.get_canvas_bounding_box();
-        horizontal_offset = 0-graph_bounding_box.x + (canvas_bounding_box.width-graph_bounding_box.width)/2;
-        vertical_offset = 0-graph_bounding_box.y + (canvas_bounding_box.height-graph_bounding_box.height)/2;
+        centerpoint = {x:canvas_bounding_box.width/2, y:canvas_bounding_box.height/2}
+        horizontal_offset = centerpoint.x-graph_bounding_box.width/2 - graph_bounding_box.x + centerpoint_offset.x;
+        vertical_offset = centerpoint.y-graph_bounding_box.height/2 - graph_bounding_box.y + centerpoint_offset.y;
         this.move_graph(horizontal_offset, vertical_offset, node, label, edge)
     }
 
@@ -802,7 +814,7 @@ class GraphView extends React.Component {
             this.scale_graph_to_fit(this.fill_proportion);
             this.resize_nodes_to_label_text();
             this.correct_projection_lengths_for_ellipse_sizes(node, edge);
-            this.center_graph(this.node, this.label, this.edge);
+            this.center_graph_on_point();
             this.apply_select_boxes(svg);
             this.graph_bounding_box = this.get_graph_bounding_box();
             this.canvas_bounding_box = this.get_canvas_bounding_box();
