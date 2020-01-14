@@ -79,6 +79,16 @@ class GraphView extends React.Component {
         add_context_menu('.graph-view', context_menu)
     }
 
+    cartesian_to_polar(x, y, cx, cy){
+        var distance, radians, polar, centerpoint;
+        x = x - cx;
+        y = y - cy;
+        distance = Math.sqrt(x*x + y*y);
+        radians = Math.atan2(y,x);
+        polar = { distance:distance, radians:radians };
+        return polar
+    }
+
     capture_keys(e){
         if (e.metaKey){
             if (e.key === '+' || e.key === '=') {
@@ -91,13 +101,55 @@ class GraphView extends React.Component {
     }
 
     capture_wheel(e){
+        var bounds, angle;
         if (e.metaKey && this.mouse_inside_canvas_bounds(e)){
-            if (e.deltaY > 0){
-                this.nudge_graph_larger()
+            if (e.deltaY > 0) {
+                bounds = this.nudge_graph_larger();
+                var polar_pre =this.cartesian_to_polar(
+                    e.offsetX, e.offsetY, bounds.pre.centerpoint.x, bounds.pre.centerpoint.y
+                );
+                var polar_post =this.cartesian_to_polar(
+                    e.offsetX, e.offsetY, bounds.post.centerpoint.x, bounds.post.centerpoint.y
+                );
+                function getPointOnRect(angle, w, h) {
+                    var sine = Math.sin(angle), cosine = Math.cos(angle);   // Calculate once and store, to make quicker and cleaner
+                    var dy = Math.sin>0 ? h/2 : h/-2;                  // Distance to top or bottom edge (from center)
+                    var dx = Math.cos>0 ? w/2 : w/-2;                  // Distance to left or right edge (from center)
+                    if(Math.abs(dx*sine) < Math.abs(dy*cosine)) {           // if (distance to vertical line) < (distance to horizontal line)
+                        dy = (dx * sine) / cosine;                  // calculate distance to vertical line
+                    } else {                                      // else: (distance to top or bottom edge) < (distance to left or right edge)
+                        dx = (dy * cosine) / sine;                  // move to top or bottom line
+                    }
+                    return {dx:dx, dy:dy};                        // Return point on rectangle edge
+                }
+                function dist(x1, y1, x2, y2){
+                    var a = x1 - x2;
+                    var b = y1 - y2;
+                    var c = Math.sqrt(a*a + b*b);
+                    return c
+                }
+                var pre_pt_rel = getPointOnRect(polar_pre.radians,bounds.pre.width, bounds.pre.height);
+                var pre_pt_abs = {x: pre_pt_rel.dx + bounds.pre.centerpoint.x, y: pre_pt_rel.dy + bounds.pre.centerpoint.y};
+                var post_pt_rel = getPointOnRect(polar_post.radians,bounds.post.width, bounds.post.height);
+                var post_pt_abs = {x: post_pt_rel.dx + bounds.post.centerpoint.x, y: post_pt_rel.dy + bounds.post.centerpoint.y};
+                var dist_offset = dist(e.offsetX, e.offsetY, post_pt_abs.x, post_pt_abs.y) -
+                    dist(e.offsetX, e.offsetY, pre_pt_abs.x, pre_pt_abs.y);
+                var theta = polar_post.radians;
+                var new_r = post_pt_abs.x - e.offsetX + dist_offset;
+                var new_x = new_r * Math.cos(theta);
+                var new_y = new_r * Math.sin(theta);
+                console.log(new_x, new_y)
+                // console.log(e.offsetX, e.offsetY, bounds.pre.centerpoint.x + pre_pt.dx, bounds.pre.centerpoint.y + pre_pt.dy);
+                // console.log(e.offsetX, e.offsetY, bounds.post.centerpoint.x + post_pt.dx, bounds.post.centerpoint.y + post_pt.dy);
+            } else {
+                bounds = this.nudge_graph_smaller();
+                // angle = this.angle_from_pts(
+                //     {x:bounds.post.centerpoint.x,y:bounds.post.centerpoint.y},
+                //     {x:e.offsetX,y:e.offsetY},
+                // );
             }
-            else if (e.deltaY < 0){
-                this.nudge_graph_smaller()
-            }
+            console.log(angle);
+            this.center_graph_on_point();
         }
     }
 
@@ -139,8 +191,15 @@ class GraphView extends React.Component {
     }
 
     nudge_graph_smaller(){
+        var pre_resize_bounds, post_resize_bounds;
+        pre_resize_bounds = this.get_graph_bounding_box();
         if (this.fill_proportion - 0.03 > 0){
             this.scale_graph_to_fit(this.fill_proportion - 0.03)
+        }
+        post_resize_bounds = this.get_graph_bounding_box();
+        return {
+            'pre':pre_resize_bounds,
+            'post':post_resize_bounds
         }
     }
 
@@ -789,7 +848,7 @@ class GraphView extends React.Component {
         edge = this.edge;
         graph_bounding_box = this.get_graph_bounding_box();
         canvas_bounding_box = this.get_canvas_bounding_box();
-        centerpoint = {x:canvas_bounding_box.width/2, y:canvas_bounding_box.height/2}
+        centerpoint = {x:canvas_bounding_box.width/2, y:canvas_bounding_box.height/2};
         horizontal_offset = centerpoint.x-graph_bounding_box.width/2 - graph_bounding_box.x + centerpoint_offset.x;
         vertical_offset = centerpoint.y-graph_bounding_box.height/2 - graph_bounding_box.y + centerpoint_offset.y;
         this.move_graph(horizontal_offset, vertical_offset, node, label, edge)
