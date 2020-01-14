@@ -89,8 +89,7 @@ class GraphView extends React.Component {
     }
 
     capture_wheel(e){
-        console.log(e);
-        if (e.metaKey && this.mouse_inside_graph_bounds(e)){
+        if (e.metaKey && this.mouse_inside_canvas_bounds(e)){
             if (e.deltaY > 0){
                 this.nudge_graph_larger()
             }
@@ -100,7 +99,7 @@ class GraphView extends React.Component {
         }
     }
 
-    mouse_inside_graph_bounds(e){
+    mouse_inside_canvas_bounds(e){
         var canvas_bounds = this.get_canvas_bounding_box();
         if (
             e.clientX >= canvas_bounds.x && e.clientX <= canvas_bounds.x + canvas_bounds.width &&
@@ -113,8 +112,22 @@ class GraphView extends React.Component {
         }
     }
 
+    mouse_inside_graph_bounds(e){
+        var graph_bounds = this.get_graph_bounding_box();
+        if (
+            e.offsetX >= graph_bounds.x && e.offsetX <= graph_bounds.x + graph_bounds.width &&
+            e.offsetY >= graph_bounds.y && e.offsetY <= graph_bounds.y + graph_bounds.height
+        ){
+            return true
+        }
+        else {
+            return false
+        }
+    }
+
     nudge_graph_larger(){
         this.scale_graph_to_fit(this.fill_proportion + 0.03)
+        console.log(this.get_graph_bounding_box().x)
     }
 
     nudge_graph_smaller(){
@@ -747,31 +760,16 @@ class GraphView extends React.Component {
                 );
             }
         }
-
-        // (node_dom_rect.width >= label_dom_rect.width && node_bounding_box.x <= label_bounding_box.x) ||
-        // (node_dom_rect.width <= label_dom_rect.width && node_bounding_box.x >= label_bounding_box.x) ?
-        //     width = Math.max(node_dom_rect.width, label_dom_rect.width) :
-        //     label_bounding_box.x < node_bounding_box.x ?
-        //         width = Math.max(
-        //             label_bounding_box.width, node_bounding_box.width + node_bounding_box.x - label_bounding_box.x
-        //         ) :
-        //         width = Math.max(
-        //             node_bounding_box.width, label_bounding_box.width + label_bounding_box.x - node_bounding_box.x
-        //         );
-
-        // width = Math.max(
-        //     Math.max(node_dom_rect.width, label_dom_rect.width),
-        //     node_dom_rect.width < label_dom_rect.width &&
-        //     node_dom_rect.x > label ?
-        //         node_dom_rect.width + label_bounding_box.x - node_bounding_box.x :
-        //         label_dom_rect.width + node_bounding_box - label_bounding_box.x
-        // );
         height = node_dom_rect.height;
         graph_bounding_box = {
             x:x,
             y:y,
             width: width,
-            height: height
+            height: height,
+            centerpoint: {
+                x: Math.floor(x + width/2),
+                y: Math.floor(y + height/2)
+            }
         };
         return graph_bounding_box
     }
@@ -812,6 +810,7 @@ class GraphView extends React.Component {
             window.graph_bounds = this.get_graph_bounding_box;
             window.canvas_bounds = this.get_canvas_bounding_box;
             window.scale_to_fit = this.scale_graph_to_fit;
+            window.move_graph = function (h, v){self.move_graph(h,v,self.node, self.label, self.edge)};
         }
     }
 

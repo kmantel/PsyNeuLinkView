@@ -81,7 +81,8 @@
       <workItem from="1576106658181" duration="122000" />
       <workItem from="1576167416568" duration="8366000" />
       <workItem from="1578437766587" duration="4017000" />
-      <workItem from="1578926068106" duration="10040000" />
+      <workItem from="1578926068106" duration="14265000" />
+      <workItem from="1579013566253" duration="9348000" />
     </task>
     <servers />
   </component>
@@ -192,7 +193,7 @@
       <breakpoints>
         <line-breakpoint type="javascript">
           <url>file://$PROJECT_DIR$/src/components/graphview.js</url>
-          <line>559</line>
+          <line>572</line>
           <option name="timeStamp" value="76" />
         </line-breakpoint>
       </breakpoints>
