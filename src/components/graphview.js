@@ -28,8 +28,8 @@ class GraphView extends React.Component {
         this.state = {
             class: `graph-view ${this.props.className}`,
             mounted: false,
-            node_width: 40,
-            node_height: 30,
+            node_width: 20,
+            node_height: 15,
             graph: this.props.graph,
             spinner_visible: false,
         };
@@ -97,11 +97,7 @@ class GraphView extends React.Component {
                 this.nudge_graph_smaller();
             }
             if (e.key === 'c') {
-                this.fill_proportion = 1;
-                this.centerpoint_offset.x = 0;
-                this.centerpoint_offset.y = 0;
-                this.center_graph_on_point();
-                this.scale_graph_to_fit(this.fill_proportion);
+                this.reset_graph()
             }
         }
     }
@@ -123,6 +119,14 @@ class GraphView extends React.Component {
             dx = (dy * cosine) / sine;                  // move to top or bottom line
         }
         return {dx: dx, dy: dy};                        // Return point on rectangle edge
+    }
+
+    reset_graph() {
+        this.fill_proportion = 1;
+        this.centerpoint_offset.x = 0;
+        this.centerpoint_offset.y = 0;
+        this.center_graph_on_point();
+        this.scale_graph_to_fit(this.fill_proportion);
     }
 
     get_len_from_point_to_edge(x1, y1, x2, y2, vx, vy, px, py) {
@@ -160,7 +164,13 @@ class GraphView extends React.Component {
                 if (e.deltaY > 0) {
                     this.nudge_graph_larger();
                 } else {
-                    this.nudge_graph_smaller();
+                    bounds = this.nudge_graph_smaller();
+                    if (
+                        ((bounds.post.y + bounds.post.height) <= this.get_canvas_bounding_box().height) &&
+                        ((bounds.post.x + bounds.post.width) <= this.get_canvas_bounding_box().width)
+                    ) {
+                        this.reset_graph();
+                    }
                 }
             } else {
                 if (e.deltaY > 0) {
@@ -277,6 +287,11 @@ class GraphView extends React.Component {
             .attr('height', '99.5%')
             .attr('class', 'graph')
             .attr('overflow', 'auto');
+        var element = document.querySelector('svg');
+        var parent = document.querySelector('.graph-view');
+        var wrapper = document.createElement('test_div');
+        parent.replaceChild(wrapper, element);
+        wrapper.appendChild(element);
         return svg
     }
 
@@ -287,13 +302,13 @@ class GraphView extends React.Component {
             color => {
                 svg.append("svg:defs").append("svg:marker")
                     .attr("id", `triangle_${color}`)
-                    .attr("refX", 6)
-                    .attr("refY", 6)
-                    .attr("markerWidth", 30)
-                    .attr("markerHeight", 30)
+                    .attr("refX", 4)
+                    .attr("refY", 4)
+                    .attr("markerWidth", 8)
+                    .attr("markerHeight", 8)
                     .attr("orient", "auto")
                     .append("path")
-                    .attr("d", "M 0 0 12 6 0 12 3 6")
+                    .attr("d", "M 0 0 8 4 0 8 2 4")
                     .attr("fill", color);
             }
         );
@@ -359,18 +374,55 @@ class GraphView extends React.Component {
                 d3Element
                     .attr('marker-end', `url(#triangle_${color})`)
             });
-        return edge
+        var recurrent_projs = []
+        d3.selectAll('g.edge line')
+            .each(function (e) {
+                var recurrent_arc_offset = 5;
+                if (e.head === e.tail) {
+                    recurrent_projs.push(e);
+                    this.remove();
+                }
+            });
+        var arc = d3.arc()
+            .innerRadius(7)
+            .outerRadius(8)
+            .startAngle(2.7)
+            .endAngle(6.7);
+        var recurrent = svg.append('g')
+            .attr('class', 'recurrent')
+            .selectAll('path')
+            .data(recurrent_projs)
+            .enter()
+            .append('path')
+            .attr('d', arc)
+            .attr('transform', (e) => {
+                var recurrent_arc_offset = 5;
+                var arc_x = e.head.x;
+                var arc_y = e.head.y;
+                return `translate(${arc_x-parseFloat(e.head.ellipse.rx/2+recurrent_arc_offset)},${arc_y})`
+            })
+            .style('fill', 'black')
+        this.recurrent = recurrent;
+        this.edge = edge;
     }
 
     drawNodes(svg, nodeWidth, nodeHeight, nodeDragFunction) {
+        var nodeWidth = nodeWidth;
+        var nodeHeight = nodeHeight;
         var node = svg.append('g')
             .attr('class', 'node')
             .selectAll('ellipse')
             .data(this.props.graph.objects)
             .enter()
             .append('ellipse')
-            .attr('rx', nodeWidth)
-            .attr('ry', nodeHeight)
+            .attr('rx', function (d) {
+                d.rx = nodeWidth;
+                return d.rx
+            })
+            .attr('ry', function (d) {
+                d.ry = nodeHeight;
+                return d.ry
+            })
             .attr('cx', function (d) {
                 return d.x
             })
@@ -386,7 +438,7 @@ class GraphView extends React.Component {
             })
             .call(d3.drag()
                 .on('drag', nodeDragFunction));
-        return node
+        this.node = node
     }
 
     drawLabels(svg, offset, labelDragFunction) {
@@ -404,18 +456,19 @@ class GraphView extends React.Component {
                 return d.y + offset
             })
             .attr('font-size', function (d) {
-                d.text['font-size'] = '14';
-                return '14px'
+                d.text['font-size'] = '10';
+                return '10px'
             })
             .text(function (d) {
                 return d.name
             })
             .call(d3.drag()
                 .on('drag', labelDragFunction));
-        return label
+        this.label = label;
     }
 
     get_offset_between_ellipses(x1, y1, x2, y2, nodeWidth, nodeHeight) {
+        var arrow_offset = 3;
         var adjusted_x = x2 - x1;
         var adjusted_y = y2 - y1;
         var dist_between_centers = Math.sqrt(adjusted_x ** 2 + adjusted_y ** 2);
@@ -423,7 +476,7 @@ class GraphView extends React.Component {
         var a = nodeWidth;
         var b = nodeHeight;
         var radius_at_point = a * b / Math.sqrt(a ** 2 * Math.sin(phi) ** 2 + b ** 2 * Math.cos(phi) ** 2);
-        var e_radius = dist_between_centers - radius_at_point - 5;
+        var e_radius = dist_between_centers - radius_at_point - 3;
         var new_x = (e_radius * Math.cos(phi) + x1);
         var new_y = (e_radius * Math.sin(phi) + y1);
         return {
@@ -432,8 +485,9 @@ class GraphView extends React.Component {
         }
     }
 
-    fit_graph_to_workspace(node) {
+    fit_graph_to_workspace() {
         var self = this;
+        var node = this.node;
         var view_rect = document.querySelector('.graph-view')
             .getBoundingClientRect();
         var graph_rect = document.querySelector('g.node')
@@ -454,8 +508,13 @@ class GraphView extends React.Component {
 
     }
 
-    move_graph(horizontal_offset, vertical_offset, node, label, edge) {
+    move_graph(horizontal_offset, vertical_offset) {
         var self = this;
+        var label_offset = 3;
+        var node = this.node;
+        var label = this.label;
+        var edge = this.edge;
+        var recurrent = this.recurrent;
         horizontal_offset /= this.scaling_factor;
         vertical_offset /= this.scaling_factor;
         self.props.graph.objects.forEach(function (d) {
@@ -476,7 +535,7 @@ class GraphView extends React.Component {
                 return d.x
             })
             .attr('y', function (d) {
-                return d.y + 5
+                return d.y + label_offset
             });
         edge
             .attr('x1', function (d) {
@@ -519,6 +578,15 @@ class GraphView extends React.Component {
                 ).y;
                 return y2
             });
+        recurrent
+            .attr('transform', (e) => {
+                var parent_dom_node = d3.select(this);
+                var recurrent_arc_offset = 5;
+                var arc_x = e.head.x -parseFloat(e.head.ellipse.rx/2+recurrent_arc_offset); //subtract node radius from x translation
+                var arc_y = e.head.y;
+                console.log(arc_x, arc_y)
+                return `translate(${arc_x},${arc_y})`
+            })
     }
 
     resize_nodes_to_label_text() {
@@ -615,6 +683,8 @@ class GraphView extends React.Component {
 
     correct_projection_lengths_for_ellipse_sizes(node, edge) {
         var self = this;
+        var node = this.node;
+        var edge = this.edge;
         edge
             .attr('x2', function (d) {
                 var x2 = self.get_offset_between_ellipses(
@@ -653,8 +723,12 @@ class GraphView extends React.Component {
             )
     }
 
-    drag_node(d, node, label, edge) {
+    drag_node(d) {
         var self = this;
+        var node = this.node;
+        var label = this.label;
+        var edge = this.edge;
+        var label_offset = 3;
         var canvas_dimensions = self.get_canvas_bounding_box();
         var node_x_radius = parseFloat(node.filter((n) => {
                 return n === d
@@ -702,13 +776,13 @@ class GraphView extends React.Component {
             return l === d
         })
             .attr('x', d.x)
-            .attr('y', d.y + 5);
+            .attr('y', d.y + label_offset);
 
         label.filter(function (l) {
             return l === d
         })
             .attr('x', d.x)
-            .attr('y', d.y + 5);
+            .attr('y', d.y + label_offset);
 
         edge.filter(function (l) {
             return l.tail === d
@@ -789,8 +863,11 @@ class GraphView extends React.Component {
             })
     }
 
-    scroll_graph_into_view(node, label, edge) {
+    scroll_graph_into_view() {
         var horizontal_offset, vertical_offset, graph_bounding_box;
+        var node = this.node;
+        var label = this.label;
+        var edge = this.edge;
         graph_bounding_box = this.get_graph_bounding_box();
         if (graph_bounding_box.x < 0) {
             horizontal_offset = Math.abs(0 - graph_bounding_box.x)
@@ -806,14 +883,17 @@ class GraphView extends React.Component {
     }
 
     scale_graph(scaling_factor) {
-        var node_selector, label_selector, edge_selector;
+        var node_selector, label_selector, edge_selector, recurrent_selector;
         this.scaling_factor = scaling_factor;
-        node_selector = document.querySelector('g.node');
-        node_selector.style.transform = `scale(${scaling_factor})`;
-        label_selector = document.querySelector('g.label');
-        label_selector.style.transform = `scale(${scaling_factor})`;
-        edge_selector = document.querySelector('g.edge');
-        edge_selector.style.transform = `scale(${scaling_factor})`;
+        node_selector = d3.select('g.node');
+        node_selector
+            .attr('transform', `scale(${scaling_factor})`);
+        label_selector = d3.select('g.label');
+        label_selector
+            .attr('transform', `scale(${scaling_factor})`);
+        edge_selector = d3.select('g.edge');
+        edge_selector
+            .attr('transform', `scale(${scaling_factor})`);
     }
 
     scale_graph_to_fit(proportion) {
@@ -884,16 +964,13 @@ class GraphView extends React.Component {
     }
 
     center_graph_on_point(centerpoint_offset = this.centerpoint_offset) {
-        var centerpoint, graph_bounding_box, canvas_bounding_box, vertical_offset, horizontal_offset, node, label, edge;
-        node = this.node;
-        label = this.label;
-        edge = this.edge;
+        var centerpoint, graph_bounding_box, canvas_bounding_box, vertical_offset, horizontal_offset;
         graph_bounding_box = this.get_graph_bounding_box();
         canvas_bounding_box = this.get_canvas_bounding_box();
         centerpoint = {x: canvas_bounding_box.width / 2, y: canvas_bounding_box.height / 2};
         horizontal_offset = centerpoint.x - graph_bounding_box.width / 2 - graph_bounding_box.x + centerpoint_offset.x;
         vertical_offset = centerpoint.y - graph_bounding_box.height / 2 - graph_bounding_box.y + centerpoint_offset.y;
-        this.move_graph(horizontal_offset, vertical_offset, node, label, edge)
+        this.move_graph(horizontal_offset, vertical_offset)
     }
 
     setGraph() {
@@ -905,20 +982,17 @@ class GraphView extends React.Component {
             this.associateVisualInformationWithGraphNodes();
             this.associateVisualInformationWithGraphEdges();
             this.appendDefs(svg);
-            var edge = this.drawProjections(svg);
-            var node = this.drawNodes(svg, nodeWidth, nodeHeight, (d) => {
-                self.drag_node(d, node, label, edge)
+            this.drawProjections(svg);
+            this.drawNodes(svg, nodeWidth, nodeHeight, (d) => {
+                self.drag_node(d)
             });
-            var label = this.drawLabels(svg, 5, (d) => {
-                self.drag_node(d, node, label, edge)
+            this.drawLabels(svg, 5, (d) => {
+                self.drag_node(d)
             });
             this.scale_graph(1);
-            this.node = node;
-            this.label = label;
-            this.edge = edge;
             this.scale_graph_to_fit(this.fill_proportion);
             this.resize_nodes_to_label_text();
-            this.correct_projection_lengths_for_ellipse_sizes(node, edge);
+            this.correct_projection_lengths_for_ellipse_sizes();
             this.center_graph_on_point();
             this.apply_select_boxes(svg);
             this.graph_bounding_box = this.get_graph_bounding_box();
@@ -928,7 +1002,7 @@ class GraphView extends React.Component {
             window.canvas_bounds = this.get_canvas_bounding_box;
             window.scale_to_fit = this.scale_graph_to_fit;
             window.move_graph = function (h, v) {
-                self.move_graph(h, v, self.node, self.label, self.edge)
+                self.move_graph(h, v)
             };
         }
     }

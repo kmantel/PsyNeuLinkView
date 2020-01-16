@@ -83,7 +83,7 @@
       <workItem from="1578437766587" duration="4017000" />
       <workItem from="1578926068106" duration="14265000" />
       <workItem from="1579013566253" duration="19039000" />
-      <workItem from="1579098786945" duration="33562000" />
+      <workItem from="1579098786945" duration="47380000" />
     </task>
     <servers />
   </component>
@@ -191,9 +191,19 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <default-breakpoints>
-        <breakpoint enabled="true" type="javascript-exception" />
-      </default-breakpoints>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/src/components/graphview.js</url>
+          <line>584</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="153" />
+        </line-breakpoint>
+      </breakpoints>
     </breakpoint-manager>
+    <watches-manager>
+      <configuration name="ChromiumRemoteDebugType">
+        <watch expression="d3Element._groups[&quot;0&quot;][&quot;0&quot;].__proto__" />
+      </configuration>
+    </watches-manager>
   </component>
 </project>
