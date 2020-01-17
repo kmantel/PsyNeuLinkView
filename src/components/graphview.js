@@ -222,6 +222,15 @@ class GraphView extends React.Component {
         }
     }
 
+    generate_arc(){
+        var arc = d3.arc()
+            .innerRadius(7)
+            .outerRadius(8)
+            .startAngle(2.7)
+            .endAngle(6.8);
+        return arc
+    }
+
     mouse_inside_graph_bounds(e) {
         var graph_bounds = this.get_graph_bounding_box();
         if (
@@ -312,6 +321,10 @@ class GraphView extends React.Component {
                     .attr("fill", color);
             }
         );
+        svg.append("svg:defs").append("svg:marker")
+            .attr("id", "reference_arc")
+            .append("path")
+            .attr("d", this.generate_arc())
     }
 
     associateVisualInformationWithGraphNodes() {
@@ -350,6 +363,9 @@ class GraphView extends React.Component {
             .data(self.props.graph.edges)
             .enter()
             .append('line')
+            .attr('id', function (d) {
+                return d.name
+            })
             .attr('x1', function (d) {
                 return d.tail.x
             })
@@ -366,7 +382,6 @@ class GraphView extends React.Component {
             .attr('stroke', function (d) {
                 return d.color
             });
-
         d3.selectAll('g.edge line')
             .each(function () {
                 var d3Element = d3.select(this);
@@ -374,34 +389,61 @@ class GraphView extends React.Component {
                 d3Element
                     .attr('marker-end', `url(#triangle_${color})`)
             });
-        var recurrent_projs = []
+        var recurrent_projs = [];
         d3.selectAll('g.edge line')
             .each(function (e) {
-                var recurrent_arc_offset = 5;
+                var recurrent_arc_offset = 10;
                 if (e.head === e.tail) {
                     recurrent_projs.push(e);
-                    this.remove();
                 }
             });
-        var arc = d3.arc()
-            .innerRadius(7)
-            .outerRadius(8)
-            .startAngle(2.7)
-            .endAngle(6.7);
         var recurrent = svg.append('g')
             .attr('class', 'recurrent')
             .selectAll('path')
             .data(recurrent_projs)
             .enter()
             .append('path')
-            .attr('d', arc)
+            .attr('d', self.generate_arc())
             .attr('transform', (e) => {
-                var recurrent_arc_offset = 5;
+                var recurrent_arc_offset = 10;
                 var arc_x = e.head.x;
                 var arc_y = e.head.y;
-                return `translate(${arc_x-parseFloat(e.head.ellipse.rx/2+recurrent_arc_offset)},${arc_y})`
+                return `scale(${this.scaling_factor}) translate(${arc_x-parseFloat(e.head.ellipse.rx/2+recurrent_arc_offset)},${arc_y})`
+            });
+        d3.selectAll('g.edge line')
+            .filter(
+                (e)=>{
+                    return e.head===e.tail
+                }
+            )
+            .attr('x1',function (d) {
+                var reference_arc = document.querySelector('#reference_arc path');
+                var arc_length = reference_arc.getTotalLength();
+                var arrow_start = reference_arc.getPointAtLength(arc_length * .75);
+                var arrow_end = reference_arc.getPointAtLength(arc_length * .55);
+                return d.head.x - d.head.ellipse.rx + arrow_start.x - document.querySelector("#reference_arc path").getBBox().x
             })
-            .style('fill', 'black')
+            .attr('y1',function (d) {
+                var reference_arc = document.querySelector('#reference_arc path');
+                var arc_length = reference_arc.getTotalLength();
+                var arrow_start = reference_arc.getPointAtLength(arc_length * .75);
+                var arrow_end = reference_arc.getPointAtLength(arc_length * .55);
+                return d.head.y - d.head.ellipse.ry + arrow_start.y - document.querySelector("#reference_arc path").getBBox().y
+            })
+            .attr('x2',function (d) {
+                var reference_arc = document.querySelector('#reference_arc path');
+                var arc_length = reference_arc.getTotalLength();
+                var arrow_start = reference_arc.getPointAtLength(arc_length * .75);
+                var arrow_end = reference_arc.getPointAtLength(arc_length * .55);
+                return d.head.x - d.head.ellipse.rx + arrow_end.x - document.querySelector("#reference_arc path").getBBox().x
+            })
+            .attr('y2',function (d) {
+                var reference_arc = document.querySelector('#reference_arc path');
+                var arc_length = reference_arc.getTotalLength();
+                var arrow_start = reference_arc.getPointAtLength(arc_length * .75);
+                var arrow_end = reference_arc.getPointAtLength(arc_length * .55);
+                return d.head.y - d.head.ellipse.ry + arrow_start.y - document.querySelector("#reference_arc path").getBBox().y
+            })
         this.recurrent = recurrent;
         this.edge = edge;
     }
@@ -580,12 +622,34 @@ class GraphView extends React.Component {
             });
         recurrent
             .attr('transform', (e) => {
-                var parent_dom_node = d3.select(this);
-                var recurrent_arc_offset = 5;
-                var arc_x = e.head.x -parseFloat(e.head.ellipse.rx/2+recurrent_arc_offset); //subtract node radius from x translation
+                var recurrent_arc_offset = 10;
+                var arc_x = e.head.x;
                 var arc_y = e.head.y;
-                console.log(arc_x, arc_y)
-                return `translate(${arc_x},${arc_y})`
+                return `scale(${this.scaling_factor}) translate(${arc_x-parseFloat(e.head.ellipse.rx/2+recurrent_arc_offset)},${arc_y})`
+            })
+        d3.selectAll('g.edge line')
+            .filter(
+                (e)=>{
+                    return e.head===e.tail
+                }
+            )
+            .attr('x1',function (d) {
+                return d.head.x - d.head.ellipse.rx + 6
+            })
+            .attr('y1',function (d) {
+                var reference_arc = document.querySelector('#reference_arc path');
+                var reference_arc_len = reference_arc.getTotalLength();
+                var starting_y_location = reference_arc.getPointAtLength(reference_arc_len).y - reference_arc.getBBox().y - 8.2;
+                return d.head.y + starting_y_location
+            })
+            .attr('x2',function (d) {
+                return d.head.x - d.head.ellipse.rx + 7
+            })
+            .attr('y2',function (d) {
+                var reference_arc = document.querySelector('#reference_arc path');
+                var reference_arc_len = reference_arc.getTotalLength();
+                var ending_y_location = reference_arc.getPointAtLength(reference_arc_len*.99).y - reference_arc.getBBox().y - 7.70;
+                return d.head.y + ending_y_location
             })
     }
 
@@ -860,6 +924,37 @@ class GraphView extends React.Component {
                         .attr('ry')
                 ).y;
                 return y2
+            })
+        this.recurrent
+            .attr('transform', (e) => {
+                var recurrent_arc_offset = 10;
+                var arc_x = e.head.x;
+                var arc_y = e.head.y;
+                return `scale(${this.scaling_factor}) translate(${arc_x-parseFloat(e.head.ellipse.rx/2+recurrent_arc_offset)},${arc_y})`
+            })
+        d3.selectAll('g.edge line')
+            .filter(
+                (e)=>{
+                    return e.head===e.tail
+                }
+            )
+            .attr('x1',function (d) {
+                return d.head.x - d.head.ellipse.rx + 6
+            })
+            .attr('y1',function (d) {
+                var reference_arc = document.querySelector('#reference_arc path');
+                var reference_arc_len = reference_arc.getTotalLength();
+                var starting_y_location = reference_arc.getPointAtLength(reference_arc_len).y - reference_arc.getBBox().y - 8.2;
+                return d.head.y + starting_y_location
+            })
+            .attr('x2',function (d) {
+                return d.head.x - d.head.ellipse.rx + 7
+            })
+            .attr('y2',function (d) {
+                var reference_arc = document.querySelector('#reference_arc path');
+                var reference_arc_len = reference_arc.getTotalLength();
+                var ending_y_location = reference_arc.getPointAtLength(reference_arc_len*.99).y - reference_arc.getBBox().y - 7.70;
+                return d.head.y + ending_y_location
             })
     }
 
