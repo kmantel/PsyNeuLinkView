@@ -80,6 +80,6 @@ svg *::-moz-selection {
     background:transparent;
 }
 
-g.node, g.label, g.edge, g.recurrent path {
-    transform-origin: center;
-}
+/*g.node, g.label, g.edge, g.recurrent path {*/
+/*    transform-origin: center;*/
+/*}*/

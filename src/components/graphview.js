@@ -290,10 +290,11 @@ class GraphView extends React.Component {
     }
 
     createSVG() {
+        var width = document.querySelector('.graphview').getBoundingClientRect().width;
+        var height = document.querySelector('.graphview').getBoundingClientRect().height;
         var svg = d3.select('.graph-view')
             .append('svg')
-            .attr('width', '100%')
-            .attr('height', '99.5%')
+            .attr("viewBox", [0, 0, width, height])
             .attr('class', 'graph')
             .attr('overflow', 'auto');
         var element = document.querySelector('svg');
@@ -408,7 +409,7 @@ class GraphView extends React.Component {
                 var recurrent_arc_offset = 10;
                 var arc_x = e.head.x;
                 var arc_y = e.head.y;
-                return `scale(${this.scaling_factor}) translate(${arc_x-parseFloat(e.head.ellipse.rx/2+recurrent_arc_offset)},${arc_y})`
+                return `translate(${arc_x-parseFloat(e.head.ellipse.rx/2+recurrent_arc_offset)},${arc_y})`
             });
         d3.selectAll('g.edge line')
             .filter(
@@ -444,6 +445,8 @@ class GraphView extends React.Component {
                 var arrow_end = reference_arc.getPointAtLength(arc_length * .55);
                 return d.head.y - d.head.ellipse.ry + arrow_start.y - document.querySelector("#reference_arc path").getBBox().y
             })
+        var width = this.get_canvas_bounding_box().width
+        var height = this.get_canvas_bounding_box().height
         this.recurrent = recurrent;
         this.edge = edge;
     }
@@ -507,6 +510,8 @@ class GraphView extends React.Component {
             .call(d3.drag()
                 .on('drag', labelDragFunction));
         this.label = label;
+        var width = this.get_canvas_bounding_box().width
+        var height = this.get_canvas_bounding_box().height
     }
 
     get_offset_between_ellipses(x1, y1, x2, y2, nodeWidth, nodeHeight) {
@@ -625,7 +630,7 @@ class GraphView extends React.Component {
                 var recurrent_arc_offset = 10;
                 var arc_x = e.head.x;
                 var arc_y = e.head.y;
-                return `scale(${this.scaling_factor}) translate(${arc_x-parseFloat(e.head.ellipse.rx/2+recurrent_arc_offset)},${arc_y})`
+                return `translate(${arc_x-parseFloat(e.head.ellipse.rx/2+recurrent_arc_offset)},${arc_y})`
             })
         d3.selectAll('g.edge line')
             .filter(
@@ -930,7 +935,7 @@ class GraphView extends React.Component {
                 var recurrent_arc_offset = 10;
                 var arc_x = e.head.x;
                 var arc_y = e.head.y;
-                return `scale(${this.scaling_factor}) translate(${arc_x-parseFloat(e.head.ellipse.rx/2+recurrent_arc_offset)},${arc_y})`
+                return `translate(${arc_x-parseFloat(e.head.ellipse.rx/2+recurrent_arc_offset)},${arc_y})`
             })
         d3.selectAll('g.edge line')
             .filter(
@@ -1092,6 +1097,23 @@ class GraphView extends React.Component {
             this.apply_select_boxes(svg);
             this.graph_bounding_box = this.get_graph_bounding_box();
             this.canvas_bounding_box = this.get_canvas_bounding_box();
+            var width = document.querySelector('.graphview').getBoundingClientRect().width;
+            var height = document.querySelector('.graphview').getBoundingClientRect().height;
+            svg.call(d3.zoom()
+                .extent([[0, 0], [width, height]])
+                .scaleExtent([1, 8])
+                .on("zoom", zoomed));
+            function zoomed() {
+                var d3e = d3.select('g.node')
+                d3e.attr("transform", d3.event.transform);
+                d3e = d3.select('g.label')
+                d3e.attr("transform", d3.event.transform);
+                d3e = d3.select('g.edge')
+                d3e.attr("transform", d3.event.transform);
+                d3e = d3.select('g.recurrent')
+                d3e.attr("transform", d3.event.transform);
+
+            }
             window.scale = this.scale_graph;
             window.graph_bounds = this.get_graph_bounding_box;
             window.canvas_bounds = this.get_canvas_bounding_box;
