@@ -33,6 +33,7 @@ class GraphView extends React.Component {
             graph: this.props.graph,
             spinner_visible: false,
         };
+        this.mouse_offset = {x:0, y:0};
         this.centerpoint_offset = {x: 0, y: 0};
         this.scaling_factor = 1;
         this.fill_proportion = 1;
@@ -74,7 +75,7 @@ class GraphView extends React.Component {
     componentDidMount() {
         this.setGraph();
         window.addEventListener('resize', this.updateGraph);
-        window.addEventListener('wheel', this.capture_wheel);
+        window.addEventListener('wheel', this.capture_wheel, {passive:false});
         window.addEventListener('keydown', this.capture_keys);
         add_context_menu('.graph-view', context_menu)
     }
@@ -122,11 +123,7 @@ class GraphView extends React.Component {
     }
 
     reset_graph() {
-        this.fill_proportion = 1;
-        this.centerpoint_offset.x = 0;
-        this.centerpoint_offset.y = 0;
-        this.center_graph_on_point();
-        this.scale_graph_to_fit(this.fill_proportion);
+        this.svg.call(this.zoom.transform, d3.zoomIdentity);
     }
 
     get_len_from_point_to_edge(x1, y1, x2, y2, vx, vy, px, py) {
@@ -156,57 +153,17 @@ class GraphView extends React.Component {
     }
 
     capture_wheel(e) {
-        var bounds, angle;
-        if (e.metaKey && this.mouse_inside_canvas_bounds(e)) {
-            if (
-                !this.mouse_inside_graph_bounds(e)
-            ) {
-                if (e.deltaY > 0) {
-                    this.nudge_graph_larger();
-                } else {
-                    bounds = this.nudge_graph_smaller();
-                    if (
-                        ((bounds.post.y + bounds.post.height) <= this.get_canvas_bounding_box().height) &&
-                        ((bounds.post.x + bounds.post.width) <= this.get_canvas_bounding_box().width)
-                    ) {
-                        this.reset_graph();
-                    }
-                }
+        this.mouse_offset = {
+            x: e.offsetX,
+            y: e.offsetY
+        }
+        e.preventDefault();
+        if (e.metaKey) {
+            if (e.deltaY > 0) {
+                this.svg.call(this.zoom.scaleBy, 1.1, [e.offsetX, e.offsetY]);
             } else {
-                if (e.deltaY > 0) {
-                    bounds = this.nudge_graph_larger();
-                } else {
-                    bounds = this.nudge_graph_smaller();
-                }
-                var polar_coords = this.cartesian_to_polar(
-                    e.offsetX, e.offsetY, bounds.post.centerpoint.x, bounds.post.centerpoint.y
-                );
-                var pre_pt_rel = this.getPointOnRect(polar_coords.radians, bounds.pre.width, bounds.pre.height);
-                var pre_pt_abs = {
-                    x: pre_pt_rel.dx + bounds.pre.centerpoint.x,
-                    y: pre_pt_rel.dy + bounds.pre.centerpoint.y
-                };
-                var post_pt_rel = this.getPointOnRect(polar_coords.radians, bounds.post.width, bounds.post.height);
-                var post_pt_abs = {
-                    x: post_pt_rel.dx + bounds.post.centerpoint.x,
-                    y: post_pt_rel.dy + bounds.post.centerpoint.y
-                };
-                var pre_nudge_c_to_p_len = this.dist(bounds.pre.centerpoint.x, bounds.pre.centerpoint.y, pre_pt_abs.x, pre_pt_abs.y);
-                var pre_nudge_c_to_m_len = this.dist(bounds.pre.centerpoint.x, bounds.pre.centerpoint.y, e.offsetX, e.offsetY);
-                var relative_len_pro = pre_nudge_c_to_m_len / pre_nudge_c_to_p_len;
-                var post_nudge_c_to_p_len = this.dist(bounds.post.centerpoint.x, bounds.post.centerpoint.y, post_pt_abs.x, post_pt_abs.y);
-                var post_nudge_c_to_m_len = this.dist(bounds.post.centerpoint.x, bounds.post.centerpoint.y, e.offsetX, e.offsetY);
-                var post_nudge_c_to_m_end_x = post_nudge_c_to_m_len * Math.cos(polar_coords.radians);
-                var post_nudge_c_to_m_end_y = post_nudge_c_to_m_len * Math.sin(polar_coords.radians);
-                var target_c_to_m_len = post_nudge_c_to_p_len * relative_len_pro;
-                var target_c_to_m_end_x = target_c_to_m_len * Math.cos(polar_coords.radians);
-                var target_c_to_m_end_y = target_c_to_m_len * Math.sin(polar_coords.radians);
-                var offset_x = target_c_to_m_end_x - post_nudge_c_to_m_end_x;
-                var offset_y = target_c_to_m_end_y - post_nudge_c_to_m_end_y;
-                this.centerpoint_offset.x += offset_x * -1;
-                this.centerpoint_offset.y += offset_y * -1;
+                this.svg.call(this.zoom.scaleBy, 0.9, [e.offsetX, e.offsetY]);
             }
-            this.center_graph_on_point();
         }
     }
 
@@ -222,7 +179,7 @@ class GraphView extends React.Component {
         }
     }
 
-    generate_arc(){
+    generate_arc() {
         var arc = d3.arc()
             .innerRadius(7)
             .outerRadius(8)
@@ -297,12 +254,14 @@ class GraphView extends React.Component {
             .attr("viewBox", [0, 0, width, height])
             .attr('class', 'graph')
             .attr('overflow', 'auto');
-        var element = document.querySelector('svg');
-        var parent = document.querySelector('.graph-view');
-        var wrapper = document.createElement('test_div');
-        parent.replaceChild(wrapper, element);
-        wrapper.appendChild(element);
         return svg
+    }
+
+    createContainer(svg) {
+        var container = svg
+            .append('g')
+            .attr('class', 'container');
+        return container
     }
 
     appendDefs(svg) {
@@ -409,36 +368,36 @@ class GraphView extends React.Component {
                 var recurrent_arc_offset = 10;
                 var arc_x = e.head.x;
                 var arc_y = e.head.y;
-                return `translate(${arc_x-parseFloat(e.head.ellipse.rx/2+recurrent_arc_offset)},${arc_y})`
+                return `translate(${arc_x - parseFloat(e.head.ellipse.rx / 2 + recurrent_arc_offset)},${arc_y})`
             });
         d3.selectAll('g.edge line')
             .filter(
-                (e)=>{
-                    return e.head===e.tail
+                (e) => {
+                    return e.head === e.tail
                 }
             )
-            .attr('x1',function (d) {
+            .attr('x1', function (d) {
                 var reference_arc = document.querySelector('#reference_arc path');
                 var arc_length = reference_arc.getTotalLength();
                 var arrow_start = reference_arc.getPointAtLength(arc_length * .75);
                 var arrow_end = reference_arc.getPointAtLength(arc_length * .55);
                 return d.head.x - d.head.ellipse.rx + arrow_start.x - document.querySelector("#reference_arc path").getBBox().x
             })
-            .attr('y1',function (d) {
+            .attr('y1', function (d) {
                 var reference_arc = document.querySelector('#reference_arc path');
                 var arc_length = reference_arc.getTotalLength();
                 var arrow_start = reference_arc.getPointAtLength(arc_length * .75);
                 var arrow_end = reference_arc.getPointAtLength(arc_length * .55);
                 return d.head.y - d.head.ellipse.ry + arrow_start.y - document.querySelector("#reference_arc path").getBBox().y
             })
-            .attr('x2',function (d) {
+            .attr('x2', function (d) {
                 var reference_arc = document.querySelector('#reference_arc path');
                 var arc_length = reference_arc.getTotalLength();
                 var arrow_start = reference_arc.getPointAtLength(arc_length * .75);
                 var arrow_end = reference_arc.getPointAtLength(arc_length * .55);
                 return d.head.x - d.head.ellipse.rx + arrow_end.x - document.querySelector("#reference_arc path").getBBox().x
             })
-            .attr('y2',function (d) {
+            .attr('y2', function (d) {
                 var reference_arc = document.querySelector('#reference_arc path');
                 var arc_length = reference_arc.getTotalLength();
                 var arrow_start = reference_arc.getPointAtLength(arc_length * .75);
@@ -630,30 +589,30 @@ class GraphView extends React.Component {
                 var recurrent_arc_offset = 10;
                 var arc_x = e.head.x;
                 var arc_y = e.head.y;
-                return `translate(${arc_x-parseFloat(e.head.ellipse.rx/2+recurrent_arc_offset)},${arc_y})`
+                return `translate(${arc_x - parseFloat(e.head.ellipse.rx / 2 + recurrent_arc_offset)},${arc_y})`
             })
         d3.selectAll('g.edge line')
             .filter(
-                (e)=>{
-                    return e.head===e.tail
+                (e) => {
+                    return e.head === e.tail
                 }
             )
-            .attr('x1',function (d) {
+            .attr('x1', function (d) {
                 return d.head.x - d.head.ellipse.rx + 6
             })
-            .attr('y1',function (d) {
+            .attr('y1', function (d) {
                 var reference_arc = document.querySelector('#reference_arc path');
                 var reference_arc_len = reference_arc.getTotalLength();
                 var starting_y_location = reference_arc.getPointAtLength(reference_arc_len).y - reference_arc.getBBox().y - 8.2;
                 return d.head.y + starting_y_location
             })
-            .attr('x2',function (d) {
+            .attr('x2', function (d) {
                 return d.head.x - d.head.ellipse.rx + 7
             })
-            .attr('y2',function (d) {
+            .attr('y2', function (d) {
                 var reference_arc = document.querySelector('#reference_arc path');
                 var reference_arc_len = reference_arc.getTotalLength();
-                var ending_y_location = reference_arc.getPointAtLength(reference_arc_len*.99).y - reference_arc.getBBox().y - 7.70;
+                var ending_y_location = reference_arc.getPointAtLength(reference_arc_len * .99).y - reference_arc.getBBox().y - 7.70;
                 return d.head.y + ending_y_location
             })
     }
@@ -935,30 +894,30 @@ class GraphView extends React.Component {
                 var recurrent_arc_offset = 10;
                 var arc_x = e.head.x;
                 var arc_y = e.head.y;
-                return `translate(${arc_x-parseFloat(e.head.ellipse.rx/2+recurrent_arc_offset)},${arc_y})`
+                return `translate(${arc_x - parseFloat(e.head.ellipse.rx / 2 + recurrent_arc_offset)},${arc_y})`
             })
         d3.selectAll('g.edge line')
             .filter(
-                (e)=>{
-                    return e.head===e.tail
+                (e) => {
+                    return e.head === e.tail
                 }
             )
-            .attr('x1',function (d) {
+            .attr('x1', function (d) {
                 return d.head.x - d.head.ellipse.rx + 6
             })
-            .attr('y1',function (d) {
+            .attr('y1', function (d) {
                 var reference_arc = document.querySelector('#reference_arc path');
                 var reference_arc_len = reference_arc.getTotalLength();
                 var starting_y_location = reference_arc.getPointAtLength(reference_arc_len).y - reference_arc.getBBox().y - 8.2;
                 return d.head.y + starting_y_location
             })
-            .attr('x2',function (d) {
+            .attr('x2', function (d) {
                 return d.head.x - d.head.ellipse.rx + 7
             })
-            .attr('y2',function (d) {
+            .attr('y2', function (d) {
                 var reference_arc = document.querySelector('#reference_arc path');
                 var reference_arc_len = reference_arc.getTotalLength();
-                var ending_y_location = reference_arc.getPointAtLength(reference_arc_len*.99).y - reference_arc.getBBox().y - 7.70;
+                var ending_y_location = reference_arc.getPointAtLength(reference_arc_len * .99).y - reference_arc.getBBox().y - 7.70;
                 return d.head.y + ending_y_location
             })
     }
@@ -1079,41 +1038,66 @@ class GraphView extends React.Component {
             let nodeWidth = self.state.node_width;
             let nodeHeight = self.state.node_height;
             var svg = this.createSVG();
+            var container = this.createContainer(svg);
             this.associateVisualInformationWithGraphNodes();
             this.associateVisualInformationWithGraphEdges();
             this.appendDefs(svg);
-            this.drawProjections(svg);
-            this.drawNodes(svg, nodeWidth, nodeHeight, (d) => {
+            this.drawProjections(container);
+            // this.drawNodes(svg, nodeWidth, nodeHeight, (d) => {
+            //     self.drag_node(d)
+            // });
+            // this.drawLabels(svg, 5, (d) => {
+            //     self.drag_node(d)
+            // });
+            this.drawNodes(container, nodeWidth, nodeHeight, (d) => {
                 self.drag_node(d)
             });
-            this.drawLabels(svg, 5, (d) => {
+            this.drawLabels(container, 5, (d) => {
                 self.drag_node(d)
             });
             this.scale_graph(1);
-            this.scale_graph_to_fit(this.fill_proportion);
+            // this.scale_graph_to_fit(this.fill_proportion);
             this.resize_nodes_to_label_text();
             this.correct_projection_lengths_for_ellipse_sizes();
             this.center_graph_on_point();
-            this.apply_select_boxes(svg);
+            // this.apply_select_boxes(svg);
             this.graph_bounding_box = this.get_graph_bounding_box();
             this.canvas_bounding_box = this.get_canvas_bounding_box();
-            var width = document.querySelector('.graphview').getBoundingClientRect().width;
-            var height = document.querySelector('.graphview').getBoundingClientRect().height;
-            svg.call(d3.zoom()
-                .extent([[0, 0], [width, height]])
-                .scaleExtent([1, 8])
-                .on("zoom", zoomed));
+            var width = document.querySelector('svg').getBoundingClientRect().width;
+            var height = document.querySelector('svg').getBoundingClientRect().height;
+            var zoom = d3.zoom();
+            this.svg = svg;
+            this.zoom = zoom
+                .scaleExtent([1, 3])
+                .filter(()=>{
+                    return d3.event.type.includes("mouse") || (d3.event.sourceEvent && !d3.event.sourceEvent.type === "wheel")
+                });
+            var d3e = d3.select('svg.graph')
+            d3e.call(this.zoom
+                .on("zoom", zoomed)
+            );
+            // d3e.call(this.zoom);
             function zoomed() {
-                var d3e = d3.select('g.node')
-                d3e.attr("transform", d3.event.transform);
-                d3e = d3.select('g.label')
-                d3e.attr("transform", d3.event.transform);
-                d3e = d3.select('g.edge')
-                d3e.attr("transform", d3.event.transform);
-                d3e = d3.select('g.recurrent')
-                d3e.attr("transform", d3.event.transform);
-
+                console.log(d3.event)
+                var d3e = d3.select('svg.graph');
+                var win = document.querySelector('.graph-view')
+                var full_g_pre = document.querySelector('svg.graph');
+                var full_g_box_pre = full_g_pre.getBoundingClientRect();
+                var pre_scale_x_proportion = self.mouse_offset.x/full_g_box_pre.width
+                var pre_scale_y_proportion = self.mouse_offset.y/full_g_box_pre.height
+                d3e
+                    .attr('width',`${100*d3.event.transform.k}%`)
+                    .attr('height',`${100*d3.event.transform.k}%`);
+                var full_g_post = document.querySelector('svg.graph');
+                var full_g_box_post = full_g_post.getBoundingClientRect();
+                var xScrollOffset = full_g_box_post.width*pre_scale_x_proportion-self.mouse_offset.x
+                var xScroll = win.scrollLeft + xScrollOffset
+                var yScrollOffset = full_g_box_post.height*pre_scale_y_proportion-self.mouse_offset.y
+                var yScroll = win.scrollTop + yScrollOffset
+                win.scrollTo(xScroll,yScroll)
             }
+
+            zoomed.bind(this)
             window.scale = this.scale_graph;
             window.graph_bounds = this.get_graph_bounding_box;
             window.canvas_bounds = this.get_canvas_bounding_box;

@@ -4,7 +4,6 @@
     <list default="true" id="00985d93-5b94-4b5c-82f7-e7117ff7b2e0" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/graphview.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/graphview.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/css/graphview.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/css/graphview.css" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -86,7 +85,10 @@
       <workItem from="1578926068106" duration="14265000" />
       <workItem from="1579013566253" duration="19039000" />
       <workItem from="1579098786945" duration="47931000" />
-      <workItem from="1579276546443" duration="16133000" />
+      <workItem from="1579276546443" duration="12514000" />
+      <workItem from="1579623457179" duration="30328000" />
+      <workItem from="1579727267214" duration="3616000" />
+      <workItem from="1579791261484" duration="6644000" />
     </task>
     <servers />
   </component>
@@ -197,15 +199,19 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/components/graphview.js</url>
-          <line>424</line>
-          <properties lambdaOrdinal="-1" />
-          <option name="timeStamp" value="166" />
+          <line>593</line>
+          <option name="timeStamp" value="169" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/components/graphview.js</url>
-          <line>646</line>
+          <line>1103</line>
+          <option name="timeStamp" value="175" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/src/components/graphview.js</url>
+          <line>1092</line>
           <properties lambdaOrdinal="-1" />
-          <option name="timeStamp" value="169" />
+          <option name="timeStamp" value="179" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
