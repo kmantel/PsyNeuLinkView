@@ -7,10 +7,8 @@
     color: white;
     margin-left:1px;
     padding:0px !important;
-    /*grid-column-start: 2;*/
-    /*grid-row-start: 1;*/
-
 }
+
 .graph-view.pnl-panel{
     overflow: scroll;
 }

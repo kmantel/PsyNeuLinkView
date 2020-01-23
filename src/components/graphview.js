@@ -157,7 +157,7 @@ class GraphView extends React.Component {
             this.mouse_offset = {
                 x: e.offsetX,
                 y: e.offsetY
-            }
+            };
             e.preventDefault();
             if (e.deltaY > 0) {
                 this.svg.call(this.zoom.scaleBy, 1.1, [e.offsetX, e.offsetY]);
@@ -253,7 +253,8 @@ class GraphView extends React.Component {
             .append('svg')
             .attr("viewBox", [0, 0, width, height])
             .attr('class', 'graph')
-            .attr('overflow', 'auto');
+            .attr('height', '99.5%')
+            .attr('width', '100%')
         return svg
     }
 
@@ -284,7 +285,47 @@ class GraphView extends React.Component {
         svg.append("svg:defs").append("svg:marker")
             .attr("id", "reference_arc")
             .append("path")
-            .attr("d", this.generate_arc())
+            .attr("d", this.generate_arc());
+
+        // var drop_filter = svg.append("svg:defs").append('filter')
+        //     .attr("id", "dropshadow")
+        //     .attr("height", "110%");
+        //
+        // drop_filter
+        //     .append("feGaussianBlur")
+        //     .attr("in","SourceImage")
+        //     .attr("stdDeviation","1")
+        //     .append("feFlood")
+        //     .attr("flood-color","blue")
+        //     .attr("flood-opacity",0.5)
+        //     // .append("feColorMatrix")
+        //     // .attr("type","matrix")
+        //     // .attr("values", "1 0 0 1.9 -2.2\n" +
+        //     //     "-3 1 0 0.0 0.3\n" +
+        //     //     "0 0 1 0 0.5\n" +
+        //     //     "0 0 0 1 0.2");
+        //
+        // drop_filter
+        //     .append("feOffset")
+        //     .attr("dx", "0")
+        //     .attr("dy", "0")
+        //     .attr("results", "offsetblur");
+        //
+        // drop_filter
+        //     .append("feComponentTransfer")
+        //     .append("feFuncA")
+        //     .attr("type", "linear")
+        //     .attr("slope", "1.7");
+        //
+        // var fe_merge = drop_filter
+        //     .append("feMerge");
+        //
+        // fe_merge
+        //     .append("feMergeNode");
+        //
+        // fe_merge
+        //     .append("feMergeNode")
+        //     .attr("in", "SourceGraphic")
     }
 
     associateVisualInformationWithGraphNodes() {
@@ -634,77 +675,111 @@ class GraphView extends React.Component {
         });
     }
 
-    apply_select_boxes(svg) {
-        svg.on("mousedown", function () {
-                if (!d3.event.ctrlKey) {
-                    d3.selectAll('g.selected').classed("selected", false);
-                }
-
-                var p = d3.mouse(this);
-
-                svg.append("rect")
+    apply_select_boxes() {
+        var svg = d3.select('svg')
+        svg
+            .on('mousedown', function () {
+                console.log(d3.event)
+                var anchor_pt = d3.mouse(this)
+                var processed_anchor_pt = [
+                    {anchor:{x:anchor_pt[0],y:anchor_pt[1]}}
+                ];
+                svg.append('rect')
                     .attr('rx', 6)
                     .attr('ry', 6)
-                    .attr('class', "selection")
-                    .attr('x', p[0])
-                    .attr('y', p[1])
-                    .attr('width', 0)
-                    .attr('height', 0);
+                    .attr('class', 'selection')
+                    .data(processed_anchor_pt)
             }
         )
             .on("mousemove", function () {
                 var s = svg.select("rect.selection");
-
-                if (!s.empty()) {
-                    let p = d3.mouse(this);
-                    let d = {};
-                    d.x = parseInt(s.attr('x'), 10);
-                    d.y = parseInt(s.attr('y'), 10);
-                    d.width = parseInt(s.attr('width'), 10);
-                    d.height = parseInt(s.attr('height'), 10);
-                    let move = {};
-                    move.x = p[0] - d.x;
-                    move.y = p[1] - d.y;
-
-                    // Calculate new properties of selection rectangle
-                    if (move.x < 1 || (move.x * 2 < d.width)) {
-                        d.x = p[0];
-                        d.width -= move.x;
-                    } else {
-                        d.width = move.x;
-                    }
-                    if (move.y < 1 || (move.y * 2 < d.height)) {
-                        d.y = p[1];
-                        d.height -= move.y;
-                    } else {
-                        d.height = move.y;
-                    }
-
-                    s.attr('x', d.x)
-                        .attr('y', d.y)
-                        .attr('width', d.width)
-                        .attr('height', d.height);
-
-                    // deselect all temporary selected state objects
-                    d3.selectAll('g.state.selection.selected').classed("selected", false);
-
-                }
+                var current_pt = d3.mouse(this);
+                s
+                    .attr('x',(d)=>{
+                        var anchor_x, current_x;
+                        anchor_x = d.anchor.x;
+                        current_x = current_pt[0];
+                        if (current_x>anchor_x){
+                            return anchor_x
+                        }
+                        else {
+                            return current_x
+                        }
+                    })
+                    .attr('y',(d)=>{
+                        var anchor_y, current_y;
+                        anchor_y = d.anchor.y;
+                        current_y = current_pt[1];
+                        if (current_y>anchor_y){
+                            return anchor_y
+                        }
+                        else {
+                            return current_y
+                        }
+                    })
+                    .attr('width',(d)=>{
+                        var anchor_x, current_x;
+                        anchor_x = d.anchor.x;
+                        current_x = current_pt[0];
+                        return Math.abs(anchor_x-current_x)
+                    })
+                    .attr('height',(d)=>{
+                        var anchor_y, current_y;
+                        anchor_y = d.anchor.y;
+                        current_y = current_pt[1];
+                        return Math.abs(anchor_y-current_y)
+                    })
+                //
+                // if (!s.empty()) {
+                //     let p = d3.mouse(this);
+                //     let d = {};
+                //     d.x = parseInt(s.attr('x'), 10);
+                //     d.y = parseInt(s.attr('y'), 10);
+                //     d.width = parseInt(s.attr('width'), 10);
+                //     d.height = parseInt(s.attr('height'), 10);
+                //     let move = {};
+                //     move.x = p[0] - d.x;
+                //     move.y = p[1] - d.y;
+                //
+                //     // Calculate new properties of selection rectangle
+                //     if (move.x < 1 || (move.x * 2 < d.width)) {
+                //         d.x = p[0];
+                //         d.width -= move.x;
+                //     } else {
+                //         d.width = move.x;
+                //     }
+                //     if (move.y < 1 || (move.y * 2 < d.height)) {
+                //         d.y = p[1];
+                //         d.height -= move.y;
+                //     } else {
+                //         d.height = move.y;
+                //     }
+                //
+                //     s.attr('x', d.x)
+                //         .attr('y', d.y)
+                //         .attr('width', d.width)
+                //         .attr('height', d.height);
+                //
+                //     // deselect all temporary selected state objects
+                //     d3.selectAll('g.state.selection.selected').classed("selected", false);
             })
             .on("mouseup", function () {
-                // Remove selection frame
+                // // Remove selection frame
                 svg.selectAll("rect.selection").remove();
-
-                // Remove temporary selection marker class
-                d3.selectAll('g.state.selection').classed("selection", false);
+                //
+                // // Remove temporary selection marker class
+                // d3.selectAll('g.state.selection').classed("selection", false);
             })
             .on("mouseout", function () {
-                var s = svg.select("rect.selection");
-                if (!s.empty() && d3.event.relatedTarget.tagName === 'HTML') {
-                    // Remove selection frame
+                // if mouse enters an area of the screen not belonging to the SVG or one of its child elements
+                var toElement = d3.event.toElement
+                if (!toElement ||
+                    !(toElement === svg.node() ||
+                        ('ownerSVGElement' in toElement && toElement.ownerSVGElement === svg.node()))){
                     svg.selectAll("rect.selection").remove();
-
-                    // Remove temporary selection marker class
-                    d3.selectAll('g.state.selection').classed("selection", false);
+                }
+                else if (!(toElement === svg.node())) {
+                    console.log(toElement)
                 }
             });
     }
@@ -784,16 +859,16 @@ class GraphView extends React.Component {
         var interpolated_y_start = canvas_height / 2 - interpolated_height / 2;
         var original_y = ((d.y - interpolated_y_start) / interpolated_height) * canvas_height;
 
-        if (original_x < bounds.x_min) {
-            d.x = Math.floor((node_x_radius / canvas_width) * interpolated_width + interpolated_x_start)
-        } else if (original_x > bounds.x_max) {
-            d.x = Math.floor((canvas_width - node_x_radius) / canvas_width * interpolated_width + interpolated_x_start)
-        }
-        if (original_y < bounds.y_min) {
-            d.y = Math.floor((node_y_radius / canvas_height) * interpolated_height + interpolated_y_start)
-        } else if (original_y > bounds.y_max) {
-            d.y = Math.floor(((canvas_height - node_y_radius) / canvas_height) * interpolated_height + interpolated_y_start)
-        }
+        // if (original_x < bounds.x_min) {
+        //     d.x = Math.floor((node_x_radius / canvas_width) * interpolated_width + interpolated_x_start)
+        // } else if (original_x > bounds.x_max) {
+        //     d.x = Math.floor((canvas_width - node_x_radius) / canvas_width * interpolated_width + interpolated_x_start)
+        // }
+        // if (original_y < bounds.y_min) {
+        //     d.y = Math.floor((node_y_radius / canvas_height) * interpolated_height + interpolated_y_start)
+        // } else if (original_y > bounds.y_max) {
+        //     d.y = Math.floor(((canvas_height - node_y_radius) / canvas_height) * interpolated_height + interpolated_y_start)
+        // }
         node.filter(function (n) {
             return n === d
         })
@@ -953,6 +1028,9 @@ class GraphView extends React.Component {
         edge_selector = d3.select('g.edge');
         edge_selector
             .attr('transform', `scale(${scaling_factor})`);
+        recurrent_selector = d3.select('g.recurrent');
+        recurrent_selector
+            .attr('transform', `scale(${scaling_factor})`);
     }
 
     scale_graph_to_fit(proportion) {
@@ -1043,12 +1121,6 @@ class GraphView extends React.Component {
             this.associateVisualInformationWithGraphEdges();
             this.appendDefs(svg);
             this.drawProjections(container);
-            // this.drawNodes(svg, nodeWidth, nodeHeight, (d) => {
-            //     self.drag_node(d)
-            // });
-            // this.drawLabels(svg, 5, (d) => {
-            //     self.drag_node(d)
-            // });
             this.drawNodes(container, nodeWidth, nodeHeight, (d) => {
                 self.drag_node(d)
             });
@@ -1056,11 +1128,11 @@ class GraphView extends React.Component {
                 self.drag_node(d)
             });
             this.scale_graph(1);
-            // this.scale_graph_to_fit(this.fill_proportion);
+            this.scale_graph_to_fit(this.fill_proportion);
             this.resize_nodes_to_label_text();
             this.correct_projection_lengths_for_ellipse_sizes();
             this.center_graph_on_point();
-            // this.apply_select_boxes(svg);
+            this.apply_select_boxes(svg);
             this.graph_bounding_box = this.get_graph_bounding_box();
             this.canvas_bounding_box = this.get_canvas_bounding_box();
             var width = document.querySelector('svg').getBoundingClientRect().width;
@@ -1070,7 +1142,7 @@ class GraphView extends React.Component {
             this.zoom = zoom
                 .scaleExtent([1, 3])
                 .filter(() => {
-                    return d3.event.type.includes("mouse") || (d3.event.sourceEvent && !d3.event.sourceEvent.type === "wheel")
+                    return d3.event.type.includes("mouse") && d3.event.metaKey || (d3.event.sourceEvent && !d3.event.sourceEvent.type === "wheel")
                 });
             var d3e = d3.select('svg.graph')
             d3e.call(this.zoom
@@ -1079,7 +1151,6 @@ class GraphView extends React.Component {
 
             // d3e.call(this.zoom);
             function zoomed() {
-                console.log(d3.event)
                 var d3e = d3.select('svg.graph');
                 var win = document.querySelector('.graph-view')
                 if (d3.event.sourceEvent && d3.event.sourceEvent.type === 'mousemove') {
@@ -1096,9 +1167,10 @@ class GraphView extends React.Component {
                     var full_g_box_pre = full_g_pre.getBoundingClientRect();
                     var pre_scale_x_proportion = self.mouse_offset.x / full_g_box_pre.width
                     var pre_scale_y_proportion = self.mouse_offset.y / full_g_box_pre.height
+                    var new_scale = 100 * d3.event.transform.k
                     d3e
-                        .attr('width', `${100 * d3.event.transform.k}%`)
-                        .attr('height', `${100 * d3.event.transform.k}%`);
+                        .attr('width', `${new_scale}%`)
+                        .attr('height', `${new_scale}%`);
                     var full_g_post = document.querySelector('svg.graph');
                     var full_g_box_post = full_g_post.getBoundingClientRect();
                     var xScrollOffset = full_g_box_post.width * pre_scale_x_proportion - self.mouse_offset.x
@@ -1108,7 +1180,6 @@ class GraphView extends React.Component {
                 }
                 win.scrollTo(xScroll, yScroll)
             }
-
             zoomed.bind(this)
             window.scale = this.scale_graph;
             window.graph_bounds = this.get_graph_bounding_box;
