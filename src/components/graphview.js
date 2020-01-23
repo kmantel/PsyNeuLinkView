@@ -33,7 +33,7 @@ class GraphView extends React.Component {
             graph: this.props.graph,
             spinner_visible: false,
         };
-        this.mouse_offset = {x:0, y:0};
+        this.mouse_offset = {x: 0, y: 0};
         this.centerpoint_offset = {x: 0, y: 0};
         this.scaling_factor = 1;
         this.fill_proportion = 1;
@@ -75,7 +75,7 @@ class GraphView extends React.Component {
     componentDidMount() {
         this.setGraph();
         window.addEventListener('resize', this.updateGraph);
-        window.addEventListener('wheel', this.capture_wheel, {passive:false});
+        window.addEventListener('wheel', this.capture_wheel, {passive: false});
         window.addEventListener('keydown', this.capture_keys);
         add_context_menu('.graph-view', context_menu)
     }
@@ -153,12 +153,12 @@ class GraphView extends React.Component {
     }
 
     capture_wheel(e) {
-        this.mouse_offset = {
-            x: e.offsetX,
-            y: e.offsetY
-        }
-        e.preventDefault();
         if (e.metaKey) {
+            this.mouse_offset = {
+                x: e.offsetX,
+                y: e.offsetY
+            }
+            e.preventDefault();
             if (e.deltaY > 0) {
                 this.svg.call(this.zoom.scaleBy, 1.1, [e.offsetX, e.offsetY]);
             } else {
@@ -1069,32 +1069,44 @@ class GraphView extends React.Component {
             this.svg = svg;
             this.zoom = zoom
                 .scaleExtent([1, 3])
-                .filter(()=>{
+                .filter(() => {
                     return d3.event.type.includes("mouse") || (d3.event.sourceEvent && !d3.event.sourceEvent.type === "wheel")
                 });
             var d3e = d3.select('svg.graph')
             d3e.call(this.zoom
                 .on("zoom", zoomed)
             );
+
             // d3e.call(this.zoom);
             function zoomed() {
                 console.log(d3.event)
                 var d3e = d3.select('svg.graph');
                 var win = document.querySelector('.graph-view')
-                var full_g_pre = document.querySelector('svg.graph');
-                var full_g_box_pre = full_g_pre.getBoundingClientRect();
-                var pre_scale_x_proportion = self.mouse_offset.x/full_g_box_pre.width
-                var pre_scale_y_proportion = self.mouse_offset.y/full_g_box_pre.height
-                d3e
-                    .attr('width',`${100*d3.event.transform.k}%`)
-                    .attr('height',`${100*d3.event.transform.k}%`);
-                var full_g_post = document.querySelector('svg.graph');
-                var full_g_box_post = full_g_post.getBoundingClientRect();
-                var xScrollOffset = full_g_box_post.width*pre_scale_x_proportion-self.mouse_offset.x
-                var xScroll = win.scrollLeft + xScrollOffset
-                var yScrollOffset = full_g_box_post.height*pre_scale_y_proportion-self.mouse_offset.y
-                var yScroll = win.scrollTop + yScrollOffset
-                win.scrollTo(xScroll,yScroll)
+                if (d3.event.sourceEvent && d3.event.sourceEvent.type === 'mousemove') {
+                    if (d3.event.sourceEvent.metaKey) {
+                        var xScroll = win.scrollLeft - d3.event.sourceEvent.movementX
+                        var yScroll = win.scrollTop - d3.event.sourceEvent.movementY
+                    }
+                    else {
+                        var xScroll = win.scrollLeft
+                        var yScroll = win.scrollTop
+                    }
+                } else {
+                    var full_g_pre = document.querySelector('svg.graph');
+                    var full_g_box_pre = full_g_pre.getBoundingClientRect();
+                    var pre_scale_x_proportion = self.mouse_offset.x / full_g_box_pre.width
+                    var pre_scale_y_proportion = self.mouse_offset.y / full_g_box_pre.height
+                    d3e
+                        .attr('width', `${100 * d3.event.transform.k}%`)
+                        .attr('height', `${100 * d3.event.transform.k}%`);
+                    var full_g_post = document.querySelector('svg.graph');
+                    var full_g_box_post = full_g_post.getBoundingClientRect();
+                    var xScrollOffset = full_g_box_post.width * pre_scale_x_proportion - self.mouse_offset.x
+                    var xScroll = win.scrollLeft + xScrollOffset
+                    var yScrollOffset = full_g_box_post.height * pre_scale_y_proportion - self.mouse_offset.y
+                    var yScroll = win.scrollTop + yScrollOffset
+                }
+                win.scrollTo(xScroll, yScroll)
             }
 
             zoomed.bind(this)
