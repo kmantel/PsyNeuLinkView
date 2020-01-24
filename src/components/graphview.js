@@ -103,7 +103,7 @@ class GraphView extends React.Component {
             } else if (e.key === '-') {
                 this.nudge_graph_smaller();
             }
-            if (e.key === 'c') {
+            if (e.key === 'r') {
                 this.reset_graph()
             }
         }
@@ -207,9 +207,13 @@ class GraphView extends React.Component {
     }
 
     nudge_graph_larger() {
-        var pre_resize_bounds, post_resize_bounds;
+        var pre_resize_bounds, post_resize_bounds, upper_bound, resize_increment;
+        upper_bound = 1;
+        resize_increment = 0.05;
         pre_resize_bounds = this.get_graph_bounding_box();
-        this.scale_graph_to_fit(this.fill_proportion + 0.03);
+        if (this.fill_proportion + resize_increment <= upper_bound) {
+            this.scale_graph_to_fit(this.fill_proportion + resize_increment);
+        }
         post_resize_bounds = this.get_graph_bounding_box();
         return {
             'pre': pre_resize_bounds,
@@ -218,10 +222,12 @@ class GraphView extends React.Component {
     }
 
     nudge_graph_smaller() {
-        var pre_resize_bounds, post_resize_bounds;
+        var pre_resize_bounds, post_resize_bounds, lower_bound, resize_increment;
+        lower_bound = 0.05;
+        resize_increment = 0.05;
         pre_resize_bounds = this.get_graph_bounding_box();
-        if (this.fill_proportion - 0.03 > 0) {
-            this.scale_graph_to_fit(this.fill_proportion - 0.03)
+        if (this.fill_proportion - 0.05 >= resize_increment) {
+            this.scale_graph_to_fit(this.fill_proportion - resize_increment)
         }
         post_resize_bounds = this.get_graph_bounding_box();
         return {
@@ -238,8 +244,8 @@ class GraphView extends React.Component {
             this.scale_graph_to_fit(this.fill_proportion);
         }
         var win = document.querySelector('.graph-view');
-        var full_g_box = document.querySelector('svg.graph').getBoundingClientRect();
-        win.scrollTo(full_g_box.width * this.scroll_proportion.left, full_g_box.height * this.scroll_proportion.top)
+        win.scrollTo(win.scrollWidth * this.scroll_proportion.left, win.scrollHeight * this.scroll_proportion.top)
+        this.graph_bounding_box = this.get_graph_bounding_box();
         this.canvas_bounding_box = this.get_canvas_bounding_box();
     }
 
@@ -674,10 +680,8 @@ class GraphView extends React.Component {
 
     update_scroll(){
         var win = document.querySelector('.graph-view');
-        var full_g_box = document.querySelector('svg.graph').getBoundingClientRect();
-        this.scroll_proportion.left = win.scrollLeft/full_g_box.width;
-        this.scroll_proportion.top = win.scrollTop/full_g_box.height;
-        console.log(this.scroll_proportion)
+        this.scroll_proportion.left = win.scrollLeft/win.scrollWidth;
+        this.scroll_proportion.top = win.scrollTop/win.scrollHeight;
     }
 
     apply_select_boxes() {
