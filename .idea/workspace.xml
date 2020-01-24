@@ -4,7 +4,6 @@
     <list default="true" id="00985d93-5b94-4b5c-82f7-e7117ff7b2e0" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/graphview.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/graphview.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/css/graphview.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/css/graphview.css" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -89,7 +88,8 @@
       <workItem from="1579276546443" duration="12514000" />
       <workItem from="1579623457179" duration="30328000" />
       <workItem from="1579727267214" duration="3616000" />
-      <workItem from="1579791261484" duration="20367000" />
+      <workItem from="1579791261484" duration="20388000" />
+      <workItem from="1579876250737" duration="2201000" />
     </task>
     <servers />
   </component>
@@ -200,14 +200,14 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/components/graphview.js</url>
-          <line>634</line>
+          <line>643</line>
           <option name="timeStamp" value="169" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/components/graphview.js</url>
-          <line>1177</line>
+          <line>253</line>
           <properties lambdaOrdinal="-1" />
-          <option name="timeStamp" value="181" />
+          <option name="timeStamp" value="182" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

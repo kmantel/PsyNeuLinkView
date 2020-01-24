@@ -35,6 +35,7 @@ class GraphView extends React.Component {
         };
         this.mouse_offset = {x: 0, y: 0};
         this.centerpoint_offset = {x: 0, y: 0};
+        this.scroll_proportion = {left: null, top: null};
         this.scaling_factor = 1;
         this.fill_proportion = 1;
         this.center_graph_on_point = this.center_graph_on_point.bind(this);
@@ -46,7 +47,8 @@ class GraphView extends React.Component {
         this.scale_graph_to_fit = this.scale_graph_to_fit.bind(this);
         this.updateGraph = this.updateGraph.bind(this);
         this.capture_wheel = this.capture_wheel.bind(this);
-        this.componentDidUpdate = this.componentDidUpdate.bind(this)
+        this.componentDidUpdate = this.componentDidUpdate.bind(this);
+        this.update_scroll = this.update_scroll.bind(this);
     }
 
     componentWillMount() {
@@ -69,7 +71,11 @@ class GraphView extends React.Component {
     componentWillUnmount() {
         window.removeEventListener('resize', this.updateGraph);
         window.removeEventListener('wheel', this.capture_wheel);
-        window.removeEventListener('keydown', this.capture_keys)
+        window.removeEventListener('keydown', this.capture_keys);
+        var win = document.querySelector('.graph-view');
+        if (win){
+            win.removeEventListener('scroll', this.update_scroll);
+        }
     }
 
     componentDidMount() {
@@ -224,25 +230,16 @@ class GraphView extends React.Component {
         }
     }
 
-    updateGraph() {
+    updateGraph(e) {
         var horizontal_overflow, vertical_overflow;
         horizontal_overflow = this.graph_bounding_box.width * this.fill_proportion >= this.canvas_bounding_box.width;
         vertical_overflow = this.graph_bounding_box.height * this.fill_proportion >= this.canvas_bounding_box.height;
-        if (!horizontal_overflow) {
-            var horizontal_offset = -1 * (this.canvas_bounding_box.width - this.get_canvas_bounding_box().width) / 2;
-            if (horizontal_offset !== 0) {
-                this.move_graph(horizontal_offset, 0, this.node, this.label, this.edge)
-            }
-        }
-        if (!vertical_overflow) {
-            var vertical_offset = -1 * (this.canvas_bounding_box.height - this.get_canvas_bounding_box().height) / 2;
-            if (vertical_offset !== 0) {
-                this.move_graph(0, vertical_offset, this.node, this.label, this.edge)
-            }
-        }
         if (horizontal_overflow || vertical_overflow) {
             this.scale_graph_to_fit(this.fill_proportion);
         }
+        var win = document.querySelector('.graph-view');
+        var full_g_box = document.querySelector('svg.graph').getBoundingClientRect();
+        win.scrollTo(full_g_box.width * this.scroll_proportion.left, full_g_box.height * this.scroll_proportion.top)
         this.canvas_bounding_box = this.get_canvas_bounding_box();
     }
 
@@ -675,11 +672,18 @@ class GraphView extends React.Component {
         });
     }
 
+    update_scroll(){
+        var win = document.querySelector('.graph-view');
+        var full_g_box = document.querySelector('svg.graph').getBoundingClientRect();
+        this.scroll_proportion.left = win.scrollLeft/full_g_box.width;
+        this.scroll_proportion.top = win.scrollTop/full_g_box.height;
+        console.log(this.scroll_proportion)
+    }
+
     apply_select_boxes() {
         var svg = d3.select('svg')
         svg
             .on('mousedown', function () {
-                console.log(d3.event)
                 var anchor_pt = d3.mouse(this)
                 var processed_anchor_pt = [
                     {anchor:{x:anchor_pt[0],y:anchor_pt[1]}}
@@ -1132,7 +1136,7 @@ class GraphView extends React.Component {
             this.resize_nodes_to_label_text();
             this.correct_projection_lengths_for_ellipse_sizes();
             this.center_graph_on_point();
-            this.apply_select_boxes(svg);
+            // this.apply_select_boxes(svg);
             this.graph_bounding_box = this.get_graph_bounding_box();
             this.canvas_bounding_box = this.get_canvas_bounding_box();
             var width = document.querySelector('svg').getBoundingClientRect().width;
@@ -1180,7 +1184,9 @@ class GraphView extends React.Component {
                 }
                 win.scrollTo(xScroll, yScroll)
             }
-            zoomed.bind(this)
+            var win = document.querySelector('.graph-view');
+            win.addEventListener('scroll', this.update_scroll);
+            zoomed.bind(this);
             window.scale = this.scale_graph;
             window.graph_bounds = this.get_graph_bounding_box;
             window.canvas_bounds = this.get_canvas_bounding_box;
