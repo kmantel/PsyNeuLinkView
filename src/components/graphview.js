@@ -33,6 +33,7 @@ class GraphView extends React.Component {
             graph: this.props.graph,
             spinner_visible: false,
         };
+        this.selected = new Set();
         this.mouse_offset = {x: 0, y: 0};
         this.centerpoint_offset = {x: 0, y: 0};
         this.scroll_proportion = {left: null, top: null};
@@ -73,7 +74,7 @@ class GraphView extends React.Component {
         window.removeEventListener('wheel', this.capture_wheel);
         window.removeEventListener('keydown', this.capture_keys);
         var win = document.querySelector('.graph-view');
-        if (win){
+        if (win) {
             win.removeEventListener('scroll', this.update_scroll);
         }
     }
@@ -290,45 +291,36 @@ class GraphView extends React.Component {
             .append("path")
             .attr("d", this.generate_arc());
 
-        // var drop_filter = svg.append("svg:defs").append('filter')
-        //     .attr("id", "dropshadow")
-        //     .attr("height", "110%");
-        //
-        // drop_filter
-        //     .append("feGaussianBlur")
-        //     .attr("in","SourceImage")
-        //     .attr("stdDeviation","1")
-        //     .append("feFlood")
-        //     .attr("flood-color","blue")
-        //     .attr("flood-opacity",0.5)
-        //     // .append("feColorMatrix")
-        //     // .attr("type","matrix")
-        //     // .attr("values", "1 0 0 1.9 -2.2\n" +
-        //     //     "-3 1 0 0.0 0.3\n" +
-        //     //     "0 0 1 0 0.5\n" +
-        //     //     "0 0 0 1 0.2");
-        //
-        // drop_filter
-        //     .append("feOffset")
-        //     .attr("dx", "0")
-        //     .attr("dy", "0")
-        //     .attr("results", "offsetblur");
-        //
-        // drop_filter
-        //     .append("feComponentTransfer")
-        //     .append("feFuncA")
-        //     .attr("type", "linear")
-        //     .attr("slope", "1.7");
-        //
-        // var fe_merge = drop_filter
-        //     .append("feMerge");
-        //
-        // fe_merge
-        //     .append("feMergeNode");
-        //
-        // fe_merge
-        //     .append("feMergeNode")
-        //     .attr("in", "SourceGraphic")
+        var drop_filter = svg.append("svg:defs").append('filter')
+            .attr("id", "dropshadow")
+            .attr("height", "120%");
+
+        drop_filter
+            .append("feGaussianBlur")
+            .attr("in", "SourceImage")
+            .attr("stdDeviation", "1")
+
+        drop_filter
+            .append("feOffset")
+            .attr("dx", "0")
+            .attr("dy", "0")
+            .attr("results", "offsetblur");
+
+        drop_filter
+            .append("feComponentTransfer")
+            .append("feFuncA")
+            .attr("type", "linear")
+            .attr("slope", "1.7");
+
+        var fe_merge = drop_filter
+            .append("feMerge");
+
+        fe_merge
+            .append("feMergeNode");
+
+        fe_merge
+            .append("feMergeNode")
+            .attr("in", "SourceGraphic")
     }
 
     associateVisualInformationWithGraphNodes() {
@@ -678,118 +670,135 @@ class GraphView extends React.Component {
         });
     }
 
-    update_scroll(){
+    update_scroll() {
         var win = document.querySelector('.graph-view');
-        this.scroll_proportion.left = win.scrollLeft/win.scrollWidth;
-        this.scroll_proportion.top = win.scrollTop/win.scrollHeight;
+        this.scroll_proportion.left = win.scrollLeft / win.scrollWidth;
+        this.scroll_proportion.top = win.scrollTop / win.scrollHeight;
     }
 
     apply_select_boxes() {
-        var svg = d3.select('svg')
+        var self = this;
+        var svg = d3.select('svg');
         svg
             .on('mousedown', function () {
-                var anchor_pt = d3.mouse(this)
-                var processed_anchor_pt = [
-                    {anchor:{x:anchor_pt[0],y:anchor_pt[1]}}
-                ];
-                svg.append('rect')
-                    .attr('rx', 6)
-                    .attr('ry', 6)
-                    .attr('class', 'selection')
-                    .data(processed_anchor_pt)
-            }
-        )
+                // don't fire if command is pressed. command unlocks different options
+                if (!d3.event.metaKey) {
+                    var anchor_pt = d3.mouse(this);
+                    var processed_anchor_pt = [
+                        {anchor: {x: anchor_pt[0], y: anchor_pt[1]}}
+                    ];
+                    svg.append('rect')
+                        .attr('rx', 6)
+                        .attr('ry', 6)
+                        .attr('class', 'selection')
+                        .data(processed_anchor_pt);
+                }}
+            )
             .on("mousemove", function () {
+                var anchor_x, anchor_y, current_x, current_y;
                 var s = svg.select("rect.selection");
                 var current_pt = d3.mouse(this);
                 s
-                    .attr('x',(d)=>{
-                        var anchor_x, current_x;
+                    .attr('x', (d) => {
                         anchor_x = d.anchor.x;
                         current_x = current_pt[0];
-                        if (current_x>anchor_x){
+                        if (current_x > anchor_x) {
                             return anchor_x
-                        }
-                        else {
+                        } else {
                             return current_x
                         }
                     })
-                    .attr('y',(d)=>{
-                        var anchor_y, current_y;
+                    .attr('y', (d) => {
                         anchor_y = d.anchor.y;
                         current_y = current_pt[1];
-                        if (current_y>anchor_y){
+                        if (current_y > anchor_y) {
                             return anchor_y
-                        }
-                        else {
+                        } else {
                             return current_y
                         }
                     })
-                    .attr('width',(d)=>{
-                        var anchor_x, current_x;
+                    .attr('width', (d) => {
                         anchor_x = d.anchor.x;
                         current_x = current_pt[0];
-                        return Math.abs(anchor_x-current_x)
+                        return Math.abs(anchor_x - current_x)
                     })
-                    .attr('height',(d)=>{
-                        var anchor_y, current_y;
+                    .attr('height', (d) => {
                         anchor_y = d.anchor.y;
                         current_y = current_pt[1];
-                        return Math.abs(anchor_y-current_y)
+                        return Math.abs(anchor_y - current_y)
+                    });
+                var selection_box = document.querySelector('rect.selection');
+                if (selection_box) {
+                    var selection_box_bounding_rect = selection_box.getBoundingClientRect();
+                    var sel_x1, sel_y1, sel_x2, sel_y2;
+                    sel_x1 = selection_box_bounding_rect.x;
+                    sel_y1 = selection_box_bounding_rect.y;
+                    sel_x2 = sel_x1 + selection_box_bounding_rect.width;
+                    sel_y2 = sel_y1 + selection_box_bounding_rect.height;
+                    var node_dom_elements = document.querySelectorAll('g.node ellipse');
+                    // Currently cycles through all dom nodes continuously.
+                    // Should really maintain a sorted index instead.
+                    node_dom_elements.forEach((node) => {
+                        var node_rect = node.getBoundingClientRect();
+                        var node_x1, node_x2, node_y1, node_y2;
+                        node_x1 = node_rect.x;
+                        node_x2 = node_x1 + node_rect.width;
+                        node_y1 = node_rect.y;
+                        node_y2 = node_y1 + node_rect.height;
+                        // Check all four corners of node boxes for overlap
+                        if (
+                            (node_x1 >= sel_x1 && node_x1 <= sel_x2 &&
+                                node_y1 >= sel_y1 && node_y1 <= sel_y2) ||
+                            (node_x2 >= sel_x1 && node_x2 <= sel_x2 &&
+                                node_y2 >= sel_y1 && node_y2 <= sel_y2) ||
+                            (node_x1 >= sel_x1 && node_x1 <= sel_x2 &&
+                                node_y2 >= sel_y1 && node_y2 <= sel_y2) ||
+                            (node_x2 >= sel_x1 && node_x2 <= sel_x2 &&
+                                node_y1 >= sel_y1 && node_y1 <= sel_y2)
+                        ) {
+                            self.select_node(node)
+                        } else {
+                            self.unselect_node(node)
+                        }
                     })
-                //
-                // if (!s.empty()) {
-                //     let p = d3.mouse(this);
-                //     let d = {};
-                //     d.x = parseInt(s.attr('x'), 10);
-                //     d.y = parseInt(s.attr('y'), 10);
-                //     d.width = parseInt(s.attr('width'), 10);
-                //     d.height = parseInt(s.attr('height'), 10);
-                //     let move = {};
-                //     move.x = p[0] - d.x;
-                //     move.y = p[1] - d.y;
-                //
-                //     // Calculate new properties of selection rectangle
-                //     if (move.x < 1 || (move.x * 2 < d.width)) {
-                //         d.x = p[0];
-                //         d.width -= move.x;
-                //     } else {
-                //         d.width = move.x;
-                //     }
-                //     if (move.y < 1 || (move.y * 2 < d.height)) {
-                //         d.y = p[1];
-                //         d.height -= move.y;
-                //     } else {
-                //         d.height = move.y;
-                //     }
-                //
-                //     s.attr('x', d.x)
-                //         .attr('y', d.y)
-                //         .attr('width', d.width)
-                //         .attr('height', d.height);
-                //
-                //     // deselect all temporary selected state objects
-                //     d3.selectAll('g.state.selection.selected').classed("selected", false);
+
+                }
             })
             .on("mouseup", function () {
                 // // Remove selection frame
                 svg.selectAll("rect.selection").remove();
-                //
-                // // Remove temporary selection marker class
-                // d3.selectAll('g.state.selection').classed("selection", false);
             })
             .on("mouseout", function () {
                 // if mouse enters an area of the screen not belonging to the SVG or one of its child elements
-                var toElement = d3.event.toElement
+                var toElement = d3.event.toElement;
                 if (!toElement ||
                     !(toElement === svg.node() ||
-                        ('ownerSVGElement' in toElement && toElement.ownerSVGElement === svg.node()))){
+                        ('ownerSVGElement' in toElement && toElement.ownerSVGElement === svg.node()))) {
                     svg.selectAll("rect.selection").remove();
                 }
-                else if (!(toElement === svg.node())) {
-                    console.log(toElement)
-                }
             });
+    }
+
+    select_node(node) {
+        var selected_set_size = this.selected.size;
+        this.selected.add(node);
+        if (this.selected.size > selected_set_size) {
+            node.classList.add('selected')
+        }
+    }
+
+    unselect_node(node) {
+        if (this.selected.has(node)) {
+            node.classList.remove('selected')
+            this.selected.delete(node)
+        }
+    }
+
+    unselect_all() {
+        this.selected.forEach((e) => {
+            e.classList.remove('selected')
+        });
+        this.selected = new Set()
     }
 
     correct_projection_lengths_for_ellipse_sizes(node, edge) {
@@ -857,6 +866,7 @@ class GraphView extends React.Component {
         };
         d.x = d3.event.x;
         d.y = d3.event.y;
+        var event = d3.event
         var canvas_width = canvas_dimensions.width;
         var interpolated_width = canvas_width / this.scaling_factor;
         var interpolated_x_start = canvas_width / 2 - interpolated_width / 2;
@@ -867,16 +877,6 @@ class GraphView extends React.Component {
         var interpolated_y_start = canvas_height / 2 - interpolated_height / 2;
         var original_y = ((d.y - interpolated_y_start) / interpolated_height) * canvas_height;
 
-        // if (original_x < bounds.x_min) {
-        //     d.x = Math.floor((node_x_radius / canvas_width) * interpolated_width + interpolated_x_start)
-        // } else if (original_x > bounds.x_max) {
-        //     d.x = Math.floor((canvas_width - node_x_radius) / canvas_width * interpolated_width + interpolated_x_start)
-        // }
-        // if (original_y < bounds.y_min) {
-        //     d.y = Math.floor((node_y_radius / canvas_height) * interpolated_height + interpolated_y_start)
-        // } else if (original_y > bounds.y_max) {
-        //     d.y = Math.floor(((canvas_height - node_y_radius) / canvas_height) * interpolated_height + interpolated_y_start)
-        // }
         node.filter(function (n) {
             return n === d
         })
@@ -1130,7 +1130,29 @@ class GraphView extends React.Component {
             this.appendDefs(svg);
             this.drawProjections(container);
             this.drawNodes(container, nodeWidth, nodeHeight, (d) => {
-                self.drag_node(d)
+                var nodes = Array.from(d3.selectAll('g.node')._groups[0][0].children);
+                var nodes_to_drag, drag_all_selected, origin_drag_node;
+                nodes_to_drag = [];
+                drag_all_selected = false;
+                origin_drag_node = d;
+                nodes.forEach(
+                    (n)=>{
+                        if (n.__data__ === origin_drag_node) {
+                            if (self.selected.has(n)){
+                                drag_all_selected = true;
+                            }
+                        }
+                        if (self.selected.has(n)){
+                            nodes_to_drag.push(n.__data__)
+                        }
+                    }
+                );
+                if (!drag_all_selected){
+                    nodes_to_drag = [origin_drag_node]
+                }
+                nodes_to_drag.forEach( (d)=>{
+                    self.drag_node(d)
+                });
             });
             this.drawLabels(container, 5, (d) => {
                 self.drag_node(d)
@@ -1140,7 +1162,7 @@ class GraphView extends React.Component {
             this.resize_nodes_to_label_text();
             this.correct_projection_lengths_for_ellipse_sizes();
             this.center_graph_on_point();
-            // this.apply_select_boxes(svg);
+            this.apply_select_boxes(svg);
             this.graph_bounding_box = this.get_graph_bounding_box();
             this.canvas_bounding_box = this.get_canvas_bounding_box();
             var width = document.querySelector('svg').getBoundingClientRect().width;
@@ -1165,8 +1187,7 @@ class GraphView extends React.Component {
                     if (d3.event.sourceEvent.metaKey) {
                         var xScroll = win.scrollLeft - d3.event.sourceEvent.movementX
                         var yScroll = win.scrollTop - d3.event.sourceEvent.movementY
-                    }
-                    else {
+                    } else {
                         var xScroll = win.scrollLeft
                         var yScroll = win.scrollTop
                     }
@@ -1188,6 +1209,7 @@ class GraphView extends React.Component {
                 }
                 win.scrollTo(xScroll, yScroll)
             }
+
             var win = document.querySelector('.graph-view');
             win.addEventListener('scroll', this.update_scroll);
             zoomed.bind(this);
