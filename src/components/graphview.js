@@ -270,12 +270,13 @@ class GraphView extends React.Component {
     }
 
     appendDefs(svg) {
-        var colors = ["black", "orange", "blue"];
+        // var colors = ['black', 'orange', 'blue'];
+        var colors = ['black'];
         var svg = svg;
         colors.forEach(
             color => {
                 svg.append("svg:defs").append("svg:marker")
-                    .attr("id", `triangle_${color}`)
+                    .attr("id", "triangle")
                     .attr("refX", 4)
                     .attr("refY", 4)
                     .attr("markerWidth", 8)
@@ -383,7 +384,7 @@ class GraphView extends React.Component {
                 var d3Element = d3.select(this);
                 var color = d3Element.attr('stroke');
                 d3Element
-                    .attr('marker-end', `url(#triangle_${color})`)
+                    .attr('marker-end', "url(#triangle)")
             });
         var recurrent_projs = [];
         d3.selectAll('g.edge line')
@@ -417,7 +418,7 @@ class GraphView extends React.Component {
                 var arc_length = reference_arc.getTotalLength();
                 var arrow_start = reference_arc.getPointAtLength(arc_length * .75);
                 var arrow_end = reference_arc.getPointAtLength(arc_length * .55);
-                return d.head.x - d.head.ellipse.rx + arrow_start.x - document.querySelector("#reference_arc path").getBBox().x
+                return d.head.x - d.head.stroke_width - d.head.ellipse.rx/2 + arrow_start.x - document.querySelector("#reference_arc path").getBBox().x
             })
             .attr('y1', function (d) {
                 var reference_arc = document.querySelector('#reference_arc path');
@@ -431,7 +432,7 @@ class GraphView extends React.Component {
                 var arc_length = reference_arc.getTotalLength();
                 var arrow_start = reference_arc.getPointAtLength(arc_length * .75);
                 var arrow_end = reference_arc.getPointAtLength(arc_length * .55);
-                return d.head.x - d.head.ellipse.rx + arrow_end.x - document.querySelector("#reference_arc path").getBBox().x
+                return d.head.x - d.head.stroke_width - d.head.ellipse.rx/2 + arrow_end.x - document.querySelector("#reference_arc path").getBBox().x
             })
             .attr('y2', function (d) {
                 var reference_arc = document.querySelector('#reference_arc path');
@@ -509,14 +510,14 @@ class GraphView extends React.Component {
         var height = this.get_canvas_bounding_box().height
     }
 
-    get_offset_between_ellipses(x1, y1, x2, y2, nodeWidth, nodeHeight) {
+    get_offset_between_ellipses(x1, y1, x2, y2, nodeWidth, nodeHeight, strokeWidth=1) {
         var arrow_offset = 3;
         var adjusted_x = x2 - x1;
         var adjusted_y = y2 - y1;
         var dist_between_centers = Math.sqrt(adjusted_x ** 2 + adjusted_y ** 2);
         var phi = Math.atan2(adjusted_y, adjusted_x);
-        var a = nodeWidth;
-        var b = nodeHeight;
+        var a = parseFloat(nodeWidth)+strokeWidth;
+        var b = parseFloat(nodeHeight)+strokeWidth;
         var radius_at_point = a * b / Math.sqrt(a ** 2 * Math.sin(phi) ** 2 + b ** 2 * Math.cos(phi) ** 2);
         var e_radius = dist_between_centers - radius_at_point - 3;
         var new_x = (e_radius * Math.cos(phi) + x1);
@@ -599,7 +600,8 @@ class GraphView extends React.Component {
                     node.filter(function (n) {
                         return n === d.head
                     })
-                        .attr('ry')
+                        .attr('ry'),
+                    Math.round(d.head.stroke_width/2)
                 ).x;
                 return x2
             })
@@ -616,7 +618,8 @@ class GraphView extends React.Component {
                     node.filter(function (n) {
                         return n === d.head
                     })
-                        .attr('ry')
+                        .attr('ry'),
+                    Math.round(d.head.stroke_width/2)
                 ).y;
                 return y2
             });
@@ -634,7 +637,7 @@ class GraphView extends React.Component {
                 }
             )
             .attr('x1', function (d) {
-                return d.head.x - d.head.ellipse.rx + 6
+                return d.head.x - d.head.ellipse.rx/2 - 10 - Math.round(d.head.stroke_width/2)
             })
             .attr('y1', function (d) {
                 var reference_arc = document.querySelector('#reference_arc path');
@@ -643,12 +646,12 @@ class GraphView extends React.Component {
                 return d.head.y + starting_y_location
             })
             .attr('x2', function (d) {
-                return d.head.x - d.head.ellipse.rx + 7
+                return d.head.x - d.head.ellipse.rx/2 - 9 - Math.round(d.head.stroke_width/2)
             })
             .attr('y2', function (d) {
                 var reference_arc = document.querySelector('#reference_arc path');
                 var reference_arc_len = reference_arc.getTotalLength();
-                var ending_y_location = reference_arc.getPointAtLength(reference_arc_len * .99).y - reference_arc.getBBox().y - 7.70;
+                var ending_y_location = reference_arc.getPointAtLength(reference_arc_len * .99).y - reference_arc.getBBox().y - 7.7;
                 return d.head.y + ending_y_location
             })
     }
@@ -819,7 +822,8 @@ class GraphView extends React.Component {
                     node.filter(function (n) {
                         return n === d.head
                     })
-                        .attr('ry')
+                        .attr('ry'),
+                    Math.round(d.head.stroke_width/2)
                 ).x;
                 return x2
             })
@@ -836,7 +840,8 @@ class GraphView extends React.Component {
                         node.filter(function (n) {
                             return n === d.head
                         })
-                            .attr('ry')
+                            .attr('ry'),
+                        Math.round(d.head.stroke_width/2)
                     ).y;
                     return y2
                 }
@@ -913,7 +918,8 @@ class GraphView extends React.Component {
                     node.filter(function (n) {
                         return n === d.head
                     })
-                        .attr('ry')
+                        .attr('ry'),
+                    Math.round(d.head.stroke_width/2)
                 ).x;
                 return x2
             })
@@ -930,7 +936,8 @@ class GraphView extends React.Component {
                     node.filter(function (n) {
                         return n === d.head
                     })
-                        .attr('ry')
+                        .attr('ry'),
+                    Math.round(d.head.stroke_width/2)
                 ).y;
                 return y2
             });
@@ -951,7 +958,8 @@ class GraphView extends React.Component {
                     node.filter(function (n) {
                         return n === d.head
                     })
-                        .attr('ry')
+                        .attr('ry'),
+                    Math.round(d.head.stroke_width/2)
                 ).x;
                 return x2
             })
@@ -968,7 +976,8 @@ class GraphView extends React.Component {
                     node.filter(function (n) {
                         return n === d.head
                     })
-                        .attr('ry')
+                        .attr('ry'),
+                    Math.round(d.head.stroke_width/2)
                 ).y;
                 return y2
             })
@@ -986,7 +995,7 @@ class GraphView extends React.Component {
                 }
             )
             .attr('x1', function (d) {
-                return d.head.x - d.head.ellipse.rx + 6
+                return d.head.x - d.head.ellipse.rx/2 - 10
             })
             .attr('y1', function (d) {
                 var reference_arc = document.querySelector('#reference_arc path');
@@ -995,7 +1004,7 @@ class GraphView extends React.Component {
                 return d.head.y + starting_y_location
             })
             .attr('x2', function (d) {
-                return d.head.x - d.head.ellipse.rx + 7
+                return d.head.x - d.head.ellipse.rx/2 - 9
             })
             .attr('y2', function (d) {
                 var reference_arc = document.querySelector('#reference_arc path');
