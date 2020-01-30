@@ -50,6 +50,8 @@ class GraphView extends React.Component {
         this.capture_wheel = this.capture_wheel.bind(this);
         this.componentDidUpdate = this.componentDidUpdate.bind(this);
         this.update_scroll = this.update_scroll.bind(this);
+        this.drag_node = this.drag_node.bind(this);
+        this.move_label_to_corresponding_node = this.move_label_to_corresponding_node.bind(this);
     }
 
     componentWillMount() {
@@ -383,9 +385,9 @@ class GraphView extends React.Component {
                 var d3Element = d3.select(this);
                 var color = d3Element.attr('stroke');
                 var color_map = {
-                    '#000000':'black',
-                    '#ffa500':'orange',
-                    '#0000ff':'blue'
+                    '#000000': 'black',
+                    '#ffa500': 'orange',
+                    '#0000ff': 'blue'
                 };
                 color = color in color_map ? color_map[color] : color;
                 d3Element
@@ -423,7 +425,7 @@ class GraphView extends React.Component {
                 var arc_length = reference_arc.getTotalLength();
                 var arrow_start = reference_arc.getPointAtLength(arc_length * .75);
                 var arrow_end = reference_arc.getPointAtLength(arc_length * .55);
-                return d.head.x - d.head.stroke_width - d.head.ellipse.rx/2 + arrow_start.x - document.querySelector("#reference_arc path").getBBox().x
+                return d.head.x - d.head.stroke_width - d.head.ellipse.rx / 2 + arrow_start.x - document.querySelector("#reference_arc path").getBBox().x
             })
             .attr('y1', function (d) {
                 var reference_arc = document.querySelector('#reference_arc path');
@@ -437,7 +439,7 @@ class GraphView extends React.Component {
                 var arc_length = reference_arc.getTotalLength();
                 var arrow_start = reference_arc.getPointAtLength(arc_length * .75);
                 var arrow_end = reference_arc.getPointAtLength(arc_length * .55);
-                return d.head.x - d.head.stroke_width - d.head.ellipse.rx/2 + arrow_end.x - document.querySelector("#reference_arc path").getBBox().x
+                return d.head.x - d.head.stroke_width - d.head.ellipse.rx / 2 + arrow_end.x - document.querySelector("#reference_arc path").getBBox().x
             })
             .attr('y2', function (d) {
                 var reference_arc = document.querySelector('#reference_arc path');
@@ -515,14 +517,14 @@ class GraphView extends React.Component {
         var height = this.get_canvas_bounding_box().height
     }
 
-    get_offset_between_ellipses(x1, y1, x2, y2, nodeWidth, nodeHeight, strokeWidth=1) {
+    get_offset_between_ellipses(x1, y1, x2, y2, nodeWidth, nodeHeight, strokeWidth = 1) {
         var arrow_offset = 3;
         var adjusted_x = x2 - x1;
         var adjusted_y = y2 - y1;
         var dist_between_centers = Math.sqrt(adjusted_x ** 2 + adjusted_y ** 2);
         var phi = Math.atan2(adjusted_y, adjusted_x);
-        var a = parseFloat(nodeWidth)+strokeWidth;
-        var b = parseFloat(nodeHeight)+strokeWidth;
+        var a = parseFloat(nodeWidth) + strokeWidth;
+        var b = parseFloat(nodeHeight) + strokeWidth;
         var radius_at_point = a * b / Math.sqrt(a ** 2 * Math.sin(phi) ** 2 + b ** 2 * Math.cos(phi) ** 2);
         var e_radius = dist_between_centers - radius_at_point - 3;
         var new_x = (e_radius * Math.cos(phi) + x1);
@@ -614,7 +616,7 @@ class GraphView extends React.Component {
                 }
             )
             .attr('x1', function (d) {
-                return d.head.x - d.head.ellipse.rx/2 - 10 - Math.round(d.head.stroke_width/2)
+                return d.head.x - d.head.ellipse.rx / 2 - 10 - Math.round(d.head.stroke_width / 2)
             })
             .attr('y1', function (d) {
                 var reference_arc = document.querySelector('#reference_arc path');
@@ -623,7 +625,7 @@ class GraphView extends React.Component {
                 return d.head.y + starting_y_location
             })
             .attr('x2', function (d) {
-                return d.head.x - d.head.ellipse.rx/2 - 9 - Math.round(d.head.stroke_width/2)
+                return d.head.x - d.head.ellipse.rx / 2 - 9 - Math.round(d.head.stroke_width / 2)
             })
             .attr('y2', function (d) {
                 var reference_arc = document.querySelector('#reference_arc path');
@@ -661,18 +663,19 @@ class GraphView extends React.Component {
         var svg = d3.select('svg');
         svg
             .on('mousedown', function () {
-                // don't fire if command is pressed. command unlocks different options
-                if (!d3.event.metaKey) {
-                    var anchor_pt = d3.mouse(this);
-                    var processed_anchor_pt = [
-                        {anchor: {x: anchor_pt[0], y: anchor_pt[1]}}
-                    ];
-                    svg.append('rect')
-                        .attr('rx', 6)
-                        .attr('ry', 6)
-                        .attr('class', 'selection')
-                        .data(processed_anchor_pt);
-                }}
+                    // don't fire if command is pressed. command unlocks different options
+                    if (!d3.event.metaKey) {
+                        var anchor_pt = d3.mouse(this);
+                        var processed_anchor_pt = [
+                            {anchor: {x: anchor_pt[0], y: anchor_pt[1]}}
+                        ];
+                        svg.append('rect')
+                            .attr('rx', 6)
+                            .attr('ry', 6)
+                            .attr('class', 'selection')
+                            .data(processed_anchor_pt);
+                    }
+                }
             )
             .on("mousemove", function () {
                 var anchor_x, anchor_y, current_x, current_y;
@@ -797,7 +800,7 @@ class GraphView extends React.Component {
             )
     }
 
-    get_offset_points_for_projection(d){
+    get_offset_points_for_projection(d) {
         var node = this.node;
         return this.get_offset_between_ellipses(
             d.tail.x,
@@ -812,62 +815,43 @@ class GraphView extends React.Component {
                 return n === d.head
             })
                 .attr('ry'),
-            Math.round(d.head.stroke_width/2)
+            Math.round(d.head.stroke_width / 2)
         )
     }
 
     drag_node(d) {
-        var self = this;
-        var node = this.node;
-        var label = this.label;
-        var edge = this.edge;
-        var label_offset = 3;
-        var canvas_dimensions = self.get_canvas_bounding_box();
-        var node_x_radius = parseFloat(node.filter((n) => {
+        var dx, dy, nodes, edges, labels, node, label;
+        d.x += d3.event.dx;
+        d.y += d3.event.dy;
+        nodes = this.node;
+        edges = this.edge;
+        labels = this.label;
+        node = nodes
+            .filter((n) => {
                 return n === d
-            }
-        ).attr('rx')) * this.scaling_factor;
-        var node_y_radius = parseFloat(node.filter((n) => {
-                return n === d
-            }
-        ).attr('ry')) * this.scaling_factor;
-        let bounds = {
-            x_min: node_x_radius,
-            x_max: canvas_dimensions.width - node_x_radius,
-            y_min: node_y_radius,
-            y_max: canvas_dimensions.height - node_y_radius
-        };
-        d.x = d3.event.x;
-        d.y = d3.event.y;
-        var event = d3.event
-        var canvas_width = canvas_dimensions.width;
-        var interpolated_width = canvas_width / this.scaling_factor;
-        var interpolated_x_start = canvas_width / 2 - interpolated_width / 2;
-        var original_x = ((d.x - interpolated_x_start) / interpolated_width) * canvas_width;
-
-        var canvas_height = canvas_dimensions.height;
-        var interpolated_height = canvas_height / this.scaling_factor;
-        var interpolated_y_start = canvas_height / 2 - interpolated_height / 2;
-        var original_y = ((d.y - interpolated_y_start) / interpolated_height) * canvas_height;
-
-        node.filter(function (n) {
-            return n === d
-        })
+            });
+        node
             .attr('cx', d.x)
             .attr('cy', d.y);
+        this.move_label_to_corresponding_node(d);
+        this.refresh_edges_for_node(d);
+    }
 
-        label.filter(function (l) {
-            return l === d
-        })
-            .attr('x', d.x)
-            .attr('y', d.y + label_offset);
+    move_label_to_corresponding_node(d) {
+        var offset_from_top_of_node = 3;
+        var labels = this.label;
+        var label = labels
+            .filter((l) => {
+                return l === d
+            });
+        label
+            .attr('x', d3.event.x)
+            .attr('y', d3.event.y + offset_from_top_of_node);
+    }
 
-        label.filter(function (l) {
-            return l === d
-        })
-            .attr('x', d.x)
-            .attr('y', d.y + label_offset);
-
+    refresh_edges_for_node(d) {
+        var self = this;
+        var edge = this.edge;
         edge.filter(function (l) {
             return l.tail === d
         })
@@ -892,7 +876,8 @@ class GraphView extends React.Component {
             .attr('y2', function (d) {
                 var y2 = self.get_offset_points_for_projection(d).y;
                 return y2
-            })
+            });
+
         this.recurrent
             .attr('transform', (e) => {
                 var recurrent_arc_offset = 10;
@@ -900,6 +885,7 @@ class GraphView extends React.Component {
                 var arc_y = e.head.y;
                 return `translate(${arc_x - parseFloat(e.head.ellipse.rx / 2 + recurrent_arc_offset)},${arc_y})`
             })
+
         d3.selectAll('g.edge line')
             .filter(
                 (e) => {
@@ -907,7 +893,7 @@ class GraphView extends React.Component {
                 }
             )
             .attr('x1', function (d) {
-                return d.head.x - d.head.ellipse.rx/2 - 10
+                return d.head.x - d.head.ellipse.rx / 2 - 10
             })
             .attr('y1', function (d) {
                 var reference_arc = document.querySelector('#reference_arc path');
@@ -916,7 +902,7 @@ class GraphView extends React.Component {
                 return d.head.y + starting_y_location
             })
             .attr('x2', function (d) {
-                return d.head.x - d.head.ellipse.rx/2 - 9
+                return d.head.x - d.head.ellipse.rx / 2 - 9
             })
             .attr('y2', function (d) {
                 var reference_arc = document.querySelector('#reference_arc path');
@@ -1051,29 +1037,30 @@ class GraphView extends React.Component {
             this.appendDefs(svg);
             this.drawProjections(container);
             this.drawNodes(container, nodeWidth, nodeHeight, (d) => {
-                var nodes = Array.from(d3.selectAll('g.node')._groups[0][0].children);
-                var nodes_to_drag, drag_all_selected, origin_drag_node;
-                nodes_to_drag = [];
-                drag_all_selected = false;
-                origin_drag_node = d;
-                nodes.forEach(
-                    (n)=>{
-                        if (n.__data__ === origin_drag_node) {
-                            if (self.selected.has(n)){
-                                drag_all_selected = true;
-                            }
-                        }
-                        if (self.selected.has(n)){
-                            nodes_to_drag.push(n.__data__)
-                        }
-                    }
-                );
-                if (!drag_all_selected){
-                    nodes_to_drag = [origin_drag_node]
-                }
-                nodes_to_drag.forEach( (d)=>{
-                    self.drag_node(d)
-                });
+                // var nodes = Array.from(d3.selectAll('g.node')._groups[0][0].children);
+                // var nodes_to_drag, drag_all_selected, origin_drag_node;
+                // nodes_to_drag = [];
+                // drag_all_selected = false;
+                // origin_drag_node = d;
+                // nodes.forEach(
+                //     (n)=>{
+                //         if (n.__data__ === origin_drag_node) {
+                //             if (self.selected.has(n)){
+                //                 drag_all_selected = true;
+                //             }
+                //         }
+                //         if (self.selected.has(n)){
+                //             nodes_to_drag.push(n.__data__)
+                //         }
+                //     }
+                // );
+                // if (!drag_all_selected){
+                //     nodes_to_drag = [origin_drag_node]
+                // }
+                // nodes_to_drag.forEach( (d)=>{
+                //     self.drag_node(d)
+                // });
+                self.drag_node(d)
             });
             this.drawLabels(container, 5, (d) => {
                 self.drag_node(d)
