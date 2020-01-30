@@ -191,7 +191,7 @@ class GraphView extends React.Component {
             .innerRadius(7)
             .outerRadius(8)
             .startAngle(2.7)
-            .endAngle(6.8);
+            .endAngle(7.0);
         return arc
     }
 
@@ -270,20 +270,19 @@ class GraphView extends React.Component {
     }
 
     appendDefs(svg) {
-        // var colors = ['black', 'orange', 'blue'];
-        var colors = ['black'];
+        var colors = ['black', 'orange', 'blue'];
         var svg = svg;
         colors.forEach(
             color => {
                 svg.append("svg:defs").append("svg:marker")
-                    .attr("id", "triangle")
+                    .attr("id", `triangle_${color}`)
                     .attr("refX", 4)
                     .attr("refY", 4)
                     .attr("markerWidth", 8)
                     .attr("markerHeight", 8)
                     .attr("orient", "auto")
                     .append("path")
-                    .attr("d", "M 0 0 8 4 0 8 2 4")
+                    .attr("d", "M 1 0 8 4 1 8 1 4")
                     .attr("fill", color);
             }
         );
@@ -383,8 +382,14 @@ class GraphView extends React.Component {
             .each(function () {
                 var d3Element = d3.select(this);
                 var color = d3Element.attr('stroke');
+                var color_map = {
+                    '#000000':'black',
+                    '#ffa500':'orange',
+                    '#0000ff':'blue'
+                };
+                color = color in color_map ? color_map[color] : color;
                 d3Element
-                    .attr('marker-end', "url(#triangle)")
+                    .attr('marker-end', `url(#triangle_${color})`)
             });
         var recurrent_projs = [];
         d3.selectAll('g.edge line')
@@ -588,39 +593,11 @@ class GraphView extends React.Component {
                 return d.tail.y
             })
             .attr('x2', function (d) {
-                var x2 = self.get_offset_between_ellipses(
-                    d.tail.x,
-                    d.tail.y,
-                    d.head.x,
-                    d.head.y,
-                    node.filter(function (n) {
-                        return n === d.head
-                    })
-                        .attr('rx'),
-                    node.filter(function (n) {
-                        return n === d.head
-                    })
-                        .attr('ry'),
-                    Math.round(d.head.stroke_width/2)
-                ).x;
+                var x2 = self.get_offset_points_for_projection(d).x;
                 return x2
             })
             .attr('y2', function (d) {
-                var y2 = self.get_offset_between_ellipses(
-                    d.tail.x,
-                    d.tail.y,
-                    d.head.x,
-                    d.head.y,
-                    node.filter(function (n) {
-                        return n === d.head
-                    })
-                        .attr('rx'),
-                    node.filter(function (n) {
-                        return n === d.head
-                    })
-                        .attr('ry'),
-                    Math.round(d.head.stroke_width/2)
-                ).y;
+                var y2 = self.get_offset_points_for_projection(d).y;
                 return y2
             });
         recurrent
@@ -810,42 +787,33 @@ class GraphView extends React.Component {
         var edge = this.edge;
         edge
             .attr('x2', function (d) {
-                var x2 = self.get_offset_between_ellipses(
-                    d.tail.x,
-                    d.tail.y,
-                    d.head.x,
-                    d.head.y,
-                    node.filter(function (n) {
-                        return n === d.head
-                    })
-                        .attr('rx'),
-                    node.filter(function (n) {
-                        return n === d.head
-                    })
-                        .attr('ry'),
-                    Math.round(d.head.stroke_width/2)
-                ).x;
+                var x2 = self.get_offset_points_for_projection(d).x;
                 return x2
             })
             .attr('y2', function (d) {
-                    var y2 = self.get_offset_between_ellipses(
-                        d.tail.x,
-                        d.tail.y,
-                        d.head.x,
-                        d.head.y,
-                        node.filter(function (n) {
-                            return n === d.head
-                        })
-                            .attr('rx'),
-                        node.filter(function (n) {
-                            return n === d.head
-                        })
-                            .attr('ry'),
-                        Math.round(d.head.stroke_width/2)
-                    ).y;
+                    var y2 = self.get_offset_points_for_projection(d).y;
                     return y2
                 }
             )
+    }
+
+    get_offset_points_for_projection(d){
+        var node = this.node;
+        return this.get_offset_between_ellipses(
+            d.tail.x,
+            d.tail.y,
+            d.head.x,
+            d.head.y,
+            node.filter(function (n) {
+                return n === d.head
+            })
+                .attr('rx'),
+            node.filter(function (n) {
+                return n === d.head
+            })
+                .attr('ry'),
+            Math.round(d.head.stroke_width/2)
+        )
     }
 
     drag_node(d) {
@@ -906,39 +874,11 @@ class GraphView extends React.Component {
             .attr('x1', d.x)
             .attr('y1', d.y)
             .attr('x2', function (d) {
-                var x2 = self.get_offset_between_ellipses(
-                    d.tail.x,
-                    d.tail.y,
-                    d.head.x,
-                    d.head.y,
-                    node.filter(function (n) {
-                        return n === d.head
-                    })
-                        .attr('rx'),
-                    node.filter(function (n) {
-                        return n === d.head
-                    })
-                        .attr('ry'),
-                    Math.round(d.head.stroke_width/2)
-                ).x;
+                var x2 = self.get_offset_points_for_projection(d).x;
                 return x2
             })
             .attr('y2', function (d) {
-                var y2 = self.get_offset_between_ellipses(
-                    d.tail.x,
-                    d.tail.y,
-                    d.head.x,
-                    d.head.y,
-                    node.filter(function (n) {
-                        return n === d.head
-                    })
-                        .attr('rx'),
-                    node.filter(function (n) {
-                        return n === d.head
-                    })
-                        .attr('ry'),
-                    Math.round(d.head.stroke_width/2)
-                ).y;
+                var y2 = self.get_offset_points_for_projection(d).y;
                 return y2
             });
 
@@ -946,39 +886,11 @@ class GraphView extends React.Component {
             return l.head === d
         })
             .attr('x2', function (d) {
-                var x2 = self.get_offset_between_ellipses(
-                    d.tail.x,
-                    d.tail.y,
-                    d.head.x,
-                    d.head.y,
-                    node.filter(function (n) {
-                        return n === d.head
-                    })
-                        .attr('rx'),
-                    node.filter(function (n) {
-                        return n === d.head
-                    })
-                        .attr('ry'),
-                    Math.round(d.head.stroke_width/2)
-                ).x;
+                var x2 = self.get_offset_points_for_projection(d).x;
                 return x2
             })
             .attr('y2', function (d) {
-                var y2 = self.get_offset_between_ellipses(
-                    d.tail.x,
-                    d.tail.y,
-                    d.head.x,
-                    d.head.y,
-                    node.filter(function (n) {
-                        return n === d.head
-                    })
-                        .attr('rx'),
-                    node.filter(function (n) {
-                        return n === d.head
-                    })
-                        .attr('ry'),
-                    Math.round(d.head.stroke_width/2)
-                ).y;
+                var y2 = self.get_offset_points_for_projection(d).y;
                 return y2
             })
         this.recurrent
