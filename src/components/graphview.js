@@ -819,6 +819,33 @@ class GraphView extends React.Component {
         )
     }
 
+    drag_nodes(d) {
+        var nodes = Array.from(d3.selectAll('g.node')._groups[0][0].children);
+        var nodes_to_drag, drag_all_selected, origin_drag_node;
+        var self = this;
+        nodes_to_drag = [];
+        drag_all_selected = false;
+        origin_drag_node = d;
+        nodes.forEach(
+            (n)=>{
+                if (n.__data__ === origin_drag_node) {
+                    if (self.selected.has(n)){
+                        drag_all_selected = true;
+                    }
+                }
+                if (self.selected.has(n)){
+                    nodes_to_drag.push(n.__data__)
+                }
+            }
+        );
+        if (!drag_all_selected){
+            nodes_to_drag = [origin_drag_node]
+        }
+        nodes_to_drag.forEach( (d)=>{
+            self.drag_node(d)
+        });
+    }
+
     drag_node(d) {
         var dx, dy, nodes, edges, labels, node, label;
         d.x += d3.event.dx;
@@ -845,8 +872,8 @@ class GraphView extends React.Component {
                 return l === d
             });
         label
-            .attr('x', d3.event.x)
-            .attr('y', d3.event.y + offset_from_top_of_node);
+            .attr('x', d.x)
+            .attr('y', d.y + offset_from_top_of_node);
     }
 
     refresh_edges_for_node(d) {
@@ -1037,33 +1064,10 @@ class GraphView extends React.Component {
             this.appendDefs(svg);
             this.drawProjections(container);
             this.drawNodes(container, nodeWidth, nodeHeight, (d) => {
-                // var nodes = Array.from(d3.selectAll('g.node')._groups[0][0].children);
-                // var nodes_to_drag, drag_all_selected, origin_drag_node;
-                // nodes_to_drag = [];
-                // drag_all_selected = false;
-                // origin_drag_node = d;
-                // nodes.forEach(
-                //     (n)=>{
-                //         if (n.__data__ === origin_drag_node) {
-                //             if (self.selected.has(n)){
-                //                 drag_all_selected = true;
-                //             }
-                //         }
-                //         if (self.selected.has(n)){
-                //             nodes_to_drag.push(n.__data__)
-                //         }
-                //     }
-                // );
-                // if (!drag_all_selected){
-                //     nodes_to_drag = [origin_drag_node]
-                // }
-                // nodes_to_drag.forEach( (d)=>{
-                //     self.drag_node(d)
-                // });
-                self.drag_node(d)
+                self.drag_nodes(d)
             });
             this.drawLabels(container, 5, (d) => {
-                self.drag_node(d)
+                self.drag_nodes(d)
             });
             this.scale_graph(1);
             this.scale_graph_to_fit(this.fill_proportion);

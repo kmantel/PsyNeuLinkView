@@ -92,7 +92,8 @@
       <workItem from="1579876250737" duration="17813000" />
       <workItem from="1580250629093" duration="800000" />
       <workItem from="1580308241639" duration="6137000" />
-      <workItem from="1580394496670" duration="6079000" />
+      <workItem from="1580394496670" duration="6590000" />
+      <workItem from="1580481352739" duration="263000" />
     </task>
     <servers />
   </component>
@@ -201,11 +202,6 @@
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
-        <line-breakpoint type="javascript">
-          <url>file://$PROJECT_DIR$/src/components/graphview.js</url>
-          <line>1169</line>
-          <option name="timeStamp" value="193" />
-        </line-breakpoint>
         <line-breakpoint type="javascript">
           <url>file://$PROJECT_DIR$/src/components/graphview.js</url>
           <line>792</line>

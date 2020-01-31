@@ -4,7 +4,7 @@
     "name": "Dillon Smith",
     "email": "Dillon.th.smith@gmail.com"
   },
-  "version": "0.2.82",
+  "version": "0.2.83",
   "private": true,
   "dependencies": {
     "@blueprintjs/core": "^3.19.1",
