@@ -35,5 +35,6 @@ message GraphName {
 }
 
 message GraphJSON {
-  string JSON = 1;
+  string objectsJSON = 1;
+  string styleJSON = 2;
 }

@@ -443,8 +443,6 @@ class GraphView extends React.Component {
                 var arrow_start = reference_arc.getPointAtLength(arc_length * .75);
                 return d.head.y - d.head.ellipse.ry + arrow_start.y - document.querySelector("#reference_arc path").getBBox().y
             });
-        var width = this.get_canvas_bounding_box().width;
-        var height = this.get_canvas_bounding_box().height;
         this.recurrent = recurrent;
         this.edge = edge;
     }
@@ -880,12 +878,10 @@ class GraphView extends React.Component {
     }
 
     drag_node(d) {
-        var dx, dy, nodes, edges, labels, node, label;
+        var nodes, node;
         d.x += d3.event.dx;
         d.y += d3.event.dy;
         nodes = this.node;
-        edges = this.edge;
-        labels = this.label;
         node = nodes
             .filter((n) => {
                 return n === d
