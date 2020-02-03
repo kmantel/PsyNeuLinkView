@@ -11,7 +11,6 @@
 
 ellipse.selected{
     fill: #e6faff;
-    filter: url(#dropshadow);
 }
 
 .graph-view.pnl-panel{

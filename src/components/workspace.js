@@ -236,7 +236,12 @@ export default class Workspace extends React.Component {
                                 return false
                             }
                             var new_graph = JSON.parse(JSON.stringify(rpc_client.script_maintainer.gv));
-                            var new_graph_style = JSON.parse(JSON.stringify(rpc_client.script_maintainer.style));
+                            try {
+                                var new_graph_style = JSON.parse(JSON.stringify(rpc_client.script_maintainer.style));
+                            }
+                            catch {
+                                var new_graph_style = {};
+                            }
                             self.setState({
                                 graph: new_graph,
                                 graph_style: new_graph_style

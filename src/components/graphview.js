@@ -22,6 +22,119 @@ const style = {
     justifyContent: "center",
 };
 
+class Index {
+    constructor() {
+        this.obj_lookup = new WeakMap();
+        this.str_lookup = {};
+        this.elements = new Set();
+        this.nodes = new Set();
+        this.projections = new Set();
+        this.labels = new Set();
+    }
+    add_d3_group(d3_group, type) {
+        if (!['node','label','projection'].includes(type)){
+            throw 'must specify group type when adding d3 group to index'
+        }
+        if (type === 'node') {
+            d3_group._groups[0].forEach(
+                (n) => {
+                    this.add_node(new Node(n))
+                }
+            );
+        }
+        else if (type === 'label') {
+            d3_group._groups[0].forEach(
+                (l) => {
+                    this.add_label(new Label(l))
+                }
+            );
+        }
+    }
+    add_label(label) {
+        var pnlv_label, associated_node;
+        pnlv_label = label._is_pnlv_obj ? label : new Label(label);
+        this.add_to_elements(pnlv_label);
+        this.add_to_lookup(pnlv_label);
+        associated_node = this.lookup(label.name);
+        if (associated_node){
+            associated_node.label = pnlv_label
+        }
+        this.labels.add(pnlv_label)
+    }
+    add_node(node) {
+        var pnlv_node = node._is_pnlv_obj ? node: new Node(node);
+        this.add_to_elements(pnlv_node);
+        this.add_to_lookup(pnlv_node);
+        this.nodes.add(pnlv_node);
+    }
+    add_to_elements(element){
+        if (!this.elements.has(element)){
+            this.elements.add(element)
+        }
+    }
+    add_to_lookup(element){
+        this.obj_lookup.set(element,element);
+        this.obj_lookup.set(element.dom,element);
+        this.obj_lookup.set(element.data,element);
+        this.obj_lookup.set(element.selection,element);
+        if (element.element_type === 'node') {
+            this.str_lookup[element.data.name] = element;
+        }
+    }
+    lookup(query){
+        var result;
+        if (typeof query === 'string'){
+            result = this.str_lookup[query]
+        }
+        else {
+            result = this.obj_lookup[query]
+        }
+        return result
+    }
+}
+
+class GraphElement {
+    constructor(svg_element) {
+        this.dom=svg_element;
+        this.data=svg_element.__data__;
+        this.selection= d3.select(this.dom);
+        this._is_pnlv_obj = true;
+        this.name = this.data.name;
+    }
+}
+
+class Node extends GraphElement {
+    constructor(svg_element) {
+        super(svg_element);
+        this.element_type = 'node'
+    }
+}
+
+class Label extends GraphElement {
+    constructor(svg_element) {
+        super(svg_element);
+        this.element_type = 'label'
+    }
+}
+
+class Projection extends GraphElement {
+    constructor(svg_element) {
+        super(svg_element)
+        this.element_type = 'projection'
+    }
+}
+
+class Shape {
+    constructor() {
+    }
+}
+
+class Ellipse extends Shape {
+    constructor() {
+        super()
+    }
+}
+
 class GraphView extends React.Component {
     constructor(props) {
         super(props);
@@ -33,6 +146,7 @@ class GraphView extends React.Component {
             graph: this.props.graph,
             spinner_visible: false,
         };
+        this.index = new Index();
         this.selected = new Set();
         this.mouse_offset = {x: 0, y: 0};
         this.centerpoint_offset = {x: 0, y: 0};
@@ -51,6 +165,7 @@ class GraphView extends React.Component {
         this.componentDidUpdate = this.componentDidUpdate.bind(this);
         this.update_scroll = this.update_scroll.bind(this);
         this.drag_node = this.drag_node.bind(this);
+        this.zoomed = this.zoomed.bind(this);
         this.move_label_to_corresponding_node = this.move_label_to_corresponding_node.bind(this);
     }
 
@@ -292,37 +407,6 @@ class GraphView extends React.Component {
             .attr("id", "reference_arc")
             .append("path")
             .attr("d", this.generate_arc());
-
-        var drop_filter = svg.append("svg:defs").append('filter')
-            .attr("id", "dropshadow")
-            .attr("height", "120%");
-
-        drop_filter
-            .append("feGaussianBlur")
-            .attr("in", "SourceImage")
-            .attr("stdDeviation", "1")
-
-        drop_filter
-            .append("feOffset")
-            .attr("dx", "0")
-            .attr("dy", "0")
-            .attr("results", "offsetblur");
-
-        drop_filter
-            .append("feComponentTransfer")
-            .append("feFuncA")
-            .attr("type", "linear")
-            .attr("slope", "1.7");
-
-        var fe_merge = drop_filter
-            .append("feMerge");
-
-        fe_merge
-            .append("feMergeNode");
-
-        fe_merge
-            .append("feMergeNode")
-            .attr("in", "SourceGraphic")
     }
 
     associateVisualInformationWithGraphNodes() {
@@ -480,6 +564,7 @@ class GraphView extends React.Component {
             .attr('class', function () {})
             .call(d3.drag()
                 .on('drag', nodeDragFunction));
+        this.index.add_d3_group(node, 'node');
         this.node = node
     }
 
@@ -507,8 +592,7 @@ class GraphView extends React.Component {
             .call(d3.drag()
                 .on('drag', labelDragFunction));
         this.label = label;
-        var width = this.get_canvas_bounding_box().width
-        var height = this.get_canvas_bounding_box().height
+        this.index.add_d3_group(label, 'label');
     }
 
     get_offset_between_ellipses(x1, y1, x2, y2, nodeWidth, nodeHeight, strokeWidth = 1) {
@@ -639,20 +723,12 @@ class GraphView extends React.Component {
     }
 
     resize_nodes_to_label_text() {
-        var labels = Array.from(d3.selectAll('g.label text')._groups[0]);
-        var nodes = Array.from(d3.selectAll('g.node ellipse')._groups[0]);
-        var node_label_arrays = nodes.map(function (e, i) {
-            return [e, labels[i]]
-        });
-        var node_label_mapping = {};
-        node_label_arrays.forEach(function (e) {
-            node_label_mapping[e[0]] = e[1];
-            var ellipseWidth = d3.select(e[0]).attr('rx');
-            var labelWidth = e[1].getBBox().width;
-            if (labelWidth >= ellipseWidth) {
-                d3.select(e[0]).attr('rx', Math.floor(labelWidth / 2) + 10)
+        this.index.nodes.forEach(
+            (n)=>{
+                var label_width = n.label.dom.getBoundingClientRect().width;
+                n.selection.attr('rx', Math.floor(label_width/2)+10)
             }
-        });
+        );
     }
 
     resize_recurrent_projections() {
@@ -725,30 +801,29 @@ class GraphView extends React.Component {
                     sel_y1 = selection_box_bounding_rect.y;
                     sel_x2 = sel_x1 + selection_box_bounding_rect.width;
                     sel_y2 = sel_y1 + selection_box_bounding_rect.height;
-                    var node_dom_elements = document.querySelectorAll('g.node ellipse');
-                    // Currently cycles through all dom nodes continuously.
-                    // Should really maintain a sorted index instead.
-                    node_dom_elements.forEach((node) => {
-                        var node_rect = node.getBoundingClientRect();
+                    self.index.nodes.forEach((node) => {
+                        var node_rect = node.dom.getBoundingClientRect();
                         var node_x1, node_x2, node_y1, node_y2;
                         node_x1 = node_rect.x;
                         node_x2 = node_x1 + node_rect.width;
                         node_y1 = node_rect.y;
                         node_y2 = node_y1 + node_rect.height;
-                        // Check all four corners of node boxes for overlap
+                        var sel_ul, sel_lr, node_ul, node_lr;
+                        sel_ul = {x:sel_x1, y:sel_y1};
+                        sel_lr = {x:sel_x2, y:sel_y2};
+                        node_ul = {x:node_x1, y:node_y1};
+                        node_lr = {x:node_x2, y:node_y2};
                         if (
-                            (node_x1 >= sel_x1 && node_x1 <= sel_x2 &&
-                                node_y1 >= sel_y1 && node_y1 <= sel_y2) ||
-                            (node_x2 >= sel_x1 && node_x2 <= sel_x2 &&
-                                node_y2 >= sel_y1 && node_y2 <= sel_y2) ||
-                            (node_x1 >= sel_x1 && node_x1 <= sel_x2 &&
-                                node_y2 >= sel_y1 && node_y2 <= sel_y2) ||
-                            (node_x2 >= sel_x1 && node_x2 <= sel_x2 &&
-                                node_y1 >= sel_y1 && node_y1 <= sel_y2)
-                        ) {
-                            self.select_node(node)
-                        } else {
+                            sel_lr.x < node_ul.x ||
+                            node_lr.x < sel_ul.x ||
+                            sel_lr.y < node_ul.y ||
+                            node_lr.y < sel_ul.y
+
+                        ){
                             self.unselect_node(node)
+                        }
+                        else {
+                            self.select_node(node)
                         }
                     })
 
@@ -770,25 +845,21 @@ class GraphView extends React.Component {
     }
 
     select_node(node) {
-        var selected_set_size = this.selected.size;
         this.selected.add(node);
-        if (this.selected.size > selected_set_size) {
-            node.classList.add('selected')
-        }
+        node.selection.classed('selected',true);
     }
 
     unselect_node(node) {
-        if (this.selected.has(node)) {
-            node.classList.remove('selected')
-            this.selected.delete(node)
-        }
+        this.selected.delete(node);
+        node.selection.classed('selected',false);
     }
 
     unselect_all() {
-        this.selected.forEach((e) => {
-            e.classList.remove('selected')
-        });
-        this.selected = new Set()
+        this.index.nodes.forEach(
+            (n)=>{
+                n.selection.classed('selected',false)
+            }
+        );
     }
 
     correct_projection_lengths_for_ellipse_sizes(node, edge) {
@@ -842,7 +913,6 @@ class GraphView extends React.Component {
     }
 
     drag_nodes(d) {
-        var nodes = Array.from(d3.selectAll('g.node')._groups[0][0].children);
         var nodes_to_drag, drag_all_selected, origin_drag_node, cancel_drag;
         var self = this;
         nodes_to_drag = [];
@@ -850,18 +920,18 @@ class GraphView extends React.Component {
         cancel_drag = false;
         origin_drag_node = d;
         if (!self.node_movement_exceeds_canvas_bounds(origin_drag_node)) {
-            nodes.forEach(
+            this.index.nodes.forEach(
                 (n) => {
-                    if (n.__data__ === origin_drag_node) {
+                    if (n.data === origin_drag_node) {
                         if (self.selected.has(n)) {
                             drag_all_selected = true;
                         }
                     }
                     if (self.selected.has(n)) {
-                        if (self.node_movement_exceeds_canvas_bounds(n.__data__)){
+                        if (self.node_movement_exceeds_canvas_bounds(n.data)){
                             cancel_drag = true
                         }
-                        nodes_to_drag.push(n.__data__)
+                        nodes_to_drag.push(n.data)
                     }
                 }
             );
@@ -1081,6 +1151,54 @@ class GraphView extends React.Component {
         this.move_graph(horizontal_offset, vertical_offset)
     }
 
+    zoomed() {
+        var d3e = d3.select('svg.graph');
+        var win = document.querySelector('.graph-view')
+        if (d3.event.sourceEvent && d3.event.sourceEvent.type === 'mousemove') {
+            if (d3.event.sourceEvent.metaKey) {
+                var xScroll = win.scrollLeft - d3.event.sourceEvent.movementX;
+                var yScroll = win.scrollTop - d3.event.sourceEvent.movementY;
+            } else {
+                var xScroll = win.scrollLeft;
+                var yScroll = win.scrollTop;
+            }
+        } else {
+            var full_g_pre = document.querySelector('svg.graph');
+            var full_g_box_pre = full_g_pre.getBoundingClientRect();
+            var pre_scale_x_proportion = this.mouse_offset.x / full_g_box_pre.width;
+            var pre_scale_y_proportion = this.mouse_offset.y / full_g_box_pre.height;
+            var new_scale = 100 * d3.event.transform.k;
+            d3e
+                .attr('width', `${new_scale}%`)
+                .attr('height', `${new_scale}%`);
+            var full_g_post = document.querySelector('svg.graph');
+            var full_g_box_post = full_g_post.getBoundingClientRect();
+            var xScrollOffset = full_g_box_post.width * pre_scale_x_proportion - this.mouse_offset.x;
+            var xScroll = win.scrollLeft + xScrollOffset;
+            var yScrollOffset = full_g_box_post.height * pre_scale_y_proportion - this.mouse_offset.y;
+            var yScroll = win.scrollTop + yScrollOffset;
+        }
+        win.scrollTo(xScroll, yScroll)
+    }
+
+    apply_zoom(svg){
+        var zoom = d3.zoom();
+        this.zoom = zoom
+            .scaleExtent([1, 3])
+            .filter(() => {
+                return d3.event.type.includes("mouse") && (d3.event.metaKey || (d3.event.sourceEvent && !d3.event.sourceEvent.type === "wheel"))
+            });
+        var d3e = d3.select('svg.graph');
+        d3e.call(this.zoom
+            .on("zoom", this.zoomed)
+        );
+    }
+
+    bind_scroll_updating(){
+        var win = document.querySelector('.graph-view');
+        win.addEventListener('scroll', this.update_scroll);
+    }
+
     setGraph() {
         var self = this;
         if (self.props.graph) {
@@ -1105,57 +1223,11 @@ class GraphView extends React.Component {
             this.correct_projection_lengths_for_ellipse_sizes();
             this.center_graph_on_point();
             this.apply_select_boxes(svg);
+            this.apply_zoom(svg);
+            this.bind_scroll_updating();
             this.graph_bounding_box = this.get_graph_bounding_box();
             this.canvas_bounding_box = this.get_canvas_bounding_box();
-            var width = document.querySelector('svg').getBoundingClientRect().width;
-            var height = document.querySelector('svg').getBoundingClientRect().height;
-            var zoom = d3.zoom();
             this.svg = svg;
-            this.zoom = zoom
-                .scaleExtent([1, 3])
-                .filter(() => {
-                    return d3.event.type.includes("mouse") && d3.event.metaKey || (d3.event.sourceEvent && !d3.event.sourceEvent.type === "wheel")
-                });
-            var d3e = d3.select('svg.graph')
-            d3e.call(this.zoom
-                .on("zoom", zoomed)
-            );
-
-            // d3e.call(this.zoom);
-            function zoomed() {
-                var d3e = d3.select('svg.graph');
-                var win = document.querySelector('.graph-view')
-                if (d3.event.sourceEvent && d3.event.sourceEvent.type === 'mousemove') {
-                    if (d3.event.sourceEvent.metaKey) {
-                        var xScroll = win.scrollLeft - d3.event.sourceEvent.movementX
-                        var yScroll = win.scrollTop - d3.event.sourceEvent.movementY
-                    } else {
-                        var xScroll = win.scrollLeft
-                        var yScroll = win.scrollTop
-                    }
-                } else {
-                    var full_g_pre = document.querySelector('svg.graph');
-                    var full_g_box_pre = full_g_pre.getBoundingClientRect();
-                    var pre_scale_x_proportion = self.mouse_offset.x / full_g_box_pre.width
-                    var pre_scale_y_proportion = self.mouse_offset.y / full_g_box_pre.height
-                    var new_scale = 100 * d3.event.transform.k
-                    d3e
-                        .attr('width', `${new_scale}%`)
-                        .attr('height', `${new_scale}%`);
-                    var full_g_post = document.querySelector('svg.graph');
-                    var full_g_box_post = full_g_post.getBoundingClientRect();
-                    var xScrollOffset = full_g_box_post.width * pre_scale_x_proportion - self.mouse_offset.x
-                    var xScroll = win.scrollLeft + xScrollOffset
-                    var yScrollOffset = full_g_box_post.height * pre_scale_y_proportion - self.mouse_offset.y
-                    var yScroll = win.scrollTop + yScrollOffset
-                }
-                win.scrollTo(xScroll, yScroll)
-            }
-
-            var win = document.querySelector('.graph-view');
-            win.addEventListener('scroll', this.update_scroll);
-            zoomed.bind(this);
-            window.angle = this.get_point_at_angle_of_ellipse
         }
     }
 
