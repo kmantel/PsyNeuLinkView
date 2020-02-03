@@ -23,6 +23,7 @@ export default class Workspace extends React.Component {
             rowTwoHorizontalFactor: Math.ceil(w / 5),
             verticalFactor: Math.ceil(h * 0.7),
             graph: null,
+            graph_style:null,
             show_settings: false,
             mouse:null
         };
@@ -166,7 +167,6 @@ export default class Workspace extends React.Component {
                 ]
             }
         ).then((paths) => {
-                console.log('hm');
                 var pathArray = paths.filePaths;
                 if (pathArray.length > 0) {
                     self.validate_server_status_and_load_script(pathArray[0])
@@ -236,7 +236,11 @@ export default class Workspace extends React.Component {
                                 return false
                             }
                             var new_graph = JSON.parse(JSON.stringify(rpc_client.script_maintainer.gv));
-                            self.setState({graph: new_graph})
+                            var new_graph_style = JSON.parse(JSON.stringify(rpc_client.script_maintainer.style));
+                            self.setState({
+                                graph: new_graph,
+                                graph_style: new_graph_style
+                            })
                         }
                     )
                 }
@@ -253,14 +257,6 @@ export default class Workspace extends React.Component {
             ()=>{
                 self.load_script(filepath)
             },
-            // ()=>{
-            //     self.dispatcher.capture(
-            //         {
-            //             error: "Failed to load Python interpreter. Check path."
-            //         },
-            //         self.setState({'graph': null})
-            //     );
-            // }
         );
     }
 
@@ -396,6 +392,7 @@ export default class Workspace extends React.Component {
                         }
                     }
                     graph={this.state.graph}
+                    graph_style = {this.state.graph_style}
                 />
             </div>,
             <div key="c">

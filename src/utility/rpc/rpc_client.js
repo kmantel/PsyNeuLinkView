@@ -62,7 +62,8 @@ class RPCClient {
                 callback(err)
             }
             else{
-                self.script_maintainer.gv = JSON.parse(response.JSON);
+                self.script_maintainer.gv = JSON.parse(response.objectsJSON);
+                self.script_maintainer.style = JSON.parse(response.styleJSON);
                 callback()
             }
         });

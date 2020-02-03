@@ -104,4 +104,8 @@ class DependencyGraph:
             elif i.find('call'):
                 if i.find('name',self.psyneulink_calls):
                     self.execute_node(i, namespace)
-        namespace['graphics_spec'] = self.fst.find('name','pnlv_graphics_spec')
+        gdict = self.fst.find('assign',lambda x: x.find('name','pnlv_graphics_spec'))
+        if gdict:
+            self.execute_node(gdict, namespace)
+        else:
+            namespace['pnlv_graphics_spec']={}

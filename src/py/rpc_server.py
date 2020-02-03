@@ -29,6 +29,9 @@ class Container():
             'compositions': {},
             'components': {}
         }
+        self.graphics_spec = {
+
+        }
         self.AST = None
 
     @property
@@ -56,7 +59,9 @@ class GraphServer(graph_pb2_grpc.ServeGraphServicer):
     def GetJSON(self, request, context):
         graph_name = request.name
         gv = get_gv_json(graph_name)
-        return graph_pb2.GraphJSON(JSON=json.dumps(gv))
+        graphics = pnl_container.graphics_spec
+        return graph_pb2.GraphJSON(objectsJSON=json.dumps(gv),
+                                   styleJSON=json.dumps(graphics))
 
     def HealthCheck(self, request, context):
         return graph_pb2.HealthStatus(status='Okay')
@@ -74,6 +79,9 @@ def get_new_pnl_objects(namespace):
     pnl_container.pnl_objects['components'].update(components)
     return compositions, components
 
+def get_graphics_dict(namespace):
+    if 'pnlv_graphics_spec' in namespace:
+        pnl_container.graphics_spec = namespace['pnlv_graphics_spec']
 
 def load_script(filepath):
     pnl_container.AST = open(filepath, 'r').read()
@@ -81,6 +89,7 @@ def load_script(filepath):
     namespace = {}
     dg.execute_ast(namespace)
     get_new_pnl_objects(namespace)
+    get_graphics_dict(namespace)
     return pnl_container.hashable_pnl_objects['compositions']
 
 
