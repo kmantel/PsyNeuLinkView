@@ -57,7 +57,8 @@ class Index {
         this.add_to_lookup(pnlv_label);
         associated_node = this.lookup(label.name);
         if (associated_node){
-            associated_node.label = pnlv_label
+            associated_node.label = pnlv_label;
+            this.node = associated_node;
         }
         this.labels.add(pnlv_label)
     }
@@ -75,9 +76,9 @@ class Index {
     add_to_lookup(element){
         this.obj_lookup.set(element,element);
         this.obj_lookup.set(element.dom,element);
-        this.obj_lookup.set(element.data,element);
         this.obj_lookup.set(element.selection,element);
         if (element.element_type === 'node') {
+            this.obj_lookup.set(element.data,element);
             this.str_lookup[element.data.name] = element;
         }
     }
@@ -87,7 +88,7 @@ class Index {
             result = this.str_lookup[query]
         }
         else {
-            result = this.obj_lookup[query]
+            result = this.obj_lookup.get(query)
         }
         return result
     }
@@ -256,23 +257,19 @@ class GraphView extends React.Component {
         var left_wall_test = (x1 - px) / vx;
         if (left_wall_test > 0) {
             possible_solutions.push(left_wall_test)
-        }
-        ;
+        };
         var right_wall_test = (x2 - px) / vx;
         if (right_wall_test > 0) {
             possible_solutions.push(right_wall_test)
-        }
-        ;
+        };
         var top_wall_test = (y1 - py) / vy;
         if (top_wall_test > 0) {
             possible_solutions.push(top_wall_test)
-        }
-        ;
+        };
         var bottom_wall_test = (y2 - py) / vy;
         if (bottom_wall_test > 0) {
             possible_solutions.push(bottom_wall_test)
-        }
-        ;
+        };
         return Math.min.apply(null, possible_solutions)
     }
 
@@ -563,7 +560,11 @@ class GraphView extends React.Component {
             })
             .attr('class', function () {})
             .call(d3.drag()
-                .on('drag', nodeDragFunction));
+                .on('drag', nodeDragFunction))
+            .on('click',(d)=>{
+                this.unselect_all();
+                this.select_node(this.index.lookup(d))
+            });
         this.index.add_d3_group(node, 'node');
         this.node = node
     }
@@ -590,7 +591,11 @@ class GraphView extends React.Component {
                 return d.name
             })
             .call(d3.drag()
-                .on('drag', labelDragFunction));
+                .on('drag', labelDragFunction))
+            .on('click',(d)=>{
+                this.unselect_all();
+                this.select_node(this.index.lookup(d).node)
+            });
         this.label = label;
         this.index.add_d3_group(label, 'label');
     }
@@ -620,8 +625,6 @@ class GraphView extends React.Component {
             .getBoundingClientRect();
         var graph_rect = document.querySelector('g.node')
             .getBBox();
-        var widthOffset = (view_rect.width / 2) - (graph_rect.width / 2);
-        var heightOffset = (view_rect.height / 2) - (graph_rect.height / 2);
         this.props.graph.objects.forEach(function (d) {
             d.x = (view_rect.width * 0.95) * (d.x / (self.props.graph.max_x));
             d.y = (view_rect.height * 0.95) * (d.y / (self.props.graph.max_y))
@@ -752,6 +755,7 @@ class GraphView extends React.Component {
                         var processed_anchor_pt = [
                             {anchor: {x: anchor_pt[0], y: anchor_pt[1]}}
                         ];
+                        self.unselect_all();
                         svg.append('rect')
                             .attr('rx', 6)
                             .attr('ry', 6)
@@ -860,6 +864,7 @@ class GraphView extends React.Component {
                 n.selection.classed('selected',false)
             }
         );
+        this.selected = new Set()
     }
 
     correct_projection_lengths_for_ellipse_sizes(node, edge) {
@@ -897,85 +902,76 @@ class GraphView extends React.Component {
         )
     }
 
-    node_movement_exceeds_canvas_bounds(d){
+    node_movement_within_canvas_bounds(node, dx, dy){
         var canvas_bounding_box = this.get_canvas_bounding_box();
-        var adjusted_x, x_shift, adjusted_y, y_shift;
-        adjusted_x = d.x * this.scaling_factor;
-        adjusted_y = d.y * this.scaling_factor;
-        x_shift = d3.event.dx;
-        y_shift = d3.event.dy;
-        return !(
-            adjusted_x + x_shift > 0 &&
-            adjusted_x + x_shift < canvas_bounding_box.width &&
-            adjusted_y + y_shift > 0 &&
-            adjusted_y + y_shift < canvas_bounding_box.height
+        var node_dom_rect, node_width, stroke_width, node_height, x, x_shift, y, y_shift;
+        node_dom_rect = node.dom.getBoundingClientRect();
+        node_width = node_dom_rect.width;
+        node_height = node_dom_rect.height;
+        stroke_width = node.data.stroke_width;
+        console.log(node_dom_rect.x - stroke_width + dx)
+        x = (node_dom_rect.x - node_width/2) + canvas_bounding_box.x;
+        y = node.data.y + canvas_bounding_box.y;
+        x_shift = dx*this.scaling_factor;
+        y_shift = dy*this.scaling_factor;
+        return (
+            {
+                x: (node_dom_rect.x - stroke_width + x_shift >= canvas_bounding_box.x &&
+                    node_dom_rect.x + node_width + stroke_width + x_shift <= canvas_bounding_box.right),
+                y:  (node_dom_rect.y - stroke_width + y_shift >= canvas_bounding_box.y &&
+                    node_dom_rect.y + node_height + stroke_width + y_shift <= canvas_bounding_box.bottom)
+            }
         );
     }
-
     drag_nodes(d) {
-        var nodes_to_drag, drag_all_selected, origin_drag_node, cancel_drag;
+        var dx, dy, origin_drag_node;
         var self = this;
-        nodes_to_drag = [];
-        drag_all_selected = false;
-        cancel_drag = false;
-        origin_drag_node = d;
-        if (!self.node_movement_exceeds_canvas_bounds(origin_drag_node)) {
-            this.index.nodes.forEach(
-                (n) => {
-                    if (n.data === origin_drag_node) {
-                        if (self.selected.has(n)) {
-                            drag_all_selected = true;
-                        }
-                    }
-                    if (self.selected.has(n)) {
-                        if (self.node_movement_exceeds_canvas_bounds(n.data)){
-                            cancel_drag = true
-                        }
-                        nodes_to_drag.push(n.data)
-                    }
-                }
-            );
-            if (!cancel_drag) {
-                if (!drag_all_selected) {
-                    self.unselect_all();
-                    nodes_to_drag = [origin_drag_node]
-                }
-                nodes_to_drag.forEach((d) => {
-                    self.drag_node(d)
-                });
-            }
+        origin_drag_node = this.index.lookup(d);
+        dx = d3.event.dx;
+        dy = d3.event.dy;
+        if (!self.selected.has(origin_drag_node)){
+            self.unselect_all();
+            self.select_node(origin_drag_node);
         }
+        self.selected.forEach(
+            (s)=>{
+                if (!self.node_movement_within_canvas_bounds(s, dx, dy).x)
+                {
+                    dx=0
+                }
+                if (!self.node_movement_within_canvas_bounds(s, dx, dy).y)
+                {
+                    dy=0
+                }
+            }
+        );
+        self.selected.forEach(
+            (s) => {
+                self.drag_node(s, dx, dy)
+            }
+        )
     }
 
-    drag_node(d) {
-        var nodes, node;
-        d.x += d3.event.dx;
-        d.y += d3.event.dy;
-        nodes = this.node;
-        node = nodes
-            .filter((n) => {
-                return n === d
-            });
-        node
-            .attr('cx', d.x)
-            .attr('cy', d.y);
-        this.move_label_to_corresponding_node(d);
-        this.refresh_edges_for_node(d);
+    drag_node(node, dx, dy) {
+        node.data.x += dx;
+        node.data.y += dy;
+        node.selection
+            .attr('cx', node.data.x)
+            .attr('cy', node.data.y);
+        this.move_label_to_corresponding_node(node);
+        this.refresh_edges_for_node(node);
     }
 
-    move_label_to_corresponding_node(d) {
+    move_label_to_corresponding_node(node) {
         var offset_from_top_of_node = 3;
         var labels = this.label;
-        var label = labels
-            .filter((l) => {
-                return l === d
-            });
-        label
-            .attr('x', d.x)
-            .attr('y', d.y + offset_from_top_of_node);
+        node.label.selection
+            .attr('x', node.data.x)
+            .attr('y', node.data.y + offset_from_top_of_node);
     }
 
-    refresh_edges_for_node(d) {
+    refresh_edges_for_node(node) {
+        var d = node.data;
         var self = this;
         var edge = this.edge;
         edge.filter(function (l) {
@@ -1091,15 +1087,8 @@ class GraphView extends React.Component {
     }
 
     get_canvas_bounding_box() {
-        var graph_dom_rect, canvas_bounding_box;
-        graph_dom_rect = document.querySelector('.graph').getBoundingClientRect();
-        canvas_bounding_box = {
-            x: graph_dom_rect.x,
-            y: graph_dom_rect.y,
-            width: graph_dom_rect.width,
-            height: graph_dom_rect.height
-        };
-        return canvas_bounding_box;
+        var graph_dom_rect = document.querySelector('.graph').getBoundingClientRect();
+        return graph_dom_rect;
     }
 
     get_graph_bounding_box() {
