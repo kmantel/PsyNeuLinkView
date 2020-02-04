@@ -8,6 +8,7 @@ service ServeGraph {
   rpc GetCompositions (NullArgument) returns (ScriptCompositions) {}
   rpc GetJSON (GraphName) returns (GraphJSON) {}
   rpc HealthCheck (NullArgument) returns (HealthStatus) {}
+  rpc UpdateStylesheet (StyleJSON) returns (NullArgument) {}
 }
 
 message NullArgument {
@@ -37,4 +38,8 @@ message GraphName {
 message GraphJSON {
   string objectsJSON = 1;
   string styleJSON = 2;
+}
+
+message StyleJSON {
+  string styleJSON = 1;
 }

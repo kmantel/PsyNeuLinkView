@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='graph',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x0bgraph.proto\x12\x05graph\"\x0e\n\x0cNullArgument\"\x1e\n\x0cHealthStatus\x12\x0e\n\x06status\x18\x01 \x01(\t\"\x17\n\x07PNLPath\x12\x0c\n\x04path\x18\x01 \x01(\t\"\x1a\n\nScriptPath\x12\x0c\n\x04path\x18\x01 \x01(\t\"*\n\x12ScriptCompositions\x12\x14\n\x0c\x63ompositions\x18\x01 \x03(\t\"\x19\n\tGraphName\x12\x0c\n\x04name\x18\x01 \x01(\t\"3\n\tGraphJSON\x12\x13\n\x0bobjectsJSON\x18\x01 \x01(\t\x12\x11\n\tstyleJSON\x18\x02 \x01(\t2\xb3\x02\n\nServeGraph\x12\x36\n\rLoadCustomPnl\x12\x0e.graph.PNLPath\x1a\x13.graph.NullArgument\"\x00\x12<\n\nLoadScript\x12\x11.graph.ScriptPath\x1a\x19.graph.ScriptCompositions\"\x00\x12\x43\n\x0fGetCompositions\x12\x13.graph.NullArgument\x1a\x19.graph.ScriptCompositions\"\x00\x12/\n\x07GetJSON\x12\x10.graph.GraphName\x1a\x10.graph.GraphJSON\"\x00\x12\x39\n\x0bHealthCheck\x12\x13.graph.NullArgument\x1a\x13.graph.HealthStatus\"\x00\x62\x06proto3')
+  serialized_pb=_b('\n\x0bgraph.proto\x12\x05graph\"\x0e\n\x0cNullArgument\"\x1e\n\x0cHealthStatus\x12\x0e\n\x06status\x18\x01 \x01(\t\"\x17\n\x07PNLPath\x12\x0c\n\x04path\x18\x01 \x01(\t\"\x1a\n\nScriptPath\x12\x0c\n\x04path\x18\x01 \x01(\t\"*\n\x12ScriptCompositions\x12\x14\n\x0c\x63ompositions\x18\x01 \x03(\t\"\x19\n\tGraphName\x12\x0c\n\x04name\x18\x01 \x01(\t\"3\n\tGraphJSON\x12\x13\n\x0bobjectsJSON\x18\x01 \x01(\t\x12\x11\n\tstyleJSON\x18\x02 \x01(\t\"\x1e\n\tStyleJSON\x12\x11\n\tstyleJSON\x18\x01 \x01(\t2\xf0\x02\n\nServeGraph\x12\x36\n\rLoadCustomPnl\x12\x0e.graph.PNLPath\x1a\x13.graph.NullArgument\"\x00\x12<\n\nLoadScript\x12\x11.graph.ScriptPath\x1a\x19.graph.ScriptCompositions\"\x00\x12\x43\n\x0fGetCompositions\x12\x13.graph.NullArgument\x1a\x19.graph.ScriptCompositions\"\x00\x12/\n\x07GetJSON\x12\x10.graph.GraphName\x1a\x10.graph.GraphJSON\"\x00\x12\x39\n\x0bHealthCheck\x12\x13.graph.NullArgument\x1a\x13.graph.HealthStatus\"\x00\x12;\n\x10UpdateStylesheet\x12\x10.graph.StyleJSON\x1a\x13.graph.NullArgument\"\x00\x62\x06proto3')
 )
 
 
@@ -242,6 +242,37 @@ _GRAPHJSON = _descriptor.Descriptor(
   serialized_end=245,
 )
 
+
+_STYLEJSON = _descriptor.Descriptor(
+  name='StyleJSON',
+  full_name='graph.StyleJSON',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='styleJSON', full_name='graph.StyleJSON.styleJSON', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=247,
+  serialized_end=277,
+)
+
 DESCRIPTOR.message_types_by_name['NullArgument'] = _NULLARGUMENT
 DESCRIPTOR.message_types_by_name['HealthStatus'] = _HEALTHSTATUS
 DESCRIPTOR.message_types_by_name['PNLPath'] = _PNLPATH
@@ -249,6 +280,7 @@ DESCRIPTOR.message_types_by_name['ScriptPath'] = _SCRIPTPATH
 DESCRIPTOR.message_types_by_name['ScriptCompositions'] = _SCRIPTCOMPOSITIONS
 DESCRIPTOR.message_types_by_name['GraphName'] = _GRAPHNAME
 DESCRIPTOR.message_types_by_name['GraphJSON'] = _GRAPHJSON
+DESCRIPTOR.message_types_by_name['StyleJSON'] = _STYLEJSON
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 NullArgument = _reflection.GeneratedProtocolMessageType('NullArgument', (_message.Message,), {
@@ -300,6 +332,13 @@ GraphJSON = _reflection.GeneratedProtocolMessageType('GraphJSON', (_message.Mess
   })
 _sym_db.RegisterMessage(GraphJSON)
 
+StyleJSON = _reflection.GeneratedProtocolMessageType('StyleJSON', (_message.Message,), {
+  'DESCRIPTOR' : _STYLEJSON,
+  '__module__' : 'graph_pb2'
+  # @@protoc_insertion_point(class_scope:graph.StyleJSON)
+  })
+_sym_db.RegisterMessage(StyleJSON)
+
 
 
 _SERVEGRAPH = _descriptor.ServiceDescriptor(
@@ -308,8 +347,8 @@ _SERVEGRAPH = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
-  serialized_start=248,
-  serialized_end=555,
+  serialized_start=280,
+  serialized_end=648,
   methods=[
   _descriptor.MethodDescriptor(
     name='LoadCustomPnl',
@@ -354,6 +393,15 @@ _SERVEGRAPH = _descriptor.ServiceDescriptor(
     containing_service=None,
     input_type=_NULLARGUMENT,
     output_type=_HEALTHSTATUS,
+    serialized_options=None,
+  ),
+  _descriptor.MethodDescriptor(
+    name='UpdateStylesheet',
+    full_name='graph.ServeGraph.UpdateStylesheet',
+    index=5,
+    containing_service=None,
+    input_type=_STYLEJSON,
+    output_type=_NULLARGUMENT,
     serialized_options=None,
   ),
 ])

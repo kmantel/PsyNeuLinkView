@@ -18,7 +18,8 @@ class RPCClient {
         this.graph_proto = this.grpc.loadPackageDefinition(this.packageDefinition).graph;
         this.script_maintainer = {
             compositions: {},
-            gv: {}
+            gv: {},
+            style: {}
         };
         this.most_recent_response = {'status':'test'};
         this.instantiate_client = this.instantiate_client.bind(this);
@@ -82,6 +83,15 @@ class RPCClient {
             else {
                 callback()
             }
+        })
+    }
+
+    update_stylesheet(stylesheet){
+        var client = this.instantiate_client();
+        client.UpdateStylesheet({
+            styleJSON:JSON.stringify(stylesheet)
+        }, function () {
+            console.log('y')
         })
     }
 

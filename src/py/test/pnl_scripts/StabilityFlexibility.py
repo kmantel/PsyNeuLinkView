@@ -57,7 +57,8 @@ def computeAccuracy(variable):
 
 ##### BEGIN STABILITY FLEXIBILITY MODEL CONSTRUCTION
 
-tau = 0.9 # time constant
+tau = 0.9
+ # time constant
 g = 1
 
 # testing input
@@ -69,11 +70,16 @@ excitatoryWeight = np.asarray([[1]])
 inhibitoryWeight = np.asarray([[-1]])
 gain = np.asarray([[g]])
 
-DRIFT = 1 # Drift Rate
-STARTING_POINT = 0.0 # Starting Point
-THRESHOLD = 0.0475 # Threshold
-NOISE = 0.04 # Noise
-T0 = 0.2 # T0
+DRIFT = 1
+ # Drift Rate
+STARTING_POINT = 0.0
+ # Starting Point
+THRESHOLD = 0.0475
+ # Threshold
+NOISE = 0.04
+ # Noise
+T0 = 0.2
+ # T0
 
 
 # first element is color task attendance, second element is motion task attendance
@@ -199,3 +205,10 @@ for i in range(1, len(stabilityFlexibility.controller.input_ports)):
 # print()
 # print(activation.mod_gain)
 # decisionMaker.log.print_entries()
+pnlv_graphics_spec = {
+    'graph':{
+        'fill_proportion':0.5,
+        'x':0,
+        'y':0
+    }
+}

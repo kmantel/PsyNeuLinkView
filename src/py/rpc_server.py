@@ -32,6 +32,7 @@ class Container():
         self.graphics_spec = {
 
         }
+        self.filepath = None
         self.AST = None
 
     @property
@@ -63,6 +64,10 @@ class GraphServer(graph_pb2_grpc.ServeGraphServicer):
         return graph_pb2.GraphJSON(objectsJSON=json.dumps(gv),
                                    styleJSON=json.dumps(graphics))
 
+    def UpdateStylesheet(self, request, context):
+        update_graphics_dict(request.styleJSON)
+        return graph_pb2.NullArgument()
+
     def HealthCheck(self, request, context):
         return graph_pb2.HealthStatus(status='Okay')
 
@@ -84,6 +89,7 @@ def get_graphics_dict(namespace):
         pnl_container.graphics_spec = namespace['pnlv_graphics_spec']
 
 def load_script(filepath):
+    pnl_container.filepath = filepath
     pnl_container.AST = open(filepath, 'r').read()
     dg = ast_parse.DependencyGraph(pnl_container.AST, pnl)
     namespace = {}
@@ -92,6 +98,15 @@ def load_script(filepath):
     get_graphics_dict(namespace)
     return pnl_container.hashable_pnl_objects['compositions']
 
+def update_graphics_dict(stylesheet):
+    ast = RedBaron(pnl_container.AST)
+    gdict = ast.find('assign',lambda x: x.find('name','pnlv_graphics_spec'))
+    if gdict:
+        gdict.value = stylesheet
+    else:
+        ast.append(RedBaron(f'pnlv_graphics_spec = {stylesheet}').dumps())
+    with open(pnl_container.filepath, 'w') as script:
+        script.write(ast.dumps())
 
 def get_gv_json(name):
     def etree_to_dict(t):

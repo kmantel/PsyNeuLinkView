@@ -3,7 +3,7 @@ import '../css/graphview.css'
 import * as d3 from 'd3'
 import add_context_menu from '../utility/add_context_menu'
 import {Resizable} from 're-resizable'
-import {Spinner, SVGSpinner} from '@blueprintjs/core'
+import {Spinner} from '@blueprintjs/core'
 
 const context_menu = [
     {
@@ -147,6 +147,7 @@ class GraphView extends React.Component {
             graph: this.props.graph,
             spinner_visible: false,
         };
+        this.id_i = 0;
         this.index = new Index();
         this.selected = new Set();
         this.mouse_offset = {x: 0, y: 0};
@@ -531,12 +532,17 @@ class GraphView extends React.Component {
     drawNodes(svg, nodeWidth, nodeHeight, nodeDragFunction) {
         var nodeWidth = nodeWidth;
         var nodeHeight = nodeHeight;
+        var self = this;
         var node = svg.append('g')
             .attr('class', 'node')
             .selectAll('ellipse')
             .data(this.props.graph.objects)
             .enter()
             .append('ellipse')
+            .attr('id', function (d) {
+                self.id_i += 1;
+                return `${self.id_i - 1}`
+            })
             .attr('rx', function (d) {
                 d.rx = nodeWidth;
                 return d.rx
@@ -1186,6 +1192,25 @@ class GraphView extends React.Component {
         win.addEventListener('scroll', this.update_scroll);
     }
 
+    parse_stylesheet(){
+        var self, stylesheet, x_coord, y_coord;
+        self = this;
+        stylesheet = this.props.graph_style;
+        if ('graph' in stylesheet){
+            if ('fill_proportion' in stylesheet.graph){
+                self.scale_graph_to_fit(parseFloat(stylesheet.graph.fill_proportion));
+            }
+            if ('x' in stylesheet.graph){
+                x_coord = parseFloat(stylesheet.graph.x);
+                self.move_graph(x_coord - self.get_graph_bounding_box().x, 0)
+            }
+            if ('y' in stylesheet.graph){
+                y_coord = parseFloat(stylesheet.graph.y);
+                self.move_graph(0, y_coord - self.get_graph_bounding_box().y)
+            }
+        }
+    }
+
     setGraph() {
         var self = this;
         if (self.props.graph) {
@@ -1212,6 +1237,8 @@ class GraphView extends React.Component {
             this.apply_select_boxes(svg);
             this.apply_zoom(svg);
             this.bind_scroll_updating();
+            this.parse_stylesheet();
+            // this.props.rpc_client.update_stylesheet(this.props.graph_style);
             this.graph_bounding_box = this.get_graph_bounding_box();
             this.canvas_bounding_box = this.get_canvas_bounding_box();
             this.svg = svg;

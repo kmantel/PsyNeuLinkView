@@ -398,6 +398,7 @@ export default class Workspace extends React.Component {
                     }
                     graph={this.state.graph}
                     graph_style = {this.state.graph_style}
+                    rpc_client = {rpc_client}
                 />
             </div>,
             <div key="c">

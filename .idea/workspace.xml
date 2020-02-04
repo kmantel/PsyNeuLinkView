@@ -4,6 +4,15 @@
     <list default="true" id="00985d93-5b94-4b5c-82f7-e7117ff7b2e0" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/graphview.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/graphview.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/workspace.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/workspace.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/protos/graph.proto" beforeDir="false" afterPath="$PROJECT_DIR$/src/protos/graph.proto" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/py/graph_pb2.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/py/graph_pb2.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/py/graph_pb2_grpc.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/py/graph_pb2_grpc.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/py/rpc_server.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/py/rpc_server.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/py/test/pnl_scripts/StabilityFlexibility.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/py/test/pnl_scripts/StabilityFlexibility.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utility/rpc/graph_grpc_web_pb.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utility/rpc/graph_pb.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utility/rpc/rpc_client.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/utility/rpc/rpc_client.js" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -208,9 +217,9 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/components/graphview.js</url>
-          <line>905</line>
+          <line>1203</line>
           <properties lambdaOrdinal="-1" />
-          <option name="timeStamp" value="292" />
+          <option name="timeStamp" value="307" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
