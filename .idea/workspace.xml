@@ -15,6 +15,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="CSS File" />
+        <option value="JavaScript File" />
       </list>
     </option>
   </component>
@@ -96,7 +97,7 @@
       <workItem from="1580481352739" duration="3291000" />
       <workItem from="1580484748414" duration="15933000" />
       <workItem from="1580508810278" duration="137000" />
-      <workItem from="1580741061494" duration="27717000" />
+      <workItem from="1580741061494" duration="829000" />
     </task>
     <servers />
   </component>
@@ -207,57 +208,56 @@
       <breakpoints>
         <line-breakpoint type="javascript">
           <url>file://$PROJECT_DIR$/src/components/graphview.js</url>
-          <line>875</line>
+          <line>893</line>
           <option name="timeStamp" value="195" />
         </line-breakpoint>
         <line-breakpoint type="javascript">
           <url>file://$PROJECT_DIR$/src/components/graphview.js</url>
-          <line>870</line>
+          <line>888</line>
           <option name="timeStamp" value="196" />
         </line-breakpoint>
-        <line-breakpoint type="javascript">
+        <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/components/graphview.js</url>
-          <line>919</line>
+          <line>925</line>
           <option name="timeStamp" value="198" />
         </line-breakpoint>
-        <line-breakpoint type="javascript">
+        <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/components/graphview.js</url>
-          <line>1207</line>
+          <line>951</line>
+          <option name="timeStamp" value="199" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/src/components/graphview.js</url>
+          <line>1217</line>
           <option name="timeStamp" value="203" />
         </line-breakpoint>
-        <line-breakpoint type="javascript">
+        <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/components/graphview.js</url>
-          <line>541</line>
+          <line>559</line>
           <option name="timeStamp" value="217" />
         </line-breakpoint>
-        <line-breakpoint type="javascript">
-          <url>file://$PROJECT_DIR$/src/components/graphview.js</url>
-          <line>19</line>
-          <option name="timeStamp" value="221" />
-        </line-breakpoint>
-        <line-breakpoint type="javascript">
-          <url>file://$PROJECT_DIR$/src/components/graphview.js</url>
-          <line>34</line>
-          <properties lambdaOrdinal="-1" />
-          <option name="timeStamp" value="227" />
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/src/components/workspace.js</url>
+          <line>244</line>
+          <option name="timeStamp" value="224" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/components/graphview.js</url>
-          <line>912</line>
+          <line>360</line>
           <properties lambdaOrdinal="-1" />
-          <option name="timeStamp" value="239" />
+          <option name="timeStamp" value="250" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/components/graphview.js</url>
-          <line>954</line>
+          <line>1167</line>
           <properties lambdaOrdinal="-1" />
-          <option name="timeStamp" value="245" />
+          <option name="timeStamp" value="251" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/components/graphview.js</url>
-          <line>596</line>
+          <line>1165</line>
           <properties lambdaOrdinal="-1" />
-          <option name="timeStamp" value="248" />
+          <option name="timeStamp" value="252" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
