@@ -553,7 +553,7 @@ class GraphView extends React.Component {
             })
             .attr('fill', 'white')
             .attr('stroke-width', function (d) {
-                return d.stroke_width
+                return d.stroke_width ? d.stroke_width : 1
             })
             .attr('stroke', function (d) {
                 return d.color
@@ -601,7 +601,7 @@ class GraphView extends React.Component {
     }
 
     get_offset_between_ellipses(x1, y1, x2, y2, nodeWidth, nodeHeight, strokeWidth = 1) {
-        var arrow_offset = 3;
+        if (!strokeWidth){strokeWidth=1}
         var adjusted_x = x2 - x1;
         var adjusted_y = y2 - y1;
         var dist_between_centers = Math.sqrt(adjusted_x ** 2 + adjusted_y ** 2);
@@ -904,11 +904,11 @@ class GraphView extends React.Component {
 
     node_movement_within_canvas_bounds(node, dx, dy){
         var canvas_bounding_box = this.get_canvas_bounding_box();
-        var node_dom_rect, node_width, stroke_width, node_height, x, x_shift, x_in_bounds, y, y_shift, y_in_bounds;
+        var node_dom_rect, node_width, stroke_width, node_height, x_shift, y_shift;
         node_dom_rect = node.dom.getBoundingClientRect();
         node_width = node_dom_rect.width;
         node_height = node_dom_rect.height;
-        stroke_width = node.data.stroke_width;
+        stroke_width = node.data.stroke_width ? node.data.stroke_width : 1; // hack: for some reason some nodes' stroke widths arent being populated
         x_shift = dx*this.scaling_factor;
         y_shift = dy*this.scaling_factor;
         return (
