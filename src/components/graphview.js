@@ -594,7 +594,7 @@ class GraphView extends React.Component {
                 .on('drag', labelDragFunction))
             .on('click',(d)=>{
                 this.unselect_all();
-                this.select_node(this.index.lookup(d).node)
+                this.select_node(this.index.lookup(d))
             });
         this.label = label;
         this.index.add_d3_group(label, 'label');
@@ -904,14 +904,11 @@ class GraphView extends React.Component {
 
     node_movement_within_canvas_bounds(node, dx, dy){
         var canvas_bounding_box = this.get_canvas_bounding_box();
-        var node_dom_rect, node_width, stroke_width, node_height, x, x_shift, y, y_shift;
+        var node_dom_rect, node_width, stroke_width, node_height, x, x_shift, x_in_bounds, y, y_shift, y_in_bounds;
         node_dom_rect = node.dom.getBoundingClientRect();
         node_width = node_dom_rect.width;
         node_height = node_dom_rect.height;
         stroke_width = node.data.stroke_width;
-        console.log(node_dom_rect.x - stroke_width + dx)
-        x = (node_dom_rect.x - node_width/2) + canvas_bounding_box.x;
-        y = node.data.y + canvas_bounding_box.y;
         x_shift = dx*this.scaling_factor;
         y_shift = dy*this.scaling_factor;
         return (
@@ -919,12 +916,12 @@ class GraphView extends React.Component {
                 x: (node_dom_rect.x - stroke_width + x_shift >= canvas_bounding_box.x &&
                     node_dom_rect.x + node_width + stroke_width + x_shift <= canvas_bounding_box.right),
                 y:  (node_dom_rect.y - stroke_width + y_shift >= canvas_bounding_box.y &&
-                    node_dom_rect.y + node_height + stroke_width + y_shift <= canvas_bounding_box.bottom)
+                    node_dom_rect.y + node_height + stroke_width + y_shift <= canvas_bounding_box.bottom),
             }
         );
     }
     drag_nodes(d) {
-        var dx, dy, origin_drag_node;
+        var dx, dy, origin_drag_node, in_bounds;
         var self = this;
         origin_drag_node = this.index.lookup(d);
         dx = d3.event.dx;
@@ -935,11 +932,12 @@ class GraphView extends React.Component {
         }
         self.selected.forEach(
             (s)=>{
-                if (!self.node_movement_within_canvas_bounds(s, dx, dy).x)
+                in_bounds = self.node_movement_within_canvas_bounds(s, dx, dy)
+                if (!in_bounds.x)
                 {
                     dx=0
                 }
-                if (!self.node_movement_within_canvas_bounds(s, dx, dy).y)
+                if (!in_bounds.y)
                 {
                     dy=0
                 }
