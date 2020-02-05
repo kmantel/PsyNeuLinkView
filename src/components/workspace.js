@@ -25,7 +25,8 @@ export default class Workspace extends React.Component {
             graph: null,
             graph_style:null,
             show_settings: false,
-            mouse:null
+            mouse:null,
+            filepath: null
         };
         this.dispatcher = new ErrorDispatcher(this);
         this.container = {};
@@ -36,6 +37,7 @@ export default class Workspace extends React.Component {
         this.set_tool_tip = this.set_tool_tip.bind(this);
         this.window_resize = this.window_resize.bind(this);
         this.componentDidMount = this.componentDidMount.bind(this);
+        this.componentDidUpdate = this.componentDidUpdate.bind(this);
         this.validate_server_status_and_load_script = this.validate_server_status_and_load_script.bind(this);
         this.handleErrors = this.handleErrors.bind(this);
         this.saveMouseData = this.saveMouseData.bind(this);
@@ -169,6 +171,7 @@ export default class Workspace extends React.Component {
         ).then((paths) => {
                 var pathArray = paths.filePaths;
                 if (pathArray.length > 0) {
+                    self.setState({'filepath':pathArray[0]})
                     self.validate_server_status_and_load_script(pathArray[0])
                 }
             }
@@ -242,6 +245,7 @@ export default class Workspace extends React.Component {
                             catch {
                                 var new_graph_style = {};
                             }
+                            console.log(new_graph_style.graph.x)
                             self.setState({
                                 graph: new_graph,
                                 graph_style: new_graph_style
@@ -256,6 +260,7 @@ export default class Workspace extends React.Component {
     async validate_server_status_and_load_script(filepath) {
         var filepath = filepath;
         var self = this;
+        self.filepath = filepath;
         self.setState({graph: "loading"});
         window.electron_root.addRecentDocument(filepath);
         window.electron_root.restart_rpc_server(
@@ -324,6 +329,10 @@ export default class Workspace extends React.Component {
     }
 
     componentDidMount() {
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        var self = this;
     }
 
     componentWillUnmount() {

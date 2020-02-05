@@ -209,6 +209,10 @@ pnlv_graphics_spec = {
     'graph':{
         'fill_proportion':0.5,
         'x':0,
-        'y':0
+        # 'y':200
+    },
+    'components':{
+        'nodes':{},
+        'edges':{}
     }
 }

@@ -626,23 +626,17 @@ class GraphView extends React.Component {
 
     fit_graph_to_workspace() {
         var self = this;
-        var node = this.node;
         var view_rect = document.querySelector('.graph-view')
             .getBoundingClientRect();
-        var graph_rect = document.querySelector('g.node')
-            .getBBox();
-        this.props.graph.objects.forEach(function (d) {
-            d.x = (view_rect.width * 0.95) * (d.x / (self.props.graph.max_x));
-            d.y = (view_rect.height * 0.95) * (d.y / (self.props.graph.max_y))
-        });
-        node
-            .attr('cx', function (d) {
-                return d.x
-            })
-            .attr('cy', function (d) {
-                return d.y
-            });
-
+        this.index.nodes.forEach(
+            function (node) {
+                node.data.x = (view_rect.width * 0.95) * (node.data.x / (self.props.graph.max_x));
+                node.data.y += (view_rect.height * 0.95) * (node.data.y / (self.props.graph.max_y));
+                node.selection
+                    .attr('cx', node.data.x)
+                    .attr('cy', node.data.y);
+            }
+        );
     }
 
     get_point_at_angle_of_ellipse(xrad, yrad, angle){
@@ -654,81 +648,20 @@ class GraphView extends React.Component {
         y = x * Math.tan(angle);
     }
 
-    move_graph(horizontal_offset, vertical_offset) {
-        var self = this;
-        var label_offset = 3;
-        var node = this.node;
-        var label = this.label;
-        var edge = this.edge;
-        var recurrent = this.recurrent;
-        horizontal_offset /= this.scaling_factor;
-        vertical_offset /= this.scaling_factor;
-        self.props.graph.objects.forEach(function (d) {
-                d.x += horizontal_offset;
-                d.y += vertical_offset;
+    move_graph(dx, dy) {
+        dx /= this.scaling_factor;
+        dy /= this.scaling_factor;
+        this.index.nodes.forEach(
+            (node)=>{
+                node.data.x += dx;
+                node.data.y += dy;
+                node.selection
+                    .attr('cx', node.data.x)
+                    .attr('cy', node.data.y);
+                this.move_label_to_corresponding_node(node);
+                this.refresh_edges_for_node(node);
             }
         );
-        node
-            .attr('cx', function (d) {
-                return d.x
-            })
-            .attr('cy', function (d) {
-                return d.y
-            });
-
-        label
-            .attr('x', function (d) {
-                return d.x
-            })
-            .attr('y', function (d) {
-                return d.y + label_offset
-            });
-        edge
-            .attr('x1', function (d) {
-                return d.tail.x
-            })
-            .attr('y1', function (d) {
-                return d.tail.y
-            })
-            .attr('x2', function (d) {
-                var x2 = self.get_offset_points_for_projection(d).x;
-                return x2
-            })
-            .attr('y2', function (d) {
-                var y2 = self.get_offset_points_for_projection(d).y;
-                return y2
-            });
-        recurrent
-            .attr('transform', (e) => {
-                var recurrent_arc_offset = 10;
-                var arc_x = e.head.x;
-                var arc_y = e.head.y;
-                return `translate(${arc_x - parseFloat(e.head.ellipse.rx / 2 + recurrent_arc_offset)},${arc_y})`
-            })
-        d3.selectAll('g.edge line')
-            .filter(
-                (e) => {
-                    return e.head === e.tail
-                }
-            )
-            .attr('x1', function (d) {
-                return d.head.x - d.head.ellipse.rx / 2 - 10 - Math.round(d.head.stroke_width / 2)
-            })
-            .attr('y1', function (d) {
-                var reference_arc = document.querySelector('#reference_arc path');
-                var reference_arc_len = reference_arc.getTotalLength();
-                var starting_y_location = reference_arc.getPointAtLength(reference_arc_len).y - reference_arc.getBBox().y - 8.2;
-                return d.head.y + starting_y_location
-            })
-            .attr('x2', function (d) {
-                return d.head.x - d.head.ellipse.rx / 2 - 9 - Math.round(d.head.stroke_width / 2)
-            })
-            .attr('y2', function (d) {
-                var reference_arc = document.querySelector('#reference_arc path');
-                var reference_arc_len = reference_arc.getTotalLength();
-                var ending_y_location = reference_arc.getPointAtLength(reference_arc_len * .99).y - reference_arc.getBBox().y - 7.7;
-                return d.head.y + ending_y_location
-            })
     }
 
     resize_nodes_to_label_text() {
@@ -938,7 +871,7 @@ class GraphView extends React.Component {
         }
         self.selected.forEach(
             (s)=>{
-                in_bounds = self.node_movement_within_canvas_bounds(s, dx, dy)
+                in_bounds = self.node_movement_within_canvas_bounds(s, dx, dy);
                 if (!in_bounds.x)
                 {
                     dx=0
@@ -1096,42 +1029,24 @@ class GraphView extends React.Component {
     }
 
     get_graph_bounding_box() {
-        var canvas_bounding_box, node_bounding_box, node_dom_rect, label_bounding_box, label_dom_rect,
-            graph_bounding_box, x, y, width, height;
-        canvas_bounding_box = this.get_canvas_bounding_box();
-        node_bounding_box = document.querySelector('.graph-view .node').getBBox();
-        node_dom_rect = document.querySelector('.graph-view .node').getBoundingClientRect();
-        label_bounding_box = document.querySelector('.graph-view .label').getBBox();
-        label_dom_rect = document.querySelector('.graph-view .label').getBoundingClientRect();
-        x = Math.min(node_dom_rect.x, label_dom_rect.x) - canvas_bounding_box.x;
-        y = Math.min(node_dom_rect.y, label_dom_rect.y) - canvas_bounding_box.y;
-
-        if ((node_dom_rect.width >= label_dom_rect.width && node_bounding_box.x <= label_bounding_box.x) ||
-            (node_dom_rect.width <= label_dom_rect.width && node_bounding_box.x >= label_bounding_box.x)) {
-            width = Math.max(node_dom_rect.width, label_dom_rect.width)
-        } else {
-            if (label_bounding_box.x < node_bounding_box.x) {
-                width = Math.max(
-                    label_bounding_box.width, node_bounding_box.width + node_bounding_box.x - label_bounding_box.x
-                );
-            } else {
-                width = Math.max(
-                    node_bounding_box.width, label_bounding_box.width + label_bounding_box.x - node_bounding_box.x
-                );
-            }
-        }
-        height = node_dom_rect.height;
-        graph_bounding_box = {
+        var g_container, graph_rect, canvas_rect, x, y, width, height, centerpoint;
+        g_container = document.querySelector('g.container');
+        graph_rect = g_container.getBBox();
+        x = graph_rect.x;
+        y = graph_rect.y;
+        width = graph_rect.width;
+        height = graph_rect.height;
+        centerpoint = {
+            x: (x + width)/2,
+            y: (y + width)/2
+        };
+        return {
             x: x,
             y: y,
             width: width,
             height: height,
-            centerpoint: {
-                x: Math.floor(x + width / 2),
-                y: Math.floor(y + height / 2)
-            }
-        };
-        return graph_bounding_box
+            centerpoint: centerpoint
+        }
     }
 
     center_graph_on_point(centerpoint_offset = this.centerpoint_offset) {
