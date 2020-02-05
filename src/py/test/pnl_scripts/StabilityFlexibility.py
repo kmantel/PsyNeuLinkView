@@ -207,9 +207,9 @@ for i in range(1, len(stabilityFlexibility.controller.input_ports)):
 # decisionMaker.log.print_entries()
 pnlv_graphics_spec = {
     'graph':{
-        'fill_proportion':0.5,
+        'fill_proportion':1.0,
         'x':0,
-        # 'y':200
+        'y':0
     },
     'components':{
         'nodes':{},

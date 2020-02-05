@@ -172,3 +172,15 @@ def run(bin_execute):
         comp.results = []
 
     return results
+
+pnlv_graphics_spec = {
+    'graph':{
+        'fill_proportion':1.0,
+        'x':0,
+        'y':0
+    },
+    'components':{
+        'nodes':{},
+        'edges':{}
+    }
+}

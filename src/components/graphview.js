@@ -31,8 +31,9 @@ class Index {
         this.projections = new Set();
         this.labels = new Set();
     }
+
     add_d3_group(d3_group, type) {
-        if (!['node','label','projection'].includes(type)){
+        if (!['node', 'label', 'projection'].includes(type)) {
             throw 'must specify group type when adding d3 group to index'
         }
         if (type === 'node') {
@@ -41,8 +42,7 @@ class Index {
                     this.add_node(new Node(n))
                 }
             );
-        }
-        else if (type === 'label') {
+        } else if (type === 'label') {
             d3_group._groups[0].forEach(
                 (l) => {
                     this.add_label(new Label(l))
@@ -50,44 +50,48 @@ class Index {
             );
         }
     }
+
     add_label(label) {
         var pnlv_label, associated_node;
         pnlv_label = label._is_pnlv_obj ? label : new Label(label);
         this.add_to_elements(pnlv_label);
         this.add_to_lookup(pnlv_label);
         associated_node = this.lookup(label.name);
-        if (associated_node){
+        if (associated_node) {
             associated_node.label = pnlv_label;
             this.node = associated_node;
         }
         this.labels.add(pnlv_label)
     }
+
     add_node(node) {
-        var pnlv_node = node._is_pnlv_obj ? node: new Node(node);
+        var pnlv_node = node._is_pnlv_obj ? node : new Node(node);
         this.add_to_elements(pnlv_node);
         this.add_to_lookup(pnlv_node);
         this.nodes.add(pnlv_node);
     }
-    add_to_elements(element){
-        if (!this.elements.has(element)){
+
+    add_to_elements(element) {
+        if (!this.elements.has(element)) {
             this.elements.add(element)
         }
     }
-    add_to_lookup(element){
-        this.obj_lookup.set(element,element);
-        this.obj_lookup.set(element.dom,element);
-        this.obj_lookup.set(element.selection,element);
+
+    add_to_lookup(element) {
+        this.obj_lookup.set(element, element);
+        this.obj_lookup.set(element.dom, element);
+        this.obj_lookup.set(element.selection, element);
         if (element.element_type === 'node') {
-            this.obj_lookup.set(element.data,element);
+            this.obj_lookup.set(element.data, element);
             this.str_lookup[element.data.name] = element;
         }
     }
-    lookup(query){
+
+    lookup(query) {
         var result;
-        if (typeof query === 'string'){
+        if (typeof query === 'string') {
             result = this.str_lookup[query]
-        }
-        else {
+        } else {
             result = this.obj_lookup.get(query)
         }
         return result
@@ -96,9 +100,9 @@ class Index {
 
 class GraphElement {
     constructor(svg_element) {
-        this.dom=svg_element;
-        this.data=svg_element.__data__;
-        this.selection= d3.select(this.dom);
+        this.dom = svg_element;
+        this.data = svg_element.__data__;
+        this.selection = d3.select(this.dom);
         this._is_pnlv_obj = true;
         this.name = this.data.name;
     }
@@ -168,6 +172,7 @@ class GraphView extends React.Component {
         this.update_scroll = this.update_scroll.bind(this);
         this.drag_node = this.drag_node.bind(this);
         this.zoomed = this.zoomed.bind(this);
+        this.move_graph = this.move_graph.bind(this);
         this.move_label_to_corresponding_node = this.move_label_to_corresponding_node.bind(this);
     }
 
@@ -258,19 +263,23 @@ class GraphView extends React.Component {
         var left_wall_test = (x1 - px) / vx;
         if (left_wall_test > 0) {
             possible_solutions.push(left_wall_test)
-        };
+        }
+        ;
         var right_wall_test = (x2 - px) / vx;
         if (right_wall_test > 0) {
             possible_solutions.push(right_wall_test)
-        };
+        }
+        ;
         var top_wall_test = (y1 - py) / vy;
         if (top_wall_test > 0) {
             possible_solutions.push(top_wall_test)
-        };
+        }
+        ;
         var bottom_wall_test = (y2 - py) / vy;
         if (bottom_wall_test > 0) {
             possible_solutions.push(bottom_wall_test)
-        };
+        }
+        ;
         return Math.min.apply(null, possible_solutions)
     }
 
@@ -564,10 +573,11 @@ class GraphView extends React.Component {
             .attr('stroke', function (d) {
                 return d.color
             })
-            .attr('class', function () {})
+            .attr('class', function () {
+            })
             .call(d3.drag()
                 .on('drag', nodeDragFunction))
-            .on('click',(d)=>{
+            .on('click', (d) => {
                 this.unselect_all();
                 this.select_node(this.index.lookup(d))
             });
@@ -598,7 +608,7 @@ class GraphView extends React.Component {
             })
             .call(d3.drag()
                 .on('drag', labelDragFunction))
-            .on('click',(d)=>{
+            .on('click', (d) => {
                 this.unselect_all();
                 this.select_node(this.index.lookup(d))
             });
@@ -607,7 +617,9 @@ class GraphView extends React.Component {
     }
 
     get_offset_between_ellipses(x1, y1, x2, y2, nodeWidth, nodeHeight, strokeWidth = 1) {
-        if (!strokeWidth){strokeWidth=1}
+        if (!strokeWidth) {
+            strokeWidth = 1
+        }
         var adjusted_x = x2 - x1;
         var adjusted_y = y2 - y1;
         var dist_between_centers = Math.sqrt(adjusted_x ** 2 + adjusted_y ** 2);
@@ -639,10 +651,10 @@ class GraphView extends React.Component {
         );
     }
 
-    get_point_at_angle_of_ellipse(xrad, yrad, angle){
+    get_point_at_angle_of_ellipse(xrad, yrad, angle) {
         var x, y;
-        x = xrad*yrad/Math.sqrt((yrad**2 + xrad**2 * Math.tan(angle)**2));
-        if (-Math.PI/2 < angle && angle < Math.PI/2){
+        x = xrad * yrad / Math.sqrt((yrad ** 2 + xrad ** 2 * Math.tan(angle) ** 2));
+        if (-Math.PI / 2 < angle && angle < Math.PI / 2) {
             x = -x
         }
         y = x * Math.tan(angle);
@@ -652,7 +664,7 @@ class GraphView extends React.Component {
         dx /= this.scaling_factor;
         dy /= this.scaling_factor;
         this.index.nodes.forEach(
-            (node)=>{
+            (node) => {
                 node.data.x += dx;
                 node.data.y += dy;
                 node.selection
@@ -666,9 +678,9 @@ class GraphView extends React.Component {
 
     resize_nodes_to_label_text() {
         this.index.nodes.forEach(
-            (n)=>{
+            (n) => {
                 var label_width = n.label.dom.getBoundingClientRect().width;
-                n.selection.attr('rx', Math.floor(label_width/2)+10)
+                n.selection.attr('rx', Math.floor(label_width / 2) + 10)
             }
         );
     }
@@ -752,20 +764,19 @@ class GraphView extends React.Component {
                         node_y1 = node_rect.y;
                         node_y2 = node_y1 + node_rect.height;
                         var sel_ul, sel_lr, node_ul, node_lr;
-                        sel_ul = {x:sel_x1, y:sel_y1};
-                        sel_lr = {x:sel_x2, y:sel_y2};
-                        node_ul = {x:node_x1, y:node_y1};
-                        node_lr = {x:node_x2, y:node_y2};
+                        sel_ul = {x: sel_x1, y: sel_y1};
+                        sel_lr = {x: sel_x2, y: sel_y2};
+                        node_ul = {x: node_x1, y: node_y1};
+                        node_lr = {x: node_x2, y: node_y2};
                         if (
                             sel_lr.x < node_ul.x ||
                             node_lr.x < sel_ul.x ||
                             sel_lr.y < node_ul.y ||
                             node_lr.y < sel_ul.y
 
-                        ){
+                        ) {
                             self.unselect_node(node)
-                        }
-                        else {
+                        } else {
                             self.select_node(node)
                         }
                     })
@@ -789,18 +800,18 @@ class GraphView extends React.Component {
 
     select_node(node) {
         this.selected.add(node);
-        node.selection.classed('selected',true);
+        node.selection.classed('selected', true);
     }
 
     unselect_node(node) {
         this.selected.delete(node);
-        node.selection.classed('selected',false);
+        node.selection.classed('selected', false);
     }
 
     unselect_all() {
         this.index.nodes.forEach(
-            (n)=>{
-                n.selection.classed('selected',false)
+            (n) => {
+                n.selection.classed('selected', false)
             }
         );
         this.selected = new Set()
@@ -841,44 +852,43 @@ class GraphView extends React.Component {
         )
     }
 
-    node_movement_within_canvas_bounds(node, dx, dy){
+    node_movement_within_canvas_bounds(node, dx, dy) {
         var canvas_bounding_box = this.get_canvas_bounding_box();
         var node_dom_rect, node_width, stroke_width, node_height, x_shift, y_shift;
         node_dom_rect = node.dom.getBoundingClientRect();
         node_width = node_dom_rect.width;
         node_height = node_dom_rect.height;
         stroke_width = node.data.stroke_width ? node.data.stroke_width : 1; // hack: for some reason some nodes' stroke widths arent being populated
-        x_shift = dx*this.scaling_factor;
-        y_shift = dy*this.scaling_factor;
+        x_shift = dx * this.scaling_factor;
+        y_shift = dy * this.scaling_factor;
         return (
             {
                 x: (node_dom_rect.x - stroke_width + x_shift >= canvas_bounding_box.x &&
                     node_dom_rect.x + node_width + stroke_width + x_shift <= canvas_bounding_box.right),
-                y:  (node_dom_rect.y - stroke_width + y_shift >= canvas_bounding_box.y &&
+                y: (node_dom_rect.y - stroke_width + y_shift >= canvas_bounding_box.y &&
                     node_dom_rect.y + node_height + stroke_width + y_shift <= canvas_bounding_box.bottom),
             }
         );
     }
+
     drag_nodes(d) {
         var dx, dy, origin_drag_node, in_bounds;
         var self = this;
         origin_drag_node = this.index.lookup(d);
         dx = d3.event.dx;
         dy = d3.event.dy;
-        if (!self.selected.has(origin_drag_node)){
+        if (!self.selected.has(origin_drag_node)) {
             self.unselect_all();
             self.select_node(origin_drag_node);
         }
         self.selected.forEach(
-            (s)=>{
+            (s) => {
                 in_bounds = self.node_movement_within_canvas_bounds(s, dx, dy);
-                if (!in_bounds.x)
-                {
-                    dx=0
+                if (!in_bounds.x) {
+                    dx = 0
                 }
-                if (!in_bounds.y)
-                {
-                    dy=0
+                if (!in_bounds.y) {
+                    dy = 0
                 }
             }
         );
@@ -1037,8 +1047,8 @@ class GraphView extends React.Component {
         width = graph_rect.width;
         height = graph_rect.height;
         centerpoint = {
-            x: (x + width)/2,
-            y: (y + width)/2
+            x: (x + width) / 2,
+            y: (y + width) / 2
         };
         return {
             x: x,
@@ -1089,7 +1099,7 @@ class GraphView extends React.Component {
         win.scrollTo(xScroll, yScroll)
     }
 
-    apply_zoom(svg){
+    apply_zoom(svg) {
         var zoom = d3.zoom();
         this.zoom = zoom
             .scaleExtent([1, 3])
@@ -1102,28 +1112,69 @@ class GraphView extends React.Component {
         );
     }
 
-    bind_scroll_updating(){
+    bind_scroll_updating() {
         var win = document.querySelector('.graph-view');
         win.addEventListener('scroll', this.update_scroll);
     }
 
-    parse_stylesheet(){
-        var self, stylesheet, x_coord, y_coord;
+    parse_stylesheet() {
+        var self, stylesheet, x_coord, y_coord, leftmost_node, topmost_node;
         self = this;
         stylesheet = this.props.graph_style;
-        if ('graph' in stylesheet){
-            if ('fill_proportion' in stylesheet.graph){
+        if ('graph' in stylesheet) {
+            if ('fill_proportion' in stylesheet.graph) {
                 self.scale_graph_to_fit(parseFloat(stylesheet.graph.fill_proportion));
             }
-            if ('x' in stylesheet.graph){
+            if ('x' in stylesheet.graph) {
                 x_coord = parseFloat(stylesheet.graph.x);
-                self.move_graph(x_coord - self.get_graph_bounding_box().x, 0)
+                leftmost_node = self.get_leftmost_node();
+                self.move_graph(x_coord -
+                    self.get_graph_bounding_box().x -
+                    leftmost_node.data.rx/2 -
+                    leftmost_node.data.stroke_width/self.scaling_factor,
+                    0
+                )
             }
-            if ('y' in stylesheet.graph){
+            if ('y' in stylesheet.graph) {
                 y_coord = parseFloat(stylesheet.graph.y);
-                self.move_graph(0, y_coord - self.get_graph_bounding_box().y)
+                topmost_node = self.get_topmost_node();
+                self.move_graph(0,
+                    y_coord -
+                    self.get_graph_bounding_box().y +
+                    topmost_node.data.stroke_width
+                )
             }
         }
+    }
+
+    get_leftmost_node() {
+        var min_x, min_node;
+        min_x = Number.MAX_SAFE_INTEGER;
+        min_node = null;
+        this.index.nodes.forEach(
+            (node) => {
+                if (node.data.x < min_x) {
+                    min_node = node;
+                    min_x = node.data.x;
+                }
+            }
+        )
+        return min_node;
+    }
+
+    get_topmost_node() {
+        var min_y, min_node;
+        min_y = Number.MAX_SAFE_INTEGER;
+        min_node = null;
+        this.index.nodes.forEach(
+            (node) => {
+                if (node.data.y < min_y) {
+                    min_node = node;
+                    min_y = node.data.y;
+                }
+            }
+        )
+        return min_node;
     }
 
     setGraph() {
@@ -1157,6 +1208,8 @@ class GraphView extends React.Component {
             this.graph_bounding_box = this.get_graph_bounding_box();
             this.canvas_bounding_box = this.get_canvas_bounding_box();
             this.svg = svg;
+            window.move = this.move_graph
+            window.index = this.index
         }
     }
 
