@@ -208,9 +208,9 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/components/graphview.js</url>
-          <line>1131</line>
+          <line>1160</line>
           <properties lambdaOrdinal="-1" />
-          <option name="timeStamp" value="317" />
+          <option name="timeStamp" value="324" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

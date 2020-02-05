@@ -405,14 +405,14 @@ class GraphView extends React.Component {
     }
 
     createSVG() {
-        var width = document.querySelector('.graphview').getBoundingClientRect().width;
-        var height = document.querySelector('.graphview').getBoundingClientRect().height;
         var svg = d3.select('.graph-view')
             .append('svg')
-            .attr("viewBox", [0, 0, width, height])
             .attr('class', 'graph')
-            .attr('height', '99.5%')
-            .attr('width', '100%')
+            .attr('height', '100%')
+            .attr('width', '100%');
+        var svg_rect = document.querySelector('svg').getBoundingClientRect();
+        svg
+            .attr("viewBox", [0, 0, svg_rect.width, svg_rect.height]);
         return svg
     }
 
@@ -690,7 +690,7 @@ class GraphView extends React.Component {
         y = x * Math.tan(angle);
     }
 
-    move_graph(dx, dy) {
+    move_graph(dx=0, dy=0) {
         dx /= this.scaling_factor;
         dy /= this.scaling_factor;
         this.index.nodes.forEach(
@@ -942,7 +942,6 @@ class GraphView extends React.Component {
 
     move_label_to_corresponding_node(node) {
         var offset_from_top_of_node = 3;
-        var labels = this.label;
         node.label.selection
             .attr('x', node.data.x)
             .attr('y', node.data.y + offset_from_top_of_node);
@@ -1028,7 +1027,7 @@ class GraphView extends React.Component {
         } else {
             vertical_offset = 0
         }
-        this.move_graph(horizontal_offset, vertical_offset, node, label, edge)
+        this.move_graph(horizontal_offset, vertical_offset)
     }
 
     scale_graph(scaling_factor) {
@@ -1158,17 +1157,18 @@ class GraphView extends React.Component {
                 self.scale_graph_to_fit(parseFloat(stylesheet.graph.fill_proportion));
             }
             if ('x' in stylesheet.graph) {
+                leftmost_node = this.index.get_leftmost_node();
                 x_coord = parseFloat(stylesheet.graph.x);
-                self.move_graph(x_coord -
-                    self.get_graph_bounding_box().x
+                self.move_graph(
+                    (x_coord+leftmost_node.data.stroke_width-self.get_graph_bounding_box().x)
                     , 0
                 )
             }
             if ('y' in stylesheet.graph) {
+                topmost_node = this.index.get_topmost_node();
                 y_coord = parseFloat(stylesheet.graph.y);
                 self.move_graph(0,
-                    y_coord -
-                    self.get_graph_bounding_box().y
+                    (y_coord+topmost_node.data.stroke_width-self.get_graph_bounding_box().y)
                 )
             }
         }
@@ -1206,7 +1206,9 @@ class GraphView extends React.Component {
             this.canvas_bounding_box = this.get_canvas_bounding_box();
             this.svg = svg;
             window.move = this.move_graph;
-            window.index = this.index
+            window.index = this.index;
+            window.obj = this;
+            window.scale = this.scale_graph;
         }
     }
 
