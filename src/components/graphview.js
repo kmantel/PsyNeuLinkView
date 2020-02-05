@@ -32,6 +32,36 @@ class Index {
         this.labels = new Set();
     }
 
+    get_leftmost_node() {
+        var min_x, min_node;
+        min_x = Number.MAX_SAFE_INTEGER;
+        min_node = null;
+        this.nodes.forEach(
+            (node) => {
+                if (node.data.x < min_x) {
+                    min_node = node;
+                    min_x = node.data.x;
+                }
+            }
+        );
+        return min_node;
+    }
+
+    get_topmost_node() {
+        var min_y, min_node;
+        min_y = Number.MAX_SAFE_INTEGER;
+        min_node = null;
+        this.nodes.forEach(
+            (node) => {
+                if (node.data.y < min_y) {
+                    min_node = node;
+                    min_y = node.data.y;
+                }
+            }
+        );
+        return min_node;
+    }
+
     add_d3_group(d3_group, type) {
         if (!['node', 'label', 'projection'].includes(type)) {
             throw 'must specify group type when adding d3 group to index'
@@ -678,9 +708,10 @@ class GraphView extends React.Component {
 
     resize_nodes_to_label_text() {
         this.index.nodes.forEach(
-            (n) => {
-                var label_width = n.label.dom.getBoundingClientRect().width;
-                n.selection.attr('rx', Math.floor(label_width / 2) + 10)
+            (node) => {
+                var label_radius = Math.floor((node.label.dom.getBoundingClientRect().width/2)+10);
+                node.data.rx = label_radius;
+                node.selection.attr('rx', label_radius);
             }
         );
     }
@@ -1034,21 +1065,22 @@ class GraphView extends React.Component {
     }
 
     get_canvas_bounding_box() {
-        var graph_dom_rect = document.querySelector('.graph').getBoundingClientRect();
-        return graph_dom_rect;
+        var canvas_rect = document.querySelector('.graph').getBoundingClientRect();
+        return canvas_rect;
     }
 
     get_graph_bounding_box() {
         var g_container, graph_rect, canvas_rect, x, y, width, height, centerpoint;
         g_container = document.querySelector('g.container');
-        graph_rect = g_container.getBBox();
-        x = graph_rect.x;
-        y = graph_rect.y;
+        graph_rect = g_container.getBoundingClientRect();
+        canvas_rect = this.get_canvas_bounding_box()
+        x = graph_rect.x - canvas_rect.x;
+        y = graph_rect.y - canvas_rect.y;
         width = graph_rect.width;
         height = graph_rect.height;
         centerpoint = {
-            x: (x + width) / 2,
-            y: (y + width) / 2
+            x: width / 2 + x,
+            y: height / 2 + y
         };
         return {
             x: x,
@@ -1064,8 +1096,8 @@ class GraphView extends React.Component {
         graph_bounding_box = this.get_graph_bounding_box();
         canvas_bounding_box = this.get_canvas_bounding_box();
         centerpoint = {x: canvas_bounding_box.width / 2, y: canvas_bounding_box.height / 2};
-        horizontal_offset = centerpoint.x - graph_bounding_box.width / 2 - graph_bounding_box.x + centerpoint_offset.x;
-        vertical_offset = centerpoint.y - graph_bounding_box.height / 2 - graph_bounding_box.y + centerpoint_offset.y;
+        horizontal_offset = centerpoint.x - graph_bounding_box.centerpoint.x + centerpoint_offset.x;
+        vertical_offset = centerpoint.y - graph_bounding_box.centerpoint.y + centerpoint_offset.y;
         this.move_graph(horizontal_offset, vertical_offset)
     }
 
@@ -1127,54 +1159,19 @@ class GraphView extends React.Component {
             }
             if ('x' in stylesheet.graph) {
                 x_coord = parseFloat(stylesheet.graph.x);
-                leftmost_node = self.get_leftmost_node();
                 self.move_graph(x_coord -
-                    self.get_graph_bounding_box().x -
-                    leftmost_node.data.rx/2 -
-                    leftmost_node.data.stroke_width/self.scaling_factor,
-                    0
+                    self.get_graph_bounding_box().x
+                    , 0
                 )
             }
             if ('y' in stylesheet.graph) {
                 y_coord = parseFloat(stylesheet.graph.y);
-                topmost_node = self.get_topmost_node();
                 self.move_graph(0,
                     y_coord -
-                    self.get_graph_bounding_box().y +
-                    topmost_node.data.stroke_width
+                    self.get_graph_bounding_box().y
                 )
             }
         }
-    }
-
-    get_leftmost_node() {
-        var min_x, min_node;
-        min_x = Number.MAX_SAFE_INTEGER;
-        min_node = null;
-        this.index.nodes.forEach(
-            (node) => {
-                if (node.data.x < min_x) {
-                    min_node = node;
-                    min_x = node.data.x;
-                }
-            }
-        )
-        return min_node;
-    }
-
-    get_topmost_node() {
-        var min_y, min_node;
-        min_y = Number.MAX_SAFE_INTEGER;
-        min_node = null;
-        this.index.nodes.forEach(
-            (node) => {
-                if (node.data.y < min_y) {
-                    min_node = node;
-                    min_y = node.data.y;
-                }
-            }
-        )
-        return min_node;
     }
 
     setGraph() {
@@ -1208,7 +1205,7 @@ class GraphView extends React.Component {
             this.graph_bounding_box = this.get_graph_bounding_box();
             this.canvas_bounding_box = this.get_canvas_bounding_box();
             this.svg = svg;
-            window.move = this.move_graph
+            window.move = this.move_graph;
             window.index = this.index
         }
     }
