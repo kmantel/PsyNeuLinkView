@@ -1202,21 +1202,13 @@ class GraphView extends React.Component {
             this.apply_select_boxes(svg);
             this.apply_zoom(svg);
             this.bind_scroll_updating();
-            // this.parse_stylesheet();
-            // this.props.rpc_client.update_stylesheet(this.props.graph_style);
             this.graph_bounding_box = this.get_graph_bounding_box();
             this.canvas_bounding_box = this.get_canvas_bounding_box();
             this.svg = svg;
-            window.move = this.move_graph;
-            window.index = this.index;
-            window.obj = this;
-            window.scale = this.scale_graph;
-            window.rpc = this.props.rpc_client;
         }
     }
 
     render() {
-        var self = this;
         return (
             <Resizable
                 style={style}
