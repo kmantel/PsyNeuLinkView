@@ -35,8 +35,7 @@ class RPCClient {
         );
     }
 
-    load_script(filepath, callback = function () {
-    }) {
+    load_script(filepath, callback = function () {}) {
         var client = this.instantiate_client();
         var self = this;
         client.LoadScript({
@@ -52,8 +51,23 @@ class RPCClient {
         });
     }
 
-    get_json(name, callback = function () {
-    }) {
+    get_style(filepath, callback = function(){}){
+        var client = this.instantiate_client();
+        var self = this;
+        client.LoadGraphics({
+            path: filepath
+        }, function (err, response) {
+            if (err) {
+                callback(err)
+            }
+            else{
+                self.script_maintainer.style = JSON.parse(response.styleJSON);
+                callback()
+            }
+        })
+    }
+
+    get_json(name, callback = function () {}) {
         var client = this.instantiate_client();
         var self = this;
         client.GetJSON({

@@ -218,8 +218,10 @@ class GraphView extends React.Component {
                 d3.selectAll('svg').remove();
                 this.setState({"spinner_visible": false});
                 this.setGraph();
-                // this.updateGraph();
             }
+        }
+        if (!(this.props.graph_style === prevProps.graph_style)){
+            this.parse_stylesheet()
         }
     }
 
@@ -1200,7 +1202,7 @@ class GraphView extends React.Component {
             this.apply_select_boxes(svg);
             this.apply_zoom(svg);
             this.bind_scroll_updating();
-            this.parse_stylesheet();
+            // this.parse_stylesheet();
             // this.props.rpc_client.update_stylesheet(this.props.graph_style);
             this.graph_bounding_box = this.get_graph_bounding_box();
             this.canvas_bounding_box = this.get_canvas_bounding_box();
@@ -1209,6 +1211,7 @@ class GraphView extends React.Component {
             window.index = this.index;
             window.obj = this;
             window.scale = this.scale_graph;
+            window.rpc = this.props.rpc_client;
         }
     }
 

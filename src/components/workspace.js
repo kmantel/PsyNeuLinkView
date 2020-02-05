@@ -6,6 +6,7 @@ import ToolTipBox from './tooltipbox'
 import ParameterControlBox from './parametercontrolbox'
 import SettingsPane from './settings'
 import ErrorDispatcher from "../utility/errors/dispatcher";
+import fs from 'fs'
 const path = require('path');
 var proto_path = path.join(window.electron_root.app_path, 'src', 'protos', 'graph.proto');
 var rpc_client = new window.rpc.rpc_client(proto_path, window.modulePath);
@@ -209,6 +210,7 @@ export default class Workspace extends React.Component {
     load_script(filepath) {
         // var rpc_client = new window.rpc.rpc_client(proto_path, window.modulePath);
         var self = this;
+        self.setState({'filepath':filepath});
         rpc_client.load_script(filepath, (err) => {
                 if (err) {
                     self.dispatcher.capture({
@@ -245,10 +247,16 @@ export default class Workspace extends React.Component {
                             catch {
                                 var new_graph_style = {};
                             }
-                            console.log(new_graph_style.graph.x)
                             self.setState({
                                 graph: new_graph,
                                 graph_style: new_graph_style
+                            });
+                            window.fs.watchFile(filepath,{interval:10},()=>{
+                                console.log('change detected');
+                                if (!['loading',null].includes(self.state.graph)){
+                                    console.log('yup');
+                                    rpc_client.get_style(self.state.filepath, ()=>{self.setState({graph_style:rpc_client.script_maintainer.style})})
+                                }
                             })
                         }
                     )
@@ -332,7 +340,6 @@ export default class Workspace extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        var self = this;
     }
 
     componentWillUnmount() {

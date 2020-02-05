@@ -49,6 +49,12 @@ class GraphServer(graph_pb2_grpc.ServeGraphServicer):
         sys.path.append(filepath)
         return graph_pb2.NullArgument()
 
+    def LoadGraphics(self, request, context):
+        filepath = request.path
+        load_style(filepath)
+        graphics = pnl_container.graphics_spec
+        return graph_pb2.StyleJSON(styleJSON=json.dumps(graphics))
+
     def LoadScript(self, request, context):
         filepath = request.path
         load_script(filepath)
@@ -87,6 +93,17 @@ def get_new_pnl_objects(namespace):
 def get_graphics_dict(namespace):
     if 'pnlv_graphics_spec' in namespace:
         pnl_container.graphics_spec = namespace['pnlv_graphics_spec']
+
+def load_style(filepath):
+    file = open(filepath, 'r').read()
+    ast = RedBaron(file)
+    gdict = ast.find('assign',lambda x: x.find('name','pnlv_graphics_spec'))
+    namespace = {}
+    if gdict:
+        exec(gdict.dumps(), namespace)
+        pnl_container.graphics_spec = namespace['pnlv_graphics_spec']
+    else:
+        pnl_container.graphics_spec = {}
 
 def load_script(filepath):
     pnl_container.filepath = filepath
