@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='graph',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x0bgraph.proto\x12\x05graph\"\x0e\n\x0cNullArgument\"\x1e\n\x0cHealthStatus\x12\x0e\n\x06status\x18\x01 \x01(\t\"\x17\n\x07PNLPath\x12\x0c\n\x04path\x18\x01 \x01(\t\"\x1a\n\nScriptPath\x12\x0c\n\x04path\x18\x01 \x01(\t\"*\n\x12ScriptCompositions\x12\x14\n\x0c\x63ompositions\x18\x01 \x03(\t\"\x19\n\tGraphName\x12\x0c\n\x04name\x18\x01 \x01(\t\"3\n\tGraphJSON\x12\x13\n\x0bobjectsJSON\x18\x01 \x01(\t\x12\x11\n\tstyleJSON\x18\x02 \x01(\t\"\x1e\n\tStyleJSON\x12\x11\n\tstyleJSON\x18\x01 \x01(\t2\xa7\x03\n\nServeGraph\x12\x36\n\rLoadCustomPnl\x12\x0e.graph.PNLPath\x1a\x13.graph.NullArgument\"\x00\x12<\n\nLoadScript\x12\x11.graph.ScriptPath\x1a\x19.graph.ScriptCompositions\"\x00\x12\x35\n\x0cLoadGraphics\x12\x11.graph.ScriptPath\x1a\x10.graph.StyleJSON\"\x00\x12\x43\n\x0fGetCompositions\x12\x13.graph.NullArgument\x1a\x19.graph.ScriptCompositions\"\x00\x12/\n\x07GetJSON\x12\x10.graph.GraphName\x1a\x10.graph.GraphJSON\"\x00\x12\x39\n\x0bHealthCheck\x12\x13.graph.NullArgument\x1a\x13.graph.HealthStatus\"\x00\x12;\n\x10UpdateStylesheet\x12\x10.graph.StyleJSON\x1a\x13.graph.NullArgument\"\x00\x62\x06proto3')
+  serialized_pb=_b('\n\x0bgraph.proto\x12\x05graph\"\x0e\n\x0cNullArgument\"\x1e\n\x0cHealthStatus\x12\x0e\n\x06status\x18\x01 \x01(\t\"\x17\n\x07PNLPath\x12\x0c\n\x04path\x18\x01 \x01(\t\"\x1a\n\nScriptPath\x12\x0c\n\x04path\x18\x01 \x01(\t\"*\n\x12ScriptCompositions\x12\x14\n\x0c\x63ompositions\x18\x01 \x03(\t\"\x19\n\tGraphName\x12\x0c\n\x04name\x18\x01 \x01(\t\"3\n\tGraphJSON\x12\x13\n\x0bobjectsJSON\x18\x01 \x01(\t\x12\x11\n\tstyleJSON\x18\x02 \x01(\t\"\x1e\n\tStyleJSON\x12\x11\n\tstyleJSON\x18\x01 \x01(\t2\xa9\x03\n\nServeGraph\x12\x36\n\rLoadCustomPnl\x12\x0e.graph.PNLPath\x1a\x13.graph.NullArgument\"\x00\x12<\n\nLoadScript\x12\x11.graph.ScriptPath\x1a\x19.graph.ScriptCompositions\"\x00\x12\x35\n\x0cLoadGraphics\x12\x11.graph.ScriptPath\x1a\x10.graph.StyleJSON\"\x00\x12\x43\n\x0fGetCompositions\x12\x13.graph.NullArgument\x1a\x19.graph.ScriptCompositions\"\x00\x12/\n\x07GetJSON\x12\x10.graph.GraphName\x1a\x10.graph.GraphJSON\"\x00\x12\x39\n\x0bHealthCheck\x12\x13.graph.NullArgument\x1a\x13.graph.HealthStatus\"\x00\x12=\n\x10UpdateStylesheet\x12\x10.graph.StyleJSON\x1a\x13.graph.NullArgument\"\x00(\x01\x62\x06proto3')
 )
 
 
@@ -348,7 +348,7 @@ _SERVEGRAPH = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   serialized_start=280,
-  serialized_end=703,
+  serialized_end=705,
   methods=[
   _descriptor.MethodDescriptor(
     name='LoadCustomPnl',

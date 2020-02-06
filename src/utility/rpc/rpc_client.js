@@ -102,9 +102,12 @@ class RPCClient {
 
     update_stylesheet(stylesheet){
         var client = this.instantiate_client();
-        client.UpdateStylesheet({
-            styleJSON:JSON.stringify(stylesheet)
-        }, function () {
+        // client.UpdateStylesheet({
+        //     styleJSON:JSON.stringify(stylesheet)
+        // }, function () {
+        //     console.log('y')
+        // })
+        return client.UpdateStylesheet(function () {
             console.log('y')
         })
     }

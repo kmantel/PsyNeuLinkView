@@ -9,7 +9,7 @@ service ServeGraph {
   rpc GetCompositions (NullArgument) returns (ScriptCompositions) {}
   rpc GetJSON (GraphName) returns (GraphJSON) {}
   rpc HealthCheck (NullArgument) returns (HealthStatus) {}
-  rpc UpdateStylesheet (StyleJSON) returns (NullArgument) {}
+  rpc UpdateStylesheet (stream StyleJSON) returns (NullArgument) {}
 }
 
 message NullArgument {

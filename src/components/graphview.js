@@ -1023,6 +1023,7 @@ class GraphView extends React.Component {
     setGraph() {
         var self = this;
         if (self.props.graph) {
+            window.rpc = self.props.rpc_client;
             var container = this.createSVG();
             this.index = new Index();
             this.drawProjections(container);

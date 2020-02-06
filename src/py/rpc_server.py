@@ -70,8 +70,9 @@ class GraphServer(graph_pb2_grpc.ServeGraphServicer):
         return graph_pb2.GraphJSON(objectsJSON=json.dumps(gv),
                                    styleJSON=json.dumps(graphics))
 
-    def UpdateStylesheet(self, request, context):
-        update_graphics_dict(request.styleJSON)
+    def UpdateStylesheet(self, request_iterator, context):
+        for request in request_iterator:
+            update_graphics_dict(json.loads(request.styleJSON))
         return graph_pb2.NullArgument()
 
     def HealthCheck(self, request, context):
@@ -117,9 +118,10 @@ def load_script(filepath):
 
 def update_graphics_dict(stylesheet):
     ast = RedBaron(pnl_container.AST)
+    print(stylesheet)
     gdict = ast.find('assign',lambda x: x.find('name','pnlv_graphics_spec'))
     if gdict:
-        gdict.value = stylesheet
+        gdict.value = json.dumps(stylesheet)
     else:
         ast.append(RedBaron(f'pnlv_graphics_spec = {stylesheet}').dumps())
     with open(pnl_container.filepath, 'w') as script:
