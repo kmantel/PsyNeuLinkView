@@ -458,15 +458,22 @@ class GraphView extends React.Component {
     }
 
     createSVG() {
-        var svg = d3.select('.graph-view')
+        var svg, svg_rect, container
+        svg = d3.select('.graph-view')
             .append('svg')
             .attr('class', 'graph')
             .attr('height', '100%')
             .attr('width', '100%');
-        var svg_rect = document.querySelector('svg').getBoundingClientRect();
+        svg_rect = document.querySelector('svg').getBoundingClientRect();
         svg
             .attr("viewBox", [0, 0, svg_rect.width, svg_rect.height]);
-        return svg
+        this.appendDefs(svg);
+        this.apply_select_boxes(svg);
+        this.apply_zoom(svg);
+        this.bind_scroll_updating();
+        this.svg = svg;
+        container = this.createContainer(svg);
+        return container
     }
 
     createContainer(svg) {
@@ -529,6 +536,7 @@ class GraphView extends React.Component {
 
     drawProjections(svg) {
         var self = this;
+        self.associateVisualInformationWithGraphEdges();
         var edge = svg.append('g')
             .attr('class', 'edge')
             .selectAll('line')
@@ -624,10 +632,11 @@ class GraphView extends React.Component {
         self.index.add_d3_group(recurrent, 'projection')
     }
 
-    drawNodes(svg, nodeWidth, nodeHeight, nodeDragFunction) {
-        var nodeWidth = nodeWidth;
-        var nodeHeight = nodeHeight;
+    drawNodes(svg, nodeDragFunction) {
         var self = this;
+        var nodeWidth = self.state.node_width;
+        var nodeHeight = self.state.node_height;
+        self.associateVisualInformationWithGraphNodes();
         var node = svg.append('g')
             .attr('class', 'node')
             .selectAll('ellipse')
@@ -1214,34 +1223,19 @@ class GraphView extends React.Component {
     setGraph() {
         var self = this;
         if (self.props.graph) {
-            let nodeWidth = self.state.node_width;
-            let nodeHeight = self.state.node_height;
-            var svg = this.createSVG();
-            var container = this.createContainer(svg);
+            var container = this.createSVG();
             this.index = new Index();
-            this.associateVisualInformationWithGraphNodes();
-            this.associateVisualInformationWithGraphEdges();
-            this.appendDefs(svg);
             this.drawProjections(container);
             this.drawRecurrentProjections(container);
-            this.drawNodes(container, nodeWidth, nodeHeight, (d) => {
-                self.drag_nodes(d)
-            });
-            this.drawLabels(container, 5, (d) => {
-                self.drag_nodes(d)
-            });
+            this.drawNodes(container, (d) => {self.drag_nodes(d)});
+            this.drawLabels(container, 5, (d) => {self.drag_nodes(d)});
             this.resize_nodes_to_label_text();
             this.resize_recurrent_projections();
-            this.scale_graph(1);
             this.scale_graph_to_fit(this.fill_proportion);
             this.correct_projection_lengths_for_ellipse_sizes();
             this.center_graph_on_point();
-            this.apply_select_boxes(svg);
-            this.apply_zoom(svg);
-            this.bind_scroll_updating();
             this.graph_bounding_box = this.get_graph_bounding_box();
             this.canvas_bounding_box = this.get_canvas_bounding_box();
-            this.svg = svg;
         }
     }
 
