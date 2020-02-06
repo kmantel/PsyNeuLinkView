@@ -34,6 +34,7 @@ class GraphView extends React.Component {
             graph: this.props.graph,
             spinner_visible: false,
         };
+        // this.stylesheet_updater = this.props.rpc_client.update_stylesheet();
         this.id_i = 0;
         this.index = new Index();
         this.selected = new Set();
@@ -53,6 +54,7 @@ class GraphView extends React.Component {
         this.capture_wheel = this.capture_wheel.bind(this);
         this.componentDidUpdate = this.componentDidUpdate.bind(this);
         this.update_scroll = this.update_scroll.bind(this);
+        // this.update_script = this.update_script.bind(this);
         this.drag_node = this.drag_node.bind(this);
         this.zoomed = this.zoomed.bind(this);
         this.move_graph = this.move_graph.bind(this);
@@ -337,10 +339,10 @@ class GraphView extends React.Component {
         });
     }
 
-    drawProjections(svg) {
+    drawProjections(container) {
         var self = this;
         self.associateVisualInformationWithGraphEdges();
-        var edge = svg.append('g')
+        var edge = container.append('g')
             .attr('class', 'edge')
             .selectAll('line')
             .data(self.props.graph.edges)
@@ -377,9 +379,10 @@ class GraphView extends React.Component {
             });
         this.index.add_d3_group(edge, 'projection');
         this.edge = edge;
+        this.drawRecurrentProjections(container);
     }
 
-    drawRecurrentProjections(svg) {
+    drawRecurrentProjections(container) {
         var self = this;
         var recurrent_projs = [];
         d3.selectAll('g.edge line')
@@ -388,7 +391,7 @@ class GraphView extends React.Component {
                     recurrent_projs.push(e);
                 }
             });
-        var recurrent = svg.append('g')
+        var recurrent = container.append('g')
             .attr('class', 'recurrent')
             .selectAll('path')
             .data(recurrent_projs)
@@ -435,12 +438,12 @@ class GraphView extends React.Component {
         self.index.add_d3_group(recurrent, 'projection')
     }
 
-    drawNodes(svg, nodeDragFunction) {
+    drawNodes(container, nodeDragFunction) {
         var self = this;
         var nodeWidth = self.state.node_width;
         var nodeHeight = self.state.node_height;
         self.associateVisualInformationWithGraphNodes();
-        var node = svg.append('g')
+        var node = container.append('g')
             .attr('class', 'node')
             .selectAll('ellipse')
             .data(this.props.graph.objects)
@@ -483,8 +486,8 @@ class GraphView extends React.Component {
         this.node = node
     }
 
-    drawLabels(svg, labelDragFunction) {
-        var label = svg.append('g')
+    drawLabels(container, labelDragFunction) {
+        var label = container.append('g')
             .attr('class', 'label')
             .selectAll('text')
             .data(this.props.graph.objects)
@@ -559,6 +562,7 @@ class GraphView extends React.Component {
     }
 
     move_graph(dx=0, dy=0) {
+        // var stylesheet, graph_rect;
         dx /= this.scaling_factor;
         dy /= this.scaling_factor;
         this.index.nodes.forEach(
@@ -1027,7 +1031,6 @@ class GraphView extends React.Component {
             var container = this.createSVG();
             this.index = new Index();
             this.drawProjections(container);
-            this.drawRecurrentProjections(container);
             this.drawNodes(container, (d) => {self.drag_nodes(d)});
             this.drawLabels(container,  (d) => {self.drag_nodes(d)});
             this.resize_nodes_to_label_text();
