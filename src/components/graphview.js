@@ -34,7 +34,7 @@ class GraphView extends React.Component {
             graph: this.props.graph,
             spinner_visible: false,
         };
-        // this.stylesheet_updater = this.props.rpc_client.update_stylesheet();
+        this.script_updater = null;
         this.id_i = 0;
         this.index = new Index();
         this.selected = new Set();
@@ -54,7 +54,7 @@ class GraphView extends React.Component {
         this.capture_wheel = this.capture_wheel.bind(this);
         this.componentDidUpdate = this.componentDidUpdate.bind(this);
         this.update_scroll = this.update_scroll.bind(this);
-        // this.update_script = this.update_script.bind(this);
+        this.update_script = this.update_script.bind(this);
         this.drag_node = this.drag_node.bind(this);
         this.zoomed = this.zoomed.bind(this);
         this.move_graph = this.move_graph.bind(this);
@@ -120,6 +120,10 @@ class GraphView extends React.Component {
                 this.reset_graph()
             }
         }
+    }
+
+    update_script(stylesheet){
+        this.script_updater.write({'styleJSON':JSON.stringify(stylesheet)})
     }
 
     dist(x1, y1, x2, y2) {
@@ -794,11 +798,18 @@ class GraphView extends React.Component {
     }
 
     drag_node(node, dx, dy) {
+        var new_stylesheet;
         node.data.x += dx;
         node.data.y += dy;
         node.selection
             .attr('cx', node.data.x)
             .attr('cy', node.data.y);
+        new_stylesheet = {...this.stylesheet};
+        new_stylesheet.components.nodes[node.name] = {
+            'cx':node.data.x,
+            'cy':node.data.y
+        }
+        this.update_script(new_stylesheet);
         this.move_label_to_corresponding_node(node);
         this.refresh_edges_for_node(node);
     }
@@ -1002,6 +1013,7 @@ class GraphView extends React.Component {
         var self, stylesheet, x_coord, y_coord, leftmost_node, topmost_node;
         self = this;
         stylesheet = this.props.graph_style;
+        this.stylesheet = stylesheet;
         if ('graph' in stylesheet) {
             // if ('fill_proportion' in stylesheet.graph) {
             //     self.scale_graph_to_fit(parseFloat(stylesheet.graph.fill_proportion));
@@ -1028,6 +1040,7 @@ class GraphView extends React.Component {
         var self = this;
         if (self.props.graph) {
             window.rpc = self.props.rpc_client;
+            this.script_updater = this.props.rpc_client.update_stylesheet();
             var container = this.createSVG();
             this.index = new Index();
             this.drawProjections(container);

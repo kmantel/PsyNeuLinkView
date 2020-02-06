@@ -211,7 +211,32 @@ pnlv_graphics_spec = {
         "y": 0
     },
     "components": {
-        "nodes": {},
+        "nodes": {
+            "Stimulus Info * Activity": {
+                "cx": 511.6756888724649,
+                "cy": 83.51351908091002
+            },
+            "objective_mechanism-0": {
+                "cx": 504.62162698281645,
+                "cy": 299.5135190809102
+            },
+            "OptimizationControlMechanism-0": {
+                "cx": 228.94594800794368,
+                "cy": 381.2432259224561
+            },
+            "DDM Integrator": {
+                "cx": 425.6756888724649,
+                "cy": 155.51351908091004
+            },
+            "Stimulus Info": {
+                "cx": 165.08107324548553,
+                "cy": 18.540541983939615
+            },
+            "DDM": {
+                "cx": 378.78378213418364,
+                "cy": 226.97297647837098
+            }
+        },
         "edges": {}
     }
 }
