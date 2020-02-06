@@ -205,4 +205,13 @@ for i in range(1, len(stabilityFlexibility.controller.input_ports)):
 # print()
 # print(activation.mod_gain)
 # decisionMaker.log.print_entries()
-pnlv_graphics_spec = {"graph": {"x": 50, "y": 100}, "components": {"nodes": {}, "edges": {}}}
+pnlv_graphics_spec = {
+    "graph": {
+        "x": 0,
+        "y": 100
+    },
+    "components": {
+        "nodes": {},
+        "edges": {}
+    }
+}

@@ -121,7 +121,7 @@ def update_graphics_dict(stylesheet):
     print(stylesheet)
     gdict = ast.find('assign',lambda x: x.find('name','pnlv_graphics_spec'))
     if gdict:
-        gdict.value = json.dumps(stylesheet)
+        gdict.value = json.dumps(stylesheet, indent=4)
     else:
         ast.append(RedBaron(f'pnlv_graphics_spec = {stylesheet}').dumps())
     with open(pnl_container.filepath, 'w') as script:
