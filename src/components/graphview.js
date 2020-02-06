@@ -1155,14 +1155,14 @@ class GraphView extends React.Component {
         self = this;
         stylesheet = this.props.graph_style;
         if ('graph' in stylesheet) {
-            if ('fill_proportion' in stylesheet.graph) {
-                self.scale_graph_to_fit(parseFloat(stylesheet.graph.fill_proportion));
-            }
+            // if ('fill_proportion' in stylesheet.graph) {
+            //     self.scale_graph_to_fit(parseFloat(stylesheet.graph.fill_proportion));
+            // }
             if ('x' in stylesheet.graph) {
                 leftmost_node = this.index.get_leftmost_node();
                 x_coord = parseFloat(stylesheet.graph.x);
                 self.move_graph(
-                    (x_coord+leftmost_node.data.stroke_width-self.get_graph_bounding_box().x)
+                    (x_coord+(leftmost_node.data.stroke_width*self.scaling_factor)-self.get_graph_bounding_box().x)
                     , 0
                 )
             }
@@ -1170,7 +1170,7 @@ class GraphView extends React.Component {
                 topmost_node = this.index.get_topmost_node();
                 y_coord = parseFloat(stylesheet.graph.y);
                 self.move_graph(0,
-                    (y_coord+topmost_node.data.stroke_width-self.get_graph_bounding_box().y)
+                    (y_coord+(topmost_node.data.stroke_width*self.scaling_factor)-self.get_graph_bounding_box().y)
                 )
             }
         }
