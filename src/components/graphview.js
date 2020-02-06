@@ -731,6 +731,7 @@ class GraphView extends React.Component {
     apply_select_boxes() {
         var self = this;
         var svg = d3.select('svg');
+        //TODO: On select, save rect of selected nodes for more efficient collision detection when dragging
         svg
             .on('mousedown', function () {
                     // don't fire if command is pressed. command unlocks different options
