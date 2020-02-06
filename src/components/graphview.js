@@ -29,6 +29,7 @@ class Index {
         this.elements = new Set();
         this.nodes = new Set();
         this.projections = new Set();
+        this.recurrent_projections = new Set();
         this.labels = new Set();
     }
 
@@ -124,20 +125,22 @@ class Index {
     }
 
     add_projection(projection) {
-        var pnlv_node, head, tail;
-        pnlv_node = projection._is_pnlv_obj ? projection : new Projection(projection);
-        this.add_to_elements(pnlv_node);
-        this.add_to_lookup(pnlv_node);
-        this.projections.add(pnlv_node);
-        head = this.lookup(pnlv_node.data.head);
+        var pnlv_projection, head, tail;
+        pnlv_projection = projection._is_pnlv_obj ? projection : new Projection(projection);
+        this.add_to_elements(pnlv_projection);
+        this.add_to_lookup(pnlv_projection);
+        head = this.lookup(pnlv_projection.data.head);
         if (head){
-            pnlv_node.head = head
+            pnlv_projection.head = head
         }
-        tail = this.lookup(pnlv_node.data.tail);
+        tail = this.lookup(pnlv_projection.data.tail);
         if (tail){
-            pnlv_node.tail = tail
+            pnlv_projection.tail = tail
         }
-
+        this.projections.add(pnlv_projection);
+        if (pnlv_projection.is_recurrent()){
+            this.recurrent_projections.add(pnlv_projection)
+        }
     }
 
     add_to_elements(element) {
@@ -199,6 +202,10 @@ class Projection extends GraphElement {
         this.element_type = 'projection';
         this.head = null;
         this.tail = null;
+    }
+
+    is_recurrent(){
+        return this.data.head===this.data.tail
     }
 }
 
@@ -546,20 +553,23 @@ class GraphView extends React.Component {
             .attr('stroke-width', 1)
             .attr('stroke', function (d) {
                 return d.color
-            });
-        d3.selectAll('g.edge line')
-            .each(function () {
-                var d3Element = d3.select(this);
-                var color = d3Element.attr('stroke');
+            })
+            .attr('marker-end', function (d){
+                var color = d.color;
                 var color_map = {
                     '#000000': 'black',
                     '#ffa500': 'orange',
                     '#0000ff': 'blue'
                 };
                 color = color in color_map ? color_map[color] : color;
-                d3Element
-                    .attr('marker-end', `url(#triangle_${color})`)
+                return `url(#triangle_${color})`;
             });
+        this.index.add_d3_group(edge, 'projection');
+        this.edge = edge;
+    }
+
+    drawRecurrentProjections(svg) {
+        var self = this;
         var recurrent_projs = [];
         d3.selectAll('g.edge line')
             .each(function (e) {
@@ -610,9 +620,8 @@ class GraphView extends React.Component {
                 var arrow_start = reference_arc.getPointAtLength(arc_length * .75);
                 return d.head.y - d.head.ellipse.ry + arrow_start.y - document.querySelector("#reference_arc path").getBBox().y
             });
-        this.index.add_d3_group(edge, 'projection');
-        this.recurrent = recurrent;
-        this.edge = edge;
+        self.recurrent = recurrent;
+        self.index.add_d3_group(recurrent, 'projection')
     }
 
     drawNodes(svg, nodeWidth, nodeHeight, nodeDragFunction) {
@@ -906,21 +915,7 @@ class GraphView extends React.Component {
                     .attr('x2', offset_pt.x)
                     .attr('y2', offset_pt.y)
             }
-        );
-        //
-        // var self = this;
-        // var node = this.node;
-        // var edge = this.edge;
-        // edge
-        //     .attr('x2', function (d) {
-        //         var x2 = self.get_offset_points_for_projection(d).x;
-        //         return x2
-        //     })
-        //     .attr('y2', function (d) {
-        //             var y2 = self.get_offset_points_for_projection(d).y;
-        //             return y2
-        //         }
-        //     )
+        )
     }
 
     get_offset_points_for_projection(projection) {
@@ -1000,10 +995,9 @@ class GraphView extends React.Component {
     }
 
     refresh_edges_for_node(node) {
-        var d = node.data;
-        var self = this;
-        var edge = this.edge;
-        var offset_pt;
+        var self, offset_pt, recurrent_projs, recurrent_arc_offset;
+        recurrent_projs = new Set();
+        self = this;
         node.efferents.forEach(
             (projection)=>{
                 offset_pt = self.get_offset_points_for_projection(projection);
@@ -1011,7 +1005,10 @@ class GraphView extends React.Component {
                     .attr('x1', projection.data.tail.x)
                     .attr('y1', projection.data.tail.y)
                     .attr('x2', offset_pt.x)
-                    .attr('y2', offset_pt.y)
+                    .attr('y2', offset_pt.y);
+                if (projection.is_recurrent()){
+                    recurrent_projs.add(projection)
+                }
             }
         );
         node.afferents.forEach(
@@ -1019,42 +1016,36 @@ class GraphView extends React.Component {
                 offset_pt = self.get_offset_points_for_projection(projection);
                 projection.selection
                     .attr('x2', offset_pt.x)
-                    .attr('y2', offset_pt.y)
+                    .attr('y2', offset_pt.y);
+                if (projection.is_recurrent()){
+                    recurrent_projs.add(projection)
+                }
             }
         );
 
-        this.recurrent
-            .attr('transform', (e) => {
-                var recurrent_arc_offset = 10;
-                var arc_x = e.head.x;
-                var arc_y = e.head.y;
-                return `translate(${arc_x - parseFloat(e.head.ellipse.rx / 2 + recurrent_arc_offset)},${arc_y})`
-            })
-
-        d3.selectAll('g.edge line')
-            .filter(
-                (e) => {
-                    return e.head === e.tail
+        recurrent_projs.forEach(
+            (projection)=>{
+                if (projection.dom.constructor.name === 'SVGPathElement')
+                {
+                    var recurrent_arc_offset = 10;
+                    var arc_x = projection.head.data.x;
+                    var arc_y = projection.head.data.y;
+                    projection.selection
+                        .attr('transform', `translate(${arc_x - parseFloat(projection.head.data.ellipse.rx / 2 + recurrent_arc_offset)},${arc_y})`)
                 }
-            )
-            .attr('x1', function (d) {
-                return d.head.x - d.head.ellipse.rx / 2 - 10
-            })
-            .attr('y1', function (d) {
-                var reference_arc = document.querySelector('#reference_arc path');
-                var reference_arc_len = reference_arc.getTotalLength();
-                var starting_y_location = reference_arc.getPointAtLength(reference_arc_len).y - reference_arc.getBBox().y - 8.2;
-                return d.head.y + starting_y_location
-            })
-            .attr('x2', function (d) {
-                return d.head.x - d.head.ellipse.rx / 2 - 9
-            })
-            .attr('y2', function (d) {
-                var reference_arc = document.querySelector('#reference_arc path');
-                var reference_arc_len = reference_arc.getTotalLength();
-                var ending_y_location = reference_arc.getPointAtLength(reference_arc_len * .99).y - reference_arc.getBBox().y - 7.70;
-                return d.head.y + ending_y_location
-            })
+                else {
+                    var reference_arc = document.querySelector('#reference_arc path');
+                    var reference_arc_len = reference_arc.getTotalLength();
+                    var y1_offset = reference_arc.getPointAtLength(reference_arc_len).y - reference_arc.getBBox().y - 8.2;
+                    var y2_offset = reference_arc.getPointAtLength(reference_arc_len * .99).y - reference_arc.getBBox().y - 7.70;
+                    projection.selection
+                        .attr('x1', projection.data.head.x - projection.data.head.ellipse.rx / 2 - 10)
+                        .attr('y1', projection.data.head.y + y1_offset)
+                        .attr('x2', projection.data.head.x - projection.data.head.ellipse.rx / 2 - 9)
+                        .attr('y2', projection.data.head.y + y2_offset)
+                }
+            }
+        );
     }
 
     scroll_graph_into_view() {
@@ -1232,6 +1223,7 @@ class GraphView extends React.Component {
             this.associateVisualInformationWithGraphEdges();
             this.appendDefs(svg);
             this.drawProjections(container);
+            this.drawRecurrentProjections(container);
             this.drawNodes(container, nodeWidth, nodeHeight, (d) => {
                 self.drag_nodes(d)
             });

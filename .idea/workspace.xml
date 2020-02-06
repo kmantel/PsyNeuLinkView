@@ -208,29 +208,11 @@
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
-        <line-breakpoint type="javascript">
-          <url>file://$PROJECT_DIR$/src/components/graphview.js</url>
-          <line>1004</line>
-          <properties lambdaOrdinal="-1" />
-          <option name="timeStamp" value="351" />
-        </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/components/graphview.js</url>
-          <line>1267</line>
+          <line>141</line>
           <properties lambdaOrdinal="-1" />
-          <option name="timeStamp" value="353" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/src/components/graphview.js</url>
-          <line>742</line>
-          <properties lambdaOrdinal="-1" />
-          <option name="timeStamp" value="355" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/src/components/graphview.js</url>
-          <line>1008</line>
-          <properties lambdaOrdinal="-1" />
-          <option name="timeStamp" value="357" />
+          <option name="timeStamp" value="371" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
