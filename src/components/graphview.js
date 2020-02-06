@@ -4,6 +4,7 @@ import * as d3 from 'd3'
 import add_context_menu from '../utility/add_context_menu'
 import {Resizable} from 're-resizable'
 import {Spinner} from '@blueprintjs/core'
+import {Index} from '../utility/d3-helper/d3-helper'
 
 const context_menu = [
     {
@@ -21,204 +22,6 @@ const style = {
     alignItems: "center",
     justifyContent: "center",
 };
-
-class Index {
-    constructor() {
-        this.obj_lookup = new WeakMap();
-        this.str_lookup = {};
-        this.elements = new Set();
-        this.nodes = new Set();
-        this.projections = new Set();
-        this.recurrent_projections = new Set();
-        this.labels = new Set();
-    }
-
-    get_leftmost_node() {
-        var min_x, min_node;
-        min_x = Number.MAX_SAFE_INTEGER;
-        min_node = null;
-        this.nodes.forEach(
-            (node) => {
-                if (node.data.x < min_x) {
-                    min_node = node;
-                    min_x = node.data.x;
-                }
-            }
-        );
-        return min_node;
-    }
-
-    get_topmost_node() {
-        var min_y, min_node;
-        min_y = Number.MAX_SAFE_INTEGER;
-        min_node = null;
-        this.nodes.forEach(
-            (node) => {
-                if (node.data.y < min_y) {
-                    min_node = node;
-                    min_y = node.data.y;
-                }
-            }
-        );
-        return min_node;
-    }
-
-    add_d3_group(d3_group, type) {
-        if (!['node', 'label', 'projection'].includes(type)) {
-            throw 'must specify group type when adding d3 group to index'
-        }
-        if (type === 'node') {
-            d3_group._groups[0].forEach(
-                (n) => {
-                    this.add_node(new Node(n))
-                }
-            );
-        } else if (type === 'label') {
-            d3_group._groups[0].forEach(
-                (l) => {
-                    this.add_label(new Label(l))
-                }
-            );
-        }
-        else if (type === 'projection') {
-            d3_group._groups[0].forEach(
-                (p) => {
-                    this.add_projection(new Projection(p))
-                }
-            );
-        }
-    }
-
-    add_label(label) {
-        var pnlv_label, associated_node;
-        pnlv_label = label._is_pnlv_obj ? label : new Label(label);
-        this.add_to_elements(pnlv_label);
-        this.add_to_lookup(pnlv_label);
-        associated_node = this.lookup(label.name);
-        if (associated_node) {
-            associated_node.label = pnlv_label;
-            this.node = associated_node;
-        }
-        this.labels.add(pnlv_label)
-    }
-
-    add_node(node) {
-        var pnlv_node, afferent, efferent;
-        pnlv_node = node._is_pnlv_obj ? node : new Node(node);
-        this.add_to_elements(pnlv_node);
-        this.add_to_lookup(pnlv_node);
-        this.nodes.add(pnlv_node);
-        this.projections.forEach(
-            (projection)=>{
-                if (projection.data.head===pnlv_node.data){
-                    afferent = this.lookup(projection.data.head);
-                    projection.head = pnlv_node;
-                    pnlv_node.afferents.add(projection);
-                }
-                if (projection.data.tail===pnlv_node.data){
-                    efferent = this.lookup(projection.data.tail);
-                    projection.tail = pnlv_node;
-                    pnlv_node.efferents.add(projection);
-                }
-            }
-        )
-    }
-
-    add_projection(projection) {
-        var pnlv_projection, head, tail;
-        pnlv_projection = projection._is_pnlv_obj ? projection : new Projection(projection);
-        this.add_to_elements(pnlv_projection);
-        this.add_to_lookup(pnlv_projection);
-        head = this.lookup(pnlv_projection.data.head);
-        if (head){
-            pnlv_projection.head = head
-        }
-        tail = this.lookup(pnlv_projection.data.tail);
-        if (tail){
-            pnlv_projection.tail = tail
-        }
-        this.projections.add(pnlv_projection);
-        if (pnlv_projection.is_recurrent()){
-            this.recurrent_projections.add(pnlv_projection)
-        }
-    }
-
-    add_to_elements(element) {
-        if (!this.elements.has(element)) {
-            this.elements.add(element)
-        }
-    }
-
-    add_to_lookup(element) {
-        this.obj_lookup.set(element, element);
-        this.obj_lookup.set(element.dom, element);
-        this.obj_lookup.set(element.selection, element);
-        if (['node', 'projection'].includes(element.element_type)) {
-            this.obj_lookup.set(element.data, element);
-            this.str_lookup[element.data.name] = element;
-        }
-    }
-
-    lookup(query) {
-        var result;
-        if (typeof query === 'string') {
-            result = this.str_lookup[query]
-        } else {
-            result = this.obj_lookup.get(query)
-        }
-        return result
-    }
-}
-
-class GraphElement {
-    constructor(svg_element) {
-        this.dom = svg_element;
-        this.data = svg_element.__data__;
-        this.selection = d3.select(this.dom);
-        this._is_pnlv_obj = true;
-        this.name = this.data.name;
-    }
-}
-
-class Node extends GraphElement {
-    constructor(svg_element) {
-        super(svg_element);
-        this.element_type = 'node';
-        this.afferents = new Set();
-        this.efferents = new Set();
-    }
-}
-
-class Label extends GraphElement {
-    constructor(svg_element) {
-        super(svg_element);
-        this.element_type = 'label'
-    }
-}
-
-class Projection extends GraphElement {
-    constructor(svg_element) {
-        super(svg_element);
-        this.element_type = 'projection';
-        this.head = null;
-        this.tail = null;
-    }
-
-    is_recurrent(){
-        return this.data.head===this.data.tail
-    }
-}
-
-class Shape {
-    constructor() {
-    }
-}
-
-class Ellipse extends Shape {
-    constructor() {
-        super()
-    }
-}
 
 class GraphView extends React.Component {
     constructor(props) {
@@ -680,7 +483,7 @@ class GraphView extends React.Component {
         this.node = node
     }
 
-    drawLabels(svg, offset, labelDragFunction) {
+    drawLabels(svg, labelDragFunction) {
         var label = svg.append('g')
             .attr('class', 'label')
             .selectAll('text')
@@ -692,7 +495,7 @@ class GraphView extends React.Component {
                 return d.x
             })
             .attr('y', function (d) {
-                return d.y + offset
+                return d.y
             })
             .attr('font-size', function (d) {
                 d.text['font-size'] = '10';
@@ -711,7 +514,7 @@ class GraphView extends React.Component {
         this.index.add_d3_group(label, 'label');
     }
 
-    get_offset_between_ellipses(x1, y1, x2, y2, nodeWidth, nodeHeight, strokeWidth = 1) {
+    get_offset_between_ellipses(x1, y1, x2, y2, nodeWidth, nodeHeight, strokeWidth) {
         if (!strokeWidth) {
             strokeWidth = 1
         }
@@ -1059,9 +862,6 @@ class GraphView extends React.Component {
 
     scroll_graph_into_view() {
         var horizontal_offset, vertical_offset, graph_bounding_box;
-        var node = this.node;
-        var label = this.label;
-        var edge = this.edge;
         graph_bounding_box = this.get_graph_bounding_box();
         if (graph_bounding_box.x < 0) {
             horizontal_offset = Math.abs(0 - graph_bounding_box.x)
@@ -1228,7 +1028,7 @@ class GraphView extends React.Component {
             this.drawProjections(container);
             this.drawRecurrentProjections(container);
             this.drawNodes(container, (d) => {self.drag_nodes(d)});
-            this.drawLabels(container, 5, (d) => {self.drag_nodes(d)});
+            this.drawLabels(container,  (d) => {self.drag_nodes(d)});
             this.resize_nodes_to_label_text();
             this.resize_recurrent_projections();
             this.scale_graph_to_fit(this.fill_proportion);

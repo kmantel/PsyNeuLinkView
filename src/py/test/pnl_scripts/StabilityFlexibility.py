@@ -208,7 +208,7 @@ for i in range(1, len(stabilityFlexibility.controller.input_ports)):
 pnlv_graphics_spec = {
     'graph':{
         'x':0,
-        'y':0
+        'y':100
     },
     'components':{
         'nodes':{},
