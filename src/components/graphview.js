@@ -79,6 +79,13 @@ class Index {
                 }
             );
         }
+        else if (type === 'projection') {
+            d3_group._groups[0].forEach(
+                (p) => {
+                    this.add_projection(new Projection(p))
+                }
+            );
+        }
     }
 
     add_label(label) {
@@ -95,10 +102,42 @@ class Index {
     }
 
     add_node(node) {
-        var pnlv_node = node._is_pnlv_obj ? node : new Node(node);
+        var pnlv_node, afferent, efferent;
+        pnlv_node = node._is_pnlv_obj ? node : new Node(node);
         this.add_to_elements(pnlv_node);
         this.add_to_lookup(pnlv_node);
         this.nodes.add(pnlv_node);
+        this.projections.forEach(
+            (projection)=>{
+                if (projection.data.head===pnlv_node.data){
+                    afferent = this.lookup(projection.data.head);
+                    projection.head = pnlv_node;
+                    pnlv_node.afferents.add(projection);
+                }
+                if (projection.data.tail===pnlv_node.data){
+                    efferent = this.lookup(projection.data.tail);
+                    projection.tail = pnlv_node;
+                    pnlv_node.efferents.add(projection);
+                }
+            }
+        )
+    }
+
+    add_projection(projection) {
+        var pnlv_node, head, tail;
+        pnlv_node = projection._is_pnlv_obj ? projection : new Projection(projection);
+        this.add_to_elements(pnlv_node);
+        this.add_to_lookup(pnlv_node);
+        this.projections.add(pnlv_node);
+        head = this.lookup(pnlv_node.data.head);
+        if (head){
+            pnlv_node.head = head
+        }
+        tail = this.lookup(pnlv_node.data.tail);
+        if (tail){
+            pnlv_node.tail = tail
+        }
+
     }
 
     add_to_elements(element) {
@@ -111,7 +150,7 @@ class Index {
         this.obj_lookup.set(element, element);
         this.obj_lookup.set(element.dom, element);
         this.obj_lookup.set(element.selection, element);
-        if (element.element_type === 'node') {
+        if (['node', 'projection'].includes(element.element_type)) {
             this.obj_lookup.set(element.data, element);
             this.str_lookup[element.data.name] = element;
         }
@@ -141,7 +180,9 @@ class GraphElement {
 class Node extends GraphElement {
     constructor(svg_element) {
         super(svg_element);
-        this.element_type = 'node'
+        this.element_type = 'node';
+        this.afferents = new Set();
+        this.efferents = new Set();
     }
 }
 
@@ -154,8 +195,10 @@ class Label extends GraphElement {
 
 class Projection extends GraphElement {
     constructor(svg_element) {
-        super(svg_element)
-        this.element_type = 'projection'
+        super(svg_element);
+        this.element_type = 'projection';
+        this.head = null;
+        this.tail = null;
     }
 }
 
@@ -204,6 +247,7 @@ class GraphView extends React.Component {
         this.zoomed = this.zoomed.bind(this);
         this.move_graph = this.move_graph.bind(this);
         this.move_label_to_corresponding_node = this.move_label_to_corresponding_node.bind(this);
+        this.initial_state = this;
     }
 
     componentWillMount() {
@@ -566,6 +610,7 @@ class GraphView extends React.Component {
                 var arrow_start = reference_arc.getPointAtLength(arc_length * .75);
                 return d.head.y - d.head.ellipse.ry + arrow_start.y - document.querySelector("#reference_arc path").getBBox().y
             });
+        this.index.add_d3_group(edge, 'projection');
         this.recurrent = recurrent;
         this.edge = edge;
     }
@@ -851,38 +896,42 @@ class GraphView extends React.Component {
         this.selected = new Set()
     }
 
-    correct_projection_lengths_for_ellipse_sizes(node, edge) {
-        var self = this;
-        var node = this.node;
-        var edge = this.edge;
-        edge
-            .attr('x2', function (d) {
-                var x2 = self.get_offset_points_for_projection(d).x;
-                return x2
-            })
-            .attr('y2', function (d) {
-                    var y2 = self.get_offset_points_for_projection(d).y;
-                    return y2
-                }
-            )
+    correct_projection_lengths_for_ellipse_sizes() {
+        var offset_pt, self;
+        self = this;
+        this.index.projections.forEach(
+            (projection)=>{
+                offset_pt = self.get_offset_points_for_projection(projection);
+                projection.selection
+                    .attr('x2', offset_pt.x)
+                    .attr('y2', offset_pt.y)
+            }
+        );
+        //
+        // var self = this;
+        // var node = this.node;
+        // var edge = this.edge;
+        // edge
+        //     .attr('x2', function (d) {
+        //         var x2 = self.get_offset_points_for_projection(d).x;
+        //         return x2
+        //     })
+        //     .attr('y2', function (d) {
+        //             var y2 = self.get_offset_points_for_projection(d).y;
+        //             return y2
+        //         }
+        //     )
     }
 
-    get_offset_points_for_projection(d) {
-        var node = this.node;
+    get_offset_points_for_projection(projection) {
         return this.get_offset_between_ellipses(
-            d.tail.x,
-            d.tail.y,
-            d.head.x,
-            d.head.y,
-            node.filter(function (n) {
-                return n === d.head
-            })
-                .attr('rx'),
-            node.filter(function (n) {
-                return n === d.head
-            })
-                .attr('ry'),
-            Math.round(d.head.stroke_width / 2)
+            projection.tail.data.x,
+            projection.tail.data.y,
+            projection.head.data.x,
+            projection.head.data.y,
+            projection.head.data.rx,
+            projection.head.data.ry,
+            Math.round(projection.head.stroke_width/2)
         )
     }
 
@@ -954,31 +1003,25 @@ class GraphView extends React.Component {
         var d = node.data;
         var self = this;
         var edge = this.edge;
-        edge.filter(function (l) {
-            return l.tail === d
-        })
-            .attr('x1', d.x)
-            .attr('y1', d.y)
-            .attr('x2', function (d) {
-                var x2 = self.get_offset_points_for_projection(d).x;
-                return x2
-            })
-            .attr('y2', function (d) {
-                var y2 = self.get_offset_points_for_projection(d).y;
-                return y2
-            });
-
-        edge.filter(function (l) {
-            return l.head === d
-        })
-            .attr('x2', function (d) {
-                var x2 = self.get_offset_points_for_projection(d).x;
-                return x2
-            })
-            .attr('y2', function (d) {
-                var y2 = self.get_offset_points_for_projection(d).y;
-                return y2
-            });
+        var offset_pt;
+        node.efferents.forEach(
+            (projection)=>{
+                offset_pt = self.get_offset_points_for_projection(projection);
+                projection.selection
+                    .attr('x1', projection.data.tail.x)
+                    .attr('y1', projection.data.tail.y)
+                    .attr('x2', offset_pt.x)
+                    .attr('y2', offset_pt.y)
+            }
+        );
+        node.afferents.forEach(
+            (projection)=>{
+                offset_pt = self.get_offset_points_for_projection(projection);
+                projection.selection
+                    .attr('x2', offset_pt.x)
+                    .attr('y2', offset_pt.y)
+            }
+        );
 
         this.recurrent
             .attr('transform', (e) => {
@@ -1184,6 +1227,7 @@ class GraphView extends React.Component {
             let nodeHeight = self.state.node_height;
             var svg = this.createSVG();
             var container = this.createContainer(svg);
+            this.index = new Index();
             this.associateVisualInformationWithGraphNodes();
             this.associateVisualInformationWithGraphEdges();
             this.appendDefs(svg);
