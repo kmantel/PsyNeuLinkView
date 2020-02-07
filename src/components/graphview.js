@@ -55,7 +55,7 @@ class GraphView extends React.Component {
         this.componentDidUpdate = this.componentDidUpdate.bind(this);
         this.update_scroll = this.update_scroll.bind(this);
         this.update_script = this.update_script.bind(this);
-        this.drag_node = this.drag_node.bind(this);
+        this.move_node = this.move_node.bind(this);
         this.zoomed = this.zoomed.bind(this);
         this.move_graph = this.move_graph.bind(this);
         this.move_label_to_corresponding_node = this.move_label_to_corresponding_node.bind(this);
@@ -63,6 +63,9 @@ class GraphView extends React.Component {
     }
 
     componentWillMount() {
+        // document.querySelector(".graphview").on("keydown", function() {
+        //     console.log(d3.event)
+        // })
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
@@ -94,6 +97,7 @@ class GraphView extends React.Component {
         window.removeEventListener('resize', this.updateGraph);
         window.removeEventListener('wheel', this.capture_wheel);
         window.removeEventListener('keydown', this.capture_keys);
+        window.removeEventListener('keyup', this.update_script);
         var win = document.querySelector('.graph-view');
         if (win) {
             win.removeEventListener('scroll', this.update_scroll);
@@ -105,6 +109,7 @@ class GraphView extends React.Component {
         window.addEventListener('resize', this.updateGraph);
         window.addEventListener('wheel', this.capture_wheel, {passive: false});
         window.addEventListener('keydown', this.capture_keys);
+        window.addEventListener('keyup', this.update_script);
         add_context_menu('.graph-view', context_menu)
     }
 
@@ -119,6 +124,7 @@ class GraphView extends React.Component {
     }
 
     capture_keys(e) {
+        console.log(e)
         if (e.metaKey) {
             if (e.key === '+' || e.key === '=') {
                 this.nudge_graph_larger();
@@ -128,6 +134,44 @@ class GraphView extends React.Component {
             if (e.key === 'r') {
                 this.reset_graph()
             }
+            if (e.key === 'a'){
+                this.index.nodes.forEach(
+                    (node)=>{
+                        this.select_node(node)
+                    }
+                )
+            }
+        }
+        if (e.key==='ArrowUp'){
+            this.selected.forEach(
+                (node)=>{
+                    this.move_node(node, 0, -5/this.scaling_factor)
+                }
+            )
+        }
+        if (e.key==='ArrowDown'){
+            this.selected.forEach(
+                (node)=>{
+                    this.move_node(node, 0, 5/this.scaling_factor)
+                }
+            )
+        }
+        if (e.key==='ArrowRight'){
+            this.selected.forEach(
+                (node)=>{
+                    this.move_node(node, 5/this.scaling_factor, 0)
+                }
+            )
+        }
+        if (e.key==='ArrowLeft'){
+            this.selected.forEach(
+                (node)=>{
+                    this.move_node(node, -5/this.scaling_factor, 0)
+                }
+            )
+        }
+        if (e.key==='Escape'){
+            this.unselect_all()
         }
     }
 
@@ -717,7 +761,7 @@ class GraphView extends React.Component {
                         ('ownerSVGElement' in toElement && toElement.ownerSVGElement === svg.node()))) {
                     svg.selectAll("rect.selection").remove();
                 }
-            });
+            })
     }
 
     select_node(node) {
@@ -806,12 +850,12 @@ class GraphView extends React.Component {
         );
         self.selected.forEach(
             (s) => {
-                self.drag_node(s, dx, dy)
+                self.move_node(s, dx, dy)
             }
         )
     }
 
-    drag_node(node, dx, dy) {
+    move_node(node, dx, dy) {
         node.data.x += dx;
         node.data.y += dy;
         node.selection
