@@ -132,8 +132,6 @@ class GraphView extends React.Component {
     }
 
     update_script() {
-        var self = this;
-        console.log('updating');
         this.script_updater.write({styleJSON: JSON.stringify(this.stylesheet, null, 4)})
     }
 

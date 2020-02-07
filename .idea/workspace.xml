@@ -4,7 +4,6 @@
     <list default="true" id="00985d93-5b94-4b5c-82f7-e7117ff7b2e0" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/graphview.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/graphview.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/py/rpc_server.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/py/rpc_server.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/py/test/pnl_scripts/Rumelhart Semantic Network.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/py/test/pnl_scripts/Rumelhart Semantic Network.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -211,13 +210,13 @@
       <breakpoints>
         <line-breakpoint type="javascript">
           <url>file://$PROJECT_DIR$/src/components/graphview.js</url>
-          <line>1073</line>
+          <line>1071</line>
           <properties lambdaOrdinal="-1" />
           <option name="timeStamp" value="380" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/components/graphview.js</url>
-          <line>1024</line>
+          <line>1022</line>
           <properties lambdaOrdinal="-1" />
           <option name="timeStamp" value="381" />
         </line-breakpoint>
