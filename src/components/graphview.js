@@ -1087,6 +1087,7 @@ class GraphView extends React.Component {
             this.scale_graph_to_fit(this.fill_proportion);
             this.correct_projection_lengths_for_ellipse_sizes();
             this.center_graph_on_point();
+            this.parse_stylesheet();
             this.graph_bounding_box = this.get_graph_bounding_box();
             this.canvas_bounding_box = this.get_canvas_bounding_box();
             window.index = this.index;

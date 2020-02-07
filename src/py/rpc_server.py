@@ -182,9 +182,6 @@ def get_gv_json(name):
         }
 
     comp = name
-    # some compositions will randomly generate left or right handed versions of themselves.
-    # set the seed here to ensure deterministic graph representation.
-    random.seed(12345)
     pnl_container.pnl_objects['compositions'][comp]._analyze_graph()
     gv = pnl_container.pnl_objects['compositions'][comp].show_graph(output_fmt='gv',
                                                                     show_learning=True,
