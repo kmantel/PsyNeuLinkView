@@ -120,10 +120,11 @@ def load_script(filepath):
 def update_graphics_dict(stylesheet):
     ast = RedBaron(pnl_container.AST)
     gdict = ast.find('assign',lambda x: x.find('name','pnlv_graphics_spec'))
+    stylesheet_str = json.dumps(stylesheet, indent=4)
     if gdict:
-        gdict.value = json.dumps(stylesheet, indent=4, separators=(',', ':'))
+        gdict.value = stylesheet_str
     else:
-        ast.append(RedBaron(f'pnlv_graphics_spec = {stylesheet}').dumps())
+        ast.append(RedBaron(f'pnlv_graphics_spec = {stylesheet_str}').dumps())
     with open(pnl_container.filepath, 'w') as script:
         script.write(ast.dumps())
 

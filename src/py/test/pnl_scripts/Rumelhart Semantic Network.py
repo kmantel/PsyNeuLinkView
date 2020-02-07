@@ -40,3 +40,49 @@ gv = comp.show_graph(
         # output_fmt='gv',
         show_learning=True,
         show_controller=True)
+pnlv_graphics_spec = {
+    "components": {
+        "nodes": {
+            "Learning Mechanism for MappingProjection from REP_IN[RESULT] to REP_HIDDEN[InputPort-0]": {
+                "cx": 1039.683324776444,
+                "cy": 864.9019428327972
+            },
+            "REP_IN": {
+                "cx": 816.6440944297641,
+                "cy": 21.372523887484647
+            },
+            "MappingProjection from REP_IN[RESULT] to REP_HIDDEN[InputPort-0]": {
+                "cx": 1009.6440944297641,
+                "cy": 93.3725238874847
+            },
+            "REP_HIDDEN": {
+                "cx": 1009.6440944297641,
+                "cy": 165.3725238874847
+            },
+            "MappingProjection from REP_HIDDEN[RESULT] to REL_HIDDEN[InputPort-0]": {
+                "cx": 1413.6440944297642,
+                "cy": 237.3725238874847
+            },
+            "Learning Mechanism for MappingProjection from REP_HIDDEN[RESULT] to REL_HIDDEN[InputPort-0]": {
+                "cx": 1500.6440944297642,
+                "cy": 669.3725238874847
+            },
+            "Learning Mechanism for MappingProjection from REL_HIDDEN[RESULT] to PROP_OUT[InputPort-0]": {
+                "cx": 1508.6440944297642,
+                "cy": 597.3725238874847
+            },
+            "MappingProjection from REL_HIDDEN[RESULT] to PROP_OUT[InputPort-0]": {
+                "cx": 1555.6440944297642,
+                "cy": 381.3725238874847
+            },
+            "Comparator-1": {
+                "cx": 1598.6440944297642,
+                "cy": 525.3725238874847
+            },
+            "PROP_OUT": {
+                "cx": 1555.6440944297642,
+                "cy": 453.3725238874847
+            }
+        }
+    }
+}

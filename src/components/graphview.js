@@ -132,7 +132,7 @@ class GraphView extends React.Component {
     }
 
     update_script() {
-        this.script_updater.write({styleJSON: JSON.stringify(this.stylesheet, null, 4)})
+        this.script_updater.write({styleJSON: JSON.stringify(this.stylesheet)})
     }
 
     dist(x1, y1, x2, y2) {
