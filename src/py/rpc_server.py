@@ -196,7 +196,7 @@ def get_gv_json(name):
     return gv_d
 
 def serve():
-    server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
+    server = grpc.server(futures.ThreadPoolExecutor(max_workers=1))
     graph_pb2_grpc.add_ServeGraphServicer_to_server(GraphServer(), server)
     server.add_insecure_port('[::]:50051')
     server.start()
