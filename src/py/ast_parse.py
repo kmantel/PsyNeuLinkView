@@ -97,8 +97,8 @@ class DependencyGraph:
                                     'string', 'raw_string',
                                     'binary_string','string_chain']
                 if hasattr(i.value, "type") and i.value.type in acceptable_types or \
-                        hasattr(i.value, "type") and i.value.type == 'list' and self.check_list_node_for_types(i,
-                                                                                                               acceptable_types) or \
+                        hasattr(i.value, "type") and i.value.type == 'list' and \
+                        self.check_list_node_for_types(i,acceptable_types) or \
                         i.find('name', self.psyneulink_calls):
                     self.execute_node(i, namespace)
             elif i.find('call'):

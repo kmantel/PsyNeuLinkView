@@ -254,7 +254,6 @@ export default class Workspace extends React.Component {
                             window.fs.watchFile(filepath,{interval:10},()=>{
                                 console.log('change detected');
                                 if (!['loading',null].includes(self.state.graph)){
-                                    console.log('yup');
                                     rpc_client.get_style(self.state.filepath, ()=>{self.setState({graph_style:rpc_client.script_maintainer.style})})
                                 }
                             })

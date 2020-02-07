@@ -206,37 +206,40 @@ for i in range(1, len(stabilityFlexibility.controller.input_ports)):
 # print(activation.mod_gain)
 # decisionMaker.log.print_entries()
 pnlv_graphics_spec = {
-    "graph": {
-        "x": 0,
-        "y": 0
-    },
     "components": {
         "nodes": {
-            "Stimulus Info * Activity": {
-                "cx": 511.6756888724649,
-                "cy": 83.51351908091002
+            "Input": {
+                "cx": 335.1487381393846,
+                "cy": 285.67566282040366
             },
             "objective_mechanism-0": {
-                "cx": 504.62162698281645,
-                "cy": 299.5135190809102
+                "cx": 357.44613003086397,
+                "cy": 223.0811193633724
             },
             "OptimizationControlMechanism-0": {
-                "cx": 228.94594800794368,
-                "cy": 381.2432259224561
-            },
-            "DDM Integrator": {
-                "cx": 425.6756888724649,
-                "cy": 155.51351908091004
-            },
-            "Stimulus Info": {
-                "cx": 165.08107324548553,
-                "cy": 18.540541983939615
+                "cx": 201.229951136821,
+                "cy": 278.3244512725521
             },
             "DDM": {
-                "cx": 378.78378213418364,
-                "cy": 226.97297647837098
+                "cx": 332.68918918918916,
+                "cy": 264.5946615386654
+            },
+            "Activity": {
+                "cx": 232.04079174351045,
+                "cy": 191.9460104156185
+            },
+            "DDM Integrator": {
+                "cx": 973.6353332931931,
+                "cy": 218.00016361958274
+            },
+            "Stimulus Info * Activity": {
+                "cx": 425.0405895645554,
+                "cy": 187.08127195126303
+            },
+            "Stimulus Info": {
+                "cx": 448.17563175510713,
+                "cy": 343.72975141293296
             }
-        },
-        "edges": {}
+        }
     }
 }
