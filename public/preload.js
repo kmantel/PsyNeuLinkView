@@ -1,5 +1,6 @@
 const path = require('path');
 const fs = require('fs');
+const md5 = require('md5');
 const remote = require('electron').remote;
 const electron_root = remote.require('./electron');
 const dialog = remote.dialog;
@@ -25,3 +26,4 @@ window.remote = remote;
 window.rpc = remote.require(path.join(electron_root.app_path, 'src/utility/rpc/rpc_client'));
 window.config_client = config_client_obj;
 window.fs = fs;
+window.md5 = md5;

@@ -42,6 +42,8 @@ export default class Workspace extends React.Component {
         this.validate_server_status_and_load_script = this.validate_server_status_and_load_script.bind(this);
         this.handleErrors = this.handleErrors.bind(this);
         this.saveMouseData = this.saveMouseData.bind(this);
+        this.watch_file = this.watch_file.bind(this);
+        this.unwatch_file = this.unwatch_file.bind(this);
         this.setMenu();
     }
 
@@ -207,6 +209,21 @@ export default class Workspace extends React.Component {
         return true
     }
 
+    watch_file(filepath) {
+        var self = this;
+        window.fs.watchFile(filepath,{interval:10},()=>{
+            if (!['loading',null].includes(self.state.graph)){
+                rpc_client.get_style(self.state.filepath, ()=>{
+                    self.setState({graph_style:rpc_client.script_maintainer.style})
+                })
+            }
+        })
+    }
+
+    unwatch_file(filepath) {
+        window.fs.unwatchFile(filepath)
+    }
+
     load_script(filepath) {
         // var rpc_client = new window.rpc.rpc_client(proto_path, window.modulePath);
         var self = this;
@@ -249,13 +266,10 @@ export default class Workspace extends React.Component {
                             }
                             self.setState({
                                 graph: new_graph,
-                                graph_style: new_graph_style
+                                graph_style: new_graph_style,
+                                filepath: filepath,
                             });
-                            window.fs.watchFile(filepath,{interval:10},()=>{
-                                if (!['loading',null].includes(self.state.graph)){
-                                    rpc_client.get_style(self.state.filepath, ()=>{self.setState({graph_style:rpc_client.script_maintainer.style})})
-                                }
-                            })
+                            self.watch_file(filepath)
                         }
                     )
                 }
@@ -412,7 +426,10 @@ export default class Workspace extends React.Component {
                     }
                     graph={this.state.graph}
                     graph_style = {this.state.graph_style}
+                    filepath = {this.state.filepath}
                     rpc_client = {rpc_client}
+                    filewatch_fx = {this.watch_file}
+                    fileunwatch_fx = {this.unwatch_file}
                 />
             </div>,
             <div key="c">

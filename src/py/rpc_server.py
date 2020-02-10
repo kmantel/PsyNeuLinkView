@@ -81,7 +81,6 @@ class GraphServer(graph_pb2_grpc.ServeGraphServicer):
 
 pnl_container = Container()
 
-
 def get_new_pnl_objects(namespace):
     compositions = {}
     for cat in pnl.CompositionRegistry:
@@ -196,7 +195,7 @@ def get_gv_json(name):
     return gv_d
 
 def serve():
-    server = grpc.server(futures.ThreadPoolExecutor(max_workers=1))
+    server = grpc.server(futures.ThreadPoolExecutor(max_workers=2))
     graph_pb2_grpc.add_ServeGraphServicer_to_server(GraphServer(), server)
     server.add_insecure_port('[::]:50051')
     server.start()

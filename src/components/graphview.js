@@ -47,7 +47,8 @@ class GraphView extends React.Component {
         this.get_canvas_bounding_box = this.get_canvas_bounding_box.bind(this);
         this.get_graph_bounding_box = this.get_graph_bounding_box.bind(this);
         this.setGraph = this.setGraph.bind(this);
-        this.capture_keys = this.capture_keys.bind(this);
+        this.key_down = this.key_down.bind(this);
+        this.key_up = this.key_up.bind(this);
         this.scale_graph = this.scale_graph.bind(this);
         this.scale_graph_to_fit = this.scale_graph_to_fit.bind(this);
         this.updateGraph = this.updateGraph.bind(this);
@@ -57,6 +58,7 @@ class GraphView extends React.Component {
         this.update_script = this.update_script.bind(this);
         this.move_node = this.move_node.bind(this);
         this.zoomed = this.zoomed.bind(this);
+        this.blur = this.blur.bind(this);
         this.move_graph = this.move_graph.bind(this);
         this.move_label_to_corresponding_node = this.move_label_to_corresponding_node.bind(this);
         this.initial_state = this;
@@ -96,8 +98,9 @@ class GraphView extends React.Component {
     componentWillUnmount() {
         window.removeEventListener('resize', this.updateGraph);
         window.removeEventListener('wheel', this.capture_wheel);
-        window.removeEventListener('keydown', this.capture_keys);
-        window.removeEventListener('keyup', this.update_script);
+        window.removeEventListener('keydown', this.key_down);
+        window.removeEventListener('keyup', this.key_up);
+        window.removeEventListener('blur', this.blur);
         var win = document.querySelector('.graph-view');
         if (win) {
             win.removeEventListener('scroll', this.update_scroll);
@@ -108,8 +111,9 @@ class GraphView extends React.Component {
         this.setGraph();
         window.addEventListener('resize', this.updateGraph);
         window.addEventListener('wheel', this.capture_wheel, {passive: false});
-        window.addEventListener('keydown', this.capture_keys);
-        window.addEventListener('keyup', this.update_script);
+        window.addEventListener('keydown', this.key_down);
+        window.addEventListener('keyup', this.key_up);
+        window.addEventListener('blur', this.blur);
         add_context_menu('.graph-view', context_menu)
     }
 
@@ -123,8 +127,7 @@ class GraphView extends React.Component {
         return polar
     }
 
-    capture_keys(e) {
-        console.log(e)
+    key_down(e) {
         if (e.metaKey) {
             if (e.key === '+' || e.key === '=') {
                 this.nudge_graph_larger();
@@ -142,41 +145,46 @@ class GraphView extends React.Component {
                 )
             }
         }
-        if (e.key==='ArrowUp'){
-            this.selected.forEach(
-                (node)=>{
-                    this.move_node(node, 0, -5/this.scaling_factor)
-                }
-            )
-        }
-        if (e.key==='ArrowDown'){
-            this.selected.forEach(
-                (node)=>{
-                    this.move_node(node, 0, 5/this.scaling_factor)
-                }
-            )
-        }
-        if (e.key==='ArrowRight'){
-            this.selected.forEach(
-                (node)=>{
-                    this.move_node(node, 5/this.scaling_factor, 0)
-                }
-            )
-        }
-        if (e.key==='ArrowLeft'){
-            this.selected.forEach(
-                (node)=>{
-                    this.move_node(node, -5/this.scaling_factor, 0)
-                }
-            )
+        if (e.key.includes('Arrow') && this.selected.size > 0){
+            var increment;
+            var self = this;
+            e.preventDefault();
+            increment = (e.metaKey ? 25:1)/self.scaling_factor;
+            if (e.key==='ArrowUp'){
+                this.move_nodes(0, -increment);
+            }
+            if (e.key==='ArrowDown'){
+                this.move_nodes(0, increment);
+            }
+            if (e.key==='ArrowRight'){
+                this.move_nodes(increment, 0);
+            }
+            if (e.key==='ArrowLeft'){
+                this.move_nodes(-increment, 0);
+            }
         }
         if (e.key==='Escape'){
             this.unselect_all()
         }
     }
 
+    blur(e){
+        if (this.props.filewatch_fx && this.props.filepath){
+            this.props.filewatch_fx(this.props.filepath)
+        }
+    }
+
+    key_up(e){
+        var self = this;
+        if (e.key.includes('Arrow')){
+            self.update_script();
+        }
+    }
+
     update_script() {
-        this.script_updater.write({styleJSON: JSON.stringify(this.stylesheet)})
+        var stylesheet_str = JSON.stringify(this.stylesheet);
+        this.props.fileunwatch_fx(this.props.filepath);
+        this.script_updater.write({styleJSON: stylesheet_str});
     }
 
     dist(x1, y1, x2, y2) {
@@ -827,16 +835,9 @@ class GraphView extends React.Component {
         );
     }
 
-    drag_nodes(d) {
-        var dx, dy, origin_drag_node, in_bounds;
+    move_nodes(dx, dy) {
+        var in_bounds;
         var self = this;
-        origin_drag_node = this.index.lookup(d);
-        dx = d3.event.dx;
-        dy = d3.event.dy;
-        if (!self.selected.has(origin_drag_node)) {
-            self.unselect_all();
-            self.select_node(origin_drag_node);
-        }
         self.selected.forEach(
             (s) => {
                 in_bounds = self.node_movement_within_canvas_bounds(s, dx, dy);
@@ -858,6 +859,8 @@ class GraphView extends React.Component {
     move_node(node, dx, dy) {
         node.data.x += dx;
         node.data.y += dy;
+        node.data.x = +node.data.x.toFixed(2);
+        node.data.y = +node.data.y.toFixed(2);
         node.selection
             .attr('cx', node.data.x)
             .attr('cy', node.data.y);
@@ -1064,7 +1067,7 @@ class GraphView extends React.Component {
     }
 
     parse_stylesheet() {
-        var self, stylesheet, x_coord, y_coord, leftmost_node, topmost_node;
+        var self, hash, stylesheet, x_coord, y_coord, leftmost_node, topmost_node;
         self = this;
         stylesheet = this.props.graph_style;
         this.stylesheet = stylesheet;
@@ -1119,10 +1122,22 @@ class GraphView extends React.Component {
             this.index = new Index();
             this.drawProjections(container);
             this.drawNodes(container, (d) => {
-                self.drag_nodes(d)
+                var origin_drag_node;
+                origin_drag_node = this.index.lookup(d);
+                if (!self.selected.has(origin_drag_node)) {
+                    self.unselect_all();
+                    self.select_node(origin_drag_node);
+                }
+                self.move_nodes(d3.event.dx, d3.event.dy)
             });
             this.drawLabels(container, (d) => {
-                self.drag_nodes(d)
+                var origin_drag_node;
+                origin_drag_node = this.index.lookup(d);
+                if (!self.selected.has(origin_drag_node)) {
+                    self.unselect_all();
+                    self.select_node(origin_drag_node);
+                }
+                self.move_nodes(d3.event.dx, d3.event.dy)
             });
             this.resize_nodes_to_label_text();
             this.resize_recurrent_projections();

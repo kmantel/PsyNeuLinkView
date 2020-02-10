@@ -43,125 +43,125 @@ gv = comp.show_graph(
 pnlv_graphics_spec = {
     "components": {
         "nodes": {
-            "Learning Mechanism for MappingProjection from REP_IN[RESULT] to REP_HIDDEN[InputPort-0]": {
-                "cx": 1445.5655963374127,
-                "cy": 1254.7711747113399
-            },
             "REP_IN": {
-                "cx": 1222.526365990733,
-                "cy": 411.24175576602704
+                "cx": 185.67,
+                "cy": 548.77
             },
             "MappingProjection from REP_IN[RESULT] to REP_HIDDEN[InputPort-0]": {
-                "cx": 1415.526365990733,
-                "cy": 483.2417557660272
+                "cx": 378.67,
+                "cy": 620.77
             },
-            "REP_HIDDEN": {
-                "cx": 1415.526365990733,
-                "cy": 555.2417557660274
-            },
-            "MappingProjection from REP_HIDDEN[RESULT] to REL_HIDDEN[InputPort-0]": {
-                "cx": 1819.526365990733,
-                "cy": 627.2417557660274
-            },
-            "Learning Mechanism for MappingProjection from REP_HIDDEN[RESULT] to REL_HIDDEN[InputPort-0]": {
-                "cx": 1906.526365990733,
-                "cy": 1059.2417557660274
-            },
-            "Learning Mechanism for MappingProjection from REL_HIDDEN[RESULT] to PROP_OUT[InputPort-0]": {
-                "cx": 1914.526365990733,
-                "cy": 987.2417557660274
-            },
-            "MappingProjection from REL_HIDDEN[RESULT] to PROP_OUT[InputPort-0]": {
-                "cx": 1961.526365990732,
-                "cy": 771.2417557660274
-            },
-            "Comparator-1": {
-                "cx": 2004.5263659907312,
-                "cy": 915.2417557660274
-            },
-            "PROP_OUT": {
-                "cx": 1961.526365990732,
-                "cy": 843.2417557660274
-            },
-            "MappingProjection from REL_IN[RESULT] to REL_HIDDEN[InputPort-0]": {
-                "cx": 3015.792269571672,
-                "cy": 1565.6099443622666
-            },
-            "Learning Mechanism for MappingProjection from REL_IN[RESULT] to REL_HIDDEN[InputPort-0]": {
-                "cx": 3015.792269571672,
-                "cy": 1493.6099443622666
-            },
-            "REL_IN": {
-                "cx": 3565.792269571672,
-                "cy": 1421.6099443622666
-            },
-            "Learning Mechanism for MappingProjection from REL_HIDDEN[RESULT] to QUAL_OUT[InputPort-0]": {
-                "cx": 3090.792269571672,
-                "cy": 1421.6099443622666
-            },
-            "Comparator-2": {
-                "cx": 3194.792269571672,
-                "cy": 1349.6099443622666
+            "Learning Mechanism for MappingProjection from REP_IN[RESULT] to REP_HIDDEN[InputPort-0]": {
+                "cx": 2918.64,
+                "cy": 828.39
             },
             "Target-3": {
-                "cx": 2490.792269571672,
-                "cy": 1277.6099443622666
-            },
-            "Target-2": {
-                "cx": 3256.792269571672,
-                "cy": 1277.6099443622666
-            },
-            "Learning Mechanism for MappingProjection from REL_HIDDEN[RESULT] to ACT_OUT[InputPort-0]": {
-                "cx": 2354.792269571672,
-                "cy": 1421.6099443622666
-            },
-            "QUAL_OUT": {
-                "cx": 3150.792269571672,
-                "cy": 1277.6099443622666
+                "cx": 2750.9,
+                "cy": 1104.08
             },
             "Comparator-3": {
-                "cx": 2439.792269571672,
-                "cy": 1349.6099443622666
+                "cx": 1978.89,
+                "cy": 1028.06
             },
-            "MappingProjection from REL_HIDDEN[RESULT] to QUAL_OUT[InputPort-0]": {
-                "cx": 3150.792269571672,
-                "cy": 1205.6099443622666
+            "Target-2": {
+                "cx": 2269.9,
+                "cy": 1104.08
             },
-            "MappingProjection from REL_HIDDEN[RESULT] to ACT_OUT[InputPort-0]": {
-                "cx": 2389.792269571672,
-                "cy": 1205.6099443622666
-            },
-            "ACT_OUT": {
-                "cx": 2389.792269571672,
-                "cy": 1277.6099443622666
-            },
-            "REL_HIDDEN": {
-                "cx": 1994.792269571673,
-                "cy": 1133.6099443622666
-            },
-            "Learning Mechanism for MappingProjection from REL_HIDDEN[RESULT] to REP_OUT[InputPort-0]": {
-                "cx": 1648.7922695716748,
-                "cy": 1421.6099443622666
-            },
-            "Target": {
-                "cx": 1754.7922695716748,
-                "cy": 1277.6099443622666
-            },
-            "Comparator": {
-                "cx": 1726.7922695716748,
-                "cy": 1349.6099443622666
-            },
-            "MappingProjection from REL_HIDDEN[RESULT] to REP_OUT[InputPort-0]": {
-                "cx": 1598.7922695716748,
-                "cy": 1205.6099443622666
-            },
-            "REP_OUT": {
-                "cx": 1659.7922695716748,
-                "cy": 1277.6099443622666
+            "Comparator-2": {
+                "cx": 2207.9,
+                "cy": 1176.08
             },
             "Target-1": {
-                "cx": 957.7922695716748,
-                "cy": 1277.6099443622666
+                "cx": 1031.67,
+                "cy": 980.77
+            },
+            "Comparator-1": {
+                "cx": 967.67,
+                "cy": 1052.77
+            },
+            "Target": {
+                "cx": 1747.67,
+                "cy": 980.77
+            },
+            "Comparator": {
+                "cx": 1217.88,
+                "cy": 1029.82
+            },
+            "REL_IN": {
+                "cx": 3421.9,
+                "cy": 1248.08
+            },
+            "MappingProjection from REL_IN[RESULT] to REL_HIDDEN[InputPort-0]": {
+                "cx": 2206.54,
+                "cy": 207.51
+            },
+            "Learning Mechanism for MappingProjection from REL_IN[RESULT] to REL_HIDDEN[InputPort-0]": {
+                "cx": 1924.98,
+                "cy": 225.91
+            },
+            "REL_HIDDEN": {
+                "cx": 1885.67,
+                "cy": 836.77
+            },
+            "Learning Mechanism for MappingProjection from REP_HIDDEN[RESULT] to REL_HIDDEN[InputPort-0]": {
+                "cx": 845.07,
+                "cy": 212.33
+            },
+            "MappingProjection from REL_HIDDEN[RESULT] to REP_OUT[InputPort-0]": {
+                "cx": 972.31,
+                "cy": 509.67
+            },
+            "Learning Mechanism for MappingProjection from REL_HIDDEN[RESULT] to REP_OUT[InputPort-0]": {
+                "cx": 930.4,
+                "cy": 724.16
+            },
+            "MappingProjection from REL_HIDDEN[RESULT] to PROP_OUT[InputPort-0]": {
+                "cx": 302.37,
+                "cy": 463.47
+            },
+            "Learning Mechanism for MappingProjection from REL_HIDDEN[RESULT] to PROP_OUT[InputPort-0]": {
+                "cx": 274.44,
+                "cy": 804.82
+            },
+            "MappingProjection from REL_HIDDEN[RESULT] to QUAL_OUT[InputPort-0]": {
+                "cx": 2267.37,
+                "cy": 490.69
+            },
+            "Learning Mechanism for MappingProjection from REL_HIDDEN[RESULT] to QUAL_OUT[InputPort-0]": {
+                "cx": 2142.32,
+                "cy": 895.45
+            },
+            "MappingProjection from REL_HIDDEN[RESULT] to ACT_OUT[InputPort-0]": {
+                "cx": 1918.56,
+                "cy": 571.56
+            },
+            "Learning Mechanism for MappingProjection from REL_HIDDEN[RESULT] to ACT_OUT[InputPort-0]": {
+                "cx": 1385.77,
+                "cy": 931.92
+            },
+            "MappingProjection from REP_HIDDEN[RESULT] to REL_HIDDEN[InputPort-0]": {
+                "cx": 1576.89,
+                "cy": 338.39
+            },
+            "REP_HIDDEN": {
+                "cx": 378.67,
+                "cy": 692.77
+            },
+            "REP_OUT": {
+                "cx": 1842.67,
+                "cy": 980.77
+            },
+            "PROP_OUT": {
+                "cx": 924.67,
+                "cy": 980.77
+            },
+            "QUAL_OUT": {
+                "cx": 2163.9,
+                "cy": 1104.08
+            },
+            "ACT_OUT": {
+                "cx": 2851.9,
+                "cy": 1104.08
             }
         }
     }
