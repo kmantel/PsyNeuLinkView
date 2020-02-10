@@ -859,15 +859,15 @@ class GraphView extends React.Component {
     move_node(node, dx, dy) {
         node.data.x += dx;
         node.data.y += dy;
-        node.data.x = +node.data.x.toFixed(2);
-        node.data.y = +node.data.y.toFixed(2);
+        node.data.x = +(node.data.x*this.scaling_factor).toFixed(0)/this.scaling_factor;
+        node.data.y = +(node.data.y*this.scaling_factor).toFixed(0)/this.scaling_factor;
         node.selection
             .attr('cx', node.data.x)
             .attr('cy', node.data.y);
         this.stylesheet.components.nodes[node.name] =
             {
-                'cx': node.data.x,
-                'cy': node.data.y
+                'x': +((node.data.x - node.data.rx) * this.scaling_factor).toFixed(0),
+                'y': +((node.data.y - node.data.ry) * this.scaling_factor).toFixed(0)
             };
         this.move_label_to_corresponding_node(node);
         this.refresh_edges_for_node(node);
@@ -1072,24 +1072,6 @@ class GraphView extends React.Component {
         stylesheet = this.props.graph_style;
         this.stylesheet = stylesheet;
         if ('graph' in stylesheet) {
-            // if ('fill_proportion' in stylesheet.graph) {
-            //     self.scale_graph_to_fit(parseFloat(stylesheet.graph.fill_proportion));
-            // }
-            if ('x' in stylesheet.graph) {
-                leftmost_node = this.index.get_leftmost_node();
-                x_coord = parseFloat(stylesheet.graph.x);
-                self.move_graph(
-                    (x_coord + (leftmost_node.data.stroke_width * self.scaling_factor) - self.get_graph_bounding_box().x)
-                    , 0
-                )
-            }
-            if ('y' in stylesheet.graph) {
-                topmost_node = this.index.get_topmost_node();
-                y_coord = parseFloat(stylesheet.graph.y);
-                self.move_graph(0,
-                    (y_coord + (topmost_node.data.stroke_width * self.scaling_factor) - self.get_graph_bounding_box().y)
-                )
-            }
         }
         if ('components' in stylesheet) {
             if ('nodes' in stylesheet.components) {
@@ -1097,9 +1079,9 @@ class GraphView extends React.Component {
                 nodes = Object.keys(stylesheet.components.nodes);
                 nodes.forEach(
                     (node) => {
-                        cx = stylesheet.components.nodes[node].cx;
-                        cy = stylesheet.components.nodes[node].cy;
                         pnlv_node = self.index.lookup(node);
+                        cx = (stylesheet.components.nodes[node].x/this.scaling_factor) + pnlv_node.data.rx + Math.round(pnlv_node.data.stroke_width/2);
+                        cy = (stylesheet.components.nodes[node].y/this.scaling_factor) + pnlv_node.data.ry + Math.round(pnlv_node.data.stroke_width/2);
                         pnlv_node.data.x = cx;
                         pnlv_node.data.y = cy;
                         pnlv_node.selection

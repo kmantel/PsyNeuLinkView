@@ -172,14 +172,3 @@ def run(bin_execute):
         comp.results = []
 
     return results
-
-pnlv_graphics_spec = {
-    "components": {
-        "nodes": {
-            "COLORS_HIDDEN": {
-                "cx": 300.98,
-                "cy": 148.82
-            }
-        }
-    }
-}
