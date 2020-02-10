@@ -205,3 +205,41 @@ for i in range(1, len(stabilityFlexibility.controller.input_ports)):
 # print()
 # print(activation.mod_gain)
 # decisionMaker.log.print_entries()
+pnlv_graphics_spec = {
+    "components": {
+        "nodes": {
+            "Stimulus Info * Activity": {
+                "x": 275,
+                "y": 50
+            },
+            "DDM Integrator": {
+                "x": 1322,
+                "y": 286
+            },
+            "Input": {
+                "x": 877,
+                "y": 417
+            },
+            "Activity": {
+                "x": 568,
+                "y": 237
+            },
+            "objective_mechanism-0": {
+                "x": 274,
+                "y": 569
+            },
+            "Stimulus Info": {
+                "x": 1099,
+                "y": 18
+            },
+            "DDM": {
+                "x": 1119,
+                "y": 417
+            },
+            "OptimizationControlMechanism-0": {
+                "x": 661,
+                "y": 104
+            }
+        }
+    }
+}

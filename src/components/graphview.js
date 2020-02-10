@@ -175,10 +175,7 @@ class GraphView extends React.Component {
     }
 
     key_up(e){
-        var self = this;
-        if (e.key.includes('Arrow')){
-            self.update_script();
-        }
+        this.update_script();
     }
 
     update_script() {
@@ -555,6 +552,7 @@ class GraphView extends React.Component {
 
     drawLabels(container, labelDragFunction) {
         var self = this;
+        var offset_from_top_of_node = 3;
         var label = container.append('g')
             .attr('class', 'label')
             .selectAll('text')
@@ -566,7 +564,7 @@ class GraphView extends React.Component {
                 return d.x
             })
             .attr('y', function (d) {
-                return d.y
+                return d.y + offset_from_top_of_node
             })
             .attr('font-size', function (d) {
                 d.text['font-size'] = '10';
@@ -866,8 +864,8 @@ class GraphView extends React.Component {
             .attr('cy', node.data.y);
         this.stylesheet.components.nodes[node.name] =
             {
-                'x': +((node.data.x - node.data.rx) * this.scaling_factor).toFixed(0),
-                'y': +((node.data.y - node.data.ry) * this.scaling_factor).toFixed(0)
+                'x': +((node.data.x - node.data.rx) * this.scaling_factor).toFixed(0) - node.data.stroke_width,
+                'y': +((node.data.y - node.data.ry) * this.scaling_factor).toFixed(0) - node.data.stroke_width
             };
         this.move_label_to_corresponding_node(node);
         this.refresh_edges_for_node(node);
@@ -1080,8 +1078,8 @@ class GraphView extends React.Component {
                 nodes.forEach(
                     (node) => {
                         pnlv_node = self.index.lookup(node);
-                        cx = (stylesheet.components.nodes[node].x/this.scaling_factor) + pnlv_node.data.rx + Math.round(pnlv_node.data.stroke_width/2);
-                        cy = (stylesheet.components.nodes[node].y/this.scaling_factor) + pnlv_node.data.ry + Math.round(pnlv_node.data.stroke_width/2);
+                        cx = (stylesheet.components.nodes[node].x/this.scaling_factor) + pnlv_node.data.rx + pnlv_node.data.stroke_width/this.scaling_factor;
+                        cy = (stylesheet.components.nodes[node].y/this.scaling_factor) + pnlv_node.data.ry + pnlv_node.data.stroke_width/this.scaling_factor;
                         pnlv_node.data.x = cx;
                         pnlv_node.data.y = cy;
                         pnlv_node.selection
