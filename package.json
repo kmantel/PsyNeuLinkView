@@ -15,7 +15,6 @@
     "electron-log": "^3.0.9",
     "fix-path": "^2.1.0",
     "grpc": "^1.24.1",
-    "md5": "^2.2.1",
     "re-resizable": "^6.1.0",
     "react-dom": "^16.10.2",
     "react-grid-layout": "^0.16.6",
