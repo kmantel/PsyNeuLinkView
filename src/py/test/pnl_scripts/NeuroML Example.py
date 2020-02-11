@@ -51,21 +51,3 @@ composition.add_projection(
     receiver=fnPop2,
 )
 composition.show_graph()
-pnlv_graphics_spec = {
-    "components": {
-        "nodes": {
-            "syn1": {
-                "cx": 159.68062481908743,
-                "cy": 50.25548201692318
-            },
-            "fnPop1": {
-                "cx": 65.86826214818899,
-                "cy": 61.776443778397805
-            },
-            "fnPop2": {
-                "cx": 281.437109804439,
-                "cy": 108.22754317414973
-            }
-        }
-    }
-}

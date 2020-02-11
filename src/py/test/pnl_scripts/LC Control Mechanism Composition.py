@@ -53,18 +53,3 @@ S.show_graph(show_model_based_optimizer=True)
 
 # result = S.run(inputs={A: [[1.0], [1.0], [1.0], [1.0], [1.0]]},
 #               call_after_trial=functools.partial(report_trial, S))
-
-pnlv_graphics_spec = {
-    "components": {
-        "nodes": {
-            "B": {
-                "x": 989,
-                "y": 257
-            },
-            "A": {
-                "x": 1142,
-                "y": 177
-            }
-        }
-    }
-}

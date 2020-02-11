@@ -26,3 +26,4 @@ yarn-error.log*
 /node_modules/
 public/config.ini
 /src/py/test/pnl_scripts/
+/src/py/test/pnl_scripts/
