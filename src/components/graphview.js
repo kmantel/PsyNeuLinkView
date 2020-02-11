@@ -532,7 +532,8 @@ class GraphView extends React.Component {
             })
             .attr('fill', 'white')
             .attr('stroke-width', function (d) {
-                return d.stroke_width ? d.stroke_width : 1
+                d.stroke_width = d.stroke_width ? d.stroke_width : 1;
+                return d.stroke_width
             })
             .attr('stroke', function (d) {
                 return d.color
@@ -840,7 +841,7 @@ class GraphView extends React.Component {
         node_dom_rect = node.dom.getBoundingClientRect();
         node_width = node_dom_rect.width;
         node_height = node_dom_rect.height;
-        stroke_width = node.data.stroke_width ? node.data.stroke_width : 1; // hack: for some reason some nodes' stroke widths arent being populated
+        stroke_width = node.data.stroke_width;
         x_shift = dx * this.scaling_factor;
         y_shift = dy * this.scaling_factor;
         return (
