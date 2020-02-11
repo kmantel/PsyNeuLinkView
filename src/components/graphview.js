@@ -191,7 +191,7 @@ class GraphView extends React.Component {
         return c
     }
 
-    getPointOnRect(angle, w, h) {
+    getnRect(angle, w, h) {
         var sine = Math.sin(angle), cosine = Math.cos(angle);   // Calculate once and store, to make quicker and cleaner
         var dy = Math.sin > 0 ? h / 2 : h / -2;                  // Distance to top or bottom edge (from center)
         var dx = Math.cos > 0 ? w / 2 : w / -2;                  // Distance to left or right edge (from center)
@@ -453,6 +453,7 @@ class GraphView extends React.Component {
                     recurrent_projs.push(e);
                 }
             });
+
         var recurrent = container.append('g')
             .attr('class', 'recurrent')
             .selectAll('path')
@@ -620,13 +621,32 @@ class GraphView extends React.Component {
         );
     }
 
+    rad2deg(rad){
+        return rad*180/Math.PI
+    }
+
+    deg2rad(deg){
+        return deg*Math.PI/180
+    }
+
+    get_terminal_angles_of_arc(start_pt, end_pt, centerpoint){
+        var start_angle, end_angle;
+        start_angle = Math.atan2(start_pt.y-centerpoint.y, start_pt.x-centerpoint.x);
+        end_angle = Math.atan2(end_pt.y-centerpoint.y, end_pt.x-centerpoint.x);
+        return {
+            start: start_angle,
+            end: end_angle
+        }
+    }
+
     get_point_at_angle_of_ellipse(xrad, yrad, angle) {
         var x, y;
-        x = xrad * yrad / Math.sqrt((yrad ** 2 + xrad ** 2 * Math.tan(angle) ** 2));
+        x = xrad * yrad / Math.sqrt(yrad ** 2 + xrad ** 2 * Math.tan(angle) ** 2);
         if (-Math.PI / 2 < angle && angle < Math.PI / 2) {
             x = -x
         }
         y = x * Math.tan(angle);
+        return {x:x, y:y}
     }
 
     move_graph(dx = 0, dy = 0) {
