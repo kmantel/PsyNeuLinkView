@@ -181,6 +181,7 @@ class GraphView extends React.Component {
     update_script() {
         var stylesheet_str = JSON.stringify(this.stylesheet);
         this.props.fileunwatch_fx(this.props.filepath);
+        console.log('updating')
         this.script_updater.write({styleJSON: stylesheet_str});
     }
 
@@ -900,7 +901,7 @@ class GraphView extends React.Component {
     }
 
     refresh_edges_for_node(node) {
-        var self, offset_pt, recurrent_projs, recurrent_arc_offset;
+        var self, offset_pt, recurrent_projs;
         recurrent_projs = new Set();
         self = this;
         node.efferents.forEach(

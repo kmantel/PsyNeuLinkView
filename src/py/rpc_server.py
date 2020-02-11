@@ -2,7 +2,7 @@ import graph_pb2
 import graph_pb2_grpc
 import grpc
 from concurrent import futures
-from redbaron import RedBaron
+import redbaron
 import json
 import sys
 import subprocess, os
@@ -10,6 +10,7 @@ from xml.etree.cElementTree import fromstring
 from collections import defaultdict
 import ast_parse
 import random
+import warnings
 
 my_env = os.environ
 
@@ -97,7 +98,7 @@ def get_graphics_dict(namespace):
 
 def load_style(filepath):
     file = open(filepath, 'r').read()
-    ast = RedBaron(file)
+    ast = redbaron.RedBaron(file)
     gdict = ast.find('assign',lambda x: x.find('name','pnlv_graphics_spec'))
     namespace = {}
     if gdict:
@@ -117,15 +118,17 @@ def load_script(filepath):
     return pnl_container.hashable_pnl_objects['compositions']
 
 def update_graphics_dict(stylesheet):
-    ast = RedBaron(pnl_container.AST)
+    ast = redbaron.RedBaron(pnl_container.AST)
     gdict = ast.find('assign',lambda x: x.find('name','pnlv_graphics_spec'))
     stylesheet_str = json.dumps(stylesheet, indent=4)
     if gdict:
         gdict.value = stylesheet_str
+        ast = ast.dumps()
     else:
-        ast.append(RedBaron(f'pnlv_graphics_spec = {stylesheet_str}').dumps())
+        ast = ast.dumps() + f'\n# PsyNeuLinkView Graphics Info \npnlv_graphics_spec = {stylesheet_str}\n'
+    pnl_container.AST = ast
     with open(pnl_container.filepath, 'w') as script:
-        script.write(ast.dumps())
+        script.write(ast)
 
 def get_gv_json(name):
     def etree_to_dict(t):
