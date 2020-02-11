@@ -114,7 +114,7 @@ class GraphView extends React.Component {
         window.addEventListener('keydown', this.key_down);
         window.addEventListener('keyup', this.key_up);
         window.addEventListener('blur', this.blur);
-        add_context_menu('.graph-view', context_menu)
+        // add_context_menu('.graph-view', context_menu)
     }
 
     cartesian_to_polar(x, y, cx, cy) {
@@ -128,7 +128,7 @@ class GraphView extends React.Component {
     }
 
     key_down(e) {
-        if (e.metaKey) {
+        if (e.metaKey || e.ctrlKey) {
             if (e.key === '+' || e.key === '=') {
                 this.nudge_graph_larger();
             } else if (e.key === '-') {
@@ -149,7 +149,7 @@ class GraphView extends React.Component {
             var increment;
             var self = this;
             e.preventDefault();
-            increment = (e.metaKey ? 25:1)/self.scaling_factor;
+            increment = (e.metaKey||e.ctrlKey ? 25:1)/self.scaling_factor;
             if (e.key==='ArrowUp'){
                 this.move_nodes(0, -increment);
             }
@@ -234,7 +234,7 @@ class GraphView extends React.Component {
     }
 
     capture_wheel(e) {
-        if (e.metaKey) {
+        if (e.metaKey||e.ctrlKey) {
             this.mouse_offset = {
                 x: e.offsetX,
                 y: e.offsetY
@@ -693,7 +693,7 @@ class GraphView extends React.Component {
         svg
             .on('mousedown', function () {
                     // don't fire if command is pressed. command unlocks different options
-                    if (!d3.event.metaKey) {
+                    if (!(d3.event.metaKey || d3.event.ctrlKey)) {
                         var anchor_pt = d3.mouse(this);
                         var processed_anchor_pt = [
                             {anchor: {x: anchor_pt[0], y: anchor_pt[1]}}
@@ -1040,7 +1040,7 @@ class GraphView extends React.Component {
         var d3e = d3.select('svg.graph');
         var win = document.querySelector('.graph-view')
         if (d3.event.sourceEvent && d3.event.sourceEvent.type === 'mousemove') {
-            if (d3.event.sourceEvent.metaKey) {
+            if (d3.event.sourceEvent.metaKey || d3.event.sourceEvent.ctrlKey) {
                 var xScroll = win.scrollLeft - d3.event.sourceEvent.movementX;
                 var yScroll = win.scrollTop - d3.event.sourceEvent.movementY;
             } else {
@@ -1071,7 +1071,12 @@ class GraphView extends React.Component {
         this.zoom = zoom
             .scaleExtent([1, 3])
             .filter(() => {
-                return d3.event.type.includes("mouse") && (d3.event.metaKey || (d3.event.sourceEvent && !d3.event.sourceEvent.type === "wheel"))
+                return d3.event.type.includes("mouse")
+                    && (
+                        d3.event.ctrlKey
+                        || d3.event.metaKey
+                        || (d3.event.sourceEvent && !d3.event.sourceEvent.type === "wheel")
+                    )
             });
         var d3e = d3.select('svg.graph');
         d3e.call(this.zoom
