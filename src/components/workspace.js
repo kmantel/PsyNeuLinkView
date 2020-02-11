@@ -288,9 +288,8 @@ export default class Workspace extends React.Component {
         var self, previous_title, win;
         self = this;
         win = window.remote.getCurrentWindow();
-        win.setTitle('PsyNeuLinkView');
         self.filepath = filepath;
-        self.setState({graph: "loading"});
+        self.setState({graph: "loading"}, ()=>{win.setTitle('PsyNeuLinkView')});
         window.electron_root.addRecentDocument(filepath);
         window.electron_root.restart_rpc_server(
             ()=>{
