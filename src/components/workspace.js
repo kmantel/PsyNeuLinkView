@@ -8,6 +8,7 @@ import SettingsPane from './settings'
 import ErrorDispatcher from "../utility/errors/dispatcher";
 import fs from 'fs'
 const path = require('path');
+const os = require('os');
 var proto_path = path.join(window.electron_root.app_path, 'src', 'protos', 'graph.proto');
 var rpc_client = new window.rpc.rpc_client(proto_path, window.modulePath);
 
@@ -174,8 +175,8 @@ export default class Workspace extends React.Component {
         ).then((paths) => {
                 var pathArray = paths.filePaths;
                 if (pathArray.length > 0) {
-                    self.setState({'filepath':pathArray[0]})
-                    self.validate_server_status_and_load_script(pathArray[0])
+                    self.setState({'filepath':pathArray[0]});
+                    self.validate_server_status_and_load_script(pathArray[0]);
                 }
             }
         )
@@ -225,8 +226,9 @@ export default class Workspace extends React.Component {
     }
 
     load_script(filepath) {
-        // var rpc_client = new window.rpc.rpc_client(proto_path, window.modulePath);
+        var win;
         var self = this;
+        win = window.remote.getCurrentWindow();
         self.setState({'filepath':filepath});
         rpc_client.load_script(filepath, (err) => {
                 if (err) {
@@ -269,7 +271,12 @@ export default class Workspace extends React.Component {
                                 graph_style: new_graph_style,
                                 filepath: filepath,
                             });
-                            self.watch_file(filepath)
+                            self.watch_file(filepath);
+                            var homedir = window.remote.app.getPath('home');
+                            if (filepath.startsWith(homedir)){
+                                filepath = `~${filepath.slice(homedir.length)}`
+                            }
+                            window.remote.getCurrentWindow().setTitle(`${composition} \u2014 ${filepath}`)
                         }
                     )
                 }
@@ -278,8 +285,10 @@ export default class Workspace extends React.Component {
     }
 
     async validate_server_status_and_load_script(filepath) {
-        var filepath = filepath;
-        var self = this;
+        var self, previous_title, win;
+        self = this;
+        win = window.remote.getCurrentWindow();
+        win.setTitle('PsyNeuLinkView');
         self.filepath = filepath;
         self.setState({graph: "loading"});
         window.electron_root.addRecentDocument(filepath);

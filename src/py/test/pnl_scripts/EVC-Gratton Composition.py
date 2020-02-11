@@ -177,3 +177,49 @@ for simulation in range(len(evc_gratton.simulation_results)):
     assert np.allclose(expected_sim_results_array[simulation],
                        # Note: Skip decision variable OutputPort
                        evc_gratton.simulation_results[simulation][1:])
+pnlv_graphics_spec = {
+    "components": {
+        "nodes": {
+            "B": {
+                "x": 623,
+                "y": 162
+            },
+            "Flanker Stimulus": {
+                "x": 1089,
+                "y": 3
+            },
+            "Automatic Component": {
+                "x": 935,
+                "y": 166
+            },
+            "Flanker Representation": {
+                "x": 1100,
+                "y": 808
+            },
+            "Target Stimulus": {
+                "x": 594,
+                "y": 52
+            },
+            "Target Representation": {
+                "x": 679,
+                "y": 808
+            },
+            "Decision": {
+                "x": 1060,
+                "y": 324
+            },
+            "objective_mechanism-0": {
+                "x": 712,
+                "y": 487
+            },
+            "OptimizationControlMechanism-0": {
+                "x": 620,
+                "y": 647
+            },
+            "reward": {
+                "x": 801,
+                "y": 324
+            }
+        }
+    }
+}

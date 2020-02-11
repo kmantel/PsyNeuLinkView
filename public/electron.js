@@ -422,6 +422,7 @@ function createWindow() {
             )
         }
     );
+    mainWindow.setTitle('test')
 }
 
 app.on('ready', function () {
