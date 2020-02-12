@@ -242,9 +242,9 @@ class GraphView extends React.Component {
             };
             e.preventDefault();
             if (e.deltaY < 0) {
-                this.svg.call(this.zoom.scaleBy, 1.1, [e.offsetX, e.offsetY]);
+                this.svg.call(this.zoom.scaleBy, 1.02, [e.offsetX, e.offsetY]);
             } else {
-                this.svg.call(this.zoom.scaleBy, 0.9, [e.offsetX, e.offsetY]);
+                this.svg.call(this.zoom.scaleBy, 0.98, [e.offsetX, e.offsetY]);
             }
         }
     }
