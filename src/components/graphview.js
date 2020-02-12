@@ -60,8 +60,10 @@ class GraphView extends React.Component {
         this.zoomed = this.zoomed.bind(this);
         this.blur = this.blur.bind(this);
         this.move_graph = this.move_graph.bind(this);
+        this.refresh_edges_for_node = this.refresh_edges_for_node.bind(this);
         this.move_label_to_corresponding_node = this.move_label_to_corresponding_node.bind(this);
         this.initial_state = this;
+        this.d3 = d3;
     }
 
     componentWillMount() {
@@ -461,12 +463,17 @@ class GraphView extends React.Component {
             .data(recurrent_projs)
             .enter()
             .append('path')
-            .attr('d', self.generate_arc())
+            // .attr('d', self.generate_arc())
+            .attr('d', (d)=>{
+                return self.get_recurrent_arc_for_node(d.head)
+            })
+            .attr('fill', 'white')
+            .attr('stroke', 'black')
             .attr('transform', (e) => {
                 var recurrent_arc_offset = 10;
                 var arc_x = e.head.x;
                 var arc_y = e.head.y;
-                return `translate(${arc_x - parseFloat(e.head.ellipse.rx / 2 + recurrent_arc_offset)},${arc_y})`
+                return `translate(${arc_x},${arc_y})`
             });
         d3.selectAll('g.edge line')
             .filter(
@@ -515,7 +522,7 @@ class GraphView extends React.Component {
             .append('ellipse')
             .attr('id', function (d) {
                 self.id_i += 1;
-                return `${self.id_i - 1}`
+                return `n${self.id_i - 1}`
             })
             .attr('rx', function (d) {
                 d.rx = nodeWidth;
@@ -641,16 +648,75 @@ class GraphView extends React.Component {
         }
     }
 
-    get_point_at_angle_of_ellipse(xrad, yrad, angle) {
-        var x, y;
-        x = xrad * yrad / Math.sqrt(yrad ** 2 + xrad ** 2 * Math.tan(angle) ** 2);
-        if (-Math.PI / 2 < angle && angle < Math.PI / 2) {
-            x = -x
-        }
-        y = x * Math.tan(angle);
-        return {x:x, y:y}
-    }
+    // get_recurrent_arc_for_node(node) {
+    //     var left_edge, top_edge, bottom_edge, arc_start, arc_end, arc_radius, arc_centerpoint, arc_offset, terminal_angles, arc;
+    //     node = this.index.lookup(node);
+    //     left_edge = node.data.x - node.data.rx;
+    //     top_edge = node.data.y - node.data.ry;
+    //     bottom_edge = node.data.y + node.data.ry;
+    //     arc_start = {
+    //         x: node.data.x - node.data.rx / 2,
+    //         y: top_edge
+    //     };
+    //     arc_end = {
+    //         x: node.data.x - node.data.rx / 2,
+    //         y: bottom_edge
+    //     };
+    //     arc_offset = 10;
+    //     arc_radius = Math.abs(left_edge-arc_offset-arc_start.x)/2
+    //     arc_centerpoint = {
+    //         x: arc_start.x - arc_radius,
+    //         y: node.data.y
+    //     };
+    //     terminal_angles = this.get_terminal_angles_of_arc(arc_start, arc_end, arc_centerpoint);
+    //     arc = d3.arc()
+    //         .innerRadius(arc_radius-1)
+    //         .outerRadius(arc_radius)
+    //         .startAngle(terminal_angles.start + Math.PI)
+    //         .endAngle(terminal_angles.end + Math.PI * 2);
+    //     var b;
+    //     return arc()
+    // }
+    get_recurrent_arc_for_node(node) {
+        node = this.index.lookup(node)
+        var x1 = 0,
+            y1 = 0,
+            x2 = 0,
+            y2 = 0,
+            dx = x2 - x1,
+            dy = y2 - y1,
+            dr = Math.sqrt(dx * dx + dy * dy),
 
+            // Defaults for normal edge.
+            drx = dr,
+            dry = dr,
+            xRotation = 0, // degrees
+            largeArc = 0, // 1 or 0
+            sweep = 1; // 1 or 0
+
+        // Self edge.
+        if ( x1 === x2 && y1 === y2 ) {
+            // Fiddle with this angle to get loop oriented.
+            xRotation = 15;
+
+            // Needs to be 1.
+            largeArc = 1;
+
+            // Change sweep to change orientation of loop.
+            //sweep = 0;
+
+            // Make drx and dry different to get an ellipse
+            // instead of a circle.
+            drx = 20;
+            dry = 20;
+
+            // For whatever reason the arc collapses to a point if the beginning
+            // and ending points of the arc are the same, so kludge it.
+            x2 = x2 + 1;
+            y2 = y2 + 1;
+        }
+        return "M" + x1 + "," + y1 + "A" + drx + "," + dry + " " + xRotation + "," + largeArc + "," + sweep + " " + x2 + "," + y2;
+    }
     move_graph(dx = 0, dy = 0) {
         // var stylesheet, graph_rect;
         dx /= this.scaling_factor;
@@ -929,14 +995,17 @@ class GraphView extends React.Component {
             }
         );
 
-        recurrent_projs.forEach(
+        this.index.recurrent_projections.forEach(
             (projection) => {
                 if (projection.dom.constructor.name === 'SVGPathElement') {
-                    var recurrent_arc_offset = 10;
-                    var arc_x = projection.head.data.x;
-                    var arc_y = projection.head.data.y;
                     projection.selection
-                        .attr('transform', `translate(${arc_x - parseFloat(projection.head.data.ellipse.rx / 2 + recurrent_arc_offset)},${arc_y})`)
+                        .attr('transform', `translate(0,0)`);
+                    var projection_center_x = projection.dom.getBoundingClientRect().x + projection.dom.getBoundingClientRect().width/2;
+                    var node_center_x = projection.head.dom.getBoundingClientRect().x + projection.head.dom.getBoundingClientRect().width/2;
+                    var sf = self.scaling_factor;
+                    var adjusted_diff = (node_center_x - projection_center_x)/self.scaling_factor;
+                    projection.selection
+                        .attr('transform', `translate(${adjusted_diff},${projection.data.head.y})`)
                 } else {
                     var reference_arc = document.querySelector('#reference_arc path');
                     var reference_arc_len = reference_arc.getTotalLength();
@@ -1150,7 +1219,7 @@ class GraphView extends React.Component {
             this.resize_recurrent_projections();
             this.scale_graph_to_fit(this.fill_proportion);
             this.correct_projection_lengths_for_ellipse_sizes();
-            this.center_graph_on_point();
+            // this.center_graph_on_point();
             this.parse_stylesheet();
             this.graph_bounding_box = this.get_graph_bounding_box();
             this.canvas_bounding_box = this.get_canvas_bounding_box();
