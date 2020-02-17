@@ -649,52 +649,17 @@ class GraphView extends React.Component {
         }
     }
 
-    // get_recurrent_arc_for_node(node) {
-    //     var left_edge, top_edge, bottom_edge, arc_start, arc_end, arc_radius, arc_centerpoint, arc_offset, terminal_angles, arc;
-    //     node = this.index.lookup(node);
-    //     left_edge = node.data.x - node.data.rx;
-    //     top_edge = node.data.y - node.data.ry;
-    //     bottom_edge = node.data.y + node.data.ry;
-    //     arc_start = {
-    //         x: node.data.x - node.data.rx / 2,
-    //         y: top_edge
-    //     };
-    //     arc_end = {
-    //         x: node.data.x - node.data.rx / 2,
-    //         y: bottom_edge
-    //     };
-    //     arc_offset = 10;
-    //     arc_radius = Math.abs(left_edge-arc_offset-arc_start.x)/2
-    //     arc_centerpoint = {
-    //         x: arc_start.x - arc_radius,
-    //         y: node.data.y
-    //     };
-    //     terminal_angles = this.get_terminal_angles_of_arc(arc_start, arc_end, arc_centerpoint);
-    //     arc = d3.arc()
-    //         .innerRadius(arc_radius-1)
-    //         .outerRadius(arc_radius)
-    //         .startAngle(terminal_angles.start + Math.PI)
-    //         .endAngle(terminal_angles.end + Math.PI * 2);
-    //     var b;
-    //     return arc()
-    // }
     get_recurrent_arc_for_node(node) {
         node = this.index.lookup(node);
         var x1 = 0,
             y1 = 0,
-            x2 = 0,
-            y2 = 0,
-            // dx = x2 - x1,
-            // dy = y2 - y1,
-            // dr = Math.sqrt(dx * dx + dy * dy),
-            largeArc = 1, // Needs to be 1.
-            xRotation = 0, // Fiddle with this angle to get loop oriented.
+            x2 = 1,
+            y2 = 1, // The arc collapses to a point if the beginning and ending points of the arc are the same, so kludge it.
+            xRotation = 90, // Fiddle with this angle to get loop oriented.
             drx = 10, // Make drx and dry different to get an ellipse instead of a circle.
             dry = 20,
-            sweep = 1; // 1 or 0; Change sweep to change orientation of loop.
-            x2 = x2 + 1; // The arc collapses to a point if the beginning and ending points of the arc are the same, so kludge it.
-            y2 = y2 + 1;
-        return "M" + x1 + "," + y1 + "A" + drx + "," + dry + " " + xRotation + "," + largeArc + "," + sweep + " " + x2 + "," + y2;
+            sweep = 0; // 1 or 0; Change sweep to change orientation of loop.
+        return "M" + x1 + "," + y1 + "A" + drx + "," + dry + " " + xRotation + ",1" + "," + sweep + " " + x2 + "," + y2;
     }
     move_graph(dx = 0, dy = 0) {
         // var stylesheet, graph_rect;
