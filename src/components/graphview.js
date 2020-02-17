@@ -463,49 +463,44 @@ class GraphView extends React.Component {
             .data(recurrent_projs)
             .enter()
             .append('path')
-            // .attr('d', self.generate_arc())
             .attr('d', (d)=>{
                 return self.get_recurrent_arc_for_node(d.head)
             })
             .attr('fill', 'white')
             .attr('fill-opacity', '0')
             .attr('stroke', 'black')
-            .attr('transform', (e) => {
-                var recurrent_arc_offset = 10;
-                var arc_x = e.head.x;
-                var arc_y = e.head.y;
-                return `translate(${arc_x},${arc_y})`
-            });
+
         d3.selectAll('g.edge line')
             .filter(
                 (e) => {
                     return e.head === e.tail
                 }
             )
-            .attr('x1', function (d) {
-                var reference_arc = document.querySelector('#reference_arc path');
-                var arc_length = reference_arc.getTotalLength();
-                var arrow_start = reference_arc.getPointAtLength(arc_length * .75);
-                return d.head.x - d.head.stroke_width - d.head.ellipse.rx / 2 + arrow_start.x - document.querySelector("#reference_arc path").getBBox().x
-            })
-            .attr('y1', function (d) {
-                var reference_arc = document.querySelector('#reference_arc path');
-                var arc_length = reference_arc.getTotalLength();
-                var arrow_start = reference_arc.getPointAtLength(arc_length * .75);
-                return d.head.y - d.head.ellipse.ry + arrow_start.y - document.querySelector("#reference_arc path").getBBox().y
-            })
-            .attr('x2', function (d) {
-                var reference_arc = document.querySelector('#reference_arc path');
-                var arc_length = reference_arc.getTotalLength();
-                var arrow_end = reference_arc.getPointAtLength(arc_length * .55);
-                return d.head.x - d.head.stroke_width - d.head.ellipse.rx / 2 + arrow_end.x - document.querySelector("#reference_arc path").getBBox().x
-            })
-            .attr('y2', function (d) {
-                var reference_arc = document.querySelector('#reference_arc path');
-                var arc_length = reference_arc.getTotalLength();
-                var arrow_start = reference_arc.getPointAtLength(arc_length * .75);
-                return d.head.y - d.head.ellipse.ry + arrow_start.y - document.querySelector("#reference_arc path").getBBox().y
-            });
+            .remove()
+            // .attr('x1', function (d) {
+            //     var reference_arc = document.querySelector('#reference_arc path');
+            //     var arc_length = reference_arc.getTotalLength();
+            //     var arrow_start = reference_arc.getPointAtLength(arc_length * .75);
+            //     return d.head.x - d.head.stroke_width - d.head.ellipse.rx / 2 + arrow_start.x - document.querySelector("#reference_arc path").getBBox().x
+            // })
+            // .attr('y1', function (d) {
+            //     var reference_arc = document.querySelector('#reference_arc path');
+            //     var arc_length = reference_arc.getTotalLength();
+            //     var arrow_start = reference_arc.getPointAtLength(arc_length * .75);
+            //     return d.head.y - d.head.ellipse.ry + arrow_start.y - document.querySelector("#reference_arc path").getBBox().y
+            // })
+            // .attr('x2', function (d) {
+            //     var reference_arc = document.querySelector('#reference_arc path');
+            //     var arc_length = reference_arc.getTotalLength();
+            //     var arrow_end = reference_arc.getPointAtLength(arc_length * .55);
+            //     return d.head.x - d.head.stroke_width - d.head.ellipse.rx / 2 + arrow_end.x - document.querySelector("#reference_arc path").getBBox().x
+            // })
+            // .attr('y2', function (d) {
+            //     var reference_arc = document.querySelector('#reference_arc path');
+            //     var arc_length = reference_arc.getTotalLength();
+            //     var arrow_start = reference_arc.getPointAtLength(arc_length * .75);
+            //     return d.head.y - d.head.ellipse.ry + arrow_start.y - document.querySelector("#reference_arc path").getBBox().y
+            // });
         self.recurrent = recurrent;
         self.index.add_d3_group(recurrent, 'projection')
     }
@@ -944,12 +939,12 @@ class GraphView extends React.Component {
                 if (projection.dom.constructor.name === 'SVGPathElement') {
                     projection.selection
                         .attr('transform', `translate(0,0)`);
-                    var projection_center_x = projection.dom.getBoundingClientRect().x + projection.dom.getBoundingClientRect().width/2;
-                    var node_center_x = projection.head.dom.getBoundingClientRect().x + projection.head.dom.getBoundingClientRect().width/2;
-                    var sf = self.scaling_factor;
-                    var adjusted_diff = (node_center_x - projection_center_x)/self.scaling_factor;
+                    var projection_center_y = projection.dom.getBoundingClientRect().y + projection.dom.getBoundingClientRect().height/2;
+                    var node_center_y = projection.head.dom.getBoundingClientRect().y + projection.head.dom.getBoundingClientRect().height/2;
+                    var adjusted_diff_y = (node_center_y - projection_center_y)/self.scaling_factor;
+                    var node_edge_x = projection.data.head.x - projection.data.head.rx - projection.data.head.stroke_width
                     projection.selection
-                        .attr('transform', `translate(${adjusted_diff},${projection.data.head.y})`)
+                        .attr('transform', `translate(${node_edge_x + 10},${adjusted_diff_y})`)
                 } else {
                     var reference_arc = document.querySelector('#reference_arc path');
                     var reference_arc_len = reference_arc.getTotalLength();
