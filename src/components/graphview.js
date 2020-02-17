@@ -456,7 +456,6 @@ class GraphView extends React.Component {
                     recurrent_projs.push(e);
                 }
             });
-
         var recurrent = container.append('g')
             .attr('class', 'recurrent')
             .selectAll('path')
@@ -468,39 +467,7 @@ class GraphView extends React.Component {
             })
             .attr('fill', 'white')
             .attr('fill-opacity', '0')
-            .attr('stroke', 'black')
-
-        d3.selectAll('g.edge line')
-            .filter(
-                (e) => {
-                    return e.head === e.tail
-                }
-            )
-            .remove()
-            // .attr('x1', function (d) {
-            //     var reference_arc = document.querySelector('#reference_arc path');
-            //     var arc_length = reference_arc.getTotalLength();
-            //     var arrow_start = reference_arc.getPointAtLength(arc_length * .75);
-            //     return d.head.x - d.head.stroke_width - d.head.ellipse.rx / 2 + arrow_start.x - document.querySelector("#reference_arc path").getBBox().x
-            // })
-            // .attr('y1', function (d) {
-            //     var reference_arc = document.querySelector('#reference_arc path');
-            //     var arc_length = reference_arc.getTotalLength();
-            //     var arrow_start = reference_arc.getPointAtLength(arc_length * .75);
-            //     return d.head.y - d.head.ellipse.ry + arrow_start.y - document.querySelector("#reference_arc path").getBBox().y
-            // })
-            // .attr('x2', function (d) {
-            //     var reference_arc = document.querySelector('#reference_arc path');
-            //     var arc_length = reference_arc.getTotalLength();
-            //     var arrow_end = reference_arc.getPointAtLength(arc_length * .55);
-            //     return d.head.x - d.head.stroke_width - d.head.ellipse.rx / 2 + arrow_end.x - document.querySelector("#reference_arc path").getBBox().x
-            // })
-            // .attr('y2', function (d) {
-            //     var reference_arc = document.querySelector('#reference_arc path');
-            //     var arc_length = reference_arc.getTotalLength();
-            //     var arrow_start = reference_arc.getPointAtLength(arc_length * .75);
-            //     return d.head.y - d.head.ellipse.ry + arrow_start.y - document.querySelector("#reference_arc path").getBBox().y
-            // });
+            .attr('stroke', 'black');
         self.recurrent = recurrent;
         self.index.add_d3_group(recurrent, 'projection')
     }
