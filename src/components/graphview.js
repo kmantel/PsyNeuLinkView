@@ -468,6 +468,7 @@ class GraphView extends React.Component {
                 return self.get_recurrent_arc_for_node(d.head)
             })
             .attr('fill', 'white')
+            .attr('fill-opacity', '0')
             .attr('stroke', 'black')
             .attr('transform', (e) => {
                 var recurrent_arc_offset = 10;
@@ -678,43 +679,21 @@ class GraphView extends React.Component {
     //     return arc()
     // }
     get_recurrent_arc_for_node(node) {
-        node = this.index.lookup(node)
+        node = this.index.lookup(node);
         var x1 = 0,
             y1 = 0,
             x2 = 0,
             y2 = 0,
-            dx = x2 - x1,
-            dy = y2 - y1,
-            dr = Math.sqrt(dx * dx + dy * dy),
-
-            // Defaults for normal edge.
-            drx = dr,
-            dry = dr,
-            xRotation = 0, // degrees
-            largeArc = 0, // 1 or 0
-            sweep = 1; // 1 or 0
-
-        // Self edge.
-        if ( x1 === x2 && y1 === y2 ) {
-            // Fiddle with this angle to get loop oriented.
-            xRotation = 15;
-
-            // Needs to be 1.
-            largeArc = 1;
-
-            // Change sweep to change orientation of loop.
-            //sweep = 0;
-
-            // Make drx and dry different to get an ellipse
-            // instead of a circle.
-            drx = 20;
-            dry = 20;
-
-            // For whatever reason the arc collapses to a point if the beginning
-            // and ending points of the arc are the same, so kludge it.
-            x2 = x2 + 1;
+            // dx = x2 - x1,
+            // dy = y2 - y1,
+            // dr = Math.sqrt(dx * dx + dy * dy),
+            largeArc = 1, // Needs to be 1.
+            xRotation = 0, // Fiddle with this angle to get loop oriented.
+            drx = 10, // Make drx and dry different to get an ellipse instead of a circle.
+            dry = 20,
+            sweep = 1; // 1 or 0; Change sweep to change orientation of loop.
+            x2 = x2 + 1; // The arc collapses to a point if the beginning and ending points of the arc are the same, so kludge it.
             y2 = y2 + 1;
-        }
         return "M" + x1 + "," + y1 + "A" + drx + "," + dry + " " + xRotation + "," + largeArc + "," + sweep + " " + x2 + "," + y2;
     }
     move_graph(dx = 0, dy = 0) {
