@@ -264,12 +264,15 @@ class GraphView extends React.Component {
     }
 
     generate_arc() {
-        var arc = d3.arc()
-            .innerRadius(7)
-            .outerRadius(8)
-            .startAngle(2.7)
-            .endAngle(7.0);
-        return arc
+        var x1 = 0,
+            y1 = 0,
+            x2 = 1,
+            y2 = 1, // The arc collapses to a point if the beginning and ending points of the arc are the same, so kludge it.
+            xRotation = 90, // Fiddle with this angle to get loop oriented.
+            rx = 10, // Make drx and dry different to get an ellipse instead of a circle.
+            ry = 20,
+            sweep = 0; // 1 or 0; Change sweep to change orientation of loop.
+        return "M" + x1 + "," + y1 + "A" + rx + "," + ry + " " + xRotation + ",1," + sweep + " " + x2 + "," + y2;
     }
 
     mouse_inside_graph_bounds(e) {
@@ -462,8 +465,8 @@ class GraphView extends React.Component {
             .data(recurrent_projs)
             .enter()
             .append('path')
-            .attr('d', (d)=>{
-                return self.get_recurrent_arc_for_node(d.head)
+            .attr('d', ()=>{
+                return self.generate_arc()
             })
             .attr('fill', 'white')
             .attr('fill-opacity', '0')
@@ -611,18 +614,6 @@ class GraphView extends React.Component {
         }
     }
 
-    get_recurrent_arc_for_node(node) {
-        node = this.index.lookup(node);
-        var x1 = 0,
-            y1 = 0,
-            x2 = 1,
-            y2 = 1, // The arc collapses to a point if the beginning and ending points of the arc are the same, so kludge it.
-            xRotation = 90, // Fiddle with this angle to get loop oriented.
-            drx = 10, // Make drx and dry different to get an ellipse instead of a circle.
-            dry = 20,
-            sweep = 0; // 1 or 0; Change sweep to change orientation of loop.
-        return "M" + x1 + "," + y1 + "A" + drx + "," + dry + " " + xRotation + ",1" + "," + sweep + " " + x2 + "," + y2;
-    }
     move_graph(dx = 0, dy = 0) {
         // var stylesheet, graph_rect;
         dx /= this.scaling_factor;
@@ -913,15 +904,15 @@ class GraphView extends React.Component {
                     projection.selection
                         .attr('transform', `translate(${node_edge_x + 10},${adjusted_diff_y})`)
                 } else {
-                    var reference_arc = document.querySelector('#reference_arc path');
-                    var reference_arc_len = reference_arc.getTotalLength();
-                    var y1_offset = reference_arc.getPointAtLength(reference_arc_len).y - reference_arc.getBBox().y - 8.2;
-                    var y2_offset = reference_arc.getPointAtLength(reference_arc_len * .99).y - reference_arc.getBBox().y - 7.70;
+                    // var reference_arc = document.querySelector('#reference_arc path');
+                    // var reference_arc_len = reference_arc.getTotalLength();
+                    // var y1_offset = reference_arc.getPointAtLength(reference_arc_len).y - reference_arc.getBBox().y - 8.2;
+                    // var y2_offset = reference_arc.getPointAtLength(reference_arc_len * .99).y - reference_arc.getBBox().y - 7.70;
                     projection.selection
-                        .attr('x1', projection.data.head.x - projection.data.head.ellipse.rx / 2 - 10)
-                        .attr('y1', projection.data.head.y + y1_offset)
-                        .attr('x2', projection.data.head.x - projection.data.head.ellipse.rx / 2 - 9)
-                        .attr('y2', projection.data.head.y + y2_offset)
+                        .attr('x1', projection.data.head.x - projection.data.head.rx - 3- projection.data.head.stroke_width)
+                        .attr('y1', projection.data.head.y)
+                        .attr('x2', projection.data.head.x - projection.data.head.rx - projection.data.head.stroke_width)
+                        .attr('y2', projection.data.head.y)
                 }
             }
         );
