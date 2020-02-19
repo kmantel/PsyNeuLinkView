@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0426a943-ef89-4391-a3a0-8152f91aa099" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/dictionaries/ds70.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/graphview.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/graphview.js" afterDir="false" />
     </list>
@@ -115,7 +114,7 @@
       <workItem from="1581453146219" duration="4299000" />
       <workItem from="1581949942288" duration="23315000" />
       <workItem from="1582037576304" duration="12560000" />
-      <workItem from="1582123393152" duration="11578000" />
+      <workItem from="1582123393152" duration="17284000" />
     </task>
     <task id="LOCAL-00001" summary="Enabled touchpad zoom gestures and windows ctrl shortcuts">
       <created>1581449946471</created>
@@ -247,9 +246,9 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/components/graphview.js</url>
-          <line>485</line>
+          <line>965</line>
           <properties lambdaOrdinal="-1" />
-          <option name="timeStamp" value="530" />
+          <option name="timeStamp" value="546" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

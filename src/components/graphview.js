@@ -932,29 +932,25 @@ class GraphView extends React.Component {
 
         this.index.recurrent_projections.forEach(
             (projection) => {
+                var phi = -2;
+                var xrad = projection.head.data.rx;
+                var yrad = projection.head.data.ry;
+                var radius_at_point = xrad * yrad / Math.sqrt(xrad ** 2 * Math.sin(phi) ** 2 + yrad ** 2 * Math.cos(phi) ** 2);
+                var stpt = {
+                    x: radius_at_point * Math.cos(phi),
+                    y: radius_at_point * Math.sin(phi)
+                };
+                var endpt = {
+                    x: stpt.x,
+                    y: stpt.y * -1
+                };
+                var lftedge = {
+                    x: -projection.head.data.rx-10,
+                    y: 0
+                };
+                var ctpt = this.CalculateCircleCenter(stpt, endpt, lftedge);
+                var radius = ctpt.x - lftedge.x;
                 if (projection.dom.constructor.name === 'SVGPathElement') {
-                    var ul_corner = {
-                        x: -projection.head.data.rx,
-                        y: -projection.head.data.ry
-                    };
-                    var phi = Math.atan2(ul_corner.y, ul_corner.x);
-                    var xrad = projection.head.data.rx;
-                    var yrad = projection.head.data.ry;
-                    var radius_at_point = xrad * yrad / Math.sqrt(xrad ** 2 * Math.sin(phi) ** 2 + yrad ** 2 * Math.cos(phi) ** 2);
-                    var stpt = {
-                        x: radius_at_point * Math.cos(phi),
-                        y: radius_at_point * Math.sin(phi)
-                    };
-                    var endpt = {
-                        x: stpt.x,
-                        y: stpt.y * -1
-                    };
-                    var lftedge = {
-                        x: -projection.head.data.rx-10,
-                        y: 0
-                    };
-                    var ctpt = this.CalculateCircleCenter(stpt, endpt, lftedge);
-                    var radius = ctpt.x - lftedge.x;
                     var arc_start_angle = Math.atan2(stpt.y-ctpt.y, stpt.x-ctpt.x);
                     var arc_end_angle = Math.atan2(endpt.y-ctpt.y, endpt.x-ctpt.x);
                     var test_arc = this.gen_arc(arc_end_angle, 2*Math.PI+arc_start_angle,  radius, radius)
@@ -963,35 +959,19 @@ class GraphView extends React.Component {
                     projection.selection
                         .attr('transform', `translate(${projection.data.head.x+ctpt.x},${projection.data.head.y}) rotate(90)`)
                 } else {
-                    var ul_corner = {
-                        x: -projection.head.data.rx,
-                        y: -projection.head.data.ry
-                    };
-                    var phi = Math.atan2(ul_corner.y, ul_corner.x);
-                    var xrad = projection.head.data.rx;
-                    var yrad = projection.head.data.ry;
-                    var radius_at_point = xrad * yrad / Math.sqrt(xrad ** 2 * Math.sin(phi) ** 2 + yrad ** 2 * Math.cos(phi) ** 2);
-                    var stpt = {
-                        x: radius_at_point * Math.cos(phi),
-                        y: radius_at_point * Math.sin(phi)
-                    };
-                    var endpt = {
-                        x: stpt.x,
-                        y: stpt.y * -1
-                    };
-                    var lftedge = {
-                        x: -projection.head.data.rx-10,
-                        y: 0
-                    };
-                    var ctpt = this.CalculateCircleCenter(stpt, endpt, lftedge);
-                    var radius = ctpt.x - lftedge.x;
-                    var x = (radius_at_point * Math.cos(phi));
-                    var y = (radius_at_point * Math.sin(phi));
+                    var circ = 2 * Math.PI * radius;
+                    var rad_per_px = 2*Math.PI/circ;
+                    var adjustment = 4;
+                    var arc_end_angle = Math.atan2(stpt.y-ctpt.y, stpt.x-ctpt.x)-(rad_per_px*adjustment);
+                    var x1 = (radius * Math.cos(arc_end_angle-0.01));
+                    var y1 = (radius * Math.sin(arc_end_angle-0.01));
+                    var x2 = (radius * Math.cos(arc_end_angle));
+                    var y2 = (radius * Math.sin(arc_end_angle));
                     projection.selection
-                        .attr('x1', projection.data.head.x+x)
-                        .attr('y1', projection.data.head.y-y)
-                        .attr('x2', projection.data.head.x+x+1)
-                        .attr('y2', projection.data.head.y-y-1)
+                        .attr('x1', projection.data.head.x+ctpt.x+x1)
+                        .attr('y1', projection.data.head.y-y1)
+                        .attr('x2', projection.data.head.x+ctpt.x+x2)
+                        .attr('y2', projection.data.head.y-y2)
                 }
             }
         );
