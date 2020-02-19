@@ -448,6 +448,7 @@ class GraphView extends React.Component {
             });
         this.index.add_d3_group(edge, 'projection');
         this.edge = edge;
+        this.drawRecurrentProjections(container);
     }
 
     drawRecurrentProjections(container) {
@@ -804,7 +805,14 @@ class GraphView extends React.Component {
     }
 
     get_offset_points_for_projection(projection) {
-        return this.get_offset_between_ellipses(projection.tail.data.x, projection.tail.data.y, projection.head.data.x, projection.head.data.y, projection.head.data.rx, projection.head.data.ry, Math.round(projection.head.stroke_width / 2))
+        return this.get_offset_between_ellipses(
+            projection.tail.data.x,
+            projection.tail.data.y,
+            projection.head.data.x,
+            projection.head.data.y,
+            projection.head.data.rx,
+            projection.head.data.ry,
+            Math.round(projection.head.data.stroke_width/2))
     }
 
     node_movement_within_canvas_bounds(node, dx, dy) {
@@ -936,6 +944,7 @@ class GraphView extends React.Component {
                 var xrad = projection.head.data.rx;
                 var yrad = projection.head.data.ry;
                 var radius_at_point = xrad * yrad / Math.sqrt(xrad ** 2 * Math.sin(phi) ** 2 + yrad ** 2 * Math.cos(phi) ** 2);
+                radius_at_point += projection.head.data.stroke_width/2;
                 var stpt = {
                     x: radius_at_point * Math.cos(phi),
                     y: radius_at_point * Math.sin(phi)
@@ -961,7 +970,7 @@ class GraphView extends React.Component {
                 } else {
                     var circ = 2 * Math.PI * radius;
                     var rad_per_px = 2*Math.PI/circ;
-                    var adjustment = 4;
+                    var adjustment = 3.4;
                     var arc_end_angle = Math.atan2(stpt.y-ctpt.y, stpt.x-ctpt.x)-(rad_per_px*adjustment);
                     var x1 = (radius * Math.cos(arc_end_angle-0.01));
                     var y1 = (radius * Math.sin(arc_end_angle-0.01));
@@ -1171,7 +1180,6 @@ class GraphView extends React.Component {
                 }
                 self.move_nodes(d3.event.dx, d3.event.dy)
             });
-            this.drawRecurrentProjections(container);
             this.resize_nodes_to_label_text();
             this.resize_recurrent_projections();
             this.scale_graph_to_fit(this.fill_proportion);
