@@ -35,7 +35,6 @@ class GraphView extends React.Component {
             spinner_visible: false,
         };
         this.script_updater = null;
-        this.id_i = 0;
         this.index = new Index();
         this.selected = new Set();
         this.mouse_offset = {x: 0, y: 0};
@@ -410,6 +409,7 @@ class GraphView extends React.Component {
     drawProjections(container) {
         var self = this;
         self.associateVisualInformationWithGraphEdges();
+        var id = 0
         var edge = container.append('g')
             .attr('class', 'edge')
             .selectAll('line')
@@ -417,7 +417,8 @@ class GraphView extends React.Component {
             .enter()
             .append('line')
             .attr('id', function (d) {
-                return d.name
+                id += 1;
+                return `p${id - 1}`
             })
             .attr('x1', function (d) {
                 return d.tail.x
@@ -447,12 +448,12 @@ class GraphView extends React.Component {
             });
         this.index.add_d3_group(edge, 'projection');
         this.edge = edge;
-        this.drawRecurrentProjections(container);
     }
 
     drawRecurrentProjections(container) {
         var self = this;
         var recurrent_projs = [];
+        var id = 0;
         d3.selectAll('g.edge line')
             .each(function (e) {
                 if (e.head === e.tail) {
@@ -465,6 +466,10 @@ class GraphView extends React.Component {
             .data(recurrent_projs)
             .enter()
             .append('path')
+            .attr('id', function (d) {
+                id += 1;
+                return `r${id - 1}`
+            })
             .attr('d', ()=>{
                 return self.generate_arc()
             })
@@ -472,7 +477,16 @@ class GraphView extends React.Component {
             .attr('fill-opacity', '0')
             .attr('stroke', 'black');
         self.recurrent = recurrent;
-        self.index.add_d3_group(recurrent, 'projection')
+        self.index.add_d3_group(recurrent, 'projection');
+
+        var recurrent_container = document.querySelector('g.recurrent');
+        this.index.recurrent_projections.forEach(
+            (projection) => {
+                if (!(projection.dom.constructor.name === 'SVGPathElement')) {
+                    recurrent_container.appendChild(projection.dom)
+                }
+            }
+        )
     }
 
     drawNodes(container, nodeDragFunction) {
@@ -480,6 +494,7 @@ class GraphView extends React.Component {
         var nodeWidth = self.state.node_width;
         var nodeHeight = self.state.node_height;
         self.associateVisualInformationWithGraphNodes();
+        var id = 0;
         var node = container.append('g')
             .attr('class', 'node')
             .selectAll('ellipse')
@@ -487,8 +502,8 @@ class GraphView extends React.Component {
             .enter()
             .append('ellipse')
             .attr('id', function (d) {
-                self.id_i += 1;
-                return `n${self.id_i - 1}`
+                id += 1;
+                return `n${id - 1}`
             })
             .attr('rx', function (d) {
                 d.rx = nodeWidth;
@@ -561,7 +576,7 @@ class GraphView extends React.Component {
         this.index.add_d3_group(label, 'label');
     }
 
-    get_offset_between_ellipses(x1, y1, x2, y2, nodeWidth, nodeHeight, strokeWidth) {
+    get_offset_between_ellipses(x1, y1, x2, y2, nodeXRad, nodeYRad, strokeWidth) {
         if (!strokeWidth) {
             strokeWidth = 1
         }
@@ -569,8 +584,8 @@ class GraphView extends React.Component {
         var adjusted_y = y2 - y1;
         var dist_between_centers = Math.sqrt(adjusted_x ** 2 + adjusted_y ** 2);
         var phi = Math.atan2(adjusted_y, adjusted_x);
-        var a = parseFloat(nodeWidth) + strokeWidth;
-        var b = parseFloat(nodeHeight) + strokeWidth;
+        var a = parseFloat(nodeXRad) + strokeWidth;
+        var b = parseFloat(nodeYRad) + strokeWidth;
         var radius_at_point = a * b / Math.sqrt(a ** 2 * Math.sin(phi) ** 2 + b ** 2 * Math.cos(phi) ** 2);
         var e_radius = dist_between_centers - radius_at_point - 3;
         var new_x = (e_radius * Math.cos(phi) + x1);
@@ -658,6 +673,7 @@ class GraphView extends React.Component {
         svg
             .on('mousedown', function () {
                     // don't fire if command is pressed. command unlocks different options
+                    console.log('x',Math.round(d3.mouse(this)[0]/self.scaling_factor), 'y', Math.round(d3.mouse(this)[1]/self.scaling_factor))
                     if (!(d3.event.metaKey || d3.event.ctrlKey)) {
                         var anchor_pt = d3.mouse(this);
                         var processed_anchor_pt = [
@@ -788,15 +804,7 @@ class GraphView extends React.Component {
     }
 
     get_offset_points_for_projection(projection) {
-        return this.get_offset_between_ellipses(
-            projection.tail.data.x,
-            projection.tail.data.y,
-            projection.head.data.x,
-            projection.head.data.y,
-            projection.head.data.rx,
-            projection.head.data.ry,
-            Math.round(projection.head.stroke_width / 2)
-        )
+        return this.get_offset_between_ellipses(projection.tail.data.x, projection.tail.data.y, projection.head.data.x, projection.head.data.y, projection.head.data.rx, projection.head.data.ry, Math.round(projection.head.stroke_width / 2))
     }
 
     node_movement_within_canvas_bounds(node, dx, dy) {
@@ -863,6 +871,36 @@ class GraphView extends React.Component {
             .attr('y', node.data.y + offset_from_top_of_node);
     }
 
+    gen_arc(phi1, phi2, innerRad, outerRad){
+        return d3.arc()
+            .startAngle(phi1)
+            .endAngle(phi2)
+            .innerRadius(innerRad)
+            .outerRadius(outerRad)()
+    }
+
+    CalculateCircleCenter(A,B,C)
+    {
+        var ax = (A.x + B.x)/2,
+            ay = (A.y + B.y)/2,
+            ux = (A.y - B.y),
+            uy = (B.x - A.x),
+            bx = (B.x + C.x)/2,
+            by = (B.y + C.y)/2,
+            vx = (B.y - C.y),
+            vy = (C.x - B.x),
+            dx = ax - bx,
+            dy = ay - by,
+            vu = vx * uy - vy * ux,
+            g = (dx * uy - dy * ux) / vu,
+            center = {
+                x:bx + g * vx,
+                y:by + g * vy
+            };
+        if (vu == 0)
+            return false; // Points are collinear, so no unique solution
+        return center;
+    }
     refresh_edges_for_node(node) {
         var self, offset_pt, recurrent_projs;
         recurrent_projs = new Set();
@@ -895,24 +933,65 @@ class GraphView extends React.Component {
         this.index.recurrent_projections.forEach(
             (projection) => {
                 if (projection.dom.constructor.name === 'SVGPathElement') {
+                    var ul_corner = {
+                        x: -projection.head.data.rx,
+                        y: -projection.head.data.ry
+                    };
+                    var phi = Math.atan2(ul_corner.y, ul_corner.x);
+                    var xrad = projection.head.data.rx;
+                    var yrad = projection.head.data.ry;
+                    var radius_at_point = xrad * yrad / Math.sqrt(xrad ** 2 * Math.sin(phi) ** 2 + yrad ** 2 * Math.cos(phi) ** 2);
+                    var stpt = {
+                        x: radius_at_point * Math.cos(phi),
+                        y: radius_at_point * Math.sin(phi)
+                    };
+                    var endpt = {
+                        x: stpt.x,
+                        y: stpt.y * -1
+                    };
+                    var lftedge = {
+                        x: -projection.head.data.rx-10,
+                        y: 0
+                    };
+                    var ctpt = this.CalculateCircleCenter(stpt, endpt, lftedge);
+                    var radius = ctpt.x - lftedge.x;
+                    var arc_start_angle = Math.atan2(stpt.y-ctpt.y, stpt.x-ctpt.x);
+                    var arc_end_angle = Math.atan2(endpt.y-ctpt.y, endpt.x-ctpt.x);
+                    var test_arc = this.gen_arc(arc_end_angle, 2*Math.PI+arc_start_angle,  radius, radius)
+                    var path = test_arc.toString()
+                    projection.selection.attr('d',path);
                     projection.selection
-                        .attr('transform', `translate(0,0)`);
-                    var projection_center_y = projection.dom.getBoundingClientRect().y + projection.dom.getBoundingClientRect().height/2;
-                    var node_center_y = projection.head.dom.getBoundingClientRect().y + projection.head.dom.getBoundingClientRect().height/2;
-                    var adjusted_diff_y = (node_center_y - projection_center_y)/self.scaling_factor;
-                    var node_edge_x = projection.data.head.x - projection.data.head.rx - projection.data.head.stroke_width
-                    projection.selection
-                        .attr('transform', `translate(${node_edge_x + 10},${adjusted_diff_y})`)
+                        .attr('transform', `translate(${projection.data.head.x+ctpt.x},${projection.data.head.y}) rotate(90)`)
                 } else {
-                    // var reference_arc = document.querySelector('#reference_arc path');
-                    // var reference_arc_len = reference_arc.getTotalLength();
-                    // var y1_offset = reference_arc.getPointAtLength(reference_arc_len).y - reference_arc.getBBox().y - 8.2;
-                    // var y2_offset = reference_arc.getPointAtLength(reference_arc_len * .99).y - reference_arc.getBBox().y - 7.70;
+                    var ul_corner = {
+                        x: -projection.head.data.rx,
+                        y: -projection.head.data.ry
+                    };
+                    var phi = Math.atan2(ul_corner.y, ul_corner.x);
+                    var xrad = projection.head.data.rx;
+                    var yrad = projection.head.data.ry;
+                    var radius_at_point = xrad * yrad / Math.sqrt(xrad ** 2 * Math.sin(phi) ** 2 + yrad ** 2 * Math.cos(phi) ** 2);
+                    var stpt = {
+                        x: radius_at_point * Math.cos(phi),
+                        y: radius_at_point * Math.sin(phi)
+                    };
+                    var endpt = {
+                        x: stpt.x,
+                        y: stpt.y * -1
+                    };
+                    var lftedge = {
+                        x: -projection.head.data.rx-10,
+                        y: 0
+                    };
+                    var ctpt = this.CalculateCircleCenter(stpt, endpt, lftedge);
+                    var radius = ctpt.x - lftedge.x;
+                    var x = (radius_at_point * Math.cos(phi));
+                    var y = (radius_at_point * Math.sin(phi));
                     projection.selection
-                        .attr('x1', projection.data.head.x - projection.data.head.rx - 3- projection.data.head.stroke_width)
-                        .attr('y1', projection.data.head.y)
-                        .attr('x2', projection.data.head.x - projection.data.head.rx - projection.data.head.stroke_width)
-                        .attr('y2', projection.data.head.y)
+                        .attr('x1', projection.data.head.x+x)
+                        .attr('y1', projection.data.head.y-y)
+                        .attr('x2', projection.data.head.x+x+1)
+                        .attr('y2', projection.data.head.y-y-1)
                 }
             }
         );
@@ -1112,6 +1191,7 @@ class GraphView extends React.Component {
                 }
                 self.move_nodes(d3.event.dx, d3.event.dy)
             });
+            this.drawRecurrentProjections(container);
             this.resize_nodes_to_label_text();
             this.resize_recurrent_projections();
             this.scale_graph_to_fit(this.fill_proportion);
