@@ -940,7 +940,7 @@ class GraphView extends React.Component {
 
         this.index.recurrent_projections.forEach(
             (projection) => {
-                var phi = -2;
+                var phi = -2.5;
                 var xrad = projection.head.data.rx;
                 var yrad = projection.head.data.ry;
                 var radius_at_point = xrad * yrad / Math.sqrt(xrad ** 2 * Math.sin(phi) ** 2 + yrad ** 2 * Math.cos(phi) ** 2);
@@ -954,7 +954,7 @@ class GraphView extends React.Component {
                     y: stpt.y * -1
                 };
                 var lftedge = {
-                    x: -projection.head.data.rx-10,
+                    x: -projection.head.data.rx-25,
                     y: 0
                 };
                 var ctpt = this.CalculateCircleCenter(stpt, endpt, lftedge);
@@ -970,7 +970,7 @@ class GraphView extends React.Component {
                 } else {
                     var circ = 2 * Math.PI * radius;
                     var rad_per_px = 2*Math.PI/circ;
-                    var adjustment = 3.4;
+                    var adjustment = 3.4 + projection.data.head.stroke_width/10;
                     var arc_end_angle = Math.atan2(stpt.y-ctpt.y, stpt.x-ctpt.x)-(rad_per_px*adjustment);
                     var x1 = (radius * Math.cos(arc_end_angle-0.01));
                     var y1 = (radius * Math.sin(arc_end_angle-0.01));
