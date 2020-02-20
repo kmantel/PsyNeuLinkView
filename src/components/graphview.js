@@ -34,6 +34,12 @@ class GraphView extends React.Component {
             graph: this.props.graph,
             spinner_visible: false,
         };
+        this.bind_this_to_functions = this.bind_this_to_functions.bind(this);
+        this.bind_this_to_functions();
+        this.set_non_react_state();
+    }
+
+    set_non_react_state() {
         this.script_updater = null;
         this.index = new Index();
         this.selected = new Set();
@@ -42,15 +48,16 @@ class GraphView extends React.Component {
         this.scroll_proportion = {left: null, top: null};
         this.scaling_factor = 1;
         this.fill_proportion = 1;
+    }
+
+    bind_this_to_functions() {
+        this.set_non_react_state = this.set_non_react_state.bind(this);
         this.center_graph = this.center_graph.bind(this);
-        this.get_canvas_bounding_box = this.get_canvas_bounding_box.bind(this);
-        this.get_graph_bounding_box = this.get_graph_bounding_box.bind(this);
         this.setGraph = this.setGraph.bind(this);
         this.key_down = this.key_down.bind(this);
         this.key_up = this.key_up.bind(this);
         this.scale_graph = this.scale_graph.bind(this);
         this.scale_graph_to_fit = this.scale_graph_to_fit.bind(this);
-        this.updateGraph = this.updateGraph.bind(this);
         this.capture_wheel = this.capture_wheel.bind(this);
         this.componentDidUpdate = this.componentDidUpdate.bind(this);
         this.update_scroll = this.update_scroll.bind(this);
@@ -61,8 +68,6 @@ class GraphView extends React.Component {
         this.move_graph = this.move_graph.bind(this);
         this.refresh_edges_for_node = this.refresh_edges_for_node.bind(this);
         this.move_label_to_corresponding_node = this.move_label_to_corresponding_node.bind(this);
-        this.initial_state = this;
-        this.d3 = d3;
     }
 
     componentWillMount() {
@@ -76,23 +81,32 @@ class GraphView extends React.Component {
             if (this.props.graph === "loading") {
                 d3.selectAll('svg').remove();
                 this.setState({"spinner_visible": true})
-            } else {
+            } else if (!(this.props.graph===null)) {
                 d3.selectAll('svg').remove();
                 this.setState({"spinner_visible": false});
+                this.stylesheet = null;
                 this.setGraph();
             }
         }
         if (!(this.props.graph_style === prevProps.graph_style)) {
+            this.stylesheet = this.props.graph_style;
             this.parse_stylesheet();
         }
     }
 
     validate_stylesheet(){
         if (!(this.stylesheet)){
+            this.stylesheet = this.props.graph_style
+        }
+        if (!(this.stylesheet)){
             this.stylesheet = {}
         }
-        if (!('canvas' in this.stylesheet)){
-            this.stylesheet.canvas = {}
+        if (!('reference_canvas' in this.stylesheet)){
+            var canvas_dimensions = document.querySelector('.graph').getBoundingClientRect();
+            this.stylesheet.reference_canvas = {
+                width: canvas_dimensions.width,
+                height: canvas_dimensions.height
+            }
         }
         if (!('components' in this.stylesheet)){
             this.stylesheet.components = {}
@@ -115,13 +129,11 @@ class GraphView extends React.Component {
     }
 
     componentDidMount() {
-        this.setGraph();
         window.addEventListener('resize', this.updateGraph);
         window.addEventListener('wheel', this.capture_wheel, {passive: false});
         window.addEventListener('keydown', this.key_down);
         window.addEventListener('keyup', this.key_up);
         window.addEventListener('blur', this.blur);
-        // add_context_menu('.graph-view', context_menu)
     }
 
     cartesian_to_polar(x, y, cx, cy) {
@@ -321,21 +333,6 @@ class GraphView extends React.Component {
         return {
             'pre': pre_resize_bounds,
             'post': post_resize_bounds
-        }
-    }
-
-    updateGraph() {
-        if (!(['loading',null].includes(this.props.graph))){
-            var horizontal_overflow, vertical_overflow;
-            horizontal_overflow = this.graph_bounding_box.width * this.fill_proportion >= this.canvas_bounding_box.width;
-            vertical_overflow = this.graph_bounding_box.height * this.fill_proportion >= this.canvas_bounding_box.height;
-            if (horizontal_overflow || vertical_overflow) {
-                this.scale_graph_to_fit(this.fill_proportion);
-            }
-            var win = document.querySelector('.graph-view');
-            win.scrollTo(win.scrollWidth * this.scroll_proportion.left, win.scrollHeight * this.scroll_proportion.top)
-            this.graph_bounding_box = this.get_graph_bounding_box();
-            this.canvas_bounding_box = this.get_canvas_bounding_box();
         }
     }
 
@@ -658,10 +655,6 @@ class GraphView extends React.Component {
         );
     }
 
-    resize_recurrent_projections() {
-        var r = this.recurrent
-    }
-
     update_scroll() {
         var win = document.querySelector('.graph-view');
         this.scroll_proportion.left = win.scrollLeft / win.scrollWidth;
@@ -866,11 +859,25 @@ class GraphView extends React.Component {
             .attr('cy', node.data.y);
         this.stylesheet.components.nodes[node.name] =
             {
-                'x': +((node.data.x - node.data.rx) * this.scaling_factor).toFixed(0) - node.data.stroke_width,
-                'y': +((node.data.y - node.data.ry) * this.scaling_factor).toFixed(0) - node.data.stroke_width
+                'x': +((node.data.x - node.data.rx)
+                    * this.stylesheet.reference_canvas.width/this.get_canvas_bounding_box().width
+                    * this.scaling_factor).toFixed(0) - node.data.stroke_width,
+                'y': +((node.data.y - node.data.ry)
+                    * this.stylesheet.reference_canvas.height/this.get_canvas_bounding_box().height
+                    * this.scaling_factor).toFixed(0) - node.data.stroke_width
             };
         this.move_label_to_corresponding_node(node);
         this.refresh_edges_for_node(node);
+    }
+
+    drag_selected(origin) {
+        var origin_drag_node = this.index.lookup(origin),
+            self = this;
+        if (!self.selected.has(origin_drag_node)) {
+            self.unselect_all();
+            self.select_node(origin_drag_node);
+        }
+        self.move_nodes(d3.event.dx, d3.event.dy)
     }
 
     move_label_to_corresponding_node(node) {
@@ -954,7 +961,7 @@ class GraphView extends React.Component {
                     y: stpt.y * -1
                 };
                 var lftedge = {
-                    x: -projection.head.data.rx-25,
+                    x: -projection.head.data.rx-10,
                     y: 0
                 };
                 var ctpt = this.CalculateCircleCenter(stpt, endpt, lftedge);
@@ -1126,12 +1133,10 @@ class GraphView extends React.Component {
     }
 
     parse_stylesheet() {
-        var self, hash, stylesheet, x_coord, y_coord, leftmost_node, topmost_node;
+        var self, stylesheet;
         self = this;
-        stylesheet = this.props.graph_style;
-        this.stylesheet = stylesheet;
-        if ('graph' in stylesheet) {
-        }
+        self.validate_stylesheet();
+        stylesheet = self.stylesheet;
         if ('components' in stylesheet) {
             if ('nodes' in stylesheet.components) {
                 var pnlv_node, nodes, cx, cy;
@@ -1139,8 +1144,14 @@ class GraphView extends React.Component {
                 nodes.forEach(
                     (node) => {
                         pnlv_node = self.index.lookup(node);
-                        cx = (stylesheet.components.nodes[node].x/this.scaling_factor) + pnlv_node.data.rx + pnlv_node.data.stroke_width/this.scaling_factor;
-                        cy = (stylesheet.components.nodes[node].y/this.scaling_factor) + pnlv_node.data.ry + pnlv_node.data.stroke_width/this.scaling_factor;
+                        cx =
+                            (stylesheet.components.nodes[node].x/stylesheet.reference_canvas.width*this.get_canvas_bounding_box().width/this.scaling_factor)
+                            + pnlv_node.data.rx
+                            + pnlv_node.data.stroke_width/this.scaling_factor;
+                        cy =
+                            (stylesheet.components.nodes[node].y/stylesheet.reference_canvas.height*this.get_canvas_bounding_box().height/this.scaling_factor)
+                            + pnlv_node.data.ry
+                            + pnlv_node.data.stroke_width/this.scaling_factor;
                         pnlv_node.data.x = cx;
                         pnlv_node.data.y = cy;
                         pnlv_node.selection
@@ -1154,43 +1165,36 @@ class GraphView extends React.Component {
         }
     }
 
+    set_script_updater(){
+        this.script_updater = this.props.rpc_client.update_stylesheet();
+        return this.script_updater;
+    }
+
+    set_index(){
+        this.index = new Index();
+        return this.index;
+    }
+
+    draw_elements(){
+        var container = this.createSVG(),
+            self = this;
+        this.drawProjections(container);
+        this.drawNodes(container, (node) => {self.drag_selected(node)});
+        this.drawLabels(container, (label) => {self.drag_selected(label)});
+        this.postprocess_elements();
+        this.scale_graph_to_fit(this.fill_proportion);
+    }
+
+    postprocess_elements(){
+        this.resize_nodes_to_label_text();
+        this.correct_projection_lengths_for_ellipse_sizes();
+    }
+
     setGraph() {
-        var self = this;
-        if (self.props.graph) {
-            window.rpc = self.props.rpc_client;
-            this.script_updater = this.props.rpc_client.update_stylesheet();
-            var container = this.createSVG();
-            this.index = new Index();
-            this.drawProjections(container);
-            this.drawNodes(container, (d) => {
-                var origin_drag_node;
-                origin_drag_node = this.index.lookup(d);
-                if (!self.selected.has(origin_drag_node)) {
-                    self.unselect_all();
-                    self.select_node(origin_drag_node);
-                }
-                self.move_nodes(d3.event.dx, d3.event.dy)
-            });
-            this.drawLabels(container, (d) => {
-                var origin_drag_node;
-                origin_drag_node = this.index.lookup(d);
-                if (!self.selected.has(origin_drag_node)) {
-                    self.unselect_all();
-                    self.select_node(origin_drag_node);
-                }
-                self.move_nodes(d3.event.dx, d3.event.dy)
-            });
-            this.resize_nodes_to_label_text();
-            this.resize_recurrent_projections();
-            this.scale_graph_to_fit(this.fill_proportion);
-            this.correct_projection_lengths_for_ellipse_sizes();
-            this.parse_stylesheet();
-            this.graph_bounding_box = this.get_graph_bounding_box();
-            this.canvas_bounding_box = this.get_canvas_bounding_box();
-            this.updateGraph();
-            window.index = this.index;
-            window.this = this;
-        }
+        this.set_script_updater();
+        this.set_index();
+        this.draw_elements();
+        this.parse_stylesheet();
     }
 
     render() {
