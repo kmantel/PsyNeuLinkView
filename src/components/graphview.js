@@ -42,7 +42,7 @@ class GraphView extends React.Component {
         this.scroll_proportion = {left: null, top: null};
         this.scaling_factor = 1;
         this.fill_proportion = 1;
-        this.center_graph_on_point = this.center_graph_on_point.bind(this);
+        this.center_graph = this.center_graph.bind(this);
         this.get_canvas_bounding_box = this.get_canvas_bounding_box.bind(this);
         this.get_graph_bounding_box = this.get_graph_bounding_box.bind(this);
         this.setGraph = this.setGraph.bind(this);
@@ -85,8 +85,14 @@ class GraphView extends React.Component {
         if (!(this.props.graph_style === prevProps.graph_style)) {
             this.parse_stylesheet();
         }
+    }
+
+    validate_stylesheet(){
         if (!(this.stylesheet)){
             this.stylesheet = {}
+        }
+        if (!('canvas' in this.stylesheet)){
+            this.stylesheet.canvas = {}
         }
         if (!('components' in this.stylesheet)){
             this.stylesheet.components = {}
@@ -180,10 +186,12 @@ class GraphView extends React.Component {
     }
 
     update_script() {
-        var stylesheet_str = JSON.stringify(this.stylesheet);
-        this.props.fileunwatch_fx(this.props.filepath);
-        console.log('updating')
-        this.script_updater.write({styleJSON: stylesheet_str});
+        if (this.props.filepath){
+            var stylesheet_str = JSON.stringify(this.stylesheet);
+            this.props.fileunwatch_fx(this.props.filepath);
+            console.log('updating')
+            this.script_updater.write({styleJSON: stylesheet_str});
+        }
     }
 
     dist(x1, y1, x2, y2) {
@@ -316,17 +324,19 @@ class GraphView extends React.Component {
         }
     }
 
-    updateGraph(e) {
-        var horizontal_overflow, vertical_overflow;
-        horizontal_overflow = this.graph_bounding_box.width * this.fill_proportion >= this.canvas_bounding_box.width;
-        vertical_overflow = this.graph_bounding_box.height * this.fill_proportion >= this.canvas_bounding_box.height;
-        if (horizontal_overflow || vertical_overflow) {
-            this.scale_graph_to_fit(this.fill_proportion);
+    updateGraph() {
+        if (!(['loading',null].includes(this.props.graph))){
+            var horizontal_overflow, vertical_overflow;
+            horizontal_overflow = this.graph_bounding_box.width * this.fill_proportion >= this.canvas_bounding_box.width;
+            vertical_overflow = this.graph_bounding_box.height * this.fill_proportion >= this.canvas_bounding_box.height;
+            if (horizontal_overflow || vertical_overflow) {
+                this.scale_graph_to_fit(this.fill_proportion);
+            }
+            var win = document.querySelector('.graph-view');
+            win.scrollTo(win.scrollWidth * this.scroll_proportion.left, win.scrollHeight * this.scroll_proportion.top)
+            this.graph_bounding_box = this.get_graph_bounding_box();
+            this.canvas_bounding_box = this.get_canvas_bounding_box();
         }
-        var win = document.querySelector('.graph-view');
-        win.scrollTo(win.scrollWidth * this.scroll_proportion.left, win.scrollHeight * this.scroll_proportion.top)
-        this.graph_bounding_box = this.get_graph_bounding_box();
-        this.canvas_bounding_box = this.get_canvas_bounding_box();
     }
 
     createSVG() {
@@ -479,15 +489,6 @@ class GraphView extends React.Component {
             .attr('stroke', 'black');
         self.recurrent = recurrent;
         self.index.add_d3_group(recurrent, 'projection');
-
-        var recurrent_container = document.querySelector('g.recurrent');
-        this.index.recurrent_projections.forEach(
-            (projection) => {
-                if (!(projection.dom.constructor.name === 'SVGPathElement')) {
-                    recurrent_container.appendChild(projection.dom)
-                }
-            }
-        )
     }
 
     drawNodes(container, nodeDragFunction) {
@@ -937,17 +938,16 @@ class GraphView extends React.Component {
                 }
             }
         );
-
-        this.index.recurrent_projections.forEach(
+        recurrent_projs.forEach(
             (projection) => {
-                var phi = -2.5;
+                var start_phi = -2.5;
                 var xrad = projection.head.data.rx;
                 var yrad = projection.head.data.ry;
-                var radius_at_point = xrad * yrad / Math.sqrt(xrad ** 2 * Math.sin(phi) ** 2 + yrad ** 2 * Math.cos(phi) ** 2);
+                var radius_at_point = xrad * yrad / Math.sqrt(xrad ** 2 * Math.sin(start_phi) ** 2 + yrad ** 2 * Math.cos(start_phi) ** 2);
                 radius_at_point += projection.head.data.stroke_width/2;
                 var stpt = {
-                    x: radius_at_point * Math.cos(phi),
-                    y: radius_at_point * Math.sin(phi)
+                    x: radius_at_point * Math.cos(start_phi),
+                    y: radius_at_point * Math.sin(start_phi)
                 };
                 var endpt = {
                     x: stpt.x,
@@ -1032,7 +1032,7 @@ class GraphView extends React.Component {
             Math.floor(((target_height / graph_bounding_box.height) * 100)) / 100,
         );
         this.scale_graph(scaling_factor);
-        this.center_graph_on_point();
+        this.center_graph();
     }
 
     get_canvas_bounding_box() {
@@ -1062,13 +1062,13 @@ class GraphView extends React.Component {
         }
     }
 
-    center_graph_on_point(centerpoint_offset = this.centerpoint_offset) {
+    center_graph() {
         var centerpoint, graph_bounding_box, canvas_bounding_box, vertical_offset, horizontal_offset;
         graph_bounding_box = this.get_graph_bounding_box();
         canvas_bounding_box = this.get_canvas_bounding_box();
         centerpoint = {x: canvas_bounding_box.width / 2, y: canvas_bounding_box.height / 2};
-        horizontal_offset = centerpoint.x - graph_bounding_box.centerpoint.x + centerpoint_offset.x;
-        vertical_offset = centerpoint.y - graph_bounding_box.centerpoint.y + centerpoint_offset.y;
+        horizontal_offset = centerpoint.x - graph_bounding_box.centerpoint.x;
+        vertical_offset = centerpoint.y - graph_bounding_box.centerpoint.y;
         this.move_graph(horizontal_offset, vertical_offset)
     }
 
@@ -1184,10 +1184,10 @@ class GraphView extends React.Component {
             this.resize_recurrent_projections();
             this.scale_graph_to_fit(this.fill_proportion);
             this.correct_projection_lengths_for_ellipse_sizes();
-            // this.center_graph_on_point();
             this.parse_stylesheet();
             this.graph_bounding_box = this.get_graph_bounding_box();
             this.canvas_bounding_box = this.get_canvas_bounding_box();
+            this.updateGraph();
             window.index = this.index;
             window.this = this;
         }

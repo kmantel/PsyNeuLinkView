@@ -432,6 +432,12 @@ export default class Workspace extends React.Component {
                             width: this.state.xRes - this.state.rowOneHorizontalFactor - padding * 2
                         }
                     }
+                    location = {
+                        {
+                            x:this.state.rowOneHorizontalFactor,
+                            y:0
+                        }
+                    }
                     graph={this.state.graph}
                     graph_style = {this.state.graph_style}
                     filepath = {this.state.filepath}
