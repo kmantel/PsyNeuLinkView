@@ -9,6 +9,11 @@
       "row_two_horizontal_factor": {},
       "vertical_factor": {}
     },
+    "graphview": {
+      "zoom_scale": 1,
+      "x_scroll": 50,
+      "y_scroll": 50
+    },
     "filepath": {}
   }
 }

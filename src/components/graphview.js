@@ -23,6 +23,8 @@ const style = {
     justifyContent: "center",
 };
 
+const config_client = window.config_client;
+
 class GraphView extends React.Component {
     constructor(props) {
         super(props);
@@ -44,13 +46,12 @@ class GraphView extends React.Component {
         this.index = new Index();
         this.selected = new Set();
         this.mouse_offset = {x: 0, y: 0};
-        this.centerpoint_offset = {x: 0, y: 0};
-        this.scroll_proportion = {left: null, top: null};
         this.scaling_factor = 1;
         this.fill_proportion = 1;
     }
 
     bind_this_to_functions() {
+        this.set_zoom = this.set_zoom.bind(this);
         this.update_graph = this.update_graph.bind(this);
         this.set_non_react_state = this.set_non_react_state.bind(this);
         this.center_graph = this.center_graph.bind(this);
@@ -663,8 +664,7 @@ class GraphView extends React.Component {
 
     update_scroll() {
         var win = document.querySelector('.graph-view');
-        this.scroll_proportion.left = win.scrollLeft / win.scrollWidth;
-        this.scroll_proportion.top = win.scrollTop / win.scrollHeight;
+        this.set_zoom_config(null,win.scrollLeft,win.scrollTop);
     }
 
     apply_select_boxes() {
@@ -1090,12 +1090,13 @@ class GraphView extends React.Component {
     }
 
     zoomed() {
+        console.log(d3.event)
         var d3e = d3.select('svg.graph');
         var win = document.querySelector('.graph-view')
         if (d3.event.sourceEvent && d3.event.sourceEvent.type === 'mousemove') {
             if (d3.event.sourceEvent.metaKey || d3.event.sourceEvent.ctrlKey) {
-                var xScroll = win.scrollLeft - d3.event.sourceEvent.movementX;
-                var yScroll = win.scrollTop - d3.event.sourceEvent.movementY;
+                var xscroll = win.scrollLeft - d3.event.sourceEvent.movementX;
+                var yscroll = win.scrollTop - d3.event.sourceEvent.movementY;
             } else {
                 var xScroll = win.scrollLeft;
                 var yScroll = win.scrollTop;
@@ -1111,12 +1112,27 @@ class GraphView extends React.Component {
                 .attr('height', `${new_scale}%`);
             var full_g_post = document.querySelector('svg.graph');
             var full_g_box_post = full_g_post.getBoundingClientRect();
-            var xScrollOffset = full_g_box_post.width * pre_scale_x_proportion - this.mouse_offset.x;
-            var xScroll = win.scrollLeft + xScrollOffset;
-            var yScrollOffset = full_g_box_post.height * pre_scale_y_proportion - this.mouse_offset.y;
-            var yScroll = win.scrollTop + yScrollOffset;
+            var xscroll_offset = full_g_box_post.width * pre_scale_x_proportion - this.mouse_offset.x;
+            var xscroll = win.scrollLeft + xscroll_offset;
+            var yscroll_offset = full_g_box_post.height * pre_scale_y_proportion - this.mouse_offset.y;
+            var yscroll = win.scrollTop + yscroll_offset;
         }
-        win.scrollTo(xScroll, yScroll)
+        this.set_zoom_config(d3.event.transform.k, xscroll, yscroll);
+        win.scrollTo(xscroll, yscroll)
+    }
+
+    set_zoom_config(k=null, xscroll=null, yscroll=null) {
+        var cf = {...config_client.get_config()};
+        if (k){
+            cf.env.graphview.zoom_scale = k;
+        }
+        if (xscroll){
+            cf.env.graphview.x_scroll = xscroll;
+        }
+        if (yscroll){
+            cf.env.graphview.y_scroll = yscroll;
+        }
+        config_client.set_config({...cf})
     }
 
     apply_zoom(svg) {
@@ -1195,7 +1211,7 @@ class GraphView extends React.Component {
         this.drawProjections(container);
         this.drawNodes(container, (node) => {self.drag_selected(node)});
         this.drawLabels(container, (label) => {self.drag_selected(label)});
-        this.postprocess_elements();
+        this.postprocess();
     }
 
     redimension_viewbox(){
@@ -1210,11 +1226,25 @@ class GraphView extends React.Component {
             this.scale_graph(this.scaling_factor * proportion);
     }
 
-    postprocess_elements(){
+    set_zoom(){
+        var cf = config_client.get_config()
+        if (!(cf.env.graphview.zoom_scale == 1)){
+            var win = document.querySelector('.graph-view'),
+                k = cf.env.graphview.zoom_scale,
+                xscroll = cf.env.graphview.x_scroll,
+                yscroll = cf.env.graphview.y_scroll;
+            this.svg.call(this.zoom.scaleTo,k);
+            win.scrollTo(xscroll, yscroll);
+            this.set_zoom_config(k,xscroll,yscroll);
+        }
+    }
+
+    postprocess(){
         this.resize_nodes_to_label_text();
         this.correct_projection_lengths_for_ellipse_sizes();
         this.scale_graph_to_fit(this.fill_proportion);
-        this.redimension_viewbox()
+        this.redimension_viewbox();
+        this.set_zoom();
     }
 
     setGraph() {
