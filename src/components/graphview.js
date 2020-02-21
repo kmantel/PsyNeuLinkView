@@ -869,12 +869,12 @@ class GraphView extends React.Component {
             viewBox_h = parseInt(viewBox[3]);
         this.stylesheet.components.nodes[node.name] =
             {
-                'x': +((node.data.x - node.data.rx)
+                'x': +((node.data.x - node.data.rx - node.data.stroke_width/2)
                     * this.stylesheet.reference_canvas.width/viewBox_w
-                    * this.scaling_factor).toFixed(0) - node.data.stroke_width,
-                'y': +((node.data.y - node.data.ry)
+                    * this.scaling_factor).toFixed(0),
+                'y': +((node.data.y - node.data.ry - node.data.stroke_width/2)
                     * this.stylesheet.reference_canvas.height/viewBox_h
-                    * this.scaling_factor).toFixed(0) - node.data.stroke_width
+                    * this.scaling_factor).toFixed(0)
             };
         this.move_label_to_corresponding_node(node);
         this.refresh_edges_for_node(node);
