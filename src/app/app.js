@@ -5,7 +5,7 @@ import React from 'react';
 import '../css/app.css';
 
 // import components
-import Workspace from '../components/workspace'
+import WorkSpace from '../components/workspace'
 
 var log = require('electron-log');
 
@@ -15,7 +15,7 @@ export default class App extends React.Component{
   render() {
     return (
         <div className = "app">
-          <Workspace/>
+          <WorkSpace/>
         </div>
     );
   }

@@ -12,24 +12,25 @@ const os = require('os');
 var proto_path = path.join(window.electron_root.app_path, 'src', 'protos', 'graph.proto');
 var rpc_client = new window.rpc.rpc_client(proto_path, window.modulePath);
 
-export default class Workspace extends React.Component {
+export default class WorkSpace extends React.Component {
     constructor(props) {
         super(props);
         var w = window.innerWidth;
         var h = window.innerHeight;
         this.state = {
             active_tooltip: '',
-            xRes: w,
-            yRes: h,
-            rowOneHorizontalFactor: Math.ceil(w / 5),
-            rowTwoHorizontalFactor: Math.ceil(w / 5),
-            verticalFactor: Math.ceil(h * 0.7),
+            x_res: w,
+            y_res: h,
+            row_one_horizontal_factor: Math.ceil(w / 5),
+            row_two_horizontal_factor: Math.ceil(w / 5),
+            vertical_factor: Math.ceil(h * 0.7),
             graph: null,
             graph_style:null,
             show_settings: false,
             mouse:null,
             filepath: null
         };
+        this.name = 'workspace';
         this.dispatcher = new ErrorDispatcher(this);
         this.container = {};
         this.choose_composition = this.choose_composition.bind(this);
@@ -321,19 +322,19 @@ export default class Workspace extends React.Component {
     }
 
     window_resize() {
-        var old_xRes = this.state.xRes;
-        var old_yRes = this.state.yRes;
-        var old_r1_h_factor = this.state.rowOneHorizontalFactor;
-        var old_r2_h_factor = this.state.rowTwoHorizontalFactor;
-        var old_v_factor = this.state.verticalFactor;
+        var old_x_res = this.state.x_res;
+        var old_y_res = this.state.y_res;
+        var old_r1_h_factor = this.state.row_one_horizontal_factor;
+        var old_r2_h_factor = this.state.row_two_horizontal_factor;
+        var old_v_factor = this.state.vertical_factor;
         var w = window.innerWidth;
         var h = window.innerHeight;
         this.setState({
-            xRes: w,
-            yRes: h,
-            rowOneHorizontalFactor: (old_r1_h_factor / old_xRes) * w,
-            rowTwoHorizontalFactor: (old_r2_h_factor / old_xRes) * w,
-            verticalFactor: (old_v_factor / old_yRes) * h,
+            x_res: w,
+            y_res: h,
+            row_one_horizontal_factor: (old_r1_h_factor / old_x_res) * w,
+            row_two_horizontal_factor: (old_r2_h_factor / old_x_res) * w,
+            vertical_factor: (old_v_factor / old_y_res) * h,
             test_width: 500
         });
         this.forceUpdate()
@@ -353,6 +354,7 @@ export default class Workspace extends React.Component {
         } else {
             self.setState({[vertical_factor]: self.state[vertical_factor] + offset_ver})
         }
+        console.log(self.state.row_one_horizontal_factor);
         self.mouse_initial = mouse_current
     }
 
@@ -401,16 +403,16 @@ export default class Workspace extends React.Component {
                     className='pnl-panel'
                     onResizeStart={this.get_mouse_initial}
                     onResize={function (e, direction, ref, d) {
-                        self.panel_resize('rowOneHorizontalFactor', 'verticalFactor', e, direction, ref, d)
+                        self.panel_resize('row_one_horizontal_factor', 'vertical_factor', e, direction, ref, d)
                         window.dispatchEvent(new Event('resize'));
                     }}
                     onResizeStop={function (e, direction, ref, d) {
-                        self.panel_resize('rowOneHorizontalFactor', 'verticalFactor', e, direction, ref, d)
+                        self.panel_resize('row_one_horizontal_factor', 'vertical_factor', e, direction, ref, d)
                     }}
                     size={
                         {
-                            height: this.state.verticalFactor - padding,
-                            width: this.state.rowOneHorizontalFactor - padding
+                            height: this.state.vertical_factor - padding,
+                            width: this.state.row_one_horizontal_factor - padding
                         }
                     }
                 />
@@ -420,21 +422,21 @@ export default class Workspace extends React.Component {
                     className='pnl-panel'
                     onResizeStart={this.get_mouse_initial}
                     onResize={function (e, direction, ref, d) {
-                        self.panel_resize('rowOneHorizontalFactor', 'verticalFactor', e, direction, ref, d)
+                        self.panel_resize('row_one_horizontal_factor', 'vertical_factor', e, direction, ref, d)
                         window.dispatchEvent(new Event('resize'));
                     }}
                     onResizeStop={function (e, direction, ref, d) {
-                        self.panel_resize('rowOneHorizontalFactor', 'verticalFactor', e, direction, ref, d)
+                        self.panel_resize('row_one_horizontal_factor', 'vertical_factor', e, direction, ref, d)
                     }}
                     size={
                         {
-                            height: this.state.verticalFactor - padding,
-                            width: this.state.xRes - this.state.rowOneHorizontalFactor - padding * 2
+                            height: this.state.vertical_factor - padding,
+                            width: this.state.x_res - this.state.row_one_horizontal_factor - padding * 2
                         }
                     }
                     location = {
                         {
-                            x:this.state.rowOneHorizontalFactor,
+                            x:this.state.row_one_horizontal_factor,
                             y:0
                         }
                     }
@@ -452,16 +454,16 @@ export default class Workspace extends React.Component {
                     className='pnl-panel'
                     onResizeStart={this.get_mouse_initial}
                     onResizeStop={function (e, direction, ref, d) {
-                        self.panel_resize('rowTwoHorizontalFactor', 'verticalFactor', e, direction, ref, d)
+                        self.panel_resize('row_two_horizontal_factor', 'vertical_factor', e, direction, ref, d)
                     }}
                     onResize={function (e, direction, ref, d) {
-                        self.panel_resize('rowTwoHorizontalFactor', 'verticalFactor', e, direction, ref, d)
+                        self.panel_resize('row_two_horizontal_factor', 'vertical_factor', e, direction, ref, d)
                         window.dispatchEvent(new Event('resize'));
                     }}
                     size={
                         {
-                            height: this.state.yRes - this.state.verticalFactor - padding * 2,
-                            width: this.state.rowTwoHorizontalFactor - padding
+                            height: this.state.y_res - this.state.vertical_factor - padding * 2,
+                            width: this.state.row_two_horizontal_factor - padding
                         }
                     }/>
             </div>,
@@ -471,16 +473,16 @@ export default class Workspace extends React.Component {
                     className='pnl-panel'
                     onResizeStart={this.get_mouse_initial}
                     onResizeStop={function (e, direction, ref, d) {
-                        self.panel_resize('rowTwoHorizontalFactor', 'verticalFactor', e, direction, ref, d)
+                        self.panel_resize('row_two_horizontal_factor', 'vertical_factor', e, direction, ref, d)
                     }}
                     onResize={function (e, direction, ref, d) {
-                        self.panel_resize('rowTwoHorizontalFactor', 'verticalFactor', e, direction, ref, d)
+                        self.panel_resize('row_two_horizontal_factor', 'vertical_factor', e, direction, ref, d)
                         window.dispatchEvent(new Event('resize'));
                     }}
                     size={
                         {
-                            height: this.state.yRes - this.state.verticalFactor - padding * 2,
-                            width: this.state.xRes - this.state.rowTwoHorizontalFactor - padding * 2
+                            height: this.state.y_res - this.state.vertical_factor - padding * 2,
+                            width: this.state.x_res - this.state.row_two_horizontal_factor - padding * 2
                         }
                     }/>
             </div>
@@ -500,34 +502,34 @@ export default class Workspace extends React.Component {
                             i: 'sidebar',
                             x: 0,
                             y: 0,
-                            w: this.state.rowOneHorizontalFactor,
-                            h: this.state.verticalFactor
+                            w: this.state.row_one_horizontal_factor,
+                            h: this.state.vertical_factor
                         },
                         {
                             i: 'graphview',
-                            x: this.state.rowOneHorizontalFactor,
+                            x: this.state.row_one_horizontal_factor,
                             y: 0,
-                            w: this.state.xRes - this.state.rowOneHorizontalFactor,
-                            h: this.state.verticalFactor
+                            w: this.state.x_res - this.state.row_one_horizontal_factor,
+                            h: this.state.vertical_factor
                         },
                         {
                             i: 'tipbox',
                             x: 0,
-                            y: this.state.verticalFactor,
-                            w: this.state.rowTwoHorizontalFactor,
-                            h: this.state.yRes - this.state.verticalFactor
+                            y: this.state.vertical_factor,
+                            w: this.state.row_two_horizontal_factor,
+                            h: this.state.y_res - this.state.vertical_factor
                         },
                         {
                             i: 'paramcontrol',
-                            x: this.state.rowTwoHorizontalFactor,
-                            y: this.state.verticalFactor,
-                            w: this.state.xRes - this.state.rowTwoHorizontalFactor,
-                            h: this.state.yRes - this.state.verticalFactor
+                            x: this.state.row_two_horizontal_factor,
+                            y: this.state.vertical_factor,
+                            w: this.state.x_res - this.state.row_two_horizontal_factor,
+                            h: this.state.y_res - this.state.vertical_factor
                         }
                     ]}
-                    cols={this.state.xRes}
+                    cols={this.state.x_res}
                     rowHeight={1}
-                    width={this.state.xRes}
+                    width={this.state.x_res}
                     components={components}
                 />
             </div>
