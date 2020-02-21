@@ -395,7 +395,7 @@ export default class Workspace extends React.Component {
         var self = this;
         var padding = 10;
         var components = [
-            <div key="a">
+            <div key="sidebar">
                 <SideBar
                     hover={() => this.set_tool_tip('sidebar')}
                     className='pnl-panel'
@@ -415,7 +415,7 @@ export default class Workspace extends React.Component {
                     }
                 />
             </div>,
-            <div key="b">
+            <div key="graphview">
                 <GraphView
                     className='pnl-panel'
                     onResizeStart={this.get_mouse_initial}
@@ -446,7 +446,7 @@ export default class Workspace extends React.Component {
                     fileunwatch_fx = {this.unwatch_file}
                 />
             </div>,
-            <div key="c">
+            <div key="tipbox">
                 <ToolTipBox
                     text={this.state.active_tooltip}
                     className='pnl-panel'
@@ -465,7 +465,7 @@ export default class Workspace extends React.Component {
                         }
                     }/>
             </div>,
-            <div key="d">
+            <div key="paramcontrol">
                 <ParameterControlBox
                     text={this.state.active_tooltip}
                     className='pnl-panel'
@@ -497,28 +497,28 @@ export default class Workspace extends React.Component {
                     margin={[0, 0]}
                     layout={[
                         {
-                            i: 'a',
+                            i: 'sidebar',
                             x: 0,
                             y: 0,
                             w: this.state.rowOneHorizontalFactor,
                             h: this.state.verticalFactor
                         },
                         {
-                            i: 'b',
+                            i: 'graphview',
                             x: this.state.rowOneHorizontalFactor,
                             y: 0,
                             w: this.state.xRes - this.state.rowOneHorizontalFactor,
                             h: this.state.verticalFactor
                         },
                         {
-                            i: 'c',
+                            i: 'tipbox',
                             x: 0,
                             y: this.state.verticalFactor,
                             w: this.state.rowTwoHorizontalFactor,
                             h: this.state.yRes - this.state.verticalFactor
                         },
                         {
-                            i: 'd',
+                            i: 'paramcontrol',
                             x: this.state.rowTwoHorizontalFactor,
                             y: this.state.verticalFactor,
                             w: this.state.xRes - this.state.rowTwoHorizontalFactor,
