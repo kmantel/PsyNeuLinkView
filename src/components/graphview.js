@@ -51,6 +51,7 @@ class GraphView extends React.Component {
     }
 
     bind_this_to_functions() {
+        this.update_graph = this.update_graph.bind(this);
         this.set_non_react_state = this.set_non_react_state.bind(this);
         this.center_graph = this.center_graph.bind(this);
         this.setGraph = this.setGraph.bind(this);
@@ -68,6 +69,12 @@ class GraphView extends React.Component {
         this.move_graph = this.move_graph.bind(this);
         this.refresh_edges_for_node = this.refresh_edges_for_node.bind(this);
         this.move_label_to_corresponding_node = this.move_label_to_corresponding_node.bind(this);
+    }
+
+    update_graph() {
+        if (![null, 'loading'].includes(this.props.graph)){
+            this.upscale_viewbox()
+        }
     }
 
     componentWillMount() {
@@ -117,7 +124,7 @@ class GraphView extends React.Component {
     }
 
     componentWillUnmount() {
-        window.removeEventListener('resize', this.updateGraph);
+        window.removeEventListener('resize', this.update_graph);
         window.removeEventListener('wheel', this.capture_wheel);
         window.removeEventListener('keydown', this.key_down);
         window.removeEventListener('keyup', this.key_up);
@@ -129,7 +136,7 @@ class GraphView extends React.Component {
     }
 
     componentDidMount() {
-        window.addEventListener('resize', this.updateGraph);
+        window.addEventListener('resize', this.update_graph);
         window.addEventListener('wheel', this.capture_wheel, {passive: false});
         window.addEventListener('keydown', this.key_down);
         window.addEventListener('keyup', this.key_up);
@@ -857,13 +864,17 @@ class GraphView extends React.Component {
         node.selection
             .attr('cx', node.data.x)
             .attr('cy', node.data.y);
+        var svg = document.querySelector('svg'),
+            viewBox = svg.getAttribute('viewBox').split(','),
+            viewBox_w = parseInt(viewBox[2]),
+            viewBox_h = parseInt(viewBox[3]);
         this.stylesheet.components.nodes[node.name] =
             {
                 'x': +((node.data.x - node.data.rx)
-                    * this.stylesheet.reference_canvas.width/this.get_canvas_bounding_box().width
+                    * this.stylesheet.reference_canvas.width/viewBox_w
                     * this.scaling_factor).toFixed(0) - node.data.stroke_width,
                 'y': +((node.data.y - node.data.ry)
-                    * this.stylesheet.reference_canvas.height/this.get_canvas_bounding_box().height
+                    * this.stylesheet.reference_canvas.height/viewBox_h
                     * this.scaling_factor).toFixed(0) - node.data.stroke_width
             };
         this.move_label_to_corresponding_node(node);
@@ -1139,17 +1150,21 @@ class GraphView extends React.Component {
         stylesheet = self.stylesheet;
         if ('components' in stylesheet) {
             if ('nodes' in stylesheet.components) {
-                var pnlv_node, nodes, cx, cy;
+                var pnlv_node, nodes, cx, cy, svg;
+                svg = document.querySelector('svg');
+                var viewBox = svg.getAttribute('viewBox').split(','),
+                    viewBox_w = parseInt(viewBox[2]),
+                    viewBox_h = parseInt(viewBox[3]);
                 nodes = Object.keys(stylesheet.components.nodes);
                 nodes.forEach(
                     (node) => {
                         pnlv_node = self.index.lookup(node);
                         cx =
-                            (stylesheet.components.nodes[node].x/stylesheet.reference_canvas.width*this.get_canvas_bounding_box().width/this.scaling_factor)
+                            (stylesheet.components.nodes[node].x/stylesheet.reference_canvas.width*viewBox_w/this.scaling_factor)
                             + pnlv_node.data.rx
                             + pnlv_node.data.stroke_width/this.scaling_factor;
                         cy =
-                            (stylesheet.components.nodes[node].y/stylesheet.reference_canvas.height*this.get_canvas_bounding_box().height/this.scaling_factor)
+                            (stylesheet.components.nodes[node].y/stylesheet.reference_canvas.height*viewBox_h/this.scaling_factor)
                             + pnlv_node.data.ry
                             + pnlv_node.data.stroke_width/this.scaling_factor;
                         pnlv_node.data.x = cx;
@@ -1182,12 +1197,24 @@ class GraphView extends React.Component {
         this.drawNodes(container, (node) => {self.drag_selected(node)});
         this.drawLabels(container, (label) => {self.drag_selected(label)});
         this.postprocess_elements();
-        this.scale_graph_to_fit(this.fill_proportion);
+    }
+
+    upscale_viewbox(){
+        var svg = document.querySelector('svg'),
+            viewBox = svg.getAttribute('viewBox').split(','),
+            viewBox_w = parseInt(viewBox[2]),
+            viewBox_h = parseInt(viewBox[3]),
+            panel_w = this.props.size.width,
+            panel_h = this.props.size.height,
+            proportion = Math.max(panel_w/viewBox_w, panel_h/viewBox_h);
+            svg.setAttribute('viewBox', [0, 0, viewBox_w*proportion, viewBox_h*proportion]);
+            this.scale_graph(this.scaling_factor * proportion);
     }
 
     postprocess_elements(){
         this.resize_nodes_to_label_text();
         this.correct_projection_lengths_for_ellipse_sizes();
+        this.scale_graph_to_fit(this.fill_proportion);
     }
 
     setGraph() {
