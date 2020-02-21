@@ -73,7 +73,6 @@ class GraphView extends React.Component {
 
     update_graph() {
         if (![null, 'loading'].includes(this.props.graph)){
-            this.upscale_viewbox()
         }
     }
 
@@ -1199,14 +1198,14 @@ class GraphView extends React.Component {
         this.postprocess_elements();
     }
 
-    upscale_viewbox(){
+    redimension_viewbox(){
         var svg = document.querySelector('svg'),
             viewBox = svg.getAttribute('viewBox').split(','),
             viewBox_w = parseInt(viewBox[2]),
             viewBox_h = parseInt(viewBox[3]),
-            panel_w = this.props.size.width,
-            panel_h = this.props.size.height,
-            proportion = Math.max(panel_w/viewBox_w, panel_h/viewBox_h);
+            window_w = window.innerWidth,
+            window_h = window.innerHeight,
+            proportion = Math.max(window_w/viewBox_w, window_h/viewBox_h);
             svg.setAttribute('viewBox', [0, 0, viewBox_w*proportion, viewBox_h*proportion]);
             this.scale_graph(this.scaling_factor * proportion);
     }
@@ -1215,6 +1214,7 @@ class GraphView extends React.Component {
         this.resize_nodes_to_label_text();
         this.correct_projection_lengths_for_ellipse_sizes();
         this.scale_graph_to_fit(this.fill_proportion);
+        this.redimension_viewbox()
     }
 
     setGraph() {
