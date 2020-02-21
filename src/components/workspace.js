@@ -9,6 +9,7 @@ import ErrorDispatcher from "../utility/errors/dispatcher";
 import fs from 'fs'
 const path = require('path');
 const os = require('os');
+const config_client = window.config_client;
 var proto_path = path.join(window.electron_root.app_path, 'src', 'protos', 'graph.proto');
 var rpc_client = new window.rpc.rpc_client(proto_path, window.modulePath);
 
@@ -17,13 +18,14 @@ export default class WorkSpace extends React.Component {
         super(props);
         var w = window.innerWidth;
         var h = window.innerHeight;
+        var sizing_factors = this.get_sizing_factors();
         this.state = {
             active_tooltip: '',
             x_res: w,
             y_res: h,
-            row_one_horizontal_factor: Math.ceil(w / 5),
-            row_two_horizontal_factor: Math.ceil(w / 5),
-            vertical_factor: Math.ceil(h * 0.7),
+            row_one_horizontal_factor: sizing_factors.row_one_horizontal_factor,
+            row_two_horizontal_factor: sizing_factors.row_two_horizontal_factor,
+            vertical_factor: sizing_factors.vertical_factor,
             graph: null,
             graph_style:null,
             show_settings: false,
@@ -47,6 +49,31 @@ export default class WorkSpace extends React.Component {
         this.watch_file = this.watch_file.bind(this);
         this.unwatch_file = this.unwatch_file.bind(this);
         this.setMenu();
+    }
+
+    get_sizing_factors() {
+        var config = {...config_client.get_config()},
+            w = window.innerWidth,
+            h = window.innerHeight,
+            row_one_h = config.env.workspace.row_one_horizontal_factor,
+            row_two_h = config.env.workspace.row_two_horizontal_factor,
+            v = config.env.workspace.vertical_factor;
+        if (!row_one_h) {
+            row_one_h = Math.ceil(w / 5)
+        }
+        if (!row_two_h) {
+            row_two_h = Math.ceil(w / 5)
+        }
+        if (!v) {
+            v = Math.ceil(h * 0.7)
+        }
+        return(
+            {
+                row_one_horizontal_factor: row_one_h,
+                row_two_horizontal_factor: row_two_h,
+                vertical_factor: v
+            }
+        )
     }
 
     setMenu() {
@@ -354,7 +381,11 @@ export default class WorkSpace extends React.Component {
         } else {
             self.setState({[vertical_factor]: self.state[vertical_factor] + offset_ver})
         }
-        console.log(self.state.row_one_horizontal_factor);
+        var cf = {...config_client.get_config()};
+        cf.env.workspace.row_one_horizontal_factor = self.state.row_one_horizontal_factor;
+        cf.env.workspace.row_two_horizontal_factor = self.state.row_two_horizontal_factor;
+        cf.env.workspace.vertical_factor = self.state.vertical_factor;
+        config_client.set_config({...cf});
         self.mouse_initial = mouse_current
     }
 

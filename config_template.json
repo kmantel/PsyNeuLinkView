@@ -2,5 +2,12 @@
   "Python": {
     "Interpreter Path": "",
     "PsyNeuLink Path": ""
+  },
+  "env" : {
+    "workspace": {
+      "row_one_horizontal_factor": {},
+      "row_two_horizontal_factor": {},
+      "vertical_factor": {}
+    }
   }
 }
