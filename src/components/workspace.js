@@ -18,7 +18,7 @@ export default class WorkSpace extends React.Component {
         super(props);
         var w = window.innerWidth;
         var h = window.innerHeight;
-        var sizing_factors = this.get_sizing_factors();
+        var sizing_factors = this.get_initial_sizing_factors();
         this.state = {
             active_tooltip: '',
             x_res: w,
@@ -51,7 +51,20 @@ export default class WorkSpace extends React.Component {
         this.setMenu();
     }
 
-    get_sizing_factors() {
+    componentDidMount() {
+        console.log('y')
+        this.get_initial_filepath();
+    }
+
+    get_initial_filepath() {
+        var config = {...config_client.get_config()},
+            filepath = config.env.filepath;
+        if (filepath){
+            this.validate_server_status_and_load_script(filepath);
+        }
+    }
+
+    get_initial_sizing_factors() {
         var config = {...config_client.get_config()},
             w = window.innerWidth,
             h = window.innerHeight,
@@ -294,6 +307,9 @@ export default class WorkSpace extends React.Component {
                             catch {
                                 var new_graph_style = {};
                             }
+                            var cf = {...config_client.get_config()};
+                            cf.env.filepath = filepath;
+                            config_client.set_config({...cf});
                             self.setState({
                                 graph: new_graph,
                                 graph_style: new_graph_style,
@@ -367,6 +383,15 @@ export default class WorkSpace extends React.Component {
         this.forceUpdate()
     }
 
+    update_config_panel_sizes(){
+        console.log('yy')
+        var cf = {...config_client.get_config()};
+        cf.env.workspace.row_one_horizontal_factor = this.state.row_one_horizontal_factor;
+        cf.env.workspace.row_two_horizontal_factor = this.state.row_two_horizontal_factor;
+        cf.env.workspace.vertical_factor = this.state.vertical_factor;
+        config_client.set_config({...cf});
+    }
+
     panel_resize(horizontal_factor, vertical_factor, e, direction, ref, d) {
         var self = this;
         var mouse_current = self.state.mouse;
@@ -381,15 +406,7 @@ export default class WorkSpace extends React.Component {
         } else {
             self.setState({[vertical_factor]: self.state[vertical_factor] + offset_ver})
         }
-        var cf = {...config_client.get_config()};
-        cf.env.workspace.row_one_horizontal_factor = self.state.row_one_horizontal_factor;
-        cf.env.workspace.row_two_horizontal_factor = self.state.row_two_horizontal_factor;
-        cf.env.workspace.vertical_factor = self.state.vertical_factor;
-        config_client.set_config({...cf});
         self.mouse_initial = mouse_current
-    }
-
-    componentDidMount() {
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
@@ -439,6 +456,7 @@ export default class WorkSpace extends React.Component {
                     }}
                     onResizeStop={function (e, direction, ref, d) {
                         self.panel_resize('row_one_horizontal_factor', 'vertical_factor', e, direction, ref, d)
+                        self.update_config_panel_sizes()
                     }}
                     size={
                         {
@@ -458,6 +476,7 @@ export default class WorkSpace extends React.Component {
                     }}
                     onResizeStop={function (e, direction, ref, d) {
                         self.panel_resize('row_one_horizontal_factor', 'vertical_factor', e, direction, ref, d)
+                        self.update_config_panel_sizes()
                     }}
                     size={
                         {
@@ -486,6 +505,7 @@ export default class WorkSpace extends React.Component {
                     onResizeStart={this.get_mouse_initial}
                     onResizeStop={function (e, direction, ref, d) {
                         self.panel_resize('row_two_horizontal_factor', 'vertical_factor', e, direction, ref, d)
+                        self.update_config_panel_sizes()
                     }}
                     onResize={function (e, direction, ref, d) {
                         self.panel_resize('row_two_horizontal_factor', 'vertical_factor', e, direction, ref, d)
@@ -505,6 +525,7 @@ export default class WorkSpace extends React.Component {
                     onResizeStart={this.get_mouse_initial}
                     onResizeStop={function (e, direction, ref, d) {
                         self.panel_resize('row_two_horizontal_factor', 'vertical_factor', e, direction, ref, d)
+                        self.update_config_panel_sizes()
                     }}
                     onResize={function (e, direction, ref, d) {
                         self.panel_resize('row_two_horizontal_factor', 'vertical_factor', e, direction, ref, d)

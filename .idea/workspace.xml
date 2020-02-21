@@ -116,7 +116,7 @@
       <workItem from="1581949942288" duration="23315000" />
       <workItem from="1582037576304" duration="12560000" />
       <workItem from="1582123393152" duration="52738000" />
-      <workItem from="1582316595834" duration="1389000" />
+      <workItem from="1582316595834" duration="2881000" />
     </task>
     <task id="LOCAL-00001" summary="Enabled touchpad zoom gestures and windows ctrl shortcuts">
       <created>1581449946471</created>
@@ -248,9 +248,21 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/components/workspace.js</url>
-          <line>392</line>
+          <line>67</line>
           <properties lambdaOrdinal="-1" />
-          <option name="timeStamp" value="626" />
+          <option name="timeStamp" value="627" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/src/components/workspace.js</url>
+          <line>311</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="628" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/src/components/workspace.js</url>
+          <line>55</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="630" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
