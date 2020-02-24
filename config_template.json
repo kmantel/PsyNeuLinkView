@@ -5,15 +5,15 @@
   },
   "env" : {
     "workspace": {
-      "row_one_horizontal_factor": {},
-      "row_two_horizontal_factor": {},
-      "vertical_factor": {}
+      "row_one_horizontal_factor": "",
+      "row_two_horizontal_factor": "",
+      "vertical_factor": ""
     },
     "graphview": {
       "zoom_scale": 1,
       "x_scroll": 50,
       "y_scroll": 50
     },
-    "filepath": {}
+    "filepath": ""
   }
 }
