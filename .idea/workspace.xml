@@ -2,7 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0426a943-ef89-4391-a3a0-8152f91aa099" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/config_template.json" beforeDir="false" afterPath="$PROJECT_DIR$/config_template.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/utility/graphview/attribute.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/utility/graphview/category.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/utility/graphview/entry.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/utility/graphview/stylesheet.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/graphview.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/graphview.js" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -68,10 +73,19 @@
     <configuration name="Main" type="NodeJSConfigurationType" application-parameters="--remote-debugging-port=9222" path-to-node="$PROJECT_DIR$/node_modules/electron/dist/Electron.app/Contents/MacOS/Electron" node-parameters="." working-dir="$PROJECT_DIR$">
       <method v="2" />
     </configuration>
+    <configuration name="test_attribute.js" type="NodeJSConfigurationType" temporary="true" nameIsGenerated="true" path-to-js-file="$PROJECT_DIR$/src/utility/graphview/tests/test_attribute.js" working-dir="$PROJECT_DIR$/src/utility/graphview/tests">
+      <method v="2" />
+    </configuration>
     <list>
       <item itemvalue="Attach to Node.js/Chrome.Debug Render" />
       <item itemvalue="Node.js.Main" />
+      <item itemvalue="Node.js.test_attribute.js" />
     </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Node.js.test_attribute.js" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="StructureViewFactory">
     <option name="ACTIVE_ACTIONS" value=",HTML5_OUTLINE_MODE" />
@@ -246,8 +260,27 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/components/graphview.js</url>
-          <line>1124</line>
-          <option name="timeStamp" value="638" />
+          <line>861</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="680" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/src/components/graphview.js</url>
+          <line>1241</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="692" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/src/components/graphview.js</url>
+          <line>536</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="700" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/src/components/graphview.js</url>
+          <line>1051</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="707" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

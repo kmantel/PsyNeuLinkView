@@ -108,18 +108,23 @@ class GraphView extends React.Component {
         if (!(this.stylesheet)){
             this.stylesheet = {}
         }
-        if (!('reference_canvas' in this.stylesheet)){
-            var canvas_dimensions = document.querySelector('.graph').getBoundingClientRect();
-            this.stylesheet.reference_canvas = {
-                width: canvas_dimensions.width,
-                height: canvas_dimensions.height
+        if (!('Graph Settings' in this.stylesheet)){
+            this.stylesheet['Graph Settings'] = {
+                'Scale':100,
+                'Zoom':100,
+                'XScroll':50,
+                'YScroll':50,
             }
         }
-        if (!('components' in this.stylesheet)){
-            this.stylesheet.components = {}
+        if (!('Components' in this.stylesheet['Graph Settings'])){
+            this.stylesheet['Graph Settings'] = {
+                'Components':{}
+            }
         }
-        if (!('nodes' in this.stylesheet.components)){
-            this.stylesheet.components.nodes = {}
+        if (!('Nodes' in this.stylesheet['Graph Settings']['Components'])){
+            this.stylesheet['Graph Settings']['Components'] = {
+                'Nodes':{}
+            }
         }
     }
 
@@ -175,7 +180,7 @@ class GraphView extends React.Component {
             var increment;
             var self = this;
             e.preventDefault();
-            increment = (e.metaKey||e.ctrlKey ? 25:1)/self.scaling_factor;
+            increment = (e.metaKey||e.ctrlKey ? 25:1);
             if (e.key==='ArrowUp'){
                 this.move_nodes(0, -increment);
             }
@@ -490,7 +495,8 @@ class GraphView extends React.Component {
             })
             .attr('fill', 'white')
             .attr('fill-opacity', '0')
-            .attr('stroke', 'black');
+            .attr('stroke', 'black')
+            .attr('stroke-width', 1);
         self.recurrent = recurrent;
         self.index.add_d3_group(recurrent, 'projection');
     }
@@ -564,7 +570,7 @@ class GraphView extends React.Component {
                 return d.y + offset_from_top_of_node
             })
             .attr('font-size', function (d) {
-                d.text['font-size'] = '10';
+                d.text['font-size'] = 10;
                 return '10px'
             })
             .text(function (d) {
@@ -590,10 +596,10 @@ class GraphView extends React.Component {
         var adjusted_y = y2 - y1;
         var dist_between_centers = Math.sqrt(adjusted_x ** 2 + adjusted_y ** 2);
         var phi = Math.atan2(adjusted_y, adjusted_x);
-        var a = parseFloat(nodeXRad) + strokeWidth;
-        var b = parseFloat(nodeYRad) + strokeWidth;
+        var a = parseFloat(nodeXRad) + Math.round(strokeWidth/2);
+        var b = parseFloat(nodeYRad) + Math.round(strokeWidth/2);
         var radius_at_point = a * b / Math.sqrt(a ** 2 * Math.sin(phi) ** 2 + b ** 2 * Math.cos(phi) ** 2);
-        var e_radius = dist_between_centers - radius_at_point - 3;
+        var e_radius = dist_between_centers - radius_at_point - strokeWidth/2;
         var new_x = (e_radius * Math.cos(phi) + x1);
         var new_y = (e_radius * Math.sin(phi) + y1);
         return {
@@ -637,8 +643,6 @@ class GraphView extends React.Component {
 
     move_graph(dx = 0, dy = 0) {
         // var stylesheet, graph_rect;
-        dx /= this.scaling_factor;
-        dy /= this.scaling_factor;
         this.index.nodes.forEach(
             (node) => {
                 node.data.x += dx;
@@ -674,7 +678,6 @@ class GraphView extends React.Component {
         svg
             .on('mousedown', function () {
                     // don't fire if command is pressed. command unlocks different options
-                    console.log('x',Math.round(d3.mouse(this)[0]/self.scaling_factor), 'y', Math.round(d3.mouse(this)[1]/self.scaling_factor))
                     if (!(d3.event.metaKey || d3.event.ctrlKey)) {
                         var anchor_pt = d3.mouse(this);
                         var processed_anchor_pt = [
@@ -812,7 +815,7 @@ class GraphView extends React.Component {
             projection.head.data.y,
             projection.head.data.rx,
             projection.head.data.ry,
-            Math.round(projection.head.data.stroke_width/2))
+            projection.head.data.stroke_width)
     }
 
     node_movement_within_canvas_bounds(node, dx, dy) {
@@ -822,8 +825,8 @@ class GraphView extends React.Component {
         node_width = node_dom_rect.width;
         node_height = node_dom_rect.height;
         stroke_width = node.data.stroke_width;
-        x_shift = dx * this.scaling_factor;
-        y_shift = dy * this.scaling_factor;
+        x_shift = dx;
+        y_shift = dy;
         return (
             {
                 x: (node_dom_rect.x - stroke_width + x_shift >= canvas_bounding_box.x &&
@@ -858,8 +861,8 @@ class GraphView extends React.Component {
     move_node(node, dx, dy) {
         node.data.x += dx;
         node.data.y += dy;
-        node.data.x = +(node.data.x*this.scaling_factor).toFixed(0)/this.scaling_factor;
-        node.data.y = +(node.data.y*this.scaling_factor).toFixed(0)/this.scaling_factor;
+        node.data.x = +(node.data.x).toFixed(0);
+        node.data.y = +(node.data.y).toFixed(0);
         node.selection
             .attr('cx', node.data.x)
             .attr('cy', node.data.y);
@@ -869,12 +872,10 @@ class GraphView extends React.Component {
             viewBox_h = parseInt(viewBox[3]);
         this.stylesheet.components.nodes[node.name] =
             {
-                'x': +((node.data.x - node.data.rx - node.data.stroke_width/2)
-                    * this.stylesheet.reference_canvas.width/viewBox_w
-                    * this.scaling_factor).toFixed(0),
-                'y': +((node.data.y - node.data.ry - node.data.stroke_width/2)
-                    * this.stylesheet.reference_canvas.height/viewBox_h
-                    * this.scaling_factor).toFixed(0)
+                'x': +((node.data.x - node.data.rx - node.data.stroke_width)
+                    * this.stylesheet.reference_canvas.width/viewBox_w).toFixed(0),
+                'y': +((node.data.y - node.data.ry - node.data.stroke_width)
+                    * this.stylesheet.reference_canvas.height/viewBox_h).toFixed(0)
             };
         this.move_label_to_corresponding_node(node);
         this.refresh_edges_for_node(node);
@@ -890,11 +891,10 @@ class GraphView extends React.Component {
         self.move_nodes(d3.event.dx, d3.event.dy)
     }
 
-    move_label_to_corresponding_node(node) {
-        var offset_from_top_of_node = 3;
+    move_label_to_corresponding_node(node, y_offset) {
         node.label.selection
             .attr('x', node.data.x)
-            .attr('y', node.data.y + offset_from_top_of_node);
+            .attr('y', node.data.y + y_offset);
     }
 
     gen_arc(phi1, phi2, innerRad, outerRad){
@@ -971,7 +971,7 @@ class GraphView extends React.Component {
                     y: stpt.y * -1
                 };
                 var lftedge = {
-                    x: -projection.head.data.rx-10,
+                    x: -projection.head.data.rx-15-projection.head.data.stroke_width,
                     y: 0
                 };
                 var ctpt = this.CalculateCircleCenter(stpt, endpt, lftedge);
@@ -1021,19 +1021,50 @@ class GraphView extends React.Component {
 
     scale_graph(scaling_factor) {
         var node_selector, label_selector, edge_selector, recurrent_selector;
-        this.scaling_factor = scaling_factor;
-        node_selector = d3.select('g.node');
-        node_selector
-            .attr('transform', `scale(${scaling_factor})`);
-        label_selector = d3.select('g.label');
-        label_selector
-            .attr('transform', `scale(${scaling_factor})`);
-        edge_selector = d3.select('g.edge');
-        edge_selector
-            .attr('transform', `scale(${scaling_factor})`);
-        recurrent_selector = d3.select('g.recurrent');
-        recurrent_selector
-            .attr('transform', `scale(${scaling_factor})`);
+        var self = this;
+        this.index.nodes.forEach(
+            (node)=>{
+                var cx = node.selection.attr('cx') * scaling_factor,
+                    cy = node.selection.attr('cy') * scaling_factor,
+                    rx = node.selection.attr('rx') * scaling_factor,
+                    ry = node.selection.attr('ry') * scaling_factor,
+                    stroke_width = node.selection.attr('stroke-width') * scaling_factor,
+                    font_size = node.label.data.text['font-size'] * scaling_factor;
+                node.data.x = cx;
+                node.data.y = cy;
+                node.data.rx = rx;
+                node.data.ry = ry;
+                node.data.stroke_width = stroke_width;
+                node.selection.attr('cx', cx);
+                node.selection.attr('cy', cy);
+                node.selection.attr('rx', rx);
+                node.selection.attr('ry', ry);
+                node.selection.attr('stroke-width', stroke_width);
+                node.label.data.text['font-size'] = font_size;
+                node.label.selection.attr('font-size', font_size);
+                self.move_label_to_corresponding_node(node, ry/5);
+                self.refresh_edges_for_node(node);
+            }
+        );
+        this.index.projections.forEach(
+            (projection)=>{
+                var stroke_width = projection.dom.getAttribute('stroke-width') * scaling_factor;
+                projection.data.stroke_width = stroke_width
+                projection.selection.attr('stroke-width', stroke_width);
+            }
+        )
+        // node_selector = d3.select('g.node');
+        // node_selector
+        //     .attr('transform', `scale(${scaling_factor})`);
+        // label_selector = d3.select('g.label');
+        // label_selector
+        //     .attr('transform', `scale(${scaling_factor})`);
+        // edge_selector = d3.select('g.edge');
+        // edge_selector
+        //     .attr('transform', `scale(${scaling_factor})`);
+        // recurrent_selector = d3.select('g.recurrent');
+        // recurrent_selector
+        //     .attr('transform', `scale(${scaling_factor})`);
     }
 
     scale_graph_to_fit(proportion) {
@@ -1175,13 +1206,13 @@ class GraphView extends React.Component {
                     (node) => {
                         pnlv_node = self.index.lookup(node);
                         cx =
-                            (stylesheet.components.nodes[node].x/stylesheet.reference_canvas.width*viewBox_w/this.scaling_factor)
+                            (stylesheet.components.nodes[node].x/stylesheet.reference_canvas.width*viewBox_w)
                             + pnlv_node.data.rx
-                            + pnlv_node.data.stroke_width/this.scaling_factor;
+                            + pnlv_node.data.stroke_width;
                         cy =
-                            (stylesheet.components.nodes[node].y/stylesheet.reference_canvas.height*viewBox_h/this.scaling_factor)
+                            (stylesheet.components.nodes[node].y/stylesheet.reference_canvas.height*viewBox_h)
                             + pnlv_node.data.ry
-                            + pnlv_node.data.stroke_width/this.scaling_factor;
+                            + pnlv_node.data.stroke_width;
                         pnlv_node.data.x = cx;
                         pnlv_node.data.y = cy;
                         pnlv_node.selection
@@ -1223,7 +1254,7 @@ class GraphView extends React.Component {
             window_h = window.innerHeight,
             proportion = Math.max(window_w/viewBox_w, window_h/viewBox_h);
             svg.setAttribute('viewBox', [0, 0, viewBox_w*proportion, viewBox_h*proportion]);
-            this.scale_graph(this.scaling_factor * proportion);
+            this.scale_graph(proportion);
     }
 
     set_zoom(){
