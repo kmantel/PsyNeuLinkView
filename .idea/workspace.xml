@@ -2,14 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0426a943-ef89-4391-a3a0-8152f91aa099" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/utility/graphview/attribute.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/utility/graphview/category.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/utility/graphview/entry.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/utility/graphview/stylesheet.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/graphview.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/graphview.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/py/test/pnl_scripts/NeuroML Example.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/py/test/pnl_scripts/NeuroML Example.py" afterDir="false" />
     </list>
-    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -54,18 +50,6 @@
     <property name="settings.editor.selected.configurable" value="preferences.general" />
     <property name="ts.external.directory.path" value="$APPLICATION_HOME_DIR$/plugins/JavaScriptLanguage/jsLanguageServicesImpl/external" />
   </component>
-  <component name="RunDashboard">
-    <option name="ruleStates">
-      <list>
-        <RuleState>
-          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
-        </RuleState>
-        <RuleState>
-          <option name="name" value="StatusDashboardGroupingRule" />
-        </RuleState>
-      </list>
-    </option>
-  </component>
   <component name="RunManager" selected="Attach to Node.js/Chrome.Debug Render">
     <configuration name="Debug Render" type="ChromiumRemoteDebugType" factoryName="Chromium Remote" port="9222">
       <method v="2" />
@@ -86,6 +70,18 @@
         <item itemvalue="Node.js.test_attribute.js" />
       </list>
     </recent_temporary>
+  </component>
+  <component name="ServiceViewManager">
+    <option name="viewStates">
+      <list>
+        <serviceView>
+          <treeState>
+            <expand />
+            <select />
+          </treeState>
+        </serviceView>
+      </list>
+    </option>
   </component>
   <component name="StructureViewFactory">
     <option name="ACTIVE_ACTIONS" value=",HTML5_OUTLINE_MODE" />
@@ -129,6 +125,7 @@
       <workItem from="1582037576304" duration="12560000" />
       <workItem from="1582123393152" duration="52738000" />
       <workItem from="1582316595834" duration="6273000" />
+      <workItem from="1582589622159" duration="649000" />
     </task>
     <task id="LOCAL-00001" summary="Enabled touchpad zoom gestures and windows ctrl shortcuts">
       <created>1581449946471</created>
@@ -260,26 +257,17 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/components/graphview.js</url>
-          <line>861</line>
-          <properties lambdaOrdinal="-1" />
+          <line>843</line>
           <option name="timeStamp" value="680" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/components/graphview.js</url>
-          <line>1241</line>
-          <properties lambdaOrdinal="-1" />
-          <option name="timeStamp" value="692" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/src/components/graphview.js</url>
           <line>536</line>
-          <properties lambdaOrdinal="-1" />
           <option name="timeStamp" value="700" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/components/graphview.js</url>
-          <line>1051</line>
-          <properties lambdaOrdinal="-1" />
+          <line>1132</line>
           <option name="timeStamp" value="707" />
         </line-breakpoint>
       </breakpoints>

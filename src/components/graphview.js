@@ -870,12 +870,10 @@ class GraphView extends React.Component {
             viewBox = svg.getAttribute('viewBox').split(','),
             viewBox_w = parseInt(viewBox[2]),
             viewBox_h = parseInt(viewBox[3]);
-        this.stylesheet.components.nodes[node.name] =
+        this.stylesheet['Graph Settings']['Components'][node.name] =
             {
-                'x': +((node.data.x - node.data.rx - node.data.stroke_width)
-                    * this.stylesheet.reference_canvas.width/viewBox_w).toFixed(0),
-                'y': +((node.data.y - node.data.ry - node.data.stroke_width)
-                    * this.stylesheet.reference_canvas.height/viewBox_h).toFixed(0)
+                'x': +(node.data.x - node.data.rx - node.data.stroke_width).toFixed(0),
+                'y': +(node.data.y - node.data.ry - node.data.stroke_width).toFixed(0)
             };
         this.move_label_to_corresponding_node(node);
         this.refresh_edges_for_node(node);
@@ -891,10 +889,10 @@ class GraphView extends React.Component {
         self.move_nodes(d3.event.dx, d3.event.dy)
     }
 
-    move_label_to_corresponding_node(node, y_offset) {
+    move_label_to_corresponding_node(node) {
         node.label.selection
             .attr('x', node.data.x)
-            .attr('y', node.data.y + y_offset);
+            .attr('y', node.data.y + node.data.ry/5);
     }
 
     gen_arc(phi1, phi2, innerRad, outerRad){
@@ -1042,7 +1040,7 @@ class GraphView extends React.Component {
                 node.selection.attr('stroke-width', stroke_width);
                 node.label.data.text['font-size'] = font_size;
                 node.label.selection.attr('font-size', font_size);
-                self.move_label_to_corresponding_node(node, ry/5);
+                self.move_label_to_corresponding_node(node);
                 self.refresh_edges_for_node(node);
             }
         );
@@ -1194,36 +1192,33 @@ class GraphView extends React.Component {
         self = this;
         self.validate_stylesheet();
         stylesheet = self.stylesheet;
-        if ('components' in stylesheet) {
-            if ('nodes' in stylesheet.components) {
-                var pnlv_node, nodes, cx, cy, svg;
-                svg = document.querySelector('svg');
-                var viewBox = svg.getAttribute('viewBox').split(','),
-                    viewBox_w = parseInt(viewBox[2]),
-                    viewBox_h = parseInt(viewBox[3]);
-                nodes = Object.keys(stylesheet.components.nodes);
-                nodes.forEach(
-                    (node) => {
-                        pnlv_node = self.index.lookup(node);
-                        cx =
-                            (stylesheet.components.nodes[node].x/stylesheet.reference_canvas.width*viewBox_w)
-                            + pnlv_node.data.rx
-                            + pnlv_node.data.stroke_width;
-                        cy =
-                            (stylesheet.components.nodes[node].y/stylesheet.reference_canvas.height*viewBox_h)
-                            + pnlv_node.data.ry
-                            + pnlv_node.data.stroke_width;
-                        pnlv_node.data.x = cx;
-                        pnlv_node.data.y = cy;
-                        pnlv_node.selection
-                            .attr('cx', pnlv_node.data.x)
-                            .attr('cy', pnlv_node.data.y);
-                        self.move_label_to_corresponding_node(pnlv_node);
-                        self.refresh_edges_for_node(pnlv_node);
-                    }
-                )
+        var pnlv_node, nodes, cx, cy, svg;
+        svg = document.querySelector('svg');
+        var viewBox = svg.getAttribute('viewBox').split(','),
+            viewBox_w = parseInt(viewBox[2]),
+            viewBox_h = parseInt(viewBox[3]);
+        nodes = Object.keys(stylesheet['Graph Settings']['Components']['Nodes']);
+
+        nodes.forEach(
+            (node) => {
+                pnlv_node = self.index.lookup(node);
+                cx =
+                    stylesheet['Graph Settings']['Components']['Nodes'][node].x
+                    + pnlv_node.data.rx
+                    + pnlv_node.data.stroke_width;
+                cy =
+                    stylesheet['Graph Settings']['Components']['Nodes'][node].y
+                    + pnlv_node.data.ry
+                    + pnlv_node.data.stroke_width;
+                pnlv_node.data.x = cx;
+                pnlv_node.data.y = cy;
+                pnlv_node.selection
+                    .attr('cx', pnlv_node.data.x)
+                    .attr('cy', pnlv_node.data.y);
+                self.move_label_to_corresponding_node(pnlv_node);
+                self.refresh_edges_for_node(pnlv_node);
             }
-        }
+        )
     }
 
     set_script_updater(){
