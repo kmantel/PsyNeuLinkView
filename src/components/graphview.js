@@ -596,10 +596,10 @@ class GraphView extends React.Component {
         var adjusted_y = y2 - y1;
         var dist_between_centers = Math.sqrt(adjusted_x ** 2 + adjusted_y ** 2);
         var phi = Math.atan2(adjusted_y, adjusted_x);
-        var a = parseFloat(nodeXRad) + strokeWidth;
-        var b = parseFloat(nodeYRad) + strokeWidth;
+        var a = parseFloat(nodeXRad) + Math.round(strokeWidth/2);
+        var b = parseFloat(nodeYRad) + Math.round(strokeWidth/2);
         var radius_at_point = a * b / Math.sqrt(a ** 2 * Math.sin(phi) ** 2 + b ** 2 * Math.cos(phi) ** 2);
-        var e_radius = dist_between_centers - radius_at_point - 3;
+        var e_radius = dist_between_centers - radius_at_point - nodeYRad/4;
         var new_x = (e_radius * Math.cos(phi) + x1);
         var new_y = (e_radius * Math.sin(phi) + y1);
         return {
