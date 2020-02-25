@@ -596,10 +596,10 @@ class GraphView extends React.Component {
         var adjusted_y = y2 - y1;
         var dist_between_centers = Math.sqrt(adjusted_x ** 2 + adjusted_y ** 2);
         var phi = Math.atan2(adjusted_y, adjusted_x);
-        var a = parseFloat(nodeXRad) + Math.round(strokeWidth/2);
-        var b = parseFloat(nodeYRad) + Math.round(strokeWidth/2);
+        var a = parseFloat(nodeXRad) + strokeWidth;
+        var b = parseFloat(nodeYRad) + strokeWidth;
         var radius_at_point = a * b / Math.sqrt(a ** 2 * Math.sin(phi) ** 2 + b ** 2 * Math.cos(phi) ** 2);
-        var e_radius = dist_between_centers - radius_at_point - strokeWidth/2;
+        var e_radius = dist_between_centers - radius_at_point - 3;
         var new_x = (e_radius * Math.cos(phi) + x1);
         var new_y = (e_radius * Math.sin(phi) + y1);
         return {
@@ -870,7 +870,7 @@ class GraphView extends React.Component {
             viewBox = svg.getAttribute('viewBox').split(','),
             viewBox_w = parseInt(viewBox[2]),
             viewBox_h = parseInt(viewBox[3]);
-        this.stylesheet['Graph Settings']['Components'][node.name] =
+        this.stylesheet['Graph Settings']['Components']['Nodes'][node.name] =
             {
                 'x': +(node.data.x - node.data.rx - node.data.stroke_width).toFixed(0),
                 'y': +(node.data.y - node.data.ry - node.data.stroke_width).toFixed(0)

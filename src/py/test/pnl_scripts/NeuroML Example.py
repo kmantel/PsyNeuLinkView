@@ -51,15 +51,3 @@ composition.add_projection(
     receiver=fnPop2,
 )
 composition.show_graph()
-# PsyNeuLinkView Graphics Info 
-pnlv_graphics_spec = {
-    "Graph Settings": {
-        "Components": {
-            "Nodes": {},
-            "fnPop1": {
-                "x": 1329,
-                "y": 339
-            }
-        }
-    }
-}
