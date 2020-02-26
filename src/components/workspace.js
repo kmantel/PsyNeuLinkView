@@ -52,7 +52,6 @@ export default class WorkSpace extends React.Component {
     }
 
     componentDidMount() {
-        console.log('y')
         this.get_initial_filepath();
     }
 
@@ -384,12 +383,11 @@ export default class WorkSpace extends React.Component {
     }
 
     update_config_panel_sizes(){
-        console.log('yy')
-        var cf = {...config_client.get_config()};
-        cf.env.workspace.row_one_horizontal_factor = Math.round(this.state.row_one_horizontal_factor);
-        cf.env.workspace.row_two_horizontal_factor = Math.round(this.state.row_two_horizontal_factor);
-        cf.env.workspace.vertical_factor = Math.round(this.state.vertical_factor) //for some reason this keeps getting converted to a float which is causing errors;
-        config_client.set_config({...cf});
+        // var cf = {...config_client.get_config()};
+        // cf.env.workspace.row_one_horizontal_factor = Math.round(this.state.row_one_horizontal_factor);
+        // cf.env.workspace.row_two_horizontal_factor = Math.round(this.state.row_two_horizontal_factor);
+        // cf.env.workspace.vertical_factor = Math.round(this.state.vertical_factor); //for some reason this keeps getting converted to a float which is causing errors;
+        // config_client.set_config({...cf});
     }
 
     panel_resize(horizontal_factor, vertical_factor, e, direction, ref, d) {
