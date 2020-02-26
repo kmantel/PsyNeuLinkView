@@ -64,12 +64,16 @@ export default class WorkSpace extends React.Component {
     }
 
     get_initial_sizing_factors() {
-        var config = {...config_client.get_config()},
-            w = window.innerWidth,
+        var w = window.innerWidth,
             h = window.innerHeight,
-            row_one_h = config.env.workspace.row_one_horizontal_factor,
-            row_two_h = config.env.workspace.row_two_horizontal_factor,
-            v = config.env.workspace.vertical_factor;
+            // config = {...config_client.get_config()},
+            // row_one_h = config.env.workspace.row_one_horizontal_factor,
+            // row_two_h = config.env.workspace.row_two_horizontal_factor,
+            // v = config.env.workspace.vertical_factor;
+            config = null,
+            row_one_h = null,
+            row_two_h = null,
+            v = null;
         if (!row_one_h) {
             row_one_h = Math.ceil(w / 5)
         }
