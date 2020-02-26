@@ -356,7 +356,7 @@ class GraphView extends React.Component {
             .attr('class', 'graph')
             .attr('height', '100%')
             .attr('width', '100%')
-            .attr('preserveAspectRatio', 'xMidYMid Slice');
+            .attr('preserveAspectRatio', 'xMidYMid');
         svg_rect = document.querySelector('svg').getBoundingClientRect();
         svg
             .attr("viewBox", [0, 0, svg_rect.width, svg_rect.height]);
@@ -829,6 +829,40 @@ class GraphView extends React.Component {
         }
     }
 
+    adjust_node_movement(node, dx, dy) {
+        var canvasbox = this.get_canvas_bounding_box(),
+            viewport_offset = this.get_viewport_offset(),
+            w_correction = viewport_offset.x/2,
+            h_correction = viewport_offset.y/2,
+            min_bound_w = -w_correction,
+            min_bound_h = -h_correction,
+            max_bound_w = canvasbox.width - w_correction,
+            max_bound_h = canvasbox.height - h_correction,
+            node_left_x = node.data.x - node.data.rx - node.data.stroke_width/2,
+            node_top_y = node.data.y - node.data.ry - node.data.stroke_width/2,
+            node_right_x = node.data.x + node.data.rx + node.data.stroke_width/2,
+            node_bottom_y = node.data.y + node.data.ry + node.data.stroke_width/2;
+        if ((dx < 0) && (node_left_x + dx < min_bound_w)){
+            dx = min_bound_w - node_left_x
+        }
+        else if ((dx > 0) && (node_right_x + dx > max_bound_w)){
+            dx = max_bound_w - node_right_x
+        }
+
+        if ((dy < 0) && (node_top_y + dy < min_bound_h)){
+            dy = min_bound_h - node_top_y
+        }
+        else if ((dy > 0) && (node_bottom_y + dy > max_bound_h)){
+            dy = max_bound_h - node_bottom_y
+        }
+        return (
+            {
+                dx: dx,
+                dy: dy,
+            }
+        );
+    };
+
     node_movement_within_canvas_bounds(node, dx, dy) {
         var canvasbox = this.get_canvas_bounding_box(),
             viewport_offset = this.get_viewport_offset(),
@@ -849,17 +883,21 @@ class GraphView extends React.Component {
     }
 
     move_nodes(dx, dy) {
+        var adjusted_movement;
         var in_bounds;
         var self = this;
         self.selected.forEach(
             (s) => {
-                in_bounds = self.node_movement_within_canvas_bounds(s, dx, dy);
-                if (!in_bounds.x) {
-                    dx = 0
-                }
-                if (!in_bounds.y) {
-                    dy = 0
-                }
+                adjusted_movement = self.adjust_node_movement(s, dx, dy)
+                dx = adjusted_movement.dx
+                dy = adjusted_movement.dy;
+                // in_bounds = self.node_movement_within_canvas_bounds(s, dx, dy);
+                // if (!in_bounds.x) {
+                //     dx = 0
+                // }
+                // if (!in_bounds.y) {
+                //     dy = 0
+                // }
             }
         );
         self.selected.forEach(
