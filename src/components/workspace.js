@@ -468,11 +468,11 @@ export default class WorkSpace extends React.Component {
                     onResizeStart={this.get_mouse_initial}
                     onResize={function (e, direction, ref, d) {
                         self.panel_resize('row_one_horizontal_factor', 'vertical_factor', e, direction, ref, d)
+                        window.dispatchEvent(new Event('resize'));
                     }}
                     onResizeStop={function (e, direction, ref, d) {
                         self.panel_resize('row_one_horizontal_factor', 'vertical_factor', e, direction, ref, d)
-                        self.update_config_panel_sizes();
-                        window.dispatchEvent(new Event('resize'));
+                        self.update_config_panel_sizes()
                     }}
                     size={
                         {
@@ -487,11 +487,10 @@ export default class WorkSpace extends React.Component {
                     className='pnl-panel'
                     onResizeStart={this.get_mouse_initial}
                     onResize={function (e, direction, ref, d) {
-                        window.dispatchEvent(new Event('resize'));
                         self.panel_resize('row_one_horizontal_factor', 'vertical_factor', e, direction, ref, d)
+                        window.dispatchEvent(new Event('resize'));
                     }}
                     onResizeStop={function (e, direction, ref, d) {
-                        window.dispatchEvent(new Event('resize'));
                         self.panel_resize('row_one_horizontal_factor', 'vertical_factor', e, direction, ref, d)
                         self.update_config_panel_sizes()
                     }}

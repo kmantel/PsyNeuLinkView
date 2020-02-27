@@ -314,9 +314,10 @@ class GraphView extends React.Component {
         upper_bound = 1;
         resize_increment = 0.05;
         pre_resize_bounds = this.get_graph_bounding_box();
-        if (this.fill_proportion + resize_increment <= upper_bound) {
-            this.scale_graph_to_fit(this.fill_proportion + resize_increment);
-        }
+        // if (this.fill_proportion + resize_increment <= upper_bound) {
+        //     this.scale_graph_to_fit(this.fill_proportion + resize_increment);
+        // }
+        this.scale_graph(1.02);
         post_resize_bounds = this.get_graph_bounding_box();
         return {
             'pre': pre_resize_bounds,
@@ -329,9 +330,10 @@ class GraphView extends React.Component {
         lower_bound = 0.05;
         resize_increment = 0.05;
         pre_resize_bounds = this.get_graph_bounding_box();
-        if (this.fill_proportion - 0.05 >= resize_increment) {
-            this.scale_graph_to_fit(this.fill_proportion - resize_increment)
-        }
+        // if (this.fill_proportion - 0.05 >= resize_increment) {
+        //     this.scale_graph_to_fit(this.fill_proportion - resize_increment)
+        // }
+        this.scale_graph(.98);
         post_resize_bounds = this.get_graph_bounding_box();
         return {
             'pre': pre_resize_bounds,
@@ -912,12 +914,12 @@ class GraphView extends React.Component {
         var svg = document.querySelector('svg'),
             viewbox = this.get_viewBox(),
             viewport_offset = this.get_viewport_offset(),
-            w_correction = viewport_offset.x/2,
-            h_correction = viewport_offset.y/2;
+            w_correction = viewport_offset.x,
+            h_correction = viewport_offset.y;
         this.stylesheet['Graph Settings']['Components']['Nodes'][node.name] =
             {
-                'x': +(((node.data.x-node.data.rx-node.data.stroke_width/2+w_correction)/viewbox.width)*100).toFixed(2),
-                'y': +(((node.data.y-node.data.ry-node.data.stroke_width/2+h_correction)/viewbox.height)*100).toFixed(2)
+                'x': +(((node.data.x-node.data.rx-node.data.stroke_width/2+w_correction/2)/(viewbox.width+w_correction))*100).toFixed(2),
+                'y': +(((node.data.y-node.data.ry-node.data.stroke_width/2+h_correction/2)/(viewbox.height+h_correction))*100).toFixed(2)
             };
         this.move_label_to_corresponding_node(node);
         this.refresh_edges_for_node(node);
@@ -1014,8 +1016,9 @@ class GraphView extends React.Component {
                     x: stpt.x,
                     y: stpt.y * -1
                 };
+                var lftedge_offset = projection.head.dom.getBoundingClientRect().height/2
                 var lftedge = {
-                    x: -projection.head.data.rx-15-projection.head.data.stroke_width,
+                    x: -projection.head.data.rx-lftedge_offset-projection.head.data.stroke_width,
                     y: 0
                 };
                 var ctpt = this.CalculateCircleCenter(stpt, endpt, lftedge);
@@ -1112,7 +1115,6 @@ class GraphView extends React.Component {
             Math.floor(((target_height / graph_bounding_box.height) * 100)) / 100,
         );
         this.scale_graph(scaling_factor);
-        this.center_graph();
     }
 
     get_canvas_bounding_box() {
@@ -1229,22 +1231,25 @@ class GraphView extends React.Component {
         nodes = Object.keys(stylesheet['Graph Settings']['Components']['Nodes']);
         var svg = document.querySelector('svg'),
             svg_rect = svg.getBoundingClientRect(),
-            svg_rect_w = svg_rect.width,
-            svg_rect_h = svg_rect.height,
             viewbox = this.get_viewBox(),
             viewbox_w = viewbox.width,
-            viewbox_h = viewbox.height;
+            viewbox_h = viewbox.height,
+            viewport_offset = this.get_viewport_offset(),
+            w_correction = viewport_offset.x,
+            h_correction = viewport_offset.y;
         nodes.forEach(
             (node) => {
                 pnlv_node = self.index.lookup(node);
                 cx =
-                    stylesheet['Graph Settings']['Components']['Nodes'][node].x * viewbox_w/100
+                    stylesheet['Graph Settings']['Components']['Nodes'][node].x * (viewbox_w+w_correction)/100
                     + pnlv_node.data.rx
-                    + pnlv_node.data.stroke_width/2;
+                    + pnlv_node.data.stroke_width/2
+                    - w_correction/2;
                 cy =
-                    stylesheet['Graph Settings']['Components']['Nodes'][node].y * viewbox_h/100
+                    stylesheet['Graph Settings']['Components']['Nodes'][node].y * (viewbox_h+h_correction)/100
                     + pnlv_node.data.ry
-                    + pnlv_node.data.stroke_width/2;
+                    + pnlv_node.data.stroke_width/2
+                    - h_correction/2;
                 pnlv_node.data.x = cx;
                 pnlv_node.data.y = cy;
                 pnlv_node.selection
@@ -1323,6 +1328,7 @@ class GraphView extends React.Component {
         this.resize_nodes_to_label_text();
         this.correct_projection_lengths_for_ellipse_sizes();
         this.scale_graph_to_fit(this.fill_proportion);
+        this.center_graph();
         this.redimension_viewbox();
         // this.set_zoom();
     }
