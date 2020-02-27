@@ -52,7 +52,8 @@ class GraphView extends React.Component {
 
     bind_this_to_functions() {
         this.set_zoom = this.set_zoom.bind(this);
-        this.update_graph = this.update_graph.bind(this);
+        this.mouse_up = this.mouse_up.bind(this);
+        this.resize = this.resize.bind(this);
         this.set_non_react_state = this.set_non_react_state.bind(this);
         this.center_graph = this.center_graph.bind(this);
         this.setGraph = this.setGraph.bind(this);
@@ -72,9 +73,16 @@ class GraphView extends React.Component {
         this.move_label_to_corresponding_node = this.move_label_to_corresponding_node.bind(this);
     }
 
-    update_graph() {
+    mouse_up(){
+        window.removeEventListener('mouseup', this.mouse_up);
+        this.redimension_viewbox();
+        this.commit_all_nodes_to_stylesheet();
+        this.update_script();
+    }
+
+    resize() {
         if (![null, 'loading'].includes(this.props.graph)){
-            this.redimension_viewbox();
+            window.addEventListener('mouseup', this.mouse_up)
         }
     }
 
@@ -121,7 +129,8 @@ class GraphView extends React.Component {
     }
 
     componentWillUnmount() {
-        window.removeEventListener('resize', this.update_graph);
+        window.removeEventListener('resize', this.resize);
+        window.removeEventListener('resize_end', this.resize_end);
         window.removeEventListener('wheel', this.capture_wheel);
         window.removeEventListener('keydown', this.key_down);
         window.removeEventListener('keyup', this.key_up);
@@ -133,7 +142,8 @@ class GraphView extends React.Component {
     }
 
     componentDidMount() {
-        window.addEventListener('resize', this.update_graph);
+        window.addEventListener('resize', this.resize);
+        window.addEventListener('resize', this.resize_end);
         window.addEventListener('wheel', this.capture_wheel, {passive: false});
         window.addEventListener('keydown', this.key_down);
         window.addEventListener('keyup', this.key_up);
@@ -903,14 +913,15 @@ class GraphView extends React.Component {
         }
     }
 
-    move_node(node, dx, dy) {
-        node.data.x += dx;
-        node.data.y += dy;
-        node.data.x = +(node.data.x).toFixed(0);
-        node.data.y = +(node.data.y).toFixed(0);
-        node.selection
-            .attr('cx', node.data.x)
-            .attr('cy', node.data.y);
+    commit_all_nodes_to_stylesheet(){
+        this.index.nodes.forEach(
+            (node)=>{
+                this.commit_node_to_stylesheet(node);
+            }
+        )
+    }
+
+    commit_node_to_stylesheet(node) {
         var svg = document.querySelector('svg'),
             viewbox = this.get_viewBox(),
             viewport_offset = this.get_viewport_offset(),
@@ -921,6 +932,17 @@ class GraphView extends React.Component {
                 'x': +(((node.data.x-node.data.rx-node.data.stroke_width/2+w_correction/2)/(viewbox.width+w_correction))*100).toFixed(2),
                 'y': +(((node.data.y-node.data.ry-node.data.stroke_width/2+h_correction/2)/(viewbox.height+h_correction))*100).toFixed(2)
             };
+    }
+
+    move_node(node, dx, dy) {
+        node.data.x += dx;
+        node.data.y += dy;
+        node.data.x = +(node.data.x).toFixed(0);
+        node.data.y = +(node.data.y).toFixed(0);
+        node.selection
+            .attr('cx', node.data.x)
+            .attr('cy', node.data.y);
+        this.commit_node_to_stylesheet(node);
         this.move_label_to_corresponding_node(node);
         this.refresh_edges_for_node(node);
     }
@@ -1294,7 +1316,7 @@ class GraphView extends React.Component {
             viewBox_w_mod,
             viewBox_h_mod,
             proportion;
-        if (svg_w !== viewBox_w || svg_h !== viewBox_h){
+        if (svg_w !== viewBox_w && svg_h !== viewBox_h){
             if (w_difference < h_difference){
                 viewBox_w_mod = svg_w;
                 viewBox_h_mod = svg_w / aspect_ratio;
@@ -1308,6 +1330,7 @@ class GraphView extends React.Component {
             proportion = Math.min(w_proportion, h_proportion);
             svg.setAttribute('viewBox',[0, 0, viewBox_w_mod, viewBox_h_mod]);
             this.scale_graph(proportion);
+            // this.parse_stylesheet();
         }
     }
 

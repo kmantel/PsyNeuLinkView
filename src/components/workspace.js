@@ -473,6 +473,7 @@ export default class WorkSpace extends React.Component {
                     onResizeStop={function (e, direction, ref, d) {
                         self.panel_resize('row_one_horizontal_factor', 'vertical_factor', e, direction, ref, d)
                         self.update_config_panel_sizes()
+                        window.dispatchEvent(new Event('resize_end'));
                     }}
                     size={
                         {
@@ -493,6 +494,7 @@ export default class WorkSpace extends React.Component {
                     onResizeStop={function (e, direction, ref, d) {
                         self.panel_resize('row_one_horizontal_factor', 'vertical_factor', e, direction, ref, d)
                         self.update_config_panel_sizes()
+                        window.dispatchEvent(new Event('resize_end'));
                     }}
                     size={
                         {
@@ -523,6 +525,7 @@ export default class WorkSpace extends React.Component {
                     onResizeStop={function (e, direction, ref, d) {
                         self.panel_resize('row_two_horizontal_factor', 'vertical_factor', e, direction, ref, d)
                         self.update_config_panel_sizes()
+                        window.dispatchEvent(new Event('resize_end'));
                     }}
                     onResize={function (e, direction, ref, d) {
                         self.panel_resize('row_two_horizontal_factor', 'vertical_factor', e, direction, ref, d)
@@ -543,6 +546,7 @@ export default class WorkSpace extends React.Component {
                     onResizeStop={function (e, direction, ref, d) {
                         self.panel_resize('row_two_horizontal_factor', 'vertical_factor', e, direction, ref, d)
                         self.update_config_panel_sizes()
+                        window.dispatchEvent(new Event('resize_end'));
                     }}
                     onResize={function (e, direction, ref, d) {
                         self.panel_resize('row_two_horizontal_factor', 'vertical_factor', e, direction, ref, d)
