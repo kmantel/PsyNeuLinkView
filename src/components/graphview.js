@@ -214,7 +214,6 @@ class GraphView extends React.Component {
         if (this.props.filepath){
             var stylesheet_str = JSON.stringify(this.stylesheet);
             this.props.fileunwatch_fx(this.props.filepath);
-            console.log('updating')
             this.script_updater.write({styleJSON: stylesheet_str});
         }
     }
@@ -1210,17 +1209,17 @@ class GraphView extends React.Component {
     }
 
     set_zoom_config(k=null, xscroll=null, yscroll=null) {
-        var cf = {...config_client.get_config()};
-        if (k){
-            cf.env.graphview.zoom_scale = Math.round(k*100)/100;
-        }
-        if (xscroll){
-            cf.env.graphview.x_scroll = Math.round(xscroll);
-        }
-        if (yscroll){
-            cf.env.graphview.y_scroll = Math.round(yscroll);
-        }
-        config_client.set_config({...cf})
+        // var cf = {...config_client.get_config()};
+        // if (k){
+        //     cf.env.graphview.zoom_scale = Math.round(k*100)/100;
+        // }
+        // if (xscroll){
+        //     cf.env.graphview.x_scroll = Math.round(xscroll);
+        // }
+        // if (yscroll){
+        //     cf.env.graphview.y_scroll = Math.round(yscroll);
+        // }
+        // config_client.set_config({...cf})
     }
 
     apply_zoom(svg) {
@@ -1326,10 +1325,7 @@ class GraphView extends React.Component {
             }
             var w_proportion = viewBox_w_mod/viewBox_w,
                 h_proportion = viewBox_h_mod/viewBox_h;
-            // console.log(w_proportion, h_proportion)
             proportion = Math.min(w_proportion, h_proportion);
-            console.log(proportion, viewBox_h_mod/viewBox_h);
-            console.log(proportion);
             svg.setAttribute('viewBox',[0, 0, viewBox_w_mod, viewBox_h_mod]);
             this.scale_graph(proportion);
         }

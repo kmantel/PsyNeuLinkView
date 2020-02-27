@@ -18,11 +18,10 @@ class ConfigClient{
         return {...cf};
     }
     set_config(cf){
-        fs.writeFile(
-            this.filepath, JSON.stringify(cf), (err) => {
-                console.log(err)
-            }
-            );
+        fs.writeFileSync(
+            this.filepath,
+            JSON.stringify(cf)
+        );
         this.config = cf
     }
 }
