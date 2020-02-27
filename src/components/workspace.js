@@ -35,6 +35,7 @@ export default class WorkSpace extends React.Component {
         this.name = 'workspace';
         this.dispatcher = new ErrorDispatcher(this);
         this.container = {};
+        this.set_graph_size_hook = this.set_graph_size_hook.bind(this);
         this.choose_composition = this.choose_composition.bind(this);
         this.componentWillMount = this.componentWillMount.bind(this);
         this.panel_resize = this.panel_resize.bind(this);
@@ -66,19 +67,14 @@ export default class WorkSpace extends React.Component {
     get_initial_sizing_factors() {
         var w = window.innerWidth,
             h = window.innerHeight,
-            // config = {...config_client.get_config()},
-            // row_one_h = config.env.workspace.row_one_horizontal_factor,
-            // row_two_h = config.env.workspace.row_two_horizontal_factor,
-            // v = config.env.workspace.vertical_factor;
-            config = null,
             row_one_h = null,
             row_two_h = null,
             v = null;
         if (!row_one_h) {
-            row_one_h = Math.ceil(w / 5)
+            row_one_h = Math.ceil(w * 0.2)
         }
         if (!row_two_h) {
-            row_two_h = Math.ceil(w / 5)
+            row_two_h = Math.ceil(w * 0.2)
         }
         if (!v) {
             v = Math.ceil(h * 0.7)
@@ -411,6 +407,24 @@ export default class WorkSpace extends React.Component {
         self.mouse_initial = mouse_current
     }
 
+    set_graph_size_hook(width=this.state.row_one_horizontal_factor,
+                        height=this.state.vertical_factor){
+        // This is a hook to allow child element graphview to set its own size.
+        // Current horizontal factor attribute is set with respect to the first element in row.
+        //  We subtract from one here so that calls to this method refer to the size of the actual
+        //  graphview element instead.
+        //
+        // Args should be given in percents, so we convert them to fractions.
+        var new_h_factor = window.innerWidth*(1-width/100),
+            new_v_factor = window.innerHeight*(height/100);
+        this.setState(
+            {
+                row_one_horizontal_factor:new_h_factor,
+                vertical_factor:new_v_factor
+            }
+        )
+    }
+
     componentDidUpdate(prevProps, prevState, snapshot) {
     }
 
@@ -454,11 +468,11 @@ export default class WorkSpace extends React.Component {
                     onResizeStart={this.get_mouse_initial}
                     onResize={function (e, direction, ref, d) {
                         self.panel_resize('row_one_horizontal_factor', 'vertical_factor', e, direction, ref, d)
-                        window.dispatchEvent(new Event('resize'));
                     }}
                     onResizeStop={function (e, direction, ref, d) {
                         self.panel_resize('row_one_horizontal_factor', 'vertical_factor', e, direction, ref, d)
-                        self.update_config_panel_sizes()
+                        self.update_config_panel_sizes();
+                        window.dispatchEvent(new Event('resize'));
                     }}
                     size={
                         {
@@ -473,10 +487,11 @@ export default class WorkSpace extends React.Component {
                     className='pnl-panel'
                     onResizeStart={this.get_mouse_initial}
                     onResize={function (e, direction, ref, d) {
-                        self.panel_resize('row_one_horizontal_factor', 'vertical_factor', e, direction, ref, d)
                         window.dispatchEvent(new Event('resize'));
+                        self.panel_resize('row_one_horizontal_factor', 'vertical_factor', e, direction, ref, d)
                     }}
                     onResizeStop={function (e, direction, ref, d) {
+                        window.dispatchEvent(new Event('resize'));
                         self.panel_resize('row_one_horizontal_factor', 'vertical_factor', e, direction, ref, d)
                         self.update_config_panel_sizes()
                     }}
@@ -498,6 +513,7 @@ export default class WorkSpace extends React.Component {
                     rpc_client = {rpc_client}
                     filewatch_fx = {this.watch_file}
                     fileunwatch_fx = {this.unwatch_file}
+                    graph_size_fx = {this.set_graph_size_hook}
                 />
             </div>,
             <div key="tipbox">

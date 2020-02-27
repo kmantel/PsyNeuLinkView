@@ -110,22 +110,13 @@ class GraphView extends React.Component {
             this.stylesheet = {}
         }
         if (!('Graph Settings' in this.stylesheet)){
-            this.stylesheet['Graph Settings'] = {
-                'Scale':100,
-                'Zoom':100,
-                'XScroll':50,
-                'YScroll':50,
-            }
+            this.stylesheet['Graph Settings'] = {}
         }
         if (!('Components' in this.stylesheet['Graph Settings'])){
-            this.stylesheet['Graph Settings'] = {
-                'Components':{}
-            }
+            this.stylesheet['Graph Settings']['Components'] = {}
         }
         if (!('Nodes' in this.stylesheet['Graph Settings']['Components'])){
-            this.stylesheet['Graph Settings']['Components'] = {
-                'Nodes':{}
-            }
+            this.stylesheet['Graph Settings']['Components']['Nodes'] = {}
         }
     }
 
@@ -669,7 +660,7 @@ class GraphView extends React.Component {
 
     update_scroll() {
         var win = document.querySelector('.graph-view');
-        this.set_zoom_config(null,win.scrollLeft,win.scrollTop);
+        // this.set_zoom_config(null,win.scrollLeft,win.scrollTop);
     }
 
     apply_select_boxes() {
@@ -919,18 +910,14 @@ class GraphView extends React.Component {
             .attr('cx', node.data.x)
             .attr('cy', node.data.y);
         var svg = document.querySelector('svg'),
-            svg_rect = svg.getBoundingClientRect(),
-            svg_rect_w = svg_rect.width,
-            svg_rect_h = svg_rect.height,
-            node_rect = node.dom.getBBox(),
             viewbox = this.get_viewBox(),
             viewport_offset = this.get_viewport_offset(),
-            w_correction = Math.abs(viewport_offset.x/2),
-            h_correction = Math.abs(viewport_offset.y/2);
+            w_correction = viewport_offset.x/2,
+            h_correction = viewport_offset.y/2;
         this.stylesheet['Graph Settings']['Components']['Nodes'][node.name] =
             {
-                'x': +(((node_rect.x-w_correction)/viewbox.width)*100).toFixed(2),
-                'y': +(((node_rect.y-h_correction)/viewbox.height)*100).toFixed(2)
+                'x': +(((node.data.x-node.data.rx-node.data.stroke_width/2+w_correction)/viewbox.width)*100).toFixed(2),
+                'y': +(((node.data.y-node.data.ry-node.data.stroke_width/2+h_correction)/viewbox.height)*100).toFixed(2)
             };
         this.move_label_to_corresponding_node(node);
         this.refresh_edges_for_node(node);
@@ -1110,18 +1097,6 @@ class GraphView extends React.Component {
                 projection.selection.attr('stroke-width', stroke_width);
             }
         )
-        // node_selector = d3.select('g.node');
-        // node_selector
-        //     .attr('transform', `scale(${scaling_factor})`);
-        // label_selector = d3.select('g.label');
-        // label_selector
-        //     .attr('transform', `scale(${scaling_factor})`);
-        // edge_selector = d3.select('g.edge');
-        // edge_selector
-        //     .attr('transform', `scale(${scaling_factor})`);
-        // recurrent_selector = d3.select('g.recurrent');
-        // recurrent_selector
-        //     .attr('transform', `scale(${scaling_factor})`);
     }
 
     scale_graph_to_fit(proportion) {
@@ -1204,22 +1179,22 @@ class GraphView extends React.Component {
             var yscroll_offset = full_g_box_post.height * pre_scale_y_proportion - this.mouse_offset.y;
             var yscroll = win.scrollTop + yscroll_offset;
         }
-        this.set_zoom_config(d3.event.transform.k, xscroll, yscroll);
+        // this.set_zoom_config(d3.event.transform.k, xscroll, yscroll);
         win.scrollTo(xscroll, yscroll)
     }
 
     set_zoom_config(k=null, xscroll=null, yscroll=null) {
-        // var cf = {...config_client.get_config()};
-        // if (k){
-        //     cf.env.graphview.zoom_scale = Math.round(k*100)/100;
-        // }
-        // if (xscroll){
-        //     cf.env.graphview.x_scroll = Math.round(xscroll);
-        // }
-        // if (yscroll){
-        //     cf.env.graphview.y_scroll = Math.round(yscroll);
-        // }
-        // config_client.set_config({...cf})
+        var cf = {...config_client.get_config()};
+        if (k){
+            cf.env.graphview.zoom_scale = Math.round(k*100)/100;
+        }
+        if (xscroll){
+            cf.env.graphview.x_scroll = Math.round(xscroll);
+        }
+        if (yscroll){
+            cf.env.graphview.y_scroll = Math.round(yscroll);
+        }
+        config_client.set_config({...cf})
     }
 
     apply_zoom(svg) {
@@ -1329,36 +1304,19 @@ class GraphView extends React.Component {
             svg.setAttribute('viewBox',[0, 0, viewBox_w_mod, viewBox_h_mod]);
             this.scale_graph(proportion);
         }
-        else{
-            // this.aspect_ratio = svg_w/svg_h;
-            // if (viewBox_w !== svg_w){
-            //     proportion = (svg_w/2)/(viewBox_w/2);
-            //     svg.setAttribute('viewBox',[0, 0, svg_w, viewBox_h]);
-            //     this.aspect_ratio = svg_w/svg_h;
-            //     this.scale_graph(proportion);
-            //     viewBox_w = this.get_viewBox().width;
-            //     viewBox_h = this.get_viewBox().height;
-            // }
-            // else if (viewBox_h !== svg_h) {
-            //     proportion = (svg_h/2)/(viewBox_h/2);
-            //     svg.setAttribute('viewBox',[0, 0, viewBox_w, svg_h]);
-            //     this.aspect_ratio = svg_w/svg_h;
-            //     this.scale_graph(proportion)
-            // }
-        }
     }
 
     set_zoom(){
-        // var cf = config_client.get_config()
-        // if (!(cf.env.graphview.zoom_scale == 1)){
-        //     var win = document.querySelector('.graph-view'),
-        //         k = cf.env.graphview.zoom_scale,
-        //         xscroll = cf.env.graphview.x_scroll,
-        //         yscroll = cf.env.graphview.y_scroll;
-        //     this.svg.call(this.zoom.scaleTo,k);
-        //     win.scrollTo(xscroll, yscroll);
-        //     this.set_zoom_config(k,xscroll,yscroll);
-        // }
+        var cf = config_client.get_config()
+        if (!(cf.env.graphview.zoom_scale == 1)){
+            var win = document.querySelector('.graph-view'),
+                k = cf.env.graphview.zoom_scale,
+                xscroll = cf.env.graphview.x_scroll,
+                yscroll = cf.env.graphview.y_scroll;
+            this.svg.call(this.zoom.scaleTo,k);
+            win.scrollTo(xscroll, yscroll);
+            // this.set_zoom_config(k,xscroll,yscroll);
+        }
     }
 
     postprocess(){
@@ -1366,7 +1324,7 @@ class GraphView extends React.Component {
         this.correct_projection_lengths_for_ellipse_sizes();
         this.scale_graph_to_fit(this.fill_proportion);
         this.redimension_viewbox();
-        this.set_zoom();
+        // this.set_zoom();
     }
 
     set_aspect_ratio(){
@@ -1383,6 +1341,7 @@ class GraphView extends React.Component {
         this.draw_elements();
         this.parse_stylesheet();
         this.set_aspect_ratio();
+        // this.props.graph_size_fx(50,50);
         window.this = this;
     }
 
