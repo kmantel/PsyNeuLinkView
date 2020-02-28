@@ -1365,6 +1365,7 @@ class GraphView extends React.Component {
         this.parse_stylesheet();
         this.set_aspect_ratio();
         // this.props.graph_size_fx(50,50);
+        window.this = this
     }
 
     render() {

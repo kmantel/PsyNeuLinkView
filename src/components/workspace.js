@@ -39,7 +39,7 @@ export default class WorkSpace extends React.Component {
         this.name = 'workspace';
         this.dispatcher = new ErrorDispatcher(this);
         this.container = {};
-        window.this = this;
+        // window.this = this;
         this.get_reference_sizing_factors = this.get_reference_sizing_factors.bind(this);
         this.set_graph_size_hook = this.set_graph_size_hook.bind(this);
         this.choose_composition = this.choose_composition.bind(this);
@@ -430,9 +430,12 @@ export default class WorkSpace extends React.Component {
         //  We subtract from one here so that calls to this method refer to the size of the actual
         //  graphview element instead.
         //
-        // Args should be given in percents, so we convert them to fractions.
-        var new_h_factor = window.innerWidth*(1-width/100),
-            new_v_factor = window.innerHeight*(height/100);
+        // Args are passed in percents, so we need to convert them to fractions.
+
+        var padding = this.panel_padding,
+            new_h_factor = window.innerWidth-((window.innerWidth)*(width/100)+padding*2)-1,
+            new_v_factor = (window.innerHeight)*(height/100)+padding;
+
         this.setState(
             {
                 row_one_horizontal_factor:new_h_factor,
