@@ -3,6 +3,7 @@ import Layout from './layout'
 import SideBar from './sidebar'
 import GraphView from './graphview'
 import ToolTipBox from './tooltipbox'
+import ControlStrip from "./controlstrip";
 import ParameterControlBox from './parametercontrolbox'
 import SettingsPane from './settings'
 import ErrorDispatcher from "../utility/errors/dispatcher";
@@ -563,7 +564,7 @@ export default class WorkSpace extends React.Component {
                     }
                     size={
                         {
-                            height: this.state.y_res - this.state.vertical_factor - padding * 2,
+                            height: this.state.y_res - this.state.vertical_factor - padding * 5,
                             width: this.state.row_two_horizontal_factor - padding
                         }
                     }
@@ -590,7 +591,7 @@ export default class WorkSpace extends React.Component {
                     }
                     size={
                         {
-                            height: this.state.y_res - this.state.vertical_factor - padding * 2,
+                            height: this.state.y_res - this.state.vertical_factor - padding * 5,
                             width: this.state.x_res - this.state.row_two_horizontal_factor - padding * 2
                         }
                     }
@@ -605,6 +606,9 @@ export default class WorkSpace extends React.Component {
         ];
         return (
             <div>
+                <ControlStrip
+                    width={window.innerWidth-this.panel_padding*2}
+                />
                 <SettingsPane
                     isOpen={this.state.show_settings}
                     // isOpen={true}
@@ -633,14 +637,14 @@ export default class WorkSpace extends React.Component {
                             x: 0,
                             y: this.state.vertical_factor,
                             w: this.state.row_two_horizontal_factor,
-                            h: this.state.y_res - this.state.vertical_factor
+                            h: this.state.y_res - this.state.vertical_factor - this.panel_padding * 5
                         },
                         {
                             i: 'paramcontrol',
                             x: this.state.row_two_horizontal_factor,
                             y: this.state.vertical_factor,
                             w: this.state.x_res - this.state.row_two_horizontal_factor,
-                            h: this.state.y_res - this.state.vertical_factor
+                            h: this.state.y_res - this.state.vertical_factor - this.panel_padding * 5
                         }
                     ]}
                     cols={this.state.x_res}

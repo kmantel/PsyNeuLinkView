@@ -2,8 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0426a943-ef89-4391-a3a0-8152f91aa099" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/graphview.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/graphview.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/workspace.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/workspace.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/py/test/pnl_scripts/Botvinick Model Composition.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/py/test/pnl_scripts/Botvinick Model Composition.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/py/test/pnl_scripts/Rumelhart Semantic Network.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/py/test/pnl_scripts/Rumelhart Semantic Network.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -21,7 +22,7 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
-    <option name="RESET_MODE" value="HARD" />
+    <option name="RESET_MODE" value="SOFT" />
   </component>
   <component name="JsFlowSettings">
     <service-enabled>true</service-enabled>
@@ -127,7 +128,7 @@
       <workItem from="1582316595834" duration="6273000" />
       <workItem from="1582589622159" duration="1145000" />
       <workItem from="1582727991429" duration="18072000" />
-      <workItem from="1582900330275" duration="21246000" />
+      <workItem from="1582900330275" duration="23045000" />
     </task>
     <task id="LOCAL-00001" summary="Enabled touchpad zoom gestures and windows ctrl shortcuts">
       <created>1581449946471</created>
@@ -263,7 +264,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/components/graphview.js</url>
-          <line>1063</line>
+          <line>1065</line>
           <properties lambdaOrdinal="-1" />
           <option name="timeStamp" value="107" />
         </line-breakpoint>
