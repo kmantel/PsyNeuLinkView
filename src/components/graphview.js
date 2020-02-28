@@ -87,11 +87,7 @@ class GraphView extends React.Component {
         }
     }
 
-    componentWillMount() {
-        // document.querySelector(".graphview").on("keydown", function() {
-        //     console.log(d3.event)
-        // })
-    }
+    componentWillMount() {}
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (!(this.props.graph === prevProps.graph)) {
@@ -162,16 +158,6 @@ class GraphView extends React.Component {
         window.addEventListener('scroll', this.scroll)
     }
 
-    cartesian_to_polar(x, y, cx, cy) {
-        var distance, radians, polar, centerpoint;
-        x = x - cx;
-        y = y - cy;
-        distance = Math.sqrt(x * x + y * y);
-        radians = Math.atan2(y, x);
-        polar = {distance: distance, radians: radians};
-        return polar
-    }
-
     on_key_down(e) {
         if (e.metaKey || e.ctrlKey) {
             if (e.key === '+' || e.key === '=') {
@@ -231,6 +217,7 @@ class GraphView extends React.Component {
         window.removeEventListener('mouseup', this.on_scroll_end)
         this.update_scroll()
     }
+
     update_script() {
         if (this.props.filepath){
             var stylesheet_str = JSON.stringify({...this.stylesheet});
@@ -239,53 +226,8 @@ class GraphView extends React.Component {
         }
     }
 
-    dist(x1, y1, x2, y2) {
-        var a = x1 - x2;
-        var b = y1 - y2;
-        var c = Math.sqrt(a * a + b * b);
-        return c
-    }
-
-    getnRect(angle, w, h) {
-        var sine = Math.sin(angle), cosine = Math.cos(angle);   // Calculate once and store, to make quicker and cleaner
-        var dy = Math.sin > 0 ? h / 2 : h / -2;                  // Distance to top or bottom edge (from center)
-        var dx = Math.cos > 0 ? w / 2 : w / -2;                  // Distance to left or right edge (from center)
-        if (Math.abs(dx * sine) < Math.abs(dy * cosine)) {           // if (distance to vertical line) < (distance to horizontal line)
-            dy = (dx * sine) / cosine;                  // calculate distance to vertical line
-        } else {                                      // else: (distance to top or bottom edge) < (distance to left or right edge)
-            dx = (dy * cosine) / sine;                  // move to top or bottom line
-        }
-        return {dx: dx, dy: dy};                        // Return point on rectangle edge
-    }
-
     reset_graph() {
         this.svg.call(this.zoom.transform, d3.zoomIdentity);
-    }
-
-    get_len_from_point_to_edge(x1, y1, x2, y2, vx, vy, px, py) {
-        // algorithm to find len of vector from point to edge of rect taken from here: https://stackoverflow.com/questions/3180000/calculate-a-vector-from-a-point-in-a-rectangle-to-edge-based-on-angle
-        var possible_solutions = [];
-        var left_wall_test = (x1 - px) / vx;
-        if (left_wall_test > 0) {
-            possible_solutions.push(left_wall_test)
-        }
-        ;
-        var right_wall_test = (x2 - px) / vx;
-        if (right_wall_test > 0) {
-            possible_solutions.push(right_wall_test)
-        }
-        ;
-        var top_wall_test = (y1 - py) / vy;
-        if (top_wall_test > 0) {
-            possible_solutions.push(top_wall_test)
-        }
-        ;
-        var bottom_wall_test = (y2 - py) / vy;
-        if (bottom_wall_test > 0) {
-            possible_solutions.push(bottom_wall_test)
-        }
-        ;
-        return Math.min.apply(null, possible_solutions)
     }
 
     on_mouse_wheel(e) {
@@ -313,18 +255,6 @@ class GraphView extends React.Component {
         } else {
             return false
         }
-    }
-
-    generate_arc() {
-        var x1 = 0,
-            y1 = 0,
-            x2 = 1,
-            y2 = 1, // The arc collapses to a point if the beginning and ending points of the arc are the same, so kludge it.
-            xRotation = 90, // Fiddle with this angle to get loop oriented.
-            rx = 10, // Make drx and dry different to get an ellipse instead of a circle.
-            ry = 20,
-            sweep = 0; // 1 or 0; Change sweep to change orientation of loop.
-        return "M" + x1 + "," + y1 + "A" + rx + "," + ry + " " + xRotation + ",1," + sweep + " " + x2 + "," + y2;
     }
 
     mouse_inside_graph_bounds(e) {
@@ -405,10 +335,6 @@ class GraphView extends React.Component {
                     .attr("fill", color);
             }
         );
-        svg.append("svg:defs").append("svg:marker")
-            .attr("id", "reference_arc")
-            .append("path")
-            .attr("d", this.generate_arc());
     }
 
     associateVisualInformationWithGraphNodes() {
@@ -504,9 +430,9 @@ class GraphView extends React.Component {
                 id += 1;
                 return `r${id - 1}`
             })
-            .attr('d', ()=>{
-                return self.generate_arc()
-            })
+            // .attr('d', ()=>{
+            //     return self.generate_arc()
+            // })
             .attr('fill', 'white')
             .attr('fill-opacity', '0')
             .attr('stroke', 'black')
@@ -635,24 +561,6 @@ class GraphView extends React.Component {
                     .attr('cy', node.data.y);
             }
         );
-    }
-
-    rad2deg(rad){
-        return rad*180/Math.PI
-    }
-
-    deg2rad(deg){
-        return deg*Math.PI/180
-    }
-
-    get_terminal_angles_of_arc(start_pt, end_pt, centerpoint){
-        var start_angle, end_angle;
-        start_angle = Math.atan2(start_pt.y-centerpoint.y, start_pt.x-centerpoint.x);
-        end_angle = Math.atan2(end_pt.y-centerpoint.y, end_pt.x-centerpoint.x);
-        return {
-            start: start_angle,
-            end: end_angle
-        }
     }
 
     move_graph(dx = 0, dy = 0) {
@@ -896,7 +804,6 @@ class GraphView extends React.Component {
 
     move_nodes(dx, dy) {
         var adjusted_movement;
-        var in_bounds;
         var self = this;
         self.selected.forEach(
             (s) => {
@@ -939,8 +846,7 @@ class GraphView extends React.Component {
     }
 
     commit_node_to_stylesheet(node) {
-        var svg = document.querySelector('svg'),
-            viewbox = this.get_viewBox(),
+        var viewbox = this.get_viewBox(),
             viewport_offset = this.get_viewport_offset(),
             w_correction = viewport_offset.x,
             h_correction = viewport_offset.y;
@@ -1148,8 +1054,8 @@ class GraphView extends React.Component {
             pre_scale_centerpoint = {
                 x: (pre_scale_graph_rect.x + pre_scale_graph_rect.width/ 2) ,
                 y: (pre_scale_graph_rect.y + pre_scale_graph_rect.height/ 2)
-            }
-        this.scale_graph(scaling_factor)
+            };
+        this.scale_graph(scaling_factor);
         var post_scale_graph_rect = document.querySelector('g.container').getBoundingClientRect(),
             post_scale_centerpoint = {
                 x: (post_scale_graph_rect.x + post_scale_graph_rect.width/ 2) ,
