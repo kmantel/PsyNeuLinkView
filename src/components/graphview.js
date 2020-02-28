@@ -75,7 +75,6 @@ class GraphView extends React.Component {
 
     mouse_up_after_resize(){
         window.removeEventListener('mouseup', this.mouse_up_after_resize);
-        this.redimension_viewbox();
         this.commit_all_nodes_to_stylesheet();
         this.update_script();
         console.log(this.props.size.width, this.props.size.height)
@@ -83,6 +82,7 @@ class GraphView extends React.Component {
 
     resize() {
         if (![null, 'loading'].includes(this.props.graph)){
+            this.redimension_viewbox();
             window.addEventListener('mouseup', this.mouse_up_after_resize)
         }
     }
@@ -1206,6 +1206,7 @@ class GraphView extends React.Component {
         }
         // this.set_zoom_config(d3.event.transform.k, xscroll, yscroll);
         win.scrollTo(xscroll, yscroll)
+        this.redimension_viewbox();
     }
 
     set_zoom_config(k=null, xscroll=null, yscroll=null) {
@@ -1308,9 +1309,8 @@ class GraphView extends React.Component {
             viewBox = svg.getAttribute('viewBox').split(','),
             viewBox_w = parseInt(viewBox[2]),
             viewBox_h = parseInt(viewBox[3]),
-            scaling = parseFloat(svg.getAttribute('width'))/100,
-            svg_w = Math.round(svg.getBoundingClientRect().width)/scaling,
-            svg_h = Math.round(svg.getBoundingClientRect().height)/scaling,
+            svg_w = Math.round(svg.getBoundingClientRect().width),
+            svg_h = Math.round(svg.getBoundingClientRect().height),
             aspect_ratio = this.aspect_ratio,
             w_difference = svg_w - viewBox_w,
             h_difference = svg_h - viewBox_h,
