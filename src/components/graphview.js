@@ -53,21 +53,21 @@ class GraphView extends React.Component {
     bind_this_to_functions() {
         this.set_zoom = this.set_zoom.bind(this);
         this.mouse_up_after_resize = this.mouse_up_after_resize.bind(this);
-        this.resize = this.resize.bind(this);
+        this.on_resize = this.on_resize.bind(this);
         this.set_non_react_state = this.set_non_react_state.bind(this);
         this.center_graph = this.center_graph.bind(this);
         this.setGraph = this.setGraph.bind(this);
-        this.key_down = this.key_down.bind(this);
-        this.key_up = this.key_up.bind(this);
+        this.on_key_down = this.on_key_down.bind(this);
+        this.on_key_up = this.on_key_up.bind(this);
         this.scale_graph = this.scale_graph.bind(this);
         this.scale_graph_to_fit = this.scale_graph_to_fit.bind(this);
-        this.capture_wheel = this.capture_wheel.bind(this);
+        this.on_mouse_wheel = this.on_mouse_wheel.bind(this);
         this.componentDidUpdate = this.componentDidUpdate.bind(this);
         this.update_scroll = this.update_scroll.bind(this);
         this.update_script = this.update_script.bind(this);
         this.move_node = this.move_node.bind(this);
-        this.zoomed = this.zoomed.bind(this);
-        this.blur = this.blur.bind(this);
+        this.on_zoom = this.on_zoom.bind(this);
+        this.on_blur = this.on_blur.bind(this);
         this.move_graph = this.move_graph.bind(this);
         this.refresh_edges_for_node = this.refresh_edges_for_node.bind(this);
         this.move_label_to_corresponding_node = this.move_label_to_corresponding_node.bind(this);
@@ -76,10 +76,11 @@ class GraphView extends React.Component {
     mouse_up_after_resize(){
         window.removeEventListener('mouseup', this.mouse_up_after_resize);
         this.commit_all_nodes_to_stylesheet();
+        this.commit_canvas_size_to_stylesheet();
         this.update_script();
     }
 
-    resize() {
+    on_resize() {
         if (![null, 'loading'].includes(this.props.graph)){
             this.redimension_viewbox();
             window.addEventListener('mouseup', this.mouse_up_after_resize)
@@ -117,8 +118,20 @@ class GraphView extends React.Component {
         if (!(this.stylesheet)){
             this.stylesheet = {}
         }
+        if (!('Canvas Settings' in this.stylesheet)){
+            this.stylesheet['Canvas Settings'] = {
+                Width:'',
+                Height:'',
+                Zoom:100,
+                xScroll:0,
+                yScroll:0
+            }
+        }
+        this.commit_canvas_size_to_stylesheet();
         if (!('Graph Settings' in this.stylesheet)){
-            this.stylesheet['Graph Settings'] = {}
+            this.stylesheet['Graph Settings'] = {
+                Scale:this.scaling_factor
+            }
         }
         if (!('Components' in this.stylesheet['Graph Settings'])){
             this.stylesheet['Graph Settings']['Components'] = {}
@@ -129,12 +142,11 @@ class GraphView extends React.Component {
     }
 
     componentWillUnmount() {
-        window.removeEventListener('resize', this.resize);
-        window.removeEventListener('resize_end', this.resize_end);
-        window.removeEventListener('wheel', this.capture_wheel);
-        window.removeEventListener('keydown', this.key_down);
-        window.removeEventListener('keyup', this.key_up);
-        window.removeEventListener('blur', this.blur);
+        window.removeEventListener('resize', this.on_resize);
+        window.removeEventListener('wheel', this.on_mouse_wheel);
+        window.removeEventListener('keydown', this.on_key_down);
+        window.removeEventListener('keyup', this.on_key_up);
+        window.removeEventListener('blur', this.on_blur);
         var win = document.querySelector('.graph-view');
         if (win) {
             win.removeEventListener('scroll', this.update_scroll);
@@ -142,12 +154,12 @@ class GraphView extends React.Component {
     }
 
     componentDidMount() {
-        window.addEventListener('resize', this.resize);
-        window.addEventListener('resize', this.resize_end);
-        window.addEventListener('wheel', this.capture_wheel, {passive: false});
-        window.addEventListener('keydown', this.key_down);
-        window.addEventListener('keyup', this.key_up);
-        window.addEventListener('blur', this.blur);
+        window.addEventListener('resize', this.on_resize);
+        window.addEventListener('wheel', this.on_mouse_wheel, {passive: false});
+        window.addEventListener('keydown', this.on_key_down);
+        window.addEventListener('keyup', this.on_key_up);
+        window.addEventListener('blur', this.on_blur);
+        window.addEventListener('scroll', this.scroll)
     }
 
     cartesian_to_polar(x, y, cx, cy) {
@@ -160,7 +172,7 @@ class GraphView extends React.Component {
         return polar
     }
 
-    key_down(e) {
+    on_key_down(e) {
         if (e.metaKey || e.ctrlKey) {
             if (e.key === '+' || e.key === '=') {
                 this.nudge_graph_larger();
@@ -201,19 +213,27 @@ class GraphView extends React.Component {
         }
     }
 
-    blur(e){
+    on_blur(e){
         if (this.props.filewatch_fx && this.props.filepath){
             this.props.filewatch_fx(this.props.filepath)
         }
     }
 
-    key_up(e){
+    on_key_up(e){
         this.update_script();
     }
 
+    on_scroll(e){
+        window.addEventListener('mouseup', this.on_scroll_end)
+    }
+
+    on_scroll_end(e){
+        window.removeEventListener('mouseup', this.on_scroll_end)
+        this.update_scroll()
+    }
     update_script() {
         if (this.props.filepath){
-            var stylesheet_str = JSON.stringify(this.stylesheet);
+            var stylesheet_str = JSON.stringify({...this.stylesheet});
             this.props.fileunwatch_fx(this.props.filepath);
             this.script_updater.write({styleJSON: stylesheet_str});
         }
@@ -268,7 +288,7 @@ class GraphView extends React.Component {
         return Math.min.apply(null, possible_solutions)
     }
 
-    capture_wheel(e) {
+    on_mouse_wheel(e) {
         if (e.metaKey||e.ctrlKey) {
             this.mouse_offset = {
                 x: e.offsetX,
@@ -320,11 +340,9 @@ class GraphView extends React.Component {
     }
 
     nudge_graph_larger() {
-        var pre_resize_bounds, post_resize_bounds, upper_bound, resize_increment;
-        upper_bound = 1;
-        resize_increment = 0.05;
+        var pre_resize_bounds, post_resize_bounds;
         pre_resize_bounds = this.get_graph_bounding_box();
-        this.scale_graph(1.02);
+        this.scale_graph_in_place(1.02);
         post_resize_bounds = this.get_graph_bounding_box();
         return {
             'pre': pre_resize_bounds,
@@ -333,11 +351,9 @@ class GraphView extends React.Component {
     }
 
     nudge_graph_smaller() {
-        var pre_resize_bounds, post_resize_bounds, lower_bound, resize_increment;
-        lower_bound = 0.05;
-        resize_increment = 0.05;
+        var pre_resize_bounds, post_resize_bounds;
         pre_resize_bounds = this.get_graph_bounding_box();
-        this.scale_graph(.98);
+        this.scale_graph_in_place(.98);
         post_resize_bounds = this.get_graph_bounding_box();
         return {
             'pre': pre_resize_bounds,
@@ -346,7 +362,7 @@ class GraphView extends React.Component {
     }
 
     createSVG() {
-        var svg, svg_rect, container
+        var svg, svg_rect, container;
         svg = d3.select('.graph-view')
             .append('svg')
             .attr('class', 'graph')
@@ -426,7 +442,7 @@ class GraphView extends React.Component {
     drawProjections(container) {
         var self = this;
         self.associateVisualInformationWithGraphEdges();
-        var id = 0
+        var id = 0;
         var edge = container.append('g')
             .attr('class', 'edge')
             .selectAll('line')
@@ -906,6 +922,13 @@ class GraphView extends React.Component {
             height: parseInt(viewBox[3])
         }
     }
+    commit_canvas_size_to_stylesheet(){
+        var full_canvas_rect = document.querySelector('.graphview').getBoundingClientRect(),
+            x_res = window.innerWidth,
+            y_res = window.innerHeight;
+        this.stylesheet['Canvas Settings']['Width'] = parseFloat((full_canvas_rect.width/x_res*100).toFixed(2));
+        this.stylesheet['Canvas Settings']['Height'] = parseFloat((full_canvas_rect.height/y_res*100).toFixed(2));
+    }
 
     commit_all_nodes_to_stylesheet(){
         this.index.nodes.forEach(
@@ -1083,7 +1106,9 @@ class GraphView extends React.Component {
     }
 
     scale_graph(scaling_factor) {
-        var node_selector, label_selector, edge_selector, recurrent_selector;
+        console.log('scaling');
+        this.scaling_factor *= scaling_factor;
+        this.stylesheet['Graph Settings']['Scale']=parseFloat((this.scaling_factor).toFixed(2));
         var self = this;
         this.index.nodes.forEach(
             (node)=>{
@@ -1115,9 +1140,25 @@ class GraphView extends React.Component {
                 projection.data.stroke_width = stroke_width
                 projection.selection.attr('stroke-width', stroke_width);
             }
-        )
+        );
     }
 
+    scale_graph_in_place(scaling_factor){
+        var pre_scale_graph_rect = document.querySelector('g.container').getBoundingClientRect(),
+            pre_scale_centerpoint = {
+                x: (pre_scale_graph_rect.x + pre_scale_graph_rect.width/ 2) ,
+                y: (pre_scale_graph_rect.y + pre_scale_graph_rect.height/ 2)
+            }
+        this.scale_graph(scaling_factor)
+        var post_scale_graph_rect = document.querySelector('g.container').getBoundingClientRect(),
+            post_scale_centerpoint = {
+                x: (post_scale_graph_rect.x + post_scale_graph_rect.width/ 2) ,
+                y: (post_scale_graph_rect.y + post_scale_graph_rect.height/ 2)
+            },
+            dx = pre_scale_centerpoint.x - post_scale_centerpoint.x,
+            dy = pre_scale_centerpoint.y - post_scale_centerpoint.y;
+        this.move_graph(dx, dy)
+    }
     scale_graph_to_fit(proportion) {
         var canvas_bounding_box, graph_bounding_box, target_width, target_height, scaling_factor;
         this.fill_proportion = proportion;
@@ -1170,7 +1211,7 @@ class GraphView extends React.Component {
         this.move_graph(horizontal_offset, vertical_offset)
     }
 
-    zoomed() {
+    on_zoom() {
         var d3e = d3.select('svg.graph');
         var win = document.querySelector('.graph-view')
         if (d3.event.sourceEvent && d3.event.sourceEvent.type === 'mousemove') {
@@ -1197,23 +1238,25 @@ class GraphView extends React.Component {
             var yscroll_offset = full_g_box_post.height * pre_scale_y_proportion - this.mouse_offset.y;
             var yscroll = win.scrollTop + yscroll_offset;
         }
-        // this.set_zoom_config(d3.event.transform.k, xscroll, yscroll);
-        win.scrollTo(xscroll, yscroll)
+        if (xscroll<0){xscroll=0};
+        if (yscroll<0){yscroll=0};
+        // this.update_script();
+        win.scrollTo(xscroll, yscroll);
+        this.commit_zoom_to_stylesheet();
         this.redimension_viewbox();
     }
 
-    set_zoom_config(k=null, xscroll=null, yscroll=null) {
-        var cf = {...config_client.get_config()};
-        if (k){
-            cf.env.graphview.zoom_scale = Math.round(k*100)/100;
-        }
-        if (xscroll){
-            cf.env.graphview.x_scroll = Math.round(xscroll);
-        }
-        if (yscroll){
-            cf.env.graphview.y_scroll = Math.round(yscroll);
-        }
-        config_client.set_config({...cf})
+    commit_zoom_to_stylesheet() {
+        var win = document.querySelector('.graph-view'),
+            svg = document.querySelector('svg'),
+            k = parseInt(svg.getAttribute('width')),
+            xscroll = win.scrollLeft,
+            xmax = win.scrollWidth - win.clientWidth,
+            yscroll = win.scrollTop,
+            ymax = win.scrollHeight - win.clientHeight;
+        this.stylesheet['Canvas Settings']['Zoom'] = k;
+        this.stylesheet['Canvas Settings']['xScroll'] = parseFloat(((xscroll/xmax)*100).toFixed(2));
+        this.stylesheet['Canvas Settings']['yScroll'] = parseFloat(((yscroll/ymax)*100).toFixed(2));
     }
 
     apply_zoom(svg) {
@@ -1230,7 +1273,7 @@ class GraphView extends React.Component {
             });
         var d3e = d3.select('svg.graph');
         d3e.call(this.zoom
-            .on("zoom", this.zoomed)
+            .on("zoom", this.on_zoom)
         );
     }
 
@@ -1342,6 +1385,7 @@ class GraphView extends React.Component {
     }
 
     postprocess(){
+        this.validate_stylesheet();
         this.resize_nodes_to_label_text();
         this.correct_projection_lengths_for_ellipse_sizes();
         this.scale_graph_to_fit(this.fill_proportion);
