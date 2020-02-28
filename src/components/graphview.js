@@ -52,7 +52,7 @@ class GraphView extends React.Component {
 
     bind_this_to_functions() {
         this.set_zoom = this.set_zoom.bind(this);
-        this.mouse_up = this.mouse_up.bind(this);
+        this.mouse_up_after_resize = this.mouse_up_after_resize.bind(this);
         this.resize = this.resize.bind(this);
         this.set_non_react_state = this.set_non_react_state.bind(this);
         this.center_graph = this.center_graph.bind(this);
@@ -73,16 +73,17 @@ class GraphView extends React.Component {
         this.move_label_to_corresponding_node = this.move_label_to_corresponding_node.bind(this);
     }
 
-    mouse_up(){
-        window.removeEventListener('mouseup', this.mouse_up);
+    mouse_up_after_resize(){
+        window.removeEventListener('mouseup', this.mouse_up_after_resize);
         this.redimension_viewbox();
         this.commit_all_nodes_to_stylesheet();
         this.update_script();
+        console.log(this.props.size.width, this.props.size.height)
     }
 
     resize() {
         if (![null, 'loading'].includes(this.props.graph)){
-            window.addEventListener('mouseup', this.mouse_up)
+            window.addEventListener('mouseup', this.mouse_up_after_resize)
         }
     }
 
@@ -1316,7 +1317,7 @@ class GraphView extends React.Component {
             viewBox_w_mod,
             viewBox_h_mod,
             proportion;
-        if (svg_w !== viewBox_w && svg_h !== viewBox_h){
+        if (svg_w !== viewBox_w || svg_h !== viewBox_h){
             if (w_difference < h_difference){
                 viewBox_w_mod = svg_w;
                 viewBox_h_mod = svg_w / aspect_ratio;
@@ -1371,7 +1372,6 @@ class GraphView extends React.Component {
         this.parse_stylesheet();
         this.set_aspect_ratio();
         // this.props.graph_size_fx(50,50);
-        window.this = this;
     }
 
     render() {
@@ -1397,6 +1397,12 @@ class GraphView extends React.Component {
                 }
                 size={
                     this.props.size
+                }
+                maxWidth={
+                    this.props.maxWidth
+                }
+                maxHeight={
+                    this.props.maxHeight
                 }
             >
                 <div className={this.state.class}/>

@@ -7,6 +7,7 @@ import ParameterControlBox from './parametercontrolbox'
 import SettingsPane from './settings'
 import ErrorDispatcher from "../utility/errors/dispatcher";
 import fs from 'fs'
+import {Resizable} from "re-resizable";
 const path = require('path');
 const os = require('os');
 const config_client = window.config_client;
@@ -32,9 +33,14 @@ export default class WorkSpace extends React.Component {
             mouse:null,
             filepath: null
         };
+        this.panel_padding = 10;
+        this.panel_max_width = window.innerWidth - this.panel_padding * 4;
+        this.panel_max_height = window.innerHeight - this.panel_padding * 4;
         this.name = 'workspace';
         this.dispatcher = new ErrorDispatcher(this);
         this.container = {};
+        window.this = this;
+        this.get_reference_sizing_factors = this.get_reference_sizing_factors.bind(this);
         this.set_graph_size_hook = this.set_graph_size_hook.bind(this);
         this.choose_composition = this.choose_composition.bind(this);
         this.componentWillMount = this.componentWillMount.bind(this);
@@ -363,6 +369,15 @@ export default class WorkSpace extends React.Component {
         this.mouse_initial = this.state.mouse
     }
 
+    get_reference_sizing_factors(horizontal, vertical){
+        this.reference_factors = {
+            horizontal_key:horizontal,
+            horizontal_value:this.state[horizontal],
+            vertical_key:vertical,
+            vertical_value:this.state[vertical]
+        }
+    }
+
     window_resize() {
         var old_x_res = this.state.x_res;
         var old_y_res = this.state.y_res;
@@ -390,21 +405,23 @@ export default class WorkSpace extends React.Component {
         // config_client.set_config({...cf});
     }
 
-    panel_resize(horizontal_factor, vertical_factor, e, direction, ref, d) {
-        var self = this;
-        var mouse_current = self.state.mouse;
-        var mouse_initial = self.mouse_initial;
-        var offset_hor = mouse_current.x - mouse_initial.x;
-        var offset_ver = mouse_current.y - mouse_initial.y;
+    panel_resize(e, direction, ref, d) {
+        var h_key = this.reference_factors.horizontal_key,
+            h_val = this.reference_factors.horizontal_value,
+            v_key = this.reference_factors.vertical_key,
+            v_val = this.reference_factors.vertical_value;
+        console.log(v_val, d.height)
+        if (direction.toLowerCase().includes('left')){d.width*=-1}
+        if (direction.toLowerCase().includes('top')){d.height*=-1}
         if (['bottomRight', 'bottomLeft', 'topRight', 'topLeft'].includes(direction)) {
-            self.setState({[horizontal_factor]: self.state[horizontal_factor] + offset_hor});
-            self.setState({[vertical_factor]: self.state[vertical_factor] + offset_ver})
+            this.setState({[h_key]: h_val + d.width});
+            this.setState({[v_key]: v_val + d.height})
         } else if (['left', 'right'].includes(direction)) {
-            self.setState({[horizontal_factor]: self.state[horizontal_factor] + offset_hor})
+            this.setState({[h_key]: h_val + d.width})
         } else {
-            self.setState({[vertical_factor]: self.state[vertical_factor] + offset_ver})
+            this.setState({[v_key]: v_val + d.height})
         }
-        self.mouse_initial = mouse_current
+        window.dispatchEvent(new Event('resize'));
     }
 
     set_graph_size_hook(width=this.state.row_one_horizontal_factor,
@@ -453,6 +470,11 @@ export default class WorkSpace extends React.Component {
         this.dispatcher.emit()
     }
 
+    on_resize(e, direction, ref, d) {
+        this.panel_resize('row_one_horizontal_factor', 'vertical_factor', e, direction, ref, d)
+        window.dispatchEvent(new Event('resize'));
+    }
+
     render() {
         var interpreter_path_is_blank = !{...window.config_client.get_config()}['Python']['Interpreter Path'];
         if (!this.state.show_settings && interpreter_path_is_blank) {
@@ -465,42 +487,50 @@ export default class WorkSpace extends React.Component {
                 <SideBar
                     hover={() => this.set_tool_tip('sidebar')}
                     className='pnl-panel'
-                    onResizeStart={this.get_mouse_initial}
-                    onResize={function (e, direction, ref, d) {
-                        self.panel_resize('row_one_horizontal_factor', 'vertical_factor', e, direction, ref, d)
-                        window.dispatchEvent(new Event('resize'));
-                    }}
-                    onResizeStop={function (e, direction, ref, d) {
-                        self.panel_resize('row_one_horizontal_factor', 'vertical_factor', e, direction, ref, d)
-                        self.update_config_panel_sizes()
-                        window.dispatchEvent(new Event('resize_end'));
-                    }}
+                    onResizeStart={
+                        ()=>{
+                            self.get_reference_sizing_factors('row_one_horizontal_factor', 'vertical_factor')
+                        }
+                    }
+                    onResize={
+                        self.panel_resize
+                    }
                     size={
                         {
                             height: this.state.vertical_factor - padding,
                             width: this.state.row_one_horizontal_factor - padding
                         }
                     }
+                    maxWidth = {
+                        this.panel_max_width
+                    }
+                    maxHeight = {
+                        this.panel_max_height
+                    }
                 />
             </div>,
             <div key="graphview">
                 <GraphView
                     className='pnl-panel'
-                    onResizeStart={this.get_mouse_initial}
-                    onResize={function (e, direction, ref, d) {
-                        self.panel_resize('row_one_horizontal_factor', 'vertical_factor', e, direction, ref, d)
-                        window.dispatchEvent(new Event('resize'));
-                    }}
-                    onResizeStop={function (e, direction, ref, d) {
-                        self.panel_resize('row_one_horizontal_factor', 'vertical_factor', e, direction, ref, d)
-                        self.update_config_panel_sizes()
-                        window.dispatchEvent(new Event('resize_end'));
-                    }}
+                    onResizeStart={
+                        ()=>{
+                            self.get_reference_sizing_factors('row_one_horizontal_factor', 'vertical_factor')
+                        }
+                    }
+                    onResize={
+                        self.panel_resize
+                    }
                     size={
                         {
                             height: this.state.vertical_factor - padding,
                             width: this.state.x_res - this.state.row_one_horizontal_factor - padding * 2
                         }
+                    }
+                    maxWidth = {
+                        this.panel_max_width
+                    }
+                    maxHeight = {
+                        this.panel_max_height
                     }
                     location = {
                         {
@@ -521,43 +551,54 @@ export default class WorkSpace extends React.Component {
                 <ToolTipBox
                     text={this.state.active_tooltip}
                     className='pnl-panel'
-                    onResizeStart={this.get_mouse_initial}
-                    onResizeStop={function (e, direction, ref, d) {
-                        self.panel_resize('row_two_horizontal_factor', 'vertical_factor', e, direction, ref, d)
-                        self.update_config_panel_sizes()
-                        window.dispatchEvent(new Event('resize_end'));
-                    }}
-                    onResize={function (e, direction, ref, d) {
-                        self.panel_resize('row_two_horizontal_factor', 'vertical_factor', e, direction, ref, d)
-                        window.dispatchEvent(new Event('resize'));
-                    }}
+                    onResizeStart={
+                        ()=>{
+                            self.get_reference_sizing_factors('row_two_horizontal_factor', 'vertical_factor')
+                        }
+                    }
+                    onResize={
+                        self.panel_resize
+                    }
                     size={
                         {
                             height: this.state.y_res - this.state.vertical_factor - padding * 2,
                             width: this.state.row_two_horizontal_factor - padding
                         }
-                    }/>
+                    }
+                    maxWidth = {
+                        this.panel_max_width
+                    }
+                    maxHeight = {
+                        this.panel_max_height
+                    }
+                />
+
             </div>,
             <div key="paramcontrol">
                 <ParameterControlBox
                     text={this.state.active_tooltip}
                     className='pnl-panel'
-                    onResizeStart={this.get_mouse_initial}
-                    onResizeStop={function (e, direction, ref, d) {
-                        self.panel_resize('row_two_horizontal_factor', 'vertical_factor', e, direction, ref, d)
-                        self.update_config_panel_sizes()
-                        window.dispatchEvent(new Event('resize_end'));
-                    }}
-                    onResize={function (e, direction, ref, d) {
-                        self.panel_resize('row_two_horizontal_factor', 'vertical_factor', e, direction, ref, d)
-                        window.dispatchEvent(new Event('resize'));
-                    }}
+                    onResizeStart={
+                        ()=>{
+                            self.get_reference_sizing_factors('row_two_horizontal_factor', 'vertical_factor')
+                        }
+                    }
+                    onResize={
+                        self.panel_resize
+                    }
                     size={
                         {
                             height: this.state.y_res - this.state.vertical_factor - padding * 2,
                             width: this.state.x_res - this.state.row_two_horizontal_factor - padding * 2
                         }
-                    }/>
+                    }
+                    maxWidth = {
+                        this.panel_max_width
+                    }
+                    maxHeight = {
+                        this.panel_max_height
+                    }
+                />
             </div>
         ];
         return (

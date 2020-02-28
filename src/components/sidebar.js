@@ -36,6 +36,12 @@ export default class SideBar extends React.Component {
         size={
           this.props.size
         }
+        maxWidth={
+          this.props.maxWidth
+        }
+        maxHeight={
+          this.props.maxHeight
+        }
       >
         <Tree
           contents={this.state.nodes}
