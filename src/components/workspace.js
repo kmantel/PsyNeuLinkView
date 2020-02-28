@@ -34,8 +34,8 @@ export default class WorkSpace extends React.Component {
             filepath: null
         };
         this.panel_padding = 10;
-        this.panel_max_width = window.innerWidth - this.panel_padding * 4;
-        this.panel_max_height = window.innerHeight - this.panel_padding * 4;
+        this.panel_max_width = window.innerWidth - this.panel_padding * 7;
+        this.panel_max_height = window.innerHeight - this.panel_padding * 7;
         this.name = 'workspace';
         this.dispatcher = new ErrorDispatcher(this);
         this.container = {};
@@ -410,7 +410,6 @@ export default class WorkSpace extends React.Component {
             h_val = this.reference_factors.horizontal_value,
             v_key = this.reference_factors.vertical_key,
             v_val = this.reference_factors.vertical_value;
-        console.log(v_val, d.height)
         if (direction.toLowerCase().includes('left')){d.width*=-1}
         if (direction.toLowerCase().includes('top')){d.height*=-1}
         if (['bottomRight', 'bottomLeft', 'topRight', 'topLeft'].includes(direction)) {

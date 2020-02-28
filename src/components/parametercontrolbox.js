@@ -45,6 +45,12 @@ export class ParameterControlBox extends React.Component {
         size={
           this.props.size
         }
+        minHeight={
+            40
+        }
+        minWidth={
+            40
+        }
         maxWidth={
             this.props.maxWidth
         }

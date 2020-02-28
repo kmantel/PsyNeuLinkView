@@ -35,6 +35,12 @@ export default class Tooltipbox extends React.Component{
           bottomLeft: false,
           topLeft: false
         }}
+        minHeight={
+          40
+        }
+        minWidth={
+          40
+        }
         maxWidth={
           this.props.maxWidth
         }

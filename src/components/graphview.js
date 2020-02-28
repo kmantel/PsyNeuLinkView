@@ -77,7 +77,6 @@ class GraphView extends React.Component {
         window.removeEventListener('mouseup', this.mouse_up_after_resize);
         this.commit_all_nodes_to_stylesheet();
         this.update_script();
-        console.log(this.props.size.width, this.props.size.height)
     }
 
     resize() {
@@ -325,9 +324,6 @@ class GraphView extends React.Component {
         upper_bound = 1;
         resize_increment = 0.05;
         pre_resize_bounds = this.get_graph_bounding_box();
-        // if (this.fill_proportion + resize_increment <= upper_bound) {
-        //     this.scale_graph_to_fit(this.fill_proportion + resize_increment);
-        // }
         this.scale_graph(1.02);
         post_resize_bounds = this.get_graph_bounding_box();
         return {
@@ -341,9 +337,6 @@ class GraphView extends React.Component {
         lower_bound = 0.05;
         resize_increment = 0.05;
         pre_resize_bounds = this.get_graph_bounding_box();
-        // if (this.fill_proportion - 0.05 >= resize_increment) {
-        //     this.scale_graph_to_fit(this.fill_proportion - resize_increment)
-        // }
         this.scale_graph(.98);
         post_resize_bounds = this.get_graph_bounding_box();
         return {
@@ -1397,6 +1390,12 @@ class GraphView extends React.Component {
                 }
                 size={
                     this.props.size
+                }
+                minHeight={
+                    40
+                }
+                minWidth={
+                    40
                 }
                 maxWidth={
                     this.props.maxWidth
