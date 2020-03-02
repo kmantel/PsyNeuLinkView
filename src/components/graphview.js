@@ -52,7 +52,8 @@ class GraphView extends React.Component {
 
     bind_this_to_functions() {
         this.set_zoom = this.set_zoom.bind(this);
-        this.mouse_up_after_resize = this.mouse_up_after_resize.bind(this);
+        this.on_scroll = this.on_scroll.bind(this);
+        this.commit_to_stylesheet_and_update_script = this.commit_to_stylesheet_and_update_script.bind(this);
         this.on_resize = this.on_resize.bind(this);
         this.set_non_react_state = this.set_non_react_state.bind(this);
         this.center_graph = this.center_graph.bind(this);
@@ -73,17 +74,19 @@ class GraphView extends React.Component {
         this.move_label_to_corresponding_node = this.move_label_to_corresponding_node.bind(this);
     }
 
-    mouse_up_after_resize(){
-        window.removeEventListener('mouseup', this.mouse_up_after_resize);
+    commit_to_stylesheet_and_update_script(){
+        window.removeEventListener('mouseup', this.commit_to_stylesheet_and_update_script);
         this.commit_all_nodes_to_stylesheet();
         this.commit_canvas_size_to_stylesheet();
+        this.commit_zoom_to_stylesheet();
         this.update_script();
     }
 
     on_resize() {
         if (![null, 'loading'].includes(this.props.graph)){
             this.redimension_viewbox();
-            window.addEventListener('mouseup', this.mouse_up_after_resize)
+            console.log('resize');
+            window.addEventListener('mouseup', this.commit_to_stylesheet_and_update_script)
         }
     }
 
@@ -155,7 +158,7 @@ class GraphView extends React.Component {
         window.addEventListener('keydown', this.on_key_down);
         window.addEventListener('keyup', this.on_key_up);
         window.addEventListener('blur', this.on_blur);
-        window.addEventListener('scroll', this.scroll)
+        window.addEventListener('scroll', this.on_scroll)
     }
 
     on_key_down(e) {
@@ -209,16 +212,42 @@ class GraphView extends React.Component {
         this.update_script();
     }
 
+    // delayedExec(after, fn) {
+    //     // console.log('y')
+    //     var timer;
+    //     return function() {
+    //         timer && clearTimeout(timer);
+    //         timer = setTimeout(fn, after);
+    //     };
+    // };
+
     on_scroll(e){
-        window.addEventListener('mouseup', this.on_scroll_end)
+
+        // console.log('scrolling')
+        // function delayed_exec(after, fn) {
+        //     var timer;
+        //     return function() {
+        //         timer && clearTimeout(timer);
+        //         timer = setTimeout(fn, after);
+        //     };
+        // };
+        //
+        // delayed_exec(250, this.commit_to_stylesheet_and_update_script);
+
+
+        // this.delayedExec(500, function() {
+        //     console.log('stopped it');
+        // })();
+        // document.getElementById('box').addEventListener('scroll', scrollStopper);
     }
 
     on_scroll_end(e){
         window.removeEventListener('mouseup', this.on_scroll_end)
+
         this.update_scroll()
     }
-
     update_script() {
+        console.log('updating')
         if (this.props.filepath){
             var stylesheet_str = JSON.stringify({...this.stylesheet});
             this.props.fileunwatch_fx(this.props.filepath);
@@ -1012,7 +1041,7 @@ class GraphView extends React.Component {
     }
 
     scale_graph(scaling_factor) {
-        console.log('scaling');
+        // console.log('scaling');
         this.scaling_factor *= scaling_factor;
         this.stylesheet['Graph Settings']['Scale']=parseFloat((this.scaling_factor).toFixed(2));
         var self = this;
@@ -1148,7 +1177,6 @@ class GraphView extends React.Component {
         if (yscroll<0){yscroll=0};
         // this.update_script();
         win.scrollTo(xscroll, yscroll);
-        this.commit_zoom_to_stylesheet();
         this.redimension_viewbox();
     }
 
@@ -1158,11 +1186,17 @@ class GraphView extends React.Component {
             k = parseInt(svg.getAttribute('width')),
             xscroll = win.scrollLeft,
             xmax = win.scrollWidth - win.clientWidth,
+            xpro = parseFloat(((xscroll/xmax)*100).toFixed(2)),
+            xpro = isNaN(xpro) ? 0 : xpro,
             yscroll = win.scrollTop,
-            ymax = win.scrollHeight - win.clientHeight;
+            ymax = win.scrollHeight - win.clientHeight,
+            ypro = parseFloat(((yscroll/ymax)*100).toFixed(2)),
+            ypro = isNaN(ypro) ? 0 : ypro,
+            scale = parseFloat((this.scaling_factor/(k/100)).toFixed(2));
+        this.stylesheet['Graph Settings']['Scale'] = scale;
         this.stylesheet['Canvas Settings']['Zoom'] = k;
-        this.stylesheet['Canvas Settings']['xScroll'] = parseFloat(((xscroll/xmax)*100).toFixed(2));
-        this.stylesheet['Canvas Settings']['yScroll'] = parseFloat(((yscroll/ymax)*100).toFixed(2));
+        this.stylesheet['Canvas Settings']['xScroll'] = xpro;
+        this.stylesheet['Canvas Settings']['yScroll'] = ypro;
     }
 
     apply_zoom(svg) {
@@ -1185,7 +1219,18 @@ class GraphView extends React.Component {
 
     bind_scroll_updating() {
         var win = document.querySelector('.graph-view');
-        win.addEventListener('scroll', this.update_scroll);
+        var self = this;
+        var delayedExec = function(after, fn) {
+            var timer;
+            return function() {
+                timer && clearTimeout(timer);
+                timer = setTimeout(fn, after);
+            };
+        };
+        var scrollStopper = delayedExec(500, function() {
+            self.commit_to_stylesheet_and_update_script();
+        });
+        win.addEventListener('scroll', scrollStopper);
     }
 
     parse_stylesheet() {
