@@ -6,6 +6,8 @@ import {Resizable} from 're-resizable'
 import {Spinner} from '@blueprintjs/core'
 import {Index} from '../utility/d3-helper/d3-helper'
 
+var lang = require('lodash/lang');
+
 const context_menu = [
     {
         onClick: {},
@@ -35,9 +37,6 @@ class GraphView extends React.Component {
             node_height: 15,
             graph: this.props.graph,
             spinner_visible: false,
-        };
-        this.flags = {
-            program_scroll: false
         };
         this.bind_this_to_functions = this.bind_this_to_functions.bind(this);
         this.bind_this_to_functions();
@@ -114,7 +113,26 @@ class GraphView extends React.Component {
         }
         if (!(this.props.graph_style === prevProps.graph_style)) {
             this.stylesheet = this.props.graph_style;
-            this.parse_stylesheet();
+            if (prevProps.graph_style){
+                if (
+                    !(
+                        lang.isEqual(
+                            this.stylesheet['Graph Settings']['Components'],
+                            prevProps.graph_style['Graph Settings']['Components']
+                        )
+                    )
+                ){
+                    this.set_node_positioning_from_stylesheet();
+                }
+                else if (
+                    !(lang.isEqual(this.stylesheet['Canvas Settings'], prevProps.graph_style['Canvas Settings']))
+                ){
+                    this.unwatch_file();
+                    this.set_canvas_state_from_stylesheet();
+                    this.commit_all_nodes_to_stylesheet();
+                    this.update_script(this.watch_file);
+                }
+            }
         }
     }
 
@@ -133,6 +151,7 @@ class GraphView extends React.Component {
                 xScroll:0,
                 yScroll:0
             };
+            this.commit_canvas_size_to_stylesheet();
         }
 
         if (!('Graph Settings' in this.stylesheet)){
@@ -140,8 +159,6 @@ class GraphView extends React.Component {
                 Scale:this.scaling_factor
             }
         }
-
-        this.commit_canvas_size_to_stylesheet();
 
         if (!('Components' in this.stylesheet['Graph Settings'])){
             this.stylesheet['Graph Settings']['Components'] = {}
@@ -223,6 +240,7 @@ class GraphView extends React.Component {
     }
 
     watch_file(){
+        console.log('watching')
         this.props.filewatch_fx(this.props.filepath)
     }
 
@@ -234,11 +252,14 @@ class GraphView extends React.Component {
         window.removeEventListener('mouseup', this.on_scroll_end)
         this.update_scroll()
     }
-    update_script() {
+
+    update_script(callback=()=>{}) {
         if (this.props.filepath){
             var stylesheet_str = JSON.stringify({...this.stylesheet});
-            this.props.fileunwatch_fx(this.props.filepath);
-            this.script_updater.write({styleJSON: stylesheet_str});
+            if (document.hasFocus()){
+                this.props.fileunwatch_fx(this.props.filepath);
+            }
+            this.script_updater.write({styleJSON: stylesheet_str}, callback);
         }
     }
 
@@ -1235,8 +1256,8 @@ class GraphView extends React.Component {
         var self, stylesheet;
         self = this;
         self.validate_stylesheet();
-        self.set_canvas_state_from_stylesheet();
         self.set_node_positioning_from_stylesheet();
+        self.set_canvas_state_from_stylesheet();
     }
 
     set_canvas_state_from_stylesheet(){
@@ -1248,11 +1269,9 @@ class GraphView extends React.Component {
             scroll_bounds = self.get_scroll_bounds(),
             xScroll = self.stylesheet['Canvas Settings']['xScroll'],
             yScroll = self.stylesheet['Canvas Settings']['yScroll'];
-        self.props.graph_size_fx(width, height);
-        self.flags.program_scroll = true;
         self.svg.call(self.zoom.scaleTo,zoom/100);
         win.scrollTo(scroll_bounds.x * (xScroll/100), scroll_bounds.y * (yScroll/100));
-        self.flags.program_scroll = false;
+        self.props.graph_size_fx(width,height);
     }
 
     set_node_positioning_from_stylesheet(){
@@ -1377,6 +1396,9 @@ class GraphView extends React.Component {
         this.draw_elements();
         this.parse_stylesheet();
         this.set_aspect_ratio();
+        if (!document.hasFocus()){
+            this.watch_file()
+        }
         // this.props.graph_size_fx(50,50);
         window.this = this
     }

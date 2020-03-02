@@ -42,7 +42,7 @@ export default class WorkSpace extends React.Component {
         this.container = {};
         // window.this = this;
         this.get_reference_sizing_factors = this.get_reference_sizing_factors.bind(this);
-        this.set_graph_size_hook = this.set_graph_size_hook.bind(this);
+        this.set_graph_size = this.set_graph_size.bind(this);
         this.choose_composition = this.choose_composition.bind(this);
         this.componentWillMount = this.componentWillMount.bind(this);
         this.panel_resize = this.panel_resize.bind(this);
@@ -323,7 +323,6 @@ export default class WorkSpace extends React.Component {
                                 graph_style: new_graph_style,
                                 filepath: filepath,
                             });
-                            self.watch_file(filepath);
                             var homedir = window.remote.app.getPath('home');
                             if (filepath.startsWith(homedir)){
                                 filepath = `~${filepath.slice(homedir.length)}`
@@ -426,8 +425,9 @@ export default class WorkSpace extends React.Component {
         window.dispatchEvent(new Event('resize'));
     }
 
-    set_graph_size_hook(width=this.state.row_one_horizontal_factor,
-                        height=this.state.vertical_factor){
+    set_graph_size(width=this.state.row_one_horizontal_factor,
+                   height=this.state.vertical_factor,
+                   callback=()=>{}){
         // This is a hook to allow child element graphview to set its own size.
         // Current horizontal factor attribute is set with respect to the first element in row.
         //  We subtract from one here so that calls to this method refer to the size of the actual
@@ -438,13 +438,13 @@ export default class WorkSpace extends React.Component {
         var padding = this.panel_padding,
             new_h_factor = window.innerWidth-((window.innerWidth)*(width/100)+padding*2)-1,
             new_v_factor = (window.innerHeight)*(height/100)+padding;
-
         this.setState(
             {
                 row_one_horizontal_factor:new_h_factor,
                 vertical_factor:new_v_factor
             }
-        )
+        );
+        callback();
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
@@ -549,7 +549,7 @@ export default class WorkSpace extends React.Component {
                     rpc_client = {rpc_client}
                     filewatch_fx = {this.watch_file}
                     fileunwatch_fx = {this.unwatch_file}
-                    graph_size_fx = {this.set_graph_size_hook}
+                    graph_size_fx = {this.set_graph_size}
                 />
             </div>,
             <div key="tipbox">
