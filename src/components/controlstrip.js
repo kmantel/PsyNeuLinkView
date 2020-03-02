@@ -11,15 +11,10 @@ export default class ControlStrip extends React.Component {
         this.handleTabChange = this.handleTabChange.bind(this);
     }
 
-    handleTabChange(){
-        var newTab;
-        if (this.state.selectedTabId === 'ng'){
-            newTab = 'mb'
+    handleTabChange(new_tab_id, prev_tab_id, e){
+        if (!(new_tab_id===prev_tab_id)){
+            this.setState({selectedTabId:new_tab_id})
         }
-        else {
-            newTab = 'ng'
-        }
-        this.setState({selectedTabId:newTab})
     }
 
     render() {

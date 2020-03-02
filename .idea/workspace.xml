@@ -128,7 +128,8 @@
       <workItem from="1582316595834" duration="6273000" />
       <workItem from="1582589622159" duration="1145000" />
       <workItem from="1582727991429" duration="18072000" />
-      <workItem from="1582900330275" duration="23937000" />
+      <workItem from="1582900330275" duration="24237000" />
+      <workItem from="1583159928449" duration="263000" />
     </task>
     <task id="LOCAL-00001" summary="Enabled touchpad zoom gestures and windows ctrl shortcuts">
       <created>1581449946471</created>
@@ -265,7 +266,6 @@
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/components/graphview.js</url>
           <line>1065</line>
-          <properties lambdaOrdinal="-1" />
           <option name="timeStamp" value="107" />
         </line-breakpoint>
       </breakpoints>
