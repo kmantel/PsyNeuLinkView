@@ -262,7 +262,9 @@ export default class WorkSpace extends React.Component {
         window.fs.watchFile(filepath,{interval:10},()=>{
             if (!['loading',null].includes(self.state.graph)){
                 rpc_client.get_style(self.state.filepath, ()=>{
-                    self.setState({graph_style:rpc_client.script_maintainer.style})
+                    self.setState({
+                        graph_style:rpc_client.script_maintainer.style
+                    })
                 })
             }
         })

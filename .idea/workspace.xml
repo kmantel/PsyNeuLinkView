@@ -3,8 +3,10 @@
   <component name="ChangeListManager">
     <list default="true" id="0426a943-ef89-4391-a3a0-8152f91aa099" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/graphview.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/graphview.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/workspace.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/workspace.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/py/test/pnl_scripts/StabilityFlexibility.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/py/test/pnl_scripts/StabilityFlexibility.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -129,7 +131,7 @@
       <workItem from="1582589622159" duration="1145000" />
       <workItem from="1582727991429" duration="18072000" />
       <workItem from="1582900330275" duration="24237000" />
-      <workItem from="1583159928449" duration="4220000" />
+      <workItem from="1583159928449" duration="13828000" />
     </task>
     <task id="LOCAL-00001" summary="Enabled touchpad zoom gestures and windows ctrl shortcuts">
       <created>1581449946471</created>

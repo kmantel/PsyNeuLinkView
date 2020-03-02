@@ -36,6 +36,9 @@ class GraphView extends React.Component {
             graph: this.props.graph,
             spinner_visible: false,
         };
+        this.flags = {
+            program_scroll: false
+        };
         this.bind_this_to_functions = this.bind_this_to_functions.bind(this);
         this.bind_this_to_functions();
         this.set_non_react_state();
@@ -51,8 +54,13 @@ class GraphView extends React.Component {
     }
 
     bind_this_to_functions() {
+        this.commit_all_nodes_to_stylesheet = this.commit_all_nodes_to_stylesheet.bind(this);
+        this.validate_stylesheet = this.validate_stylesheet.bind(this);
+        this.watch_file = this.watch_file.bind(this);
+        this.unwatch_file = this.unwatch_file.bind(this);
+        this.set_canvas_state_from_stylesheet = this.set_canvas_state_from_stylesheet.bind(this);
+        this.set_node_positioning_from_stylesheet = this.set_node_positioning_from_stylesheet.bind(this);
         this.set_zoom = this.set_zoom.bind(this);
-        this.on_scroll = this.on_scroll.bind(this);
         this.commit_to_stylesheet_and_update_script = this.commit_to_stylesheet_and_update_script.bind(this);
         this.on_resize = this.on_resize.bind(this);
         this.set_non_react_state = this.set_non_react_state.bind(this);
@@ -124,14 +132,17 @@ class GraphView extends React.Component {
                 Zoom:100,
                 xScroll:0,
                 yScroll:0
-            }
+            };
         }
-        this.commit_canvas_size_to_stylesheet();
+
         if (!('Graph Settings' in this.stylesheet)){
             this.stylesheet['Graph Settings'] = {
                 Scale:this.scaling_factor
             }
         }
+
+        this.commit_canvas_size_to_stylesheet();
+
         if (!('Components' in this.stylesheet['Graph Settings'])){
             this.stylesheet['Graph Settings']['Components'] = {}
         }
@@ -158,7 +169,10 @@ class GraphView extends React.Component {
         window.addEventListener('keydown', this.on_key_down);
         window.addEventListener('keyup', this.on_key_up);
         window.addEventListener('blur', this.on_blur);
-        window.addEventListener('scroll', this.on_scroll)
+    }
+
+    unwatch_file(){
+        this.props.fileunwatch_fx(this.props.filepath);
     }
 
     on_key_down(e) {
@@ -204,50 +218,23 @@ class GraphView extends React.Component {
 
     on_blur(e){
         if (this.props.filewatch_fx && this.props.filepath){
-            this.props.filewatch_fx(this.props.filepath)
+            this.watch_file();
         }
+    }
+
+    watch_file(){
+        this.props.filewatch_fx(this.props.filepath)
     }
 
     on_key_up(e){
         this.update_script();
     }
 
-    // delayedExec(after, fn) {
-    //     // console.log('y')
-    //     var timer;
-    //     return function() {
-    //         timer && clearTimeout(timer);
-    //         timer = setTimeout(fn, after);
-    //     };
-    // };
-
-    on_scroll(e){
-
-        // console.log('scrolling')
-        // function delayed_exec(after, fn) {
-        //     var timer;
-        //     return function() {
-        //         timer && clearTimeout(timer);
-        //         timer = setTimeout(fn, after);
-        //     };
-        // };
-        //
-        // delayed_exec(250, this.commit_to_stylesheet_and_update_script);
-
-
-        // this.delayedExec(500, function() {
-        //     console.log('stopped it');
-        // })();
-        // document.getElementById('box').addEventListener('scroll', scrollStopper);
-    }
-
     on_scroll_end(e){
         window.removeEventListener('mouseup', this.on_scroll_end)
-
         this.update_scroll()
     }
     update_script() {
-        console.log('updating')
         if (this.props.filepath){
             var stylesheet_str = JSON.stringify({...this.stylesheet});
             this.props.fileunwatch_fx(this.props.filepath);
@@ -1180,16 +1167,27 @@ class GraphView extends React.Component {
         this.redimension_viewbox();
     }
 
+    get_scroll_bounds() {
+        var win = document.querySelector('.graph-view'),
+            xmax = win.scrollWidth - win.clientWidth,
+            ymax = win.scrollHeight - win.clientHeight
+        return {
+            x: xmax,
+            y: ymax
+        }
+    }
+
     commit_zoom_to_stylesheet() {
         var win = document.querySelector('.graph-view'),
             svg = document.querySelector('svg'),
             k = parseInt(svg.getAttribute('width')),
+            scroll_bounds = this.get_scroll_bounds(),
             xscroll = win.scrollLeft,
-            xmax = win.scrollWidth - win.clientWidth,
+            xmax = scroll_bounds.x,
             xpro = parseFloat(((xscroll/xmax)*100).toFixed(2)),
             xpro = isNaN(xpro) ? 0 : xpro,
             yscroll = win.scrollTop,
-            ymax = win.scrollHeight - win.clientHeight,
+            ymax = scroll_bounds.y,
             ypro = parseFloat(((yscroll/ymax)*100).toFixed(2)),
             ypro = isNaN(ypro) ? 0 : ypro,
             scale = parseFloat((this.scaling_factor/(k/100)).toFixed(2));
@@ -1237,12 +1235,32 @@ class GraphView extends React.Component {
         var self, stylesheet;
         self = this;
         self.validate_stylesheet();
-        stylesheet = self.stylesheet;
-        var pnlv_node, nodes, cx, cy, viewBox, viewBox_w, viewBox_h;
+        self.set_canvas_state_from_stylesheet();
+        self.set_node_positioning_from_stylesheet();
+    }
+
+    set_canvas_state_from_stylesheet(){
+        var self = this,
+            width = self.stylesheet['Canvas Settings']['Width'],
+            height = self.stylesheet['Canvas Settings']['Height'],
+            zoom  = self.stylesheet['Canvas Settings']['Zoom'],
+            win = document.querySelector('.graph-view'),
+            scroll_bounds = self.get_scroll_bounds(),
+            xScroll = self.stylesheet['Canvas Settings']['xScroll'],
+            yScroll = self.stylesheet['Canvas Settings']['yScroll'];
+        self.props.graph_size_fx(width, height);
+        self.flags.program_scroll = true;
+        self.svg.call(self.zoom.scaleTo,zoom/100);
+        win.scrollTo(scroll_bounds.x * (xScroll/100), scroll_bounds.y * (yScroll/100));
+        self.flags.program_scroll = false;
+    }
+
+    set_node_positioning_from_stylesheet(){
+        var self = this,
+            stylesheet = self.stylesheet,
+            pnlv_node, nodes, cx, cy;
         nodes = Object.keys(stylesheet['Graph Settings']['Components']['Nodes']);
-        var svg = document.querySelector('svg'),
-            svg_rect = svg.getBoundingClientRect(),
-            viewbox = this.get_viewBox(),
+        var viewbox = this.get_viewBox(),
             viewbox_w = viewbox.width,
             viewbox_h = viewbox.height,
             viewport_offset = this.get_viewport_offset(),
