@@ -422,7 +422,7 @@ function createWindow() {
             )
         }
     );
-    mainWindow.setTitle('test')
+    mainWindow.setTitle('PsyNeuLinkView')
 }
 
 app.on('ready', function () {
