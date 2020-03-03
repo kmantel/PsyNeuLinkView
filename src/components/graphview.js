@@ -58,6 +58,7 @@ class GraphView extends React.Component {
     }
 
     bind_this_to_functions() {
+        this.redimension_viewbox = this.redimension_viewbox.bind(this);
         this.set_aspect_ratio = this.set_aspect_ratio.bind(this);
         this.commit_all_nodes_to_stylesheet = this.commit_all_nodes_to_stylesheet.bind(this);
         this.validate_stylesheet = this.validate_stylesheet.bind(this);
@@ -119,8 +120,8 @@ class GraphView extends React.Component {
         if (!_lang.isEqual(this.props.size, prevProps.size) && this.svg){
             this.redimension_viewbox()
         }
-        if (!(this.props.graph_style === prevProps.graph_style)) {
-            this.stylesheet = this.props.graph_style;
+        if (!(_lang.isEqual(this.props.graph_style, prevProps.graph_style))) {
+            this.stylesheet = _lang.cloneDeep(this.props.graph_style);
             if (prevProps.graph_style && this.props.graph_style){
                 if (
                     !(
@@ -150,7 +151,7 @@ class GraphView extends React.Component {
 
     validate_stylesheet(){
         if (!(this.stylesheet)){
-            this.stylesheet = this.props.graph_style
+            this.stylesheet = _lang.cloneDeep(this.props.graph_style)
         }
         if (!(this.stylesheet)){
             this.stylesheet = {}
@@ -167,9 +168,11 @@ class GraphView extends React.Component {
         }
 
         if (!('Graph Settings' in this.stylesheet)){
-            this.stylesheet['Graph Settings'] = {
-                Scale:this.scaling_factor
-            }
+            this.stylesheet['Graph Settings'] = {}
+        }
+
+        if (!('Scale' in this.stylesheet['Graph Settings'])){
+            this.stylesheet['Graph Settings']['Scale'] = this.scaling_factor
         }
 
         if (!('Components' in this.stylesheet['Graph Settings'])){
@@ -1066,6 +1069,7 @@ class GraphView extends React.Component {
     scale_graph(scaling_factor) {
         // console.log('scaling');
         this.scaling_factor *= scaling_factor;
+        this.validate_stylesheet()
         this.stylesheet['Graph Settings']['Scale']=parseFloat((this.scaling_factor).toFixed(2));
         var self = this;
         this.index.nodes.forEach(
@@ -1292,37 +1296,39 @@ class GraphView extends React.Component {
         var self = this,
             stylesheet = self.stylesheet,
             pnlv_node, nodes, cx, cy, scale;
-        nodes = Object.keys(stylesheet['Graph Settings']['Components']['Nodes']);
-        scale = stylesheet['Graph Settings']['Scale'];
-        var viewbox = this.get_viewBox(),
-            viewbox_w = viewbox.width,
-            viewbox_h = viewbox.height,
-            viewport_offset = this.get_viewport_offset(),
-            w_correction = viewport_offset.x,
-            h_correction = viewport_offset.y;
-        nodes.forEach(
-            (node) => {
-                pnlv_node = self.index.lookup(node);
-                cx =
-                    stylesheet['Graph Settings']['Components']['Nodes'][node].x * (viewbox_w+w_correction)/100
-                    + pnlv_node.data.rx
-                    + pnlv_node.data.stroke_width/2
-                    - w_correction/2;
-                cy =
-                    stylesheet['Graph Settings']['Components']['Nodes'][node].y * (viewbox_h+h_correction)/100
-                    + pnlv_node.data.ry
-                    + pnlv_node.data.stroke_width/2
-                    - h_correction/2;
-                pnlv_node.data.x = cx;
-                pnlv_node.data.y = cy;
-                pnlv_node.selection
-                    .attr('cx', pnlv_node.data.x)
-                    .attr('cy', pnlv_node.data.y);
-                self.move_label_to_corresponding_node(pnlv_node);
-                self.refresh_edges_for_node(pnlv_node);
-            }
-        );
-        // this.scale_graph_in_place(this.scaling_factor/scale)
+        if (Object.keys(self.props.graph_style).length>0){
+            nodes = Object.keys(stylesheet['Graph Settings']['Components']['Nodes']);
+            scale = self.props.graph_style['Graph Settings']['Scale'];
+            this.scale_graph_in_place(scale/this.scaling_factor);
+            var viewbox = this.get_viewBox(),
+                viewbox_w = viewbox.width,
+                viewbox_h = viewbox.height,
+                viewport_offset = this.get_viewport_offset(),
+                w_correction = viewport_offset.x,
+                h_correction = viewport_offset.y;
+            nodes.forEach(
+                (node) => {
+                    pnlv_node = self.index.lookup(node);
+                    cx =
+                        stylesheet['Graph Settings']['Components']['Nodes'][node].x * (viewbox_w+w_correction)/100
+                        + pnlv_node.data.rx
+                        + pnlv_node.data.stroke_width/2
+                        - w_correction/2;
+                    cy =
+                        stylesheet['Graph Settings']['Components']['Nodes'][node].y * (viewbox_h+h_correction)/100
+                        + pnlv_node.data.ry
+                        + pnlv_node.data.stroke_width/2
+                        - h_correction/2;
+                    pnlv_node.data.x = cx;
+                    pnlv_node.data.y = cy;
+                    pnlv_node.selection
+                        .attr('cx', pnlv_node.data.x)
+                        .attr('cy', pnlv_node.data.y);
+                    self.move_label_to_corresponding_node(pnlv_node);
+                    self.refresh_edges_for_node(pnlv_node);
+                }
+            );
+        }
     }
 
     set_script_updater(){
