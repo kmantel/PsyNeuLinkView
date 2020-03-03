@@ -442,9 +442,9 @@ export default class WorkSpace extends React.Component {
             {
                 row_one_horizontal_factor:new_h_factor,
                 vertical_factor:new_v_factor
-            }
+            },
+            callback
         );
-        callback();
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {

@@ -6,7 +6,8 @@ import {Resizable} from 're-resizable'
 import {Spinner} from '@blueprintjs/core'
 import {Index} from '../utility/d3-helper/d3-helper'
 
-var lang = require('lodash/lang');
+var _lang = require('lodash/lang');
+var _fun = require('lodash/function');
 
 const context_menu = [
     {
@@ -41,6 +42,10 @@ class GraphView extends React.Component {
         this.bind_this_to_functions = this.bind_this_to_functions.bind(this);
         this.bind_this_to_functions();
         this.set_non_react_state();
+        this.flags = {
+            reload_locations:false
+        };
+        this.update_script = _fun.debounce(this.update_script, 1000)
     }
 
     set_non_react_state() {
@@ -53,6 +58,7 @@ class GraphView extends React.Component {
     }
 
     bind_this_to_functions() {
+        this.set_aspect_ratio = this.set_aspect_ratio.bind(this);
         this.commit_all_nodes_to_stylesheet = this.commit_all_nodes_to_stylesheet.bind(this);
         this.validate_stylesheet = this.validate_stylesheet.bind(this);
         this.watch_file = this.watch_file.bind(this);
@@ -91,7 +97,6 @@ class GraphView extends React.Component {
 
     on_resize() {
         if (![null, 'loading'].includes(this.props.graph)){
-            this.redimension_viewbox();
             console.log('resize');
             window.addEventListener('mouseup', this.commit_to_stylesheet_and_update_script)
         }
@@ -111,12 +116,15 @@ class GraphView extends React.Component {
                 this.setGraph();
             }
         }
+        if (!_lang.isEqual(this.props.size, prevProps.size) && this.svg){
+            this.redimension_viewbox()
+        }
         if (!(this.props.graph_style === prevProps.graph_style)) {
             this.stylesheet = this.props.graph_style;
-            if (prevProps.graph_style){
+            if (prevProps.graph_style && this.props.graph_style){
                 if (
                     !(
-                        lang.isEqual(
+                        _lang.isEqual(
                             this.stylesheet['Graph Settings']['Components'],
                             prevProps.graph_style['Graph Settings']['Components']
                         )
@@ -125,14 +133,18 @@ class GraphView extends React.Component {
                     this.set_node_positioning_from_stylesheet();
                 }
                 else if (
-                    !(lang.isEqual(this.stylesheet['Canvas Settings'], prevProps.graph_style['Canvas Settings']))
+                    !(_lang.isEqual(this.stylesheet['Canvas Settings'], prevProps.graph_style['Canvas Settings']))
                 ){
-                    this.unwatch_file();
                     this.set_canvas_state_from_stylesheet();
                     this.commit_all_nodes_to_stylesheet();
-                    this.update_script(this.watch_file);
+                    this.update_script();
                 }
             }
+        }
+        if (this.flags.reload_locations) {
+            this.redimension_viewbox()
+            this.set_node_positioning_from_stylesheet();
+            this.flags.reload_locations = false;
         }
     }
 
@@ -261,6 +273,7 @@ class GraphView extends React.Component {
             }
             this.script_updater.write({styleJSON: stylesheet_str}, callback);
         }
+        console.log('y')
     }
 
     reset_graph() {
@@ -310,6 +323,7 @@ class GraphView extends React.Component {
         var pre_resize_bounds, post_resize_bounds;
         pre_resize_bounds = this.get_graph_bounding_box();
         this.scale_graph_in_place(1.02);
+        this.update_script();
         post_resize_bounds = this.get_graph_bounding_box();
         return {
             'pre': pre_resize_bounds,
@@ -321,6 +335,7 @@ class GraphView extends React.Component {
         var pre_resize_bounds, post_resize_bounds;
         pre_resize_bounds = this.get_graph_bounding_box();
         this.scale_graph_in_place(.98);
+        this.update_script();
         post_resize_bounds = this.get_graph_bounding_box();
         return {
             'pre': pre_resize_bounds,
@@ -1183,9 +1198,7 @@ class GraphView extends React.Component {
         }
         if (xscroll<0){xscroll=0};
         if (yscroll<0){yscroll=0};
-        // this.update_script();
         win.scrollTo(xscroll, yscroll);
-        this.redimension_viewbox();
     }
 
     get_scroll_bounds() {
@@ -1256,7 +1269,6 @@ class GraphView extends React.Component {
         var self, stylesheet;
         self = this;
         self.validate_stylesheet();
-        self.set_node_positioning_from_stylesheet();
         self.set_canvas_state_from_stylesheet();
     }
 
@@ -1269,16 +1281,19 @@ class GraphView extends React.Component {
             scroll_bounds = self.get_scroll_bounds(),
             xScroll = self.stylesheet['Canvas Settings']['xScroll'],
             yScroll = self.stylesheet['Canvas Settings']['yScroll'];
-        self.svg.call(self.zoom.scaleTo,zoom/100);
         win.scrollTo(scroll_bounds.x * (xScroll/100), scroll_bounds.y * (yScroll/100));
-        self.props.graph_size_fx(width,height);
+        self.props.graph_size_fx(width,height,()=>{
+            self.flags.reload_locations = true;
+            self.forceUpdate();
+        });
     }
 
     set_node_positioning_from_stylesheet(){
         var self = this,
             stylesheet = self.stylesheet,
-            pnlv_node, nodes, cx, cy;
+            pnlv_node, nodes, cx, cy, scale;
         nodes = Object.keys(stylesheet['Graph Settings']['Components']['Nodes']);
+        scale = stylesheet['Graph Settings']['Scale'];
         var viewbox = this.get_viewBox(),
             viewbox_w = viewbox.width,
             viewbox_h = viewbox.height,
@@ -1306,7 +1321,8 @@ class GraphView extends React.Component {
                 self.move_label_to_corresponding_node(pnlv_node);
                 self.refresh_edges_for_node(pnlv_node);
             }
-        )
+        );
+        // this.scale_graph_in_place(this.scaling_factor/scale)
     }
 
     set_script_updater(){
@@ -1322,6 +1338,7 @@ class GraphView extends React.Component {
     draw_elements(){
         var container = this.createSVG(),
             self = this;
+        this.set_aspect_ratio();
         this.drawProjections(container);
         this.drawNodes(container, (node) => {self.drag_selected(node)});
         this.drawLabels(container, (label) => {self.drag_selected(label)});
@@ -1378,8 +1395,6 @@ class GraphView extends React.Component {
         this.correct_projection_lengths_for_ellipse_sizes();
         this.scale_graph_to_fit(this.fill_proportion);
         this.center_graph();
-        this.redimension_viewbox();
-        // this.set_zoom();
     }
 
     set_aspect_ratio(){
@@ -1387,7 +1402,7 @@ class GraphView extends React.Component {
             svg_rect = svg.getBoundingClientRect(),
             svg_rect_w = svg_rect.width,
             svg_rect_h = svg_rect.height;
-        this.aspect_ratio = svg_rect_w/svg_rect_h
+        this.aspect_ratio = svg_rect_w/svg_rect_h;
     }
 
     setGraph() {
@@ -1395,11 +1410,9 @@ class GraphView extends React.Component {
         this.set_index();
         this.draw_elements();
         this.parse_stylesheet();
-        this.set_aspect_ratio();
         if (!document.hasFocus()){
             this.watch_file()
         }
-        // this.props.graph_size_fx(50,50);
         window.this = this
     }
 

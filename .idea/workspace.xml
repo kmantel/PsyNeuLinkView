@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="0426a943-ef89-4391-a3a0-8152f91aa099" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/graphview.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/graphview.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/workspace.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/workspace.js" afterDir="false" />
     </list>
@@ -131,6 +130,7 @@
       <workItem from="1582727991429" duration="18072000" />
       <workItem from="1582900330275" duration="24237000" />
       <workItem from="1583159928449" duration="13828000" />
+      <workItem from="1583250945994" duration="4223000" />
     </task>
     <task id="LOCAL-00001" summary="Enabled touchpad zoom gestures and windows ctrl shortcuts">
       <created>1581449946471</created>
@@ -146,7 +146,14 @@
       <option name="project" value="LOCAL" />
       <updated>1581449965181</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Initial title changed from test to PsyNeuLinkView">
+      <created>1583251495416</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1583251495416</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -169,7 +176,8 @@
     <MESSAGE value="." />
     <MESSAGE value="Enabled touchpad zoom gestures and windows ctrl shortcuts" />
     <MESSAGE value="Fixed missing stroke width bug" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed missing stroke width bug" />
+    <MESSAGE value="Initial title changed from test to PsyNeuLinkView" />
+    <option name="LAST_COMMIT_MESSAGE" value="Initial title changed from test to PsyNeuLinkView" />
   </component>
   <component name="WindowStateProjectService">
     <state x="225" y="69" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1578442549055">
@@ -266,15 +274,9 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/components/graphview.js</url>
-          <line>1273</line>
+          <line>144</line>
           <properties lambdaOrdinal="-1" />
-          <option name="timeStamp" value="157" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/src/components/graphview.js</url>
-          <line>124</line>
-          <properties lambdaOrdinal="-1" />
-          <option name="timeStamp" value="167" />
+          <option name="timeStamp" value="187" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
