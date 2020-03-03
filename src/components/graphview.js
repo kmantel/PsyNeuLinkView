@@ -58,6 +58,7 @@ class GraphView extends React.Component {
     }
 
     bind_this_to_functions() {
+        this.update_graph_from_stylesheet = this.update_graph_from_stylesheet.bind(this);
         this.redimension_viewbox = this.redimension_viewbox.bind(this);
         this.set_aspect_ratio = this.set_aspect_ratio.bind(this);
         this.commit_all_nodes_to_stylesheet = this.commit_all_nodes_to_stylesheet.bind(this);
@@ -117,25 +118,31 @@ class GraphView extends React.Component {
                 this.setGraph();
             }
         }
-        if (!_lang.isEqual(this.props.size, prevProps.size) && this.svg){
-            this.redimension_viewbox()
+        this.update_graph_from_stylesheet(prevProps)
+    }
+
+    update_graph_from_stylesheet(prevProps) {
+        var size_updated = (!_lang.isEqual(this.props.size, prevProps.size) && this.svg),
+            style_updated = (!(_lang.isEqual(this.props.graph_style, prevProps.graph_style))),
+            prev_and_current_style_exist = (prevProps.graph_style && this.props.graph_style);
+
+        if (prev_and_current_style_exist) {
+            var graph_settings_updated = !(_lang.isEqual(this.stylesheet['Graph Settings'],
+                prevProps.graph_style['Graph Settings'])),
+                canvas_settings_updated = !(_lang.isEqual(this.stylesheet['Canvas Settings'],
+                    prevProps.graph_style['Canvas Settings']));
         }
-        if (!(_lang.isEqual(this.props.graph_style, prevProps.graph_style))) {
-            this.stylesheet = _lang.cloneDeep(this.props.graph_style);
-            if (prevProps.graph_style && this.props.graph_style){
-                if (
-                    !(
-                        _lang.isEqual(
-                            this.stylesheet['Graph Settings']['Components'],
-                            prevProps.graph_style['Graph Settings']['Components']
-                        )
-                    )
-                ){
+
+        if (size_updated){
+            this.redimension_viewbox();
+        }
+        if (prev_and_current_style_exist){
+            if (style_updated){
+                this.stylesheet = _lang.cloneDeep(this.props.graph_style);
+                if (graph_settings_updated){
                     this.set_node_positioning_from_stylesheet();
                 }
-                else if (
-                    !(_lang.isEqual(this.stylesheet['Canvas Settings'], prevProps.graph_style['Canvas Settings']))
-                ){
+                else {
                     this.set_canvas_state_from_stylesheet();
                     this.commit_all_nodes_to_stylesheet();
                     this.update_script();
@@ -143,7 +150,7 @@ class GraphView extends React.Component {
             }
         }
         if (this.flags.reload_locations) {
-            this.redimension_viewbox()
+            this.redimension_viewbox();
             this.set_node_positioning_from_stylesheet();
             this.flags.reload_locations = false;
         }
