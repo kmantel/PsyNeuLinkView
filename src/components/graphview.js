@@ -6,8 +6,7 @@ import {Resizable} from 're-resizable'
 import {Spinner} from '@blueprintjs/core'
 import {Index} from '../utility/d3-helper/d3-helper'
 
-var _lang = require('lodash/lang');
-var _fun = require('lodash/function');
+var _ = require('lodash');
 
 const context_menu = [
     {
@@ -43,9 +42,10 @@ class GraphView extends React.Component {
         this.bind_this_to_functions();
         this.set_non_react_state();
         this.flags = {
-            reload_locations:false
+            reload_locations:false,
+            update_locations:false
         };
-        this.update_script = _fun.debounce(this.update_script, 1000)
+        this.update_script = _.debounce(this.update_script, 1000)
     }
 
     set_non_react_state() {
@@ -76,6 +76,7 @@ class GraphView extends React.Component {
         this.on_key_down = this.on_key_down.bind(this);
         this.on_key_up = this.on_key_up.bind(this);
         this.scale_graph = this.scale_graph.bind(this);
+        this.scale_graph_in_place = this.scale_graph_in_place.bind(this);
         this.scale_graph_to_fit = this.scale_graph_to_fit.bind(this);
         this.on_mouse_wheel = this.on_mouse_wheel.bind(this);
         this.componentDidUpdate = this.componentDidUpdate.bind(this);
@@ -87,9 +88,15 @@ class GraphView extends React.Component {
         this.move_graph = this.move_graph.bind(this);
         this.refresh_edges_for_node = this.refresh_edges_for_node.bind(this);
         this.move_label_to_corresponding_node = this.move_label_to_corresponding_node.bind(this);
+        this.handle_style_diff = this.handle_style_diff.bind(this);
+        this.handle_dimension_diff = this.handle_dimension_diff.bind(this);
+        this.handle_style_diff = this.handle_style_diff.bind(this);
+        this.handle_scale_diff = this.handle_scale_diff.bind(this);
+        this.handle_zoom_diff = this.handle_zoom_diff.bind(this);
+        this.handle_node_diff = this.handle_node_diff.bind(this);
     }
 
-    commit_to_stylesheet_and_update_script(){
+    commit_to_stylesheet_and_update_script(callback=()=>{}){
         window.removeEventListener('mouseup', this.commit_to_stylesheet_and_update_script);
         this.commit_all_nodes_to_stylesheet();
         this.commit_canvas_size_to_stylesheet();
@@ -118,47 +125,149 @@ class GraphView extends React.Component {
                 this.setGraph();
             }
         }
-        this.update_graph_from_stylesheet(prevProps)
-    }
-
-    update_graph_from_stylesheet(prevProps) {
-        var size_updated = (!_lang.isEqual(this.props.size, prevProps.size) && this.svg),
-            style_updated = (!(_lang.isEqual(this.props.graph_style, prevProps.graph_style))),
-            prev_and_current_style_exist = (prevProps.graph_style && this.props.graph_style);
-
-        if (prev_and_current_style_exist) {
-            var graph_settings_updated = !(_lang.isEqual(this.stylesheet['Graph Settings'],
-                prevProps.graph_style['Graph Settings'])),
-                canvas_settings_updated = !(_lang.isEqual(this.stylesheet['Canvas Settings'],
-                    prevProps.graph_style['Canvas Settings']));
-        }
-
+        var size_updated = (!_.isEqual(this.props.size, prevProps.size) && this.svg)
         if (size_updated){
             this.redimension_viewbox();
         }
-        if (prev_and_current_style_exist){
-            if (style_updated){
-                this.stylesheet = _lang.cloneDeep(this.props.graph_style);
-                if (graph_settings_updated){
-                    this.set_node_positioning_from_stylesheet();
-                }
-                else {
-                    this.set_canvas_state_from_stylesheet();
-                    this.commit_all_nodes_to_stylesheet();
-                    this.update_script();
-                }
-            }
-        }
+        this.update_graph_from_stylesheet(prevProps)
         if (this.flags.reload_locations) {
             this.redimension_viewbox();
             this.set_node_positioning_from_stylesheet();
             this.flags.reload_locations = false;
         }
+        if (this.flags.update_locations) {
+            this.redimension_viewbox();
+            this.commit_all_nodes_to_stylesheet();
+            this.update_script();
+            this.flags.update_locations = false;
+        }
+    }
+
+    update_graph_from_stylesheet(prevProps) {
+        var style_updated = (!(_.isEqual(this.props.graph_style, prevProps.graph_style))),
+            prev_and_current_style_exist = (prevProps.graph_style && this.props.graph_style);
+
+        if (prev_and_current_style_exist) {
+            var style_diff = this.difference(this.props.graph_style, prevProps.graph_style);
+            if (!_.isEmpty(style_diff)){
+                this.handle_style_diff(style_diff)
+            }
+        }
+    }
+
+    handle_style_diff(style_diff){
+        this.handle_dimension_diff(style_diff);
+        this.handle_scale_diff(style_diff);
+        this.handle_zoom_diff(style_diff);
+        this.handle_scroll_diff(style_diff);
+        this.handle_node_diff(style_diff);
+    }
+
+    handle_dimension_diff(style_diff){
+        var self = this,
+            canvas_ss = self.stylesheet['Canvas Settings']
+        if ('Canvas Settings' in style_diff){
+            var canvas_sd = style_diff['Canvas Settings'],
+                width_sd = canvas_sd['Width'],
+                width_ss = canvas_ss['Width'],
+                height_sd = canvas_sd['Height'],
+                height_ss = canvas_ss['Height'];
+            if ((width_sd && !(width_sd===width_ss))
+                || (height_sd && !(height_sd===height_ss))){
+                var width = width_sd ? width_sd : width_ss,
+                    height = height_sd ? height_sd : height_ss;
+                canvas_ss['Width'] = width;
+                canvas_ss['Height'] = height;
+                this.props.graph_size_fx(width, height, ()=>{
+                    self.flags.update_locations = true;
+                    self.forceUpdate();
+                });
+            }
+        }
+    }
+
+    handle_scale_diff(style_diff) {
+        if ('Graph Settings' in style_diff) {
+            if ('Scale' in style_diff['Graph Settings']) {
+                var graph_sd = style_diff['Graph Settings'],
+                    graph_ss = this.stylesheet['Graph Settings'],
+                    zoom_ss = this.stylesheet['Canvas Settings']['Zoom']/100,
+                    scale_sd = graph_sd['Scale'];
+                if (scale_sd) {
+                    var scale_diff = (scale_sd * zoom_ss) / (this.scaling_factor * zoom_ss);
+                    this.scale_graph_in_place(scale_diff);
+                    graph_ss['Scale'] = scale_sd;
+                    this.flags.update_locations = true;
+                    this.forceUpdate()
+                };
+            }
+        }
+    }
+
+    handle_zoom_diff(style_diff){
+        var self = this,
+            canvas_ss = self.stylesheet['Canvas Settings'];
+        if ('Canvas Settings' in style_diff){
+            if ('Zoom' in style_diff['Canvas Settings']){
+                var zoom = style_diff['Canvas Settings']['Zoom']/100;
+                canvas_ss['Zoom'] = Math.round(zoom*100);
+                this.update_script();
+                var xScroll_ss = canvas_ss['xScroll'],
+                    yScroll_ss = canvas_ss['yScroll'];
+                this.svg.call(this.zoom.scaleTo, zoom);
+                var scroll_bounds = this.get_scroll_bounds(),
+                    win = document.querySelector('.graph-view');
+                win.scrollTo(
+                    scroll_bounds.x * (xScroll_ss/100),
+                    scroll_bounds.y * (yScroll_ss/100)
+                )
+            }
+        }
+    }
+
+    handle_scroll_diff(style_diff){
+        var self = this,
+            canvas_ss = self.stylesheet['Canvas Settings'],
+            scroll_bounds = this.get_scroll_bounds(),
+            win = document.querySelector('.graph-view');
+        if ('Canvas Settings' in style_diff){
+            if ('xScroll' in style_diff['Canvas Settings']){
+                var xScroll_sd = style_diff['Canvas Settings']['xScroll'];
+                canvas_ss['xScroll'] = xScroll_sd;
+                win.scrollTo(scroll_bounds.x * (xScroll_sd/100), win.scrollTop)
+            }
+            if ('yScroll' in style_diff['Canvas Settings']){
+                var yScroll_sd = style_diff['Canvas Settings']['yScroll'];
+                canvas_ss['yScroll'] = yScroll_sd;
+                win.scrollTo(win.scrollLeft, scroll_bounds.y * (yScroll_sd/100))
+            }
+        }
+    }
+
+    handle_node_diff(style_diff){
+        var graph_ss = this.stylesheet['Graph Settings'],
+            components_props = this.props.graph_style['Graph Settings']['Components'];
+        if ('Graph Settings' in style_diff){
+            if ('Components' in style_diff['Graph Settings']){
+                graph_ss['Components'] = components_props;
+                this.set_node_positioning_from_stylesheet();
+            }
+        }
+    }
+    difference(object, base) {
+        function changes(object, base) {
+            return _.transform(object, function(result, value, key) {
+                if (!_.isEqual(value, base[key])) {
+                    result[key] = (_.isObject(value) && _.isObject(base[key])) ? changes(value, base[key]) : value;
+                }
+            });
+        }
+        return changes(object, base);
     }
 
     validate_stylesheet(){
         if (!(this.stylesheet)){
-            this.stylesheet = _lang.cloneDeep(this.props.graph_style)
+            this.stylesheet = _.cloneDeep(this.props.graph_style)
         }
         if (!(this.stylesheet)){
             this.stylesheet = {}
@@ -262,7 +371,7 @@ class GraphView extends React.Component {
     }
 
     watch_file(){
-        console.log('watching')
+        // console.log('watching')
         this.props.filewatch_fx(this.props.filepath)
     }
 
@@ -283,7 +392,7 @@ class GraphView extends React.Component {
             }
             this.script_updater.write({styleJSON: stylesheet_str}, callback);
         }
-        console.log('y')
+        // console.log('y')
     }
 
     reset_graph() {
@@ -330,27 +439,15 @@ class GraphView extends React.Component {
     }
 
     nudge_graph_larger() {
-        var pre_resize_bounds, post_resize_bounds;
-        pre_resize_bounds = this.get_graph_bounding_box();
         this.scale_graph_in_place(1.02);
+        this.commit_to_stylesheet_and_update_script();
         this.update_script();
-        post_resize_bounds = this.get_graph_bounding_box();
-        return {
-            'pre': pre_resize_bounds,
-            'post': post_resize_bounds
-        }
     }
 
     nudge_graph_smaller() {
-        var pre_resize_bounds, post_resize_bounds;
-        pre_resize_bounds = this.get_graph_bounding_box();
         this.scale_graph_in_place(.98);
+        this.commit_to_stylesheet_and_update_script();
         this.update_script();
-        post_resize_bounds = this.get_graph_bounding_box();
-        return {
-            'pre': pre_resize_bounds,
-            'post': post_resize_bounds
-        }
     }
 
     createSVG() {
@@ -1073,20 +1170,20 @@ class GraphView extends React.Component {
         this.move_graph(horizontal_offset, vertical_offset)
     }
 
-    scale_graph(scaling_factor) {
-        // console.log('scaling');
-        this.scaling_factor *= scaling_factor;
-        this.validate_stylesheet()
-        this.stylesheet['Graph Settings']['Scale']=parseFloat((this.scaling_factor).toFixed(2));
+    scale_graph(scale_by) {
+        this.scaling_factor *= scale_by;
+        this.validate_stylesheet();
+        var zoom_factor = this.stylesheet['Canvas Settings']['Zoom']/100;
+        this.stylesheet['Graph Settings']['Scale']= +(this.scaling_factor).toFixed(2);
         var self = this;
         this.index.nodes.forEach(
             (node)=>{
-                var cx = node.selection.attr('cx') * scaling_factor,
-                    cy = node.selection.attr('cy') * scaling_factor,
-                    rx = node.selection.attr('rx') * scaling_factor,
-                    ry = node.selection.attr('ry') * scaling_factor,
-                    stroke_width = node.selection.attr('stroke-width') * scaling_factor,
-                    font_size = node.label.data.text['font-size'] * scaling_factor;
+                var cx = node.selection.attr('cx') * scale_by,
+                    cy = node.selection.attr('cy') * scale_by,
+                    rx = node.selection.attr('rx') * scale_by,
+                    ry = node.selection.attr('ry') * scale_by,
+                    stroke_width = node.selection.attr('stroke-width') * scale_by,
+                    font_size = node.label.data.text['font-size'] * scale_by;
                 node.data.x = cx;
                 node.data.y = cy;
                 node.data.rx = rx;
@@ -1105,7 +1202,7 @@ class GraphView extends React.Component {
         );
         this.index.projections.forEach(
             (projection)=>{
-                var stroke_width = projection.dom.getAttribute('stroke-width') * scaling_factor;
+                var stroke_width = projection.dom.getAttribute('stroke-width') * scale_by;
                 projection.data.stroke_width = stroke_width
                 projection.selection.attr('stroke-width', stroke_width);
             }
@@ -1210,6 +1307,7 @@ class GraphView extends React.Component {
         if (xscroll<0){xscroll=0};
         if (yscroll<0){yscroll=0};
         win.scrollTo(xscroll, yscroll);
+        this.redimension_viewbox();
     }
 
     get_scroll_bounds() {
@@ -1229,15 +1327,16 @@ class GraphView extends React.Component {
             scroll_bounds = this.get_scroll_bounds(),
             xscroll = win.scrollLeft,
             xmax = scroll_bounds.x,
-            xpro = parseFloat(((xscroll/xmax)*100).toFixed(2)),
+            xpro = Math.round(xscroll/xmax*100),
             xpro = isNaN(xpro) ? 0 : xpro,
             yscroll = win.scrollTop,
             ymax = scroll_bounds.y,
-            ypro = parseFloat(((yscroll/ymax)*100).toFixed(2)),
+            ypro = Math.round(yscroll/ymax*100),
             ypro = isNaN(ypro) ? 0 : ypro,
-            scale = parseFloat((this.scaling_factor/(k/100)).toFixed(2));
-        this.stylesheet['Graph Settings']['Scale'] = scale;
+            // scale = parseFloat((this.scaling_factor/(k/100)).toFixed(2));
+            scale = +this.scaling_factor.toFixed(2);
         this.stylesheet['Canvas Settings']['Zoom'] = k;
+        this.stylesheet['Graph Settings']['Scale'] = scale;
         this.stylesheet['Canvas Settings']['xScroll'] = xpro;
         this.stylesheet['Canvas Settings']['yScroll'] = ypro;
     }
@@ -1266,6 +1365,7 @@ class GraphView extends React.Component {
         var delayedExec = function(after, fn) {
             var timer;
             return function() {
+                // self.unwatch_file();
                 timer && clearTimeout(timer);
                 timer = setTimeout(fn, after);
             };
@@ -1288,13 +1388,14 @@ class GraphView extends React.Component {
             width = self.stylesheet['Canvas Settings']['Width'],
             height = self.stylesheet['Canvas Settings']['Height'],
             zoom  = self.stylesheet['Canvas Settings']['Zoom'],
-            win = document.querySelector('.graph-view'),
-            scroll_bounds = self.get_scroll_bounds(),
-            xScroll = self.stylesheet['Canvas Settings']['xScroll'],
-            yScroll = self.stylesheet['Canvas Settings']['yScroll'];
-        win.scrollTo(scroll_bounds.x * (xScroll/100), scroll_bounds.y * (yScroll/100));
+            win = document.querySelector('.graph-view');
+        this.svg.call(this.zoom.scaleTo, zoom/100);
         self.props.graph_size_fx(width,height,()=>{
             self.flags.reload_locations = true;
+            var scroll_bounds = self.get_scroll_bounds(),
+                xScroll = self.stylesheet['Canvas Settings']['xScroll'],
+                yScroll = self.stylesheet['Canvas Settings']['yScroll'];
+            win.scrollTo(scroll_bounds.x * (xScroll/100), scroll_bounds.y * (yScroll/100));
             self.forceUpdate();
         });
     }
@@ -1302,10 +1403,12 @@ class GraphView extends React.Component {
     set_node_positioning_from_stylesheet(){
         var self = this,
             stylesheet = self.stylesheet,
-            pnlv_node, nodes, cx, cy, scale;
+            pnlv_node, nodes, cx, cy, scale, zoom;
         if (Object.keys(self.props.graph_style).length>0){
             nodes = Object.keys(stylesheet['Graph Settings']['Components']['Nodes']);
-            scale = self.props.graph_style['Graph Settings']['Scale'];
+            zoom = stylesheet['Canvas Settings']['Zoom'];
+            scale = self.props.graph_style['Graph Settings']['Scale']
+                // *(zoom/100);
             this.scale_graph_in_place(scale/this.scaling_factor);
             var viewbox = this.get_viewBox(),
                 viewbox_w = viewbox.width,
@@ -1384,8 +1487,8 @@ class GraphView extends React.Component {
                 h_proportion = viewBox_h_mod/viewBox_h;
             proportion = Math.min(w_proportion, h_proportion);
             svg.setAttribute('viewBox',[0, 0, viewBox_w_mod, viewBox_h_mod]);
+            this.scaling_factor /= proportion;
             this.scale_graph(proportion);
-            // this.parse_stylesheet();
         }
     }
 
@@ -1419,12 +1522,14 @@ class GraphView extends React.Component {
     }
 
     setGraph() {
+        this.set_non_react_state();
         this.set_script_updater();
         this.set_index();
         this.draw_elements();
         this.parse_stylesheet();
-        if (!document.hasFocus()){
-            this.watch_file()
+        // console.log(document.hasFocus())
+        if (!(document.hasFocus())){
+            this.watch_file();
         }
         window.this = this
     }
