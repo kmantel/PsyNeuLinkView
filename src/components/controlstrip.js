@@ -27,12 +27,14 @@ export default class ControlStrip extends React.Component {
                      }
                  }>
                 <div class={'controlstrip pnl-panel'}>
-                    <Tabs id="TabsExample" onChange={this.handleTabChange} selectedTabId={this.state.selectedTabId}>
-                        <Tab id="ng" title="Construct" panel={<div />} />
-                        <Tab id="mb" title="Monitor" panel={<div />} />
-                        <Tabs.Expander />
-                        <input className="pt-input" type="text" placeholder="Search..." />
-                    </Tabs>
+                    <div class={'tab-container'}>
+                        <Tabs id="TabsExample" onChange={this.handleTabChange} selectedTabId={this.state.selectedTabId}>
+                            <Tab id="ng" title="Construct" panel={<div />} />
+                            <Tab id="mb" title="Monitor" panel={<div />} />
+                            {/*<Tabs.Expander />*/}
+                            {/*<input className="pt-input" type="text" placeholder="Search..." />*/}
+                        </Tabs>
+                    </div>
                 </div>
             </div>
         )
