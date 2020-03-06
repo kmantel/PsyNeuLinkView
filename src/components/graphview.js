@@ -5,8 +5,7 @@ import add_context_menu from '../utility/add_context_menu'
 import {Resizable} from 're-resizable'
 import {Spinner} from '@blueprintjs/core'
 import {Index} from '../utility/d3-helper/d3-helper'
-
-var _ = require('lodash');
+import * as _ from 'lodash'
 
 const context_menu = [
     {

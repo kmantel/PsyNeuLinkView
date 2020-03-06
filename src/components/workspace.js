@@ -1,6 +1,7 @@
 import React from 'react'
 import Layout from './layout'
 import SideBar from './sidebar'
+import Plotter from './plotter'
 import GraphView from './graphview'
 import ToolTipBox from './tooltipbox'
 import ControlStrip from "./controlstrip";
@@ -15,7 +16,7 @@ const config_client = window.config_client;
 var proto_path = path.join(window.electron_root.app_path, 'src', 'protos', 'graph.proto');
 var rpc_client = new window.rpc.rpc_client(proto_path, window.modulePath);
 
-export default class WorkSpace extends React.Component {
+export default class WorkSpace extends React.PureComponent {
     constructor(props) {
         super(props);
         var w = window.innerWidth;
@@ -514,8 +515,46 @@ export default class WorkSpace extends React.Component {
                     }
                 />
             </div>,
-            <div key="graphview">
+            /*<div key="graphview">
                 <GraphView
+                    className='pnl-panel'
+                    onResizeStart={
+                        ()=>{
+                            self.get_reference_sizing_factors('row_one_horizontal_factor', 'vertical_factor')
+                        }
+                    }
+                    onResize={
+                        self.panel_resize
+                    }
+                    size={
+                        {
+                            height: this.state.vertical_factor - padding,
+                            width: this.state.x_res - this.state.row_one_horizontal_factor - padding * 2
+                        }
+                    }
+                    maxWidth = {
+                        this.panel_max_width
+                    }
+                    maxHeight = {
+                        this.panel_max_height
+                    }
+                    location = {
+                        {
+                            x:this.state.row_one_horizontal_factor,
+                            y:0
+                        }
+                    }
+                    graph={this.state.graph}
+                    graph_style = {this.state.graph_style}
+                    filepath = {this.state.filepath}
+                    rpc_client = {rpc_client}
+                    filewatch_fx = {this.watch_file}
+                    fileunwatch_fx = {this.unwatch_file}
+                    graph_size_fx = {this.set_graph_size}
+                />
+            </div>,*/
+            <div key="plotter">
+                <Plotter
                     className='pnl-panel'
                     onResizeStart={
                         ()=>{
@@ -629,6 +668,13 @@ export default class WorkSpace extends React.Component {
                         },
                         {
                             i: 'graphview',
+                            x: this.state.row_one_horizontal_factor,
+                            y: 0,
+                            w: this.state.x_res - this.state.row_one_horizontal_factor,
+                            h: this.state.vertical_factor
+                        },
+                        {
+                            i: 'plotter',
                             x: this.state.row_one_horizontal_factor,
                             y: 0,
                             w: this.state.x_res - this.state.row_one_horizontal_factor,
