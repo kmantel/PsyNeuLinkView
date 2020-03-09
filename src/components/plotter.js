@@ -21,7 +21,7 @@ class Plotter extends React.PureComponent {
             graph: this.props.graph,
             spinner_visible: false,
         };
-        this.matrix = require('../matrix')
+        this.matrix = require('../test/matrix')
         this.bind_this_to_functions = this.bind_this_to_functions.bind(this);
         this.bind_this_to_functions();
         // this.set_non_react_state();
