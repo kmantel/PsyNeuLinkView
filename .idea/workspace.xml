@@ -3,10 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="0426a943-ef89-4391-a3a0-8152f91aa099" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/controlstrip.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/controlstrip.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/parametercontrolbox.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/parametercontrolbox.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/css/controlstrip.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/css/controlstrip.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/py/rpc_server.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/py/rpc_server.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/workspace.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/workspace.js" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -55,6 +52,7 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/test" />
       <recent name="$PROJECT_DIR$/src" />
     </key>
   </component>
@@ -141,7 +139,7 @@
       <workItem from="1583332993635" duration="20292000" />
       <workItem from="1583521041276" duration="12729000" />
       <workItem from="1583761055429" duration="1360000" />
-      <workItem from="1583763429140" duration="9110000" />
+      <workItem from="1583763429140" duration="10441000" />
     </task>
     <task id="LOCAL-00001" summary="Enabled touchpad zoom gestures and windows ctrl shortcuts">
       <created>1581449946471</created>

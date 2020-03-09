@@ -33,7 +33,8 @@ export default class WorkSpace extends React.PureComponent {
             graph_style:null,
             show_settings: false,
             mouse:null,
-            filepath: null
+            filepath: null,
+            main_component: 'graphview'
         };
         this.panel_padding = 10;
         this.panel_max_width = window.innerWidth - this.panel_padding * 7;
@@ -481,6 +482,10 @@ export default class WorkSpace extends React.PureComponent {
         window.dispatchEvent(new Event('resize'));
     }
 
+    toggle_main_component(){
+
+    }
+
     render() {
         var interpreter_path_is_blank = !{...window.config_client.get_config()}['Python']['Interpreter Path'];
         if (!this.state.show_settings && interpreter_path_is_blank) {
@@ -553,7 +558,7 @@ export default class WorkSpace extends React.PureComponent {
                     graph_size_fx = {this.set_graph_size}
                 />
             </div>,
-            /**<div key="plotter">
+            <div key="plotter">
                 <Plotter
                     className='pnl-panel'
                     onResizeStart={
@@ -590,7 +595,7 @@ export default class WorkSpace extends React.PureComponent {
                     fileunwatch_fx = {this.unwatch_file}
                     graph_size_fx = {this.set_graph_size}
                 />
-            </div>**/
+            </div>,
             <div key="tipbox">
                 <ToolTipBox
                     text={this.state.active_tooltip}
