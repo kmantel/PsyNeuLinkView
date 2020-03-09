@@ -1,5 +1,5 @@
 import React from 'react'
-import {Tab, Tabs} from "@blueprintjs/core"
+import {Icon, Tab, Tabs} from "@blueprintjs/core"
 import '../css/controlstrip.css'
 
 export default class ControlStrip extends React.Component {
@@ -27,13 +27,33 @@ export default class ControlStrip extends React.Component {
                      }
                  }>
                 <div class={'controlstrip pnl-panel'}>
-                    <div class={'tab-container'}>
+                    <div class={'view-tab-container'}>
                         <Tabs id="TabsExample" onChange={this.handleTabChange} selectedTabId={this.state.selectedTabId}>
                             <Tab id="ng" title="Construct" panel={<div />} />
                             <Tab id="mb" title="Monitor" panel={<div />} />
                             {/*<Tabs.Expander />*/}
                             {/*<input className="pt-input" type="text" placeholder="Search..." />*/}
                         </Tabs>
+                    </div>
+                    <div className={'run-flow-container'}>
+                        <Icon
+                            icon={"play"}
+                            style={
+                                {
+                                    color:'green',
+                                    cursor: 'pointer'
+                                }
+                            }
+                            />
+                        <Icon
+                            icon={"stop"}
+                            style={
+                                {
+                                    color:'red',
+                                    cursor:'pointer'
+                                }
+                            }
+                        />
                     </div>
                 </div>
             </div>

@@ -3,8 +3,10 @@
   <component name="ChangeListManager">
     <list default="true" id="0426a943-ef89-4391-a3a0-8152f91aa099" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/controlstrip.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/controlstrip.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/parametercontrolbox.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/parametercontrolbox.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/css/controlstrip.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/css/controlstrip.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/py/rpc_server.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/py/rpc_server.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/py/test/pnl_scripts/Rumelhart Semantic Network.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/py/test/pnl_scripts/Rumelhart Semantic Network.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -139,7 +141,7 @@
       <workItem from="1583332993635" duration="20292000" />
       <workItem from="1583521041276" duration="12729000" />
       <workItem from="1583761055429" duration="1360000" />
-      <workItem from="1583763429140" duration="3304000" />
+      <workItem from="1583763429140" duration="9110000" />
     </task>
     <task id="LOCAL-00001" summary="Enabled touchpad zoom gestures and windows ctrl shortcuts">
       <created>1581449946471</created>
@@ -186,6 +188,7 @@
     <MESSAGE value="Enabled touchpad zoom gestures and windows ctrl shortcuts" />
     <MESSAGE value="Fixed missing stroke width bug" />
     <MESSAGE value="Initial title changed from test to PsyNeuLinkView" />
+    <MESSAGE value="turned off show_learning_components on internal show_graph" />
     <option name="LAST_COMMIT_MESSAGE" value="Initial title changed from test to PsyNeuLinkView" />
   </component>
   <component name="WindowStateProjectService">

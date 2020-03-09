@@ -15,7 +15,22 @@
     margin: 0 auto;
 }
 
-.tab-container {
-    width: 10%;
-    margin: 0 auto;
+.view-tab-container {
+    left: 1%;
+    float: left;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.run-flow-container {
+    right: 1%;
+    height: 100%;
+    float: right;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+.run-flow-container .bp3-icon-play{
+    margin:15px
 }
