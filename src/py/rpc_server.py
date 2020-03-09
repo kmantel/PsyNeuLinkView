@@ -186,7 +186,7 @@ def get_gv_json(name):
     comp = name
     pnl_container.pnl_objects['compositions'][comp]._analyze_graph()
     gv = pnl_container.pnl_objects['compositions'][comp].show_graph(output_fmt='gv',
-                                                                    show_learning=True,
+                                                                    show_learning=False,
                                                                     show_controller=True
                                                                     )
     gv_svg = gv.pipe(format='svg')
