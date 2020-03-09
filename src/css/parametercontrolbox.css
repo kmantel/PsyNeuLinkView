@@ -6,3 +6,8 @@
 .parametercontrolbody{
     margin: 10px;
 }
+
+.parameter-control-title{
+    width: 20px;
+    margin: 0 auto;
+}

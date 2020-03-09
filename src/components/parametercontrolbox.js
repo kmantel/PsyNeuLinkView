@@ -60,6 +60,9 @@ export class ParameterControlBox extends React.Component {
       >
         <div className={this.state.class}>
             {this.state.text}
+            <div className={'parameter-control-title'}>
+                Parameterization Toolbox
+            </div>
         </div>
       </Resizable>
     )

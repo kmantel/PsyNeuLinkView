@@ -515,7 +515,7 @@ export default class WorkSpace extends React.PureComponent {
                     }
                 />
             </div>,
-            /*<div key="graphview">
+            <div key="graphview">
                 <GraphView
                     className='pnl-panel'
                     onResizeStart={
@@ -552,8 +552,8 @@ export default class WorkSpace extends React.PureComponent {
                     fileunwatch_fx = {this.unwatch_file}
                     graph_size_fx = {this.set_graph_size}
                 />
-            </div>,*/
-            <div key="plotter">
+            </div>,
+            /**<div key="plotter">
                 <Plotter
                     className='pnl-panel'
                     onResizeStart={
@@ -590,7 +590,7 @@ export default class WorkSpace extends React.PureComponent {
                     fileunwatch_fx = {this.unwatch_file}
                     graph_size_fx = {this.set_graph_size}
                 />
-            </div>,
+            </div>**/
             <div key="tipbox">
                 <ToolTipBox
                     text={this.state.active_tooltip}
@@ -673,13 +673,13 @@ export default class WorkSpace extends React.PureComponent {
                             w: this.state.x_res - this.state.row_one_horizontal_factor,
                             h: this.state.vertical_factor
                         },
-                        {
-                            i: 'plotter',
-                            x: this.state.row_one_horizontal_factor,
-                            y: 0,
-                            w: this.state.x_res - this.state.row_one_horizontal_factor,
-                            h: this.state.vertical_factor
-                        },
+                        // {
+                        //     i: 'plotter',
+                        //     x: this.state.row_one_horizontal_factor,
+                        //     y: 0,
+                        //     w: this.state.x_res - this.state.row_one_horizontal_factor,
+                        //     h: this.state.vertical_factor
+                        // },
                         {
                             i: 'tipbox',
                             x: 0,

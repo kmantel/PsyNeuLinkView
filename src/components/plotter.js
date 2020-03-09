@@ -176,7 +176,7 @@ class Plotter extends React.PureComponent {
                     .append("rect")
                     .attr("x", function (d){
                         var x = increment_x;
-                        increment_x += 5;
+                        increment_x += 4;
                         return x
                     })
                     .attr("y", function (d){
@@ -189,7 +189,7 @@ class Plotter extends React.PureComponent {
                         return myColor(Math.random())
                     });
 
-                increment_y += 5
+                increment_y += 4
             }
         );
     }
