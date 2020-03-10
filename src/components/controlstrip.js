@@ -6,14 +6,19 @@ export default class ControlStrip extends React.Component {
     constructor(props){
         super(props)
         this.state = {
-            selectedTabId:'ng'
+            selectedTabId:'graphview'
         }
         this.handleTabChange = this.handleTabChange.bind(this);
     }
 
     handleTabChange(new_tab_id, prev_tab_id, e){
         if (!(new_tab_id===prev_tab_id)){
-            this.setState({selectedTabId:new_tab_id})
+            this.setState(
+                {selectedTabId:new_tab_id},
+                function () {
+                    this.props.activePanelControl(new_tab_id)
+                }
+            )
         }
     }
 
@@ -29,8 +34,8 @@ export default class ControlStrip extends React.Component {
                 <div class={'controlstrip pnl-panel'}>
                     <div class={'view-tab-container'}>
                         <Tabs id="TabsExample" onChange={this.handleTabChange} selectedTabId={this.state.selectedTabId}>
-                            <Tab id="ng" title="Construct" panel={<div />} />
-                            <Tab id="mb" title="Monitor" panel={<div />} />
+                            <Tab id="graphview" title="Construct" panel={<div />} />
+                            <Tab id="plotter" title="Monitor" panel={<div />} />
                             {/*<Tabs.Expander />*/}
                             {/*<input className="pt-input" type="text" placeholder="Search..." />*/}
                         </Tabs>

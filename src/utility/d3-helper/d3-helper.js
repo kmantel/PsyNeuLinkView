@@ -88,14 +88,14 @@ export class Index {
         this.nodes.add(pnlv_node);
         this.projections.forEach(
             (projection)=>{
-                if (projection.data.head===pnlv_node.data){
-                    afferent = this.lookup(projection.data.head);
-                    projection.head = pnlv_node;
+                if (projection.data.head_node===pnlv_node.data){
+                    afferent = this.lookup(projection.data.head_node);
+                    projection.head_node = pnlv_node;
                     pnlv_node.afferents.add(projection);
                 }
-                if (projection.data.tail===pnlv_node.data){
-                    efferent = this.lookup(projection.data.tail);
-                    projection.tail = pnlv_node;
+                if (projection.data.tail_node===pnlv_node.data){
+                    efferent = this.lookup(projection.data.tail_node);
+                    projection.tail_node = pnlv_node;
                     pnlv_node.efferents.add(projection);
                 }
             }
@@ -107,13 +107,13 @@ export class Index {
         pnlv_projection = projection._is_pnlv_obj ? projection : new Projection(projection);
         this.add_to_elements(pnlv_projection);
         this.add_to_lookup(pnlv_projection);
-        head = this.lookup(pnlv_projection.data.head);
+        head = this.lookup(pnlv_projection.data.head_node);
         if (head){
-            pnlv_projection.head = head
+            pnlv_projection.head_node = head
         }
-        tail = this.lookup(pnlv_projection.data.tail);
+        tail = this.lookup(pnlv_projection.data.tail_node);
         if (tail){
-            pnlv_projection.tail = tail
+            pnlv_projection.tail_node = tail
         }
         this.projections.add(pnlv_projection);
         if (pnlv_projection.is_recurrent()){
@@ -178,12 +178,12 @@ export class Projection extends GraphElement {
     constructor(svg_element) {
         super(svg_element);
         this.element_type = 'projection';
-        this.head = null;
-        this.tail = null;
+        this.head_node = null;
+        this.tail_node = null;
     }
 
     is_recurrent(){
-        return this.data.head===this.data.tail
+        return this.data.head_node===this.data.tail_node
     }
 }
 

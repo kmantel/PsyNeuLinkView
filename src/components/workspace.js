@@ -34,7 +34,7 @@ export default class WorkSpace extends React.PureComponent {
             show_settings: false,
             mouse:null,
             filepath: null,
-            main_component: 'graphview'
+            active_component: 'graphview'
         };
         this.panel_padding = 10;
         this.panel_max_width = window.innerWidth - this.panel_padding * 7;
@@ -58,6 +58,7 @@ export default class WorkSpace extends React.PureComponent {
         this.saveMouseData = this.saveMouseData.bind(this);
         this.watch_file = this.watch_file.bind(this);
         this.unwatch_file = this.unwatch_file.bind(this);
+        this.set_active_component = this.set_active_component.bind(this);
         this.setMenu();
     }
 
@@ -482,8 +483,8 @@ export default class WorkSpace extends React.PureComponent {
         window.dispatchEvent(new Event('resize'));
     }
 
-    toggle_main_component(){
-
+    set_active_component(component, callback=()=>{}){
+        this.setState({'active_component':component}, callback)
     }
 
     render() {
@@ -492,9 +493,8 @@ export default class WorkSpace extends React.PureComponent {
             this.setState({show_settings: true})
         }
         var self = this;
-        var padding = 10;
-        var components = [
-            <div key="sidebar">
+        var padding = 10,
+            sidebar = <div key="sidebar">
                 <SideBar
                     hover={() => this.set_tool_tip('sidebar')}
                     className='pnl-panel'
@@ -520,7 +520,7 @@ export default class WorkSpace extends React.PureComponent {
                     }
                 />
             </div>,
-            <div key="graphview">
+            graphview = <div key="graphview">
                 <GraphView
                     className='pnl-panel'
                     onResizeStart={
@@ -558,7 +558,7 @@ export default class WorkSpace extends React.PureComponent {
                     graph_size_fx = {this.set_graph_size}
                 />
             </div>,
-            <div key="plotter">
+            plotter =  <div key="plotter">
                 <Plotter
                     className='pnl-panel'
                     onResizeStart={
@@ -596,7 +596,7 @@ export default class WorkSpace extends React.PureComponent {
                     graph_size_fx = {this.set_graph_size}
                 />
             </div>,
-            <div key="tipbox">
+            tipbox = <div key="tipbox">
                 <ToolTipBox
                     text={this.state.active_tooltip}
                     className='pnl-panel'
@@ -623,7 +623,7 @@ export default class WorkSpace extends React.PureComponent {
                 />
 
             </div>,
-            <div key="paramcontrol">
+            paramcontrolbox =     <div key="paramcontrol">
                 <ParameterControlBox
                     text={this.state.active_tooltip}
                     className='pnl-panel'
@@ -649,11 +649,25 @@ export default class WorkSpace extends React.PureComponent {
                     }
                 />
             </div>
+
+        var components = [
+            sidebar, tipbox, paramcontrolbox,
         ];
+
+        if (this.state.active_component === 'graphview'){
+            components.push(graphview);
+        }
+        else if (this.state.active_component === 'plotter'){
+            components.push(plotter)
+        }
+
+        // var components = [
+        // ];
         return (
             <div>
                 <ControlStrip
                     width={window.innerWidth-this.panel_padding*2}
+                    activePanelControl={this.set_active_component}
                 />
                 <SettingsPane
                     isOpen={this.state.show_settings}
@@ -672,19 +686,12 @@ export default class WorkSpace extends React.PureComponent {
                             h: this.state.vertical_factor
                         },
                         {
-                            i: 'graphview',
+                            i: this.state.active_component,
                             x: this.state.row_one_horizontal_factor,
                             y: 0,
                             w: this.state.x_res - this.state.row_one_horizontal_factor,
                             h: this.state.vertical_factor
                         },
-                        // {
-                        //     i: 'plotter',
-                        //     x: this.state.row_one_horizontal_factor,
-                        //     y: 0,
-                        //     w: this.state.x_res - this.state.row_one_horizontal_factor,
-                        //     h: this.state.vertical_factor
-                        // },
                         {
                             i: 'tipbox',
                             x: 0,

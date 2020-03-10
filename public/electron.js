@@ -443,7 +443,7 @@ app.on('quit', () => {
     }
 });
 
-app.disableHardwareAcceleration();
+// app.disableHardwareAcceleration();
 
 exports.open_log_file = open_log_file;
 exports.open_log_folder = open_log_folder;

@@ -21,7 +21,8 @@ class Plotter extends React.PureComponent {
             graph: this.props.graph,
             spinner_visible: false,
         };
-        this.matrix = require('../test/matrix')
+        // this.matrix = require('../test/matrix')
+        this.matrix = window.matrix;
         this.bind_this_to_functions = this.bind_this_to_functions.bind(this);
         this.bind_this_to_functions();
         // this.set_non_react_state();
@@ -95,38 +96,6 @@ class Plotter extends React.PureComponent {
                 i += 1
             }
         )
-        // context.clearRect(0, 0, canvas.width, canvas.height)
-        //
-
-
-        //
-        // matrix.forEach(
-        //     (r)=>{
-        //         var increment_x = 150;
-        //         heatmap
-        //             .append('g')
-        //             .attr('class', 'row')
-        //             .selectAll("rect")
-        //             .data(r)
-        //             .enter()
-        //             .append("rect")
-        //             .attr("x", function (d){
-        //                 var x = increment_x;
-        //                 increment_x += 25;
-        //                 return x
-        //             })
-        //             .attr("y", function (d){
-        //                 var y = increment_y;
-        //                 return y
-        //             })
-        //             .attr("width", 20)
-        //             .attr("height", 20)
-        //             .style("fill", function (d) {
-        //                 return myColor(Math.random())
-        //             })
-        //         increment_y += 25
-        //     }
-        // )
     }
 
     draw_matrix(matrix){

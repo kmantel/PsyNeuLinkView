@@ -35,7 +35,7 @@ class GraphView extends React.Component {
             node_width: 20,
             node_height: 15,
             graph: this.props.graph,
-            spinner_visible: false,
+            spinner_visible: false
         };
         this.bind_this_to_functions = this.bind_this_to_functions.bind(this);
         this.bind_this_to_functions();
@@ -79,6 +79,8 @@ class GraphView extends React.Component {
         this.scale_graph_to_fit = this.scale_graph_to_fit.bind(this);
         this.on_mouse_wheel = this.on_mouse_wheel.bind(this);
         this.componentDidUpdate = this.componentDidUpdate.bind(this);
+        this.componentDidMount = this.componentDidMount.bind(this);
+        this.componentWillUnmount = this.componentWillUnmount.bind(this);
         this.update_scroll = this.update_scroll.bind(this);
         this.update_script = this.update_script.bind(this);
         this.move_node = this.move_node.bind(this);
@@ -93,6 +95,8 @@ class GraphView extends React.Component {
         this.handle_scale_diff = this.handle_scale_diff.bind(this);
         this.handle_zoom_diff = this.handle_zoom_diff.bind(this);
         this.handle_node_diff = this.handle_node_diff.bind(this);
+        this.associateVisualInformationWithGraphEdges = this.associateVisualInformationWithGraphEdges.bind(this);
+        this.associateVisualInformationWithGraphNodes = this.associateVisualInformationWithGraphNodes.bind(this);
     }
 
     commit_to_stylesheet_and_update_script(callback=()=>{}){
@@ -110,7 +114,9 @@ class GraphView extends React.Component {
         }
     }
 
-    componentWillMount() {}
+    componentWillMount() {
+
+    }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (!(this.props.graph === prevProps.graph)) {
@@ -308,6 +314,8 @@ class GraphView extends React.Component {
         if (win) {
             win.removeEventListener('scroll', this.update_scroll);
         }
+        this.setState({mounted:false})
+        this.update_script()
     }
 
     componentDidMount() {
@@ -316,6 +324,17 @@ class GraphView extends React.Component {
         window.addEventListener('keydown', this.on_key_down);
         window.addEventListener('keyup', this.on_key_up);
         window.addEventListener('blur', this.on_blur);
+        if (!(this.state.mounted)){
+            if (this.props.graph === "loading") {
+                d3.selectAll('svg').remove();
+                this.setState({"spinner_visible": true})
+            } else if (!(this.props.graph===null)) {
+                d3.selectAll('svg').remove();
+                this.setState({"spinner_visible": false});
+                this.stylesheet = null;
+                this.setGraph();
+            }
+        }
     }
 
     unwatch_file(){
@@ -517,8 +536,8 @@ class GraphView extends React.Component {
     associateVisualInformationWithGraphEdges() {
         var self = this;
         this.props.graph.edges.forEach(function (d) {
-            d.tail = self.props.graph.objects[d.tail];
-            d.head = self.props.graph.objects[d.head];
+            d.tail_node = self.props.graph.objects[d.tail];
+            d.head_node = self.props.graph.objects[d.head];
             d.color = d.path.stroke;
         });
     }
@@ -538,16 +557,16 @@ class GraphView extends React.Component {
                 return `p${id - 1}`
             })
             .attr('x1', function (d) {
-                return d.tail.x
+                return d.tail_node.x
             })
             .attr('y1', function (d) {
-                return d.tail.y
+                return d.tail_node.y
             })
             .attr('x2', function (d) {
-                return d.head.x
+                return d.head_node.x
             })
             .attr('y2', function (d) {
-                return d.head.y
+                return d.head_node.y
             })
             .attr('stroke-width', 1)
             .attr('stroke', function (d) {
@@ -574,7 +593,7 @@ class GraphView extends React.Component {
         var id = 0;
         d3.selectAll('g.edge line')
             .each(function (e) {
-                if (e.head === e.tail) {
+                if (e.head_node === e.tail_node) {
                     recurrent_projs.push(e);
                 }
             });
@@ -889,13 +908,13 @@ class GraphView extends React.Component {
 
     get_offset_points_for_projection(projection) {
         return this.get_offset_between_ellipses(
-            projection.tail.data.x,
-            projection.tail.data.y,
-            projection.head.data.x,
-            projection.head.data.y,
-            projection.head.data.rx,
-            projection.head.data.ry,
-            projection.head.data.stroke_width)
+            projection.tail_node.data.x,
+            projection.tail_node.data.y,
+            projection.head_node.data.x,
+            projection.head_node.data.y,
+            projection.head_node.data.rx,
+            projection.head_node.data.ry,
+            projection.head_node.data.stroke_width)
     }
 
     get_viewport_offset(){
@@ -1084,8 +1103,8 @@ class GraphView extends React.Component {
             (projection) => {
                 offset_pt = self.get_offset_points_for_projection(projection);
                 projection.selection
-                    .attr('x1', projection.data.tail.x)
-                    .attr('y1', projection.data.tail.y)
+                    .attr('x1', projection.data.tail_node.x)
+                    .attr('y1', projection.data.tail_node.y)
                     .attr('x2', offset_pt.x)
                     .attr('y2', offset_pt.y);
                 if (projection.is_recurrent()) {
@@ -1107,10 +1126,10 @@ class GraphView extends React.Component {
         recurrent_projs.forEach(
             (projection) => {
                 var start_phi = -2.5;
-                var xrad = projection.head.data.rx;
-                var yrad = projection.head.data.ry;
+                var xrad = projection.head_node.data.rx;
+                var yrad = projection.head_node.data.ry;
                 var radius_at_point = xrad * yrad / Math.sqrt(xrad ** 2 * Math.sin(start_phi) ** 2 + yrad ** 2 * Math.cos(start_phi) ** 2);
-                radius_at_point += projection.head.data.stroke_width/2;
+                radius_at_point += projection.head_node.data.stroke_width/2;
                 var stpt = {
                     x: radius_at_point * Math.cos(start_phi),
                     y: radius_at_point * Math.sin(start_phi)
@@ -1119,9 +1138,9 @@ class GraphView extends React.Component {
                     x: stpt.x,
                     y: stpt.y * -1
                 };
-                var lftedge_offset = projection.head.dom.getBoundingClientRect().height/2
+                var lftedge_offset = projection.head_node.dom.getBoundingClientRect().height/2
                 var lftedge = {
-                    x: -projection.head.data.rx-lftedge_offset-projection.head.data.stroke_width,
+                    x: -projection.head_node.data.rx-lftedge_offset-projection.head_node.data.stroke_width,
                     y: 0
                 };
                 var ctpt = this.CalculateCircleCenter(stpt, endpt, lftedge);
@@ -1133,21 +1152,21 @@ class GraphView extends React.Component {
                     var path = test_arc.toString()
                     projection.selection.attr('d',path);
                     projection.selection
-                        .attr('transform', `translate(${projection.data.head.x+ctpt.x},${projection.data.head.y}) rotate(90)`)
+                        .attr('transform', `translate(${projection.data.head_node.x+ctpt.x},${projection.data.head_node.y}) rotate(90)`)
                 } else {
                     var circ = 2 * Math.PI * radius;
                     var rad_per_px = 2*Math.PI/circ;
-                    var adjustment = projection.data.head.ry/4.2;
+                    var adjustment = projection.data.head_node.ry/4.2;
                     var arc_end_angle = Math.atan2(stpt.y-ctpt.y, stpt.x-ctpt.x)-(rad_per_px*adjustment);
                     var x1 = (radius * Math.cos(arc_end_angle-0.01));
                     var y1 = (radius * Math.sin(arc_end_angle-0.01));
                     var x2 = (radius * Math.cos(arc_end_angle));
                     var y2 = (radius * Math.sin(arc_end_angle));
                     projection.selection
-                        .attr('x1', projection.data.head.x+ctpt.x+x1)
-                        .attr('y1', projection.data.head.y-y1)
-                        .attr('x2', projection.data.head.x+ctpt.x+x2)
-                        .attr('y2', projection.data.head.y-y2)
+                        .attr('x1', projection.data.head_node.x+ctpt.x+x1)
+                        .attr('y1', projection.data.head_node.y-y1)
+                        .attr('x2', projection.data.head_node.x+ctpt.x+x2)
+                        .attr('y2', projection.data.head_node.y-y2)
                 }
             }
         );
@@ -1530,6 +1549,7 @@ class GraphView extends React.Component {
         if (!(document.hasFocus())){
             this.watch_file();
         }
+        this.setState({mounted:true});
         window.this = this
     }
 

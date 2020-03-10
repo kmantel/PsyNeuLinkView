@@ -25,3 +25,4 @@ window.remote = remote;
 window.rpc = remote.require(path.join(electron_root.app_path, 'src/utility/rpc/rpc_client'));
 window.config_client = config_client_obj;
 window.fs = fs;
+window.matrix = require('../src/matrix')
