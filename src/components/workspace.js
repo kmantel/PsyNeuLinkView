@@ -63,7 +63,165 @@ export default class WorkSpace extends React.PureComponent {
     }
 
     componentDidMount() {
+        var self = this,
+            padding = 10
         this.get_initial_filepath();
+        this.sidebar = <div key="sidebar">
+            <SideBar
+                hover={() => this.set_tool_tip('sidebar')}
+                className='pnl-panel'
+                onResizeStart={
+                    ()=>{
+                        self.get_reference_sizing_factors('row_one_horizontal_factor', 'vertical_factor')
+                    }
+                }
+                onResize={
+                    self.panel_resize
+                }
+                size={
+                    {
+                        height: this.state.vertical_factor - padding,
+                        width: this.state.row_one_horizontal_factor - padding
+                    }
+                }
+                maxWidth = {
+                    this.panel_max_width
+                }
+                maxHeight = {
+                    this.panel_max_height
+                }
+            />
+        </div>
+        this.graphview = <div key="graphview">
+                <GraphView
+                    className='pnl-panel'
+                    onResizeStart={
+                        ()=>{
+                            self.get_reference_sizing_factors('row_one_horizontal_factor', 'vertical_factor')
+                        }
+                    }
+                    onResize={
+                        self.panel_resize
+                    }
+                    size={
+                        {
+                            height: this.state.vertical_factor - padding,
+                            width: this.state.x_res - this.state.row_one_horizontal_factor - padding * 2
+                        }
+                    }
+                    maxWidth = {
+                        this.panel_max_width
+                    }
+                    maxHeight = {
+                        this.panel_max_height
+                    }
+                    location = {
+                        {
+                            x:this.state.row_one_horizontal_factor,
+                            y:0
+                        }
+                    }
+                    graph={this.state.graph}
+                    graph_style = {this.state.graph_style}
+                    filepath = {this.state.filepath}
+                    rpc_client = {rpc_client}
+                    filewatch_fx = {this.watch_file}
+                    fileunwatch_fx = {this.unwatch_file}
+                    graph_size_fx = {this.set_graph_size}
+                />
+            </div>
+        this.plotter =  <div key="plotter">
+                <Plotter
+                    className='pnl-panel'
+                    onResizeStart={
+                        ()=>{
+                            self.get_reference_sizing_factors('row_one_horizontal_factor', 'vertical_factor')
+                        }
+                    }
+                    onResize={
+                        self.panel_resize
+                    }
+                    size={
+                        {
+                            height: this.state.vertical_factor - padding,
+                            width: this.state.x_res - this.state.row_one_horizontal_factor - padding * 2
+                        }
+                    }
+                    maxWidth = {
+                        this.panel_max_width
+                    }
+                    maxHeight = {
+                        this.panel_max_height
+                    }
+                    location = {
+                        {
+                            x:this.state.row_one_horizontal_factor,
+                            y:0
+                        }
+                    }
+                    graph={this.state.graph}
+                    graph_style = {this.state.graph_style}
+                    filepath = {this.state.filepath}
+                    rpc_client = {rpc_client}
+                    filewatch_fx = {this.watch_file}
+                    fileunwatch_fx = {this.unwatch_file}
+                    graph_size_fx = {this.set_graph_size}
+                />
+            </div>
+        this.tipbox = <div key="tipbox">
+                <ToolTipBox
+                    text={this.state.active_tooltip}
+                    className='pnl-panel'
+                    onResizeStart={
+                        ()=>{
+                            self.get_reference_sizing_factors('row_two_horizontal_factor', 'vertical_factor')
+                        }
+                    }
+                    onResize={
+                        self.panel_resize
+                    }
+                    size={
+                        {
+                            height: this.state.y_res - this.state.vertical_factor - padding * 6,
+                            width: this.state.row_two_horizontal_factor - padding
+                        }
+                    }
+                    maxWidth = {
+                        this.panel_max_width
+                    }
+                    maxHeight = {
+                        this.panel_max_height
+                    }
+                />
+
+            </div>
+        this.paramcontrolbox = <div key="paramcontrol">
+                <ParameterControlBox
+                    text={this.state.active_tooltip}
+                    className='pnl-panel'
+                    onResizeStart={
+                        ()=>{
+                            self.get_reference_sizing_factors('row_two_horizontal_factor', 'vertical_factor')
+                        }
+                    }
+                    onResize={
+                        self.panel_resize
+                    }
+                    size={
+                        {
+                            height: this.state.y_res - this.state.vertical_factor - padding * 6,
+                            width: this.state.x_res - this.state.row_two_horizontal_factor - padding * 2
+                        }
+                    }
+                    maxWidth = {
+                        this.panel_max_width
+                    }
+                    maxHeight = {
+                        this.panel_max_height
+                    }
+                />
+            </div>
+
     }
 
     get_initial_filepath() {
@@ -484,7 +642,7 @@ export default class WorkSpace extends React.PureComponent {
     }
 
     set_active_component(component, callback=()=>{}){
-        this.setState({'active_component':component}, callback)
+        // this.setState({'active_component':component}, callback)
     }
 
     render() {
