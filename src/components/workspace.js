@@ -418,11 +418,16 @@ export default class WorkSpace extends React.PureComponent {
         return true
     }
 
+    render_log(message){
+        console.log(message)
+    }
+
     watch_file(filepath) {
         var self = this;
         window.fs.watchFile(filepath,{interval:10},()=>{
             if (!['loading',null].includes(self.state.graph)){
                 rpc_client.get_style(self.state.filepath, ()=>{
+                    self.render_log(rpc_client.script_maintainer.style);
                     self.setState({
                         graph_style:rpc_client.script_maintainer.style
                     })
@@ -641,8 +646,20 @@ export default class WorkSpace extends React.PureComponent {
         window.dispatchEvent(new Event('resize'));
     }
 
-    set_active_component(component, callback=()=>{}){
-        // this.setState({'active_component':component}, callback)
+    set_active_component(component, callback = () => {}) {
+        var self = this;
+        this.setState({'active_component': component},
+            function () {
+                if (component === 'graphview') {
+                    if (this.state.filepath){
+                        console.log('graphview');
+                        self.watch_file(this.state.filepath);
+                    }
+                    callback()
+                }
+
+            }
+        )
     }
 
     render() {

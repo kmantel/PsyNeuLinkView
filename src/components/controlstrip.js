@@ -32,34 +32,34 @@ export default class ControlStrip extends React.Component {
                      }
                  }>
                 <div class={'controlstrip pnl-panel'}>
-                    {/*<div class={'view-tab-container'}>*/}
-                    {/*    <Tabs id="TabsExample" onChange={this.handleTabChange} selectedTabId={this.state.selectedTabId}>*/}
-                    {/*        <Tab id="graphview" title="Construct" panel={<div />} />*/}
-                    {/*        <Tab id="plotter" title="Monitor" panel={<div />} />*/}
-                    {/*        /!*<Tabs.Expander />*!/*/}
-                    {/*        /!*<input className="pt-input" type="text" placeholder="Search..." />*!/*/}
-                    {/*    </Tabs>*/}
-                    {/*</div>*/}
-                    {/*<div className={'run-flow-container'}>*/}
-                    {/*    <Icon*/}
-                    {/*        icon={"play"}*/}
-                    {/*        style={*/}
-                    {/*            {*/}
-                    {/*                color:'green',*/}
-                    {/*                cursor: 'pointer'*/}
-                    {/*            }*/}
-                    {/*        }*/}
-                    {/*        />*/}
-                    {/*    <Icon*/}
-                    {/*        icon={"stop"}*/}
-                    {/*        style={*/}
-                    {/*            {*/}
-                    {/*                color:'red',*/}
-                    {/*                cursor:'pointer'*/}
-                    {/*            }*/}
-                    {/*        }*/}
-                    {/*    />*/}
-                    {/*</div>*/}
+                    <div class={'view-tab-container'}>
+                        <Tabs id="TabsExample" onChange={this.handleTabChange} selectedTabId={this.state.selectedTabId}>
+                            <Tab id="graphview" title="Construct" panel={<div />} />
+                            <Tab id="plotter" title="Monitor" panel={<div />} />
+                            {/*<Tabs.Expander />*/}
+                            {/*<input className="pt-input" type="text" placeholder="Search..." />*/}
+                        </Tabs>
+                    </div>
+                    <div className={'run-flow-container'}>
+                        <Icon
+                            icon={"play"}
+                            style={
+                                {
+                                    color:'green',
+                                    cursor: 'pointer'
+                                }
+                            }
+                            />
+                        <Icon
+                            icon={"stop"}
+                            style={
+                                {
+                                    color:'red',
+                                    cursor:'pointer'
+                                }
+                            }
+                        />
+                    </div>
                 </div>
             </div>
         )

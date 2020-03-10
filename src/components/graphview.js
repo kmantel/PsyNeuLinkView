@@ -119,10 +119,6 @@ class GraphView extends React.Component {
         // }
     }
 
-    componentWillMount() {
-
-    }
-
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (!(this.props.graph === prevProps.graph)) {
             if (this.props.graph === "loading") {
