@@ -3,8 +3,10 @@
   <component name="ChangeListManager">
     <list default="true" id="0426a943-ef89-4391-a3a0-8152f91aa099" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/workspace.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/workspace.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/graphview.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/graphview.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/py/test/pnl_scripts/Botvinick Model Composition.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/py/test/pnl_scripts/Botvinick Model Composition.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/py/test/pnl_scripts/Rumelhart Semantic Network.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/py/test/pnl_scripts/Rumelhart Semantic Network.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/py/test/pnl_scripts/StabilityFlexibility.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/py/test/pnl_scripts/StabilityFlexibility.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -129,7 +131,10 @@
       <workItem from="1583761055429" duration="1360000" />
       <workItem from="1583763429140" duration="10441000" />
       <workItem from="1583798836200" duration="3141000" />
-      <workItem from="1583807324530" duration="96000" />
+      <workItem from="1583807324530" duration="133000" />
+      <workItem from="1583809421188" duration="19000" />
+      <workItem from="1583847657943" duration="6680000" />
+      <workItem from="1583857873194" duration="665000" />
     </task>
     <task id="LOCAL-00001" summary="Enabled touchpad zoom gestures and windows ctrl shortcuts">
       <created>1581449946471</created>
@@ -268,10 +273,10 @@
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state width="1366" height="300" key="GridCell.Tab.3.right/0.0.1536.824@0.0.1536.824" timestamp="1578443688363" />
-    <state x="66" y="123" width="1699" height="849" key="com.intellij.history.integration.ui.views.FileHistoryDialog" timestamp="1582590956157">
+    <state x="66" y="123" width="1699" height="849" key="com.intellij.history.integration.ui.views.FileHistoryDialog" timestamp="1583855088962">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="66" y="123" width="1699" height="849" key="com.intellij.history.integration.ui.views.FileHistoryDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1582590956157" />
+    <state x="66" y="123" width="1699" height="849" key="com.intellij.history.integration.ui.views.FileHistoryDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1583855088962" />
     <state x="331" y="150" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2" timestamp="1578442594912">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
@@ -295,22 +300,22 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/components/graphview.js</url>
-          <line>559</line>
+          <line>564</line>
           <option name="timeStamp" value="6" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/components/graphview.js</url>
-          <line>548</line>
+          <line>553</line>
           <option name="timeStamp" value="8" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/components/graphview.js</url>
-          <line>536</line>
+          <line>541</line>
           <option name="timeStamp" value="9" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/components/graphview.js</url>
-          <line>545</line>
+          <line>550</line>
           <option name="timeStamp" value="11" />
         </line-breakpoint>
       </breakpoints>

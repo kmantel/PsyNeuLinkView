@@ -170,9 +170,7 @@ search_range = pnl.SampleSpec(start=0.1, stop=0.3, num=3)
 
 
 signal = pnl.ControlSignal(modulates=[(pnl.GAIN, activation)],
-                           function=pnl.Linear,
                            variable=1.0,
-                           intensity_cost_function=pnl.Linear(slope=0.),
                            allocation_samples=search_range)
 
 objective_mech = pnl.ObjectiveMechanism(monitor=[inputLayer, stimulusInfo,
@@ -205,3 +203,53 @@ for i in range(1, len(stabilityFlexibility.controller.input_ports)):
 # print()
 # print(activation.mod_gain)
 # decisionMaker.log.print_entries()
+
+# PsyNeuLinkView Graphics Info 
+pnlv_graphics_spec = {
+    "Canvas Settings": {
+        "Width": 78.74,
+        "Height": 68.83,
+        "Zoom": 100,
+        "xScroll": 0,
+        "yScroll": 0
+    },
+    "Graph Settings": {
+        "Scale": 1.73,
+        "Components": {
+            "Nodes": {
+                "Stimulus Info * Activity": {
+                    "x": 54.66,
+                    "y": 23.92
+                },
+                "DDM Integrator": {
+                    "x": 48.21,
+                    "y": 35.64
+                },
+                "Input": {
+                    "x": 33.88,
+                    "y": 47.16
+                },
+                "Activity": {
+                    "x": 47.26,
+                    "y": 81.65
+                },
+                "objective_mechanism-0": {
+                    "x": 42.39,
+                    "y": 58.98
+                },
+                "Stimulus Info": {
+                    "x": 46.36,
+                    "y": 12.1
+                },
+                "DDM": {
+                    "x": 47.33,
+                    "y": 47.16
+                },
+                "OptimizationControlMechanism-0": {
+                    "x": 40.05,
+                    "y": 70.61
+                }
+            }
+        }
+    }
+}

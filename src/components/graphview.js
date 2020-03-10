@@ -45,6 +45,7 @@ class GraphView extends React.Component {
             update_locations:false
         };
         this.update_script = _.debounce(this.update_script, 1000)
+        this.commit_to_stylesheet_and_update_script = _.debounce(this.commit_to_stylesheet_and_update_script, 1000)
     }
 
     set_non_react_state() {
@@ -101,6 +102,7 @@ class GraphView extends React.Component {
 
     commit_to_stylesheet_and_update_script(callback=()=>{}){
         window.removeEventListener('mouseup', this.commit_to_stylesheet_and_update_script);
+        this.redimension_viewbox();
         this.commit_all_nodes_to_stylesheet();
         this.commit_canvas_size_to_stylesheet();
         this.commit_zoom_to_stylesheet();
@@ -108,10 +110,13 @@ class GraphView extends React.Component {
     }
 
     on_resize() {
-        if (![null, 'loading'].includes(this.props.graph)){
-            console.log('resize');
-            window.addEventListener('mouseup', this.commit_to_stylesheet_and_update_script)
+        if (![null, 'loading'].includes(this.props.graph)) {
+            this.commit_to_stylesheet_and_update_script()
         }
+        // if (![null, 'loading'].includes(this.props.graph)){
+        //     console.log('resize');
+        //     window.addEventListener('mouseup', this.commit_to_stylesheet_and_update_script)
+        // }
     }
 
     componentWillMount() {
@@ -130,21 +135,21 @@ class GraphView extends React.Component {
                 this.setGraph();
             }
         }
-        var size_updated = (!_.isEqual(this.props.size, prevProps.size) && this.svg)
-        if (size_updated){
-            this.redimension_viewbox();
-        }
-        this.update_graph_from_stylesheet(prevProps)
         if (this.flags.reload_locations) {
             this.redimension_viewbox();
             this.set_node_positioning_from_stylesheet();
             this.flags.reload_locations = false;
         }
         if (this.flags.update_locations) {
-            this.redimension_viewbox();
-            this.commit_all_nodes_to_stylesheet();
-            this.update_script();
+            // this.redimension_viewbox();
+            // this.commit_all_nodes_to_stylesheet();
+            // this.update_script();
             this.flags.update_locations = false;
+        }
+        this.update_graph_from_stylesheet(prevProps)
+        var size_updated = (!_.isEqual(this.props.size, prevProps.size) && this.svg);
+        if (size_updated){
+            this.redimension_viewbox();
         }
     }
 
@@ -1472,7 +1477,7 @@ class GraphView extends React.Component {
     draw_elements(){
         var container = this.createSVG(),
             self = this;
-        this.set_aspect_ratio();
+        // this.set_aspect_ratio();
         this.drawProjections(container);
         this.drawNodes(container, (node) => {self.drag_selected(node)});
         this.drawLabels(container, (label) => {self.drag_selected(label)});
@@ -1529,6 +1534,7 @@ class GraphView extends React.Component {
         this.correct_projection_lengths_for_ellipse_sizes();
         this.scale_graph_to_fit(this.fill_proportion);
         this.center_graph();
+        this.set_aspect_ratio();
     }
 
     set_aspect_ratio(){

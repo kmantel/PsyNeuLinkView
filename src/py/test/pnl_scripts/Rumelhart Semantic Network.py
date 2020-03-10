@@ -41,138 +41,138 @@ gv = comp.show_graph(
         show_learning=True,
         show_controller=True)
 
-# PsyNeuLinkView Graphics Info
+# PsyNeuLinkView Graphics Info 
 pnlv_graphics_spec = {
     "Canvas Settings": {
-        "Width": 78.92,
-        "Height": 69.04,
+        "Width": 91.37,
+        "Height": 86.26,
         "Zoom": 100,
         "xScroll": 0,
-        "yScroll": 67
+        "yScroll": 100
     },
     "Graph Settings": {
-        "Scale": 0.45,
+        "Scale": 0.53,
         "Components": {
             "Nodes": {
                 "REP_IN": {
-                    "x": 86.7,
-                    "y": 30.65
+                    "x": 5.93,
+                    "y": 25.16
                 },
                 "MappingProjection from REP_IN[RESULT] to REP_HIDDEN[InputPort-0]": {
-                    "x": 76.91,
-                    "y": 34.41
+                    "x": 4.83,
+                    "y": 31.46
                 },
                 "Learning Mechanism for MappingProjection from REP_IN[RESULT] to REP_HIDDEN[InputPort-0]": {
-                    "x": 85.87,
-                    "y": 67.7
+                    "x": 1.57,
+                    "y": 46.31
                 },
                 "Target-3": {
-                    "x": 55.63,
-                    "y": 52.85
+                    "x": 74.1,
+                    "y": 58.76
                 },
                 "Comparator-3": {
-                    "x": 53.75,
-                    "y": 56.6
+                    "x": 74.36,
+                    "y": 61.94
                 },
                 "Target-2": {
-                    "x": 77.88,
-                    "y": 52.85
+                    "x": 56.29,
+                    "y": 58.98
                 },
                 "Comparator-2": {
-                    "x": 75.67,
-                    "y": 56.6
+                    "x": 56.7,
+                    "y": 62.72
                 },
                 "Target-1": {
-                    "x": 10.76,
-                    "y": 52.85
+                    "x": 20.96,
+                    "y": 59.22
                 },
                 "Comparator-1": {
-                    "x": 10.15,
-                    "y": 56.6
+                    "x": 21.61,
+                    "y": 62.83
                 },
                 "Target": {
-                    "x": 34.47,
-                    "y": 52.85
+                    "x": 38.88,
+                    "y": 58.76
                 },
                 "Comparator": {
-                    "x": 33.23,
-                    "y": 56.6
+                    "x": 39.29,
+                    "y": 62.27
                 },
                 "REL_IN": {
-                    "x": 86.94,
-                    "y": 60.25
+                    "x": 85.53,
+                    "y": 38.22
                 },
                 "MappingProjection from REL_IN[RESULT] to REL_HIDDEN[InputPort-0]": {
-                    "x": 67.04,
-                    "y": 67.7
+                    "x": 66.73,
+                    "y": 42.18
                 },
                 "Learning Mechanism for MappingProjection from REL_IN[RESULT] to REL_HIDDEN[InputPort-0]": {
-                    "x": 65.38,
-                    "y": 64.01
+                    "x": 81.59,
+                    "y": 49.21
                 },
                 "REL_HIDDEN": {
-                    "x": 40.86,
-                    "y": 45.51
+                    "x": 51.84,
+                    "y": 45.31
                 },
                 "Learning Mechanism for MappingProjection from REP_HIDDEN[RESULT] to REL_HIDDEN[InputPort-0]": {
-                    "x": 14.7,
-                    "y": 64.01
+                    "x": 1.15,
+                    "y": 59.26
                 },
                 "MappingProjection from REL_HIDDEN[RESULT] to REP_OUT[InputPort-0]": {
-                    "x": 25.39,
-                    "y": 49.21
+                    "x": 38.11,
+                    "y": 56.03
                 },
                 "Learning Mechanism for MappingProjection from REL_HIDDEN[RESULT] to REP_OUT[InputPort-0]": {
-                    "x": 25.24,
-                    "y": 60.3
+                    "x": 38.82,
+                    "y": 68.64
                 },
                 "MappingProjection from REL_HIDDEN[RESULT] to PROP_OUT[InputPort-0]": {
-                    "x": 0.84,
-                    "y": 49.21
+                    "x": 20.38,
+                    "y": 56.25
                 },
                 "Learning Mechanism for MappingProjection from REL_HIDDEN[RESULT] to PROP_OUT[InputPort-0]": {
-                    "x": 4.53,
-                    "y": 60.3
+                    "x": 21.09,
+                    "y": 68.53
                 },
                 "MappingProjection from REL_HIDDEN[RESULT] to QUAL_OUT[InputPort-0]": {
-                    "x": 70.34,
-                    "y": 49.21
+                    "x": 57.73,
+                    "y": 56.36
                 },
                 "Learning Mechanism for MappingProjection from REL_HIDDEN[RESULT] to QUAL_OUT[InputPort-0]": {
-                    "x": 66.95,
-                    "y": 60.3
+                    "x": 56.34,
+                    "y": 68.53
                 },
                 "MappingProjection from REL_HIDDEN[RESULT] to ACT_OUT[InputPort-0]": {
-                    "x": 48.4,
-                    "y": 49.21
+                    "x": 75.54,
+                    "y": 56.25
                 },
                 "Learning Mechanism for MappingProjection from REL_HIDDEN[RESULT] to ACT_OUT[InputPort-0]": {
-                    "x": 45.7,
-                    "y": 60.3
+                    "x": 74.22,
+                    "y": 68.53
                 },
                 "MappingProjection from REP_HIDDEN[RESULT] to REL_HIDDEN[InputPort-0]": {
-                    "x": 36.64,
-                    "y": 41.81
+                    "x": 29.3,
+                    "y": 42.74
                 },
                 "REP_HIDDEN": {
-                    "x": 60.78,
-                    "y": 38.11
+                    "x": 8.03,
+                    "y": 37.27
                 },
                 "REP_OUT": {
-                    "x": 31.44,
-                    "y": 52.85
+                    "x": 42.38,
+                    "y": 58.65
                 },
                 "PROP_OUT": {
-                    "x": 7.41,
-                    "y": 52.85
+                    "x": 24.5,
+                    "y": 59.22
                 },
                 "QUAL_OUT": {
-                    "x": 74.52,
-                    "y": 52.85
+                    "x": 59.9,
+                    "y": 58.98
                 },
                 "ACT_OUT": {
-                    "x": 52.54,
-                    "y": 52.85
+                    "x": 77.82,
+                    "y": 58.76
                 }
             }
         }
