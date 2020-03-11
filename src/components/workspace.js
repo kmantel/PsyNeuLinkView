@@ -10,13 +10,15 @@ import SettingsPane from './settings'
 import ErrorDispatcher from "../utility/errors/dispatcher";
 import fs from 'fs'
 import {Resizable} from "re-resizable";
+import {connect} from "react-redux";
+import {setActiveView} from "../app/redux/actions";
 const path = require('path');
 const os = require('os');
 const config_client = window.config_client;
 var proto_path = path.join(window.electron_root.app_path, 'src', 'protos', 'graph.proto');
 var rpc_client = new window.rpc.rpc_client(proto_path, window.modulePath);
 
-export default class WorkSpace extends React.PureComponent {
+class WorkSpace extends React.Component {
     constructor(props) {
         super(props);
         var w = window.innerWidth;
@@ -812,10 +814,10 @@ export default class WorkSpace extends React.PureComponent {
             sidebar, tipbox, paramcontrolbox,
         ];
 
-        if (this.state.active_component === 'graphview'){
+        if (this.props.activeView === 'graphview'){
             components.push(graphview);
         }
-        else if (this.state.active_component === 'plotter'){
+        else if (this.props.activeView === 'plotter'){
             components.push(plotter)
         }
 
@@ -844,7 +846,7 @@ export default class WorkSpace extends React.PureComponent {
                             h: this.state.vertical_factor
                         },
                         {
-                            i: this.state.active_component,
+                            i: this.props.activeView,
                             x: this.state.row_one_horizontal_factor,
                             y: 0,
                             w: this.state.x_res - this.state.row_one_horizontal_factor,
@@ -874,3 +876,14 @@ export default class WorkSpace extends React.PureComponent {
         )
     }
 }
+
+const mapStateToProps = state => {
+    return { activeView: state.activeView }
+}
+
+export default connect(
+    mapStateToProps,
+    { setActiveView }
+)(WorkSpace)
+
+// export default connect(mapStateToProps)(WorkSpace)

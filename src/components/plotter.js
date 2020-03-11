@@ -22,7 +22,7 @@ class Plotter extends React.PureComponent {
             spinner_visible: false,
         };
         // this.matrix = require('../test/matrix')
-        this.matrix = window.matrix;
+        this.matrix = [[]];
         this.bind_this_to_functions = this.bind_this_to_functions.bind(this);
         this.bind_this_to_functions();
         // this.set_non_react_state();

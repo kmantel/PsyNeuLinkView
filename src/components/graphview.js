@@ -113,10 +113,6 @@ class GraphView extends React.Component {
         if (![null, 'loading'].includes(this.props.graph)) {
             this.commit_to_stylesheet_and_update_script()
         }
-        // if (![null, 'loading'].includes(this.props.graph)){
-        //     console.log('resize');
-        //     window.addEventListener('mouseup', this.commit_to_stylesheet_and_update_script)
-        // }
     }
 
     componentWillMount() {

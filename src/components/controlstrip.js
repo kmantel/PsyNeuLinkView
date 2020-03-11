@@ -1,29 +1,19 @@
 import React from 'react'
 import {connect} from "react-redux";
+import {store} from "../app/redux/store";
 import { setActiveView } from "../app/redux/actions";
 import {Icon, Tab, Tabs} from "@blueprintjs/core"
 import '../css/controlstrip.css'
 
 class ControlStrip extends React.Component {
     constructor(props){
-        super(props)
-        console.log(this.props)
-        this.state = {
-            activeView:this.props.activeView
-        }
-        this.handleTabChange = this.handleTabChange.bind(this);
+        super(props);
+        this.handleTabChange = this.handleTabChange.bind(this)
     }
 
     handleTabChange(new_tab_id, prev_tab_id, e){
-        setActiveView(new_tab_id);
-        // if (!(new_tab_id===prev_tab_id)){
-        //     this.setState(
-        //         {selectedTabId:new_tab_id},
-        //         function () {
-        //             this.props.activePanelControl(new_tab_id)
-        //         }
-        //     )
-        // }
+        store.dispatch(setActiveView(new_tab_id));
+        console.log(this.props)
     }
 
     render() {

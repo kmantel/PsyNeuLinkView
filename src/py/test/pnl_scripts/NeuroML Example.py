@@ -54,7 +54,7 @@ composition.show_graph()
 # PsyNeuLinkView Graphics Info 
 pnlv_graphics_spec = {
     "Canvas Settings": {
-        "Width": 54.08,
+        "Width": 70.77,
         "Height": 45.64,
         "Zoom": 100,
         "xScroll": 0,
@@ -65,15 +65,15 @@ pnlv_graphics_spec = {
         "Components": {
             "Nodes": {
                 "syn1": {
-                    "x": 37.43,
+                    "x": 40.42,
                     "y": 16.64
                 },
                 "fnPop1": {
-                    "x": 56.07,
+                    "x": 54.63,
                     "y": 27.6
                 },
                 "fnPop2": {
-                    "x": 55.82,
+                    "x": 54.44,
                     "y": 67.95
                 }
             }
