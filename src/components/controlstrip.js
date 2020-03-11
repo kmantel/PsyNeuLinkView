@@ -1,25 +1,29 @@
 import React from 'react'
+import {connect} from "react-redux";
+import { setActiveView } from "../app/redux/actions";
 import {Icon, Tab, Tabs} from "@blueprintjs/core"
 import '../css/controlstrip.css'
 
-export default class ControlStrip extends React.Component {
+class ControlStrip extends React.Component {
     constructor(props){
         super(props)
+        console.log(this.props)
         this.state = {
-            selectedTabId:'graphview'
+            activeView:this.props.activeView
         }
         this.handleTabChange = this.handleTabChange.bind(this);
     }
 
     handleTabChange(new_tab_id, prev_tab_id, e){
-        if (!(new_tab_id===prev_tab_id)){
-            this.setState(
-                {selectedTabId:new_tab_id},
-                function () {
-                    this.props.activePanelControl(new_tab_id)
-                }
-            )
-        }
+        setActiveView(new_tab_id);
+        // if (!(new_tab_id===prev_tab_id)){
+        //     this.setState(
+        //         {selectedTabId:new_tab_id},
+        //         function () {
+        //             this.props.activePanelControl(new_tab_id)
+        //         }
+        //     )
+        // }
     }
 
     render() {
@@ -32,36 +36,45 @@ export default class ControlStrip extends React.Component {
                      }
                  }>
                 <div class={'controlstrip pnl-panel'}>
-                    {/*<div class={'view-tab-container'}>*/}
-                    {/*    <Tabs id="TabsExample" onChange={this.handleTabChange} selectedTabId={this.state.selectedTabId}>*/}
-                    {/*        <Tab id="graphview" title="Construct" panel={<div />} />*/}
-                    {/*        <Tab id="plotter" title="Monitor" panel={<div />} />*/}
-                    {/*        /!*<Tabs.Expander />*!/*/}
-                    {/*        /!*<input className="pt-input" type="text" placeholder="Search..." />*!/*/}
-                    {/*    </Tabs>*/}
-                    {/*</div>*/}
-                    {/*<div className={'run-flow-container'}>*/}
-                    {/*    <Icon*/}
-                    {/*        icon={"play"}*/}
-                    {/*        style={*/}
-                    {/*            {*/}
-                    {/*                color:'green',*/}
-                    {/*                cursor: 'pointer'*/}
-                    {/*            }*/}
-                    {/*        }*/}
-                    {/*        />*/}
-                    {/*    <Icon*/}
-                    {/*        icon={"stop"}*/}
-                    {/*        style={*/}
-                    {/*            {*/}
-                    {/*                color:'red',*/}
-                    {/*                cursor:'pointer'*/}
-                    {/*            }*/}
-                    {/*        }*/}
-                    {/*    />*/}
-                    {/*</div>*/}
+                    <div class={'view-tab-container'}>
+                        <Tabs id="TabsExample" onChange={this.handleTabChange} selectedTabId={this.props.activeView}>
+                            <Tab id="graphview" title="Construct" panel={<div />} />
+                            <Tab id="plotter" title="Monitor" panel={<div />} />
+                            {/*<Tabs.Expander />*/}
+                            {/*<input className="pt-input" type="text" placeholder="Search..." />*/}
+                        </Tabs>
+                    </div>
+                    <div className={'run-flow-container'}>
+                        <Icon
+                            icon={"play"}
+                            style={
+                                {
+                                    color:'green',
+                                    cursor: 'pointer'
+                                }
+                            }
+                            />
+                        <Icon
+                            icon={"stop"}
+                            style={
+                                {
+                                    color:'red',
+                                    cursor:'pointer'
+                                }
+                            }
+                        />
+                    </div>
                 </div>
             </div>
         )
     }
 }
+
+const mapStateToProps = state => {
+    return { activeView: state.activeView }
+}
+
+export default connect(
+    mapStateToProps,
+    { setActiveView }
+)(ControlStrip)

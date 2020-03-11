@@ -1,6 +1,10 @@
 // import packages
 import React from 'react';
 
+// import redux provider and store
+import { Provider } from 'react-redux'
+import { store } from './redux/store'
+
 // import css
 import '../css/app.css';
 
@@ -15,7 +19,9 @@ export default class App extends React.Component{
   render() {
     return (
         <div className = "app">
-          <WorkSpace/>
+            <Provider store={store}>
+              <WorkSpace/>
+            </Provider>
         </div>
     );
   }

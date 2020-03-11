@@ -1,0 +1,1 @@
+export const SET_ACTIVE_VIEW = 'set_active_view';
