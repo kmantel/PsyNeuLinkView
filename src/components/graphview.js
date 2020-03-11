@@ -6,6 +6,9 @@ import {Resizable} from 're-resizable'
 import {Spinner} from '@blueprintjs/core'
 import {Index} from '../utility/d3-helper/d3-helper'
 import * as _ from 'lodash'
+import {connect} from "react-redux";
+import {store} from "../app/redux/store";
+import { setStyleSheet } from "../app/redux/actions";
 
 const context_menu = [
     {
@@ -46,6 +49,70 @@ class GraphView extends React.Component {
         };
         this.update_script = _.debounce(this.update_script, 1000)
         this.commit_to_stylesheet_and_update_script = _.debounce(this.commit_to_stylesheet_and_update_script, 1000)
+    }
+
+    // lifecycle methods
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (!(this.props.graph === prevProps.graph)) {
+            if (this.props.graph === "loading") {
+                d3.selectAll('svg').remove();
+                this.setState({"spinner_visible": true})
+            } else if (!(this.props.graph===null)) {
+                d3.selectAll('svg').remove();
+                this.setState({"spinner_visible": false});
+                this.stylesheet = null;
+                this.setGraph();
+            }
+        }
+        if (this.flags.reload_locations) {
+            this.redimension_viewbox();
+            this.set_node_positioning_from_stylesheet();
+            this.flags.reload_locations = false;
+        }
+        if (this.flags.update_locations) {
+            // this.redimension_viewbox();
+            // this.commit_all_nodes_to_stylesheet();
+            // this.update_script();
+            this.flags.update_locations = false;
+        }
+        this.update_graph_from_stylesheet(prevProps)
+        var size_updated = (!_.isEqual(this.props.size, prevProps.size) && this.svg);
+        if (size_updated){
+            this.redimension_viewbox();
+        }
+    }
+    componentWillUnmount() {
+        window.removeEventListener('resize', this.on_resize);
+        window.removeEventListener('wheel', this.on_mouse_wheel);
+        window.removeEventListener('keydown', this.on_key_down);
+        window.removeEventListener('keyup', this.on_key_up);
+        window.removeEventListener('blur', this.on_blur);
+        var win = document.querySelector('.graph-view');
+        if (win) {
+            win.removeEventListener('scroll', this.update_scroll);
+        }
+        this.setState({mounted:false})
+        this.update_script()
+    }
+
+    componentDidMount() {
+        window.addEventListener('resize', this.on_resize);
+        window.addEventListener('wheel', this.on_mouse_wheel, {passive: false});
+        window.addEventListener('keydown', this.on_key_down);
+        window.addEventListener('keyup', this.on_key_up);
+        window.addEventListener('blur', this.on_blur);
+        if (!(this.state.mounted)){
+            if (this.props.graph === "loading") {
+                d3.selectAll('svg').remove();
+                this.setState({"spinner_visible": true})
+            } else if (!(this.props.graph===null)) {
+                d3.selectAll('svg').remove();
+                this.setState({"spinner_visible": false});
+                this.stylesheet = null;
+                this.setGraph();
+            }
+        }
     }
 
     set_non_react_state() {
@@ -115,39 +182,7 @@ class GraphView extends React.Component {
         }
     }
 
-    componentWillMount() {
 
-    }
-
-    componentDidUpdate(prevProps, prevState, snapshot) {
-        if (!(this.props.graph === prevProps.graph)) {
-            if (this.props.graph === "loading") {
-                d3.selectAll('svg').remove();
-                this.setState({"spinner_visible": true})
-            } else if (!(this.props.graph===null)) {
-                d3.selectAll('svg').remove();
-                this.setState({"spinner_visible": false});
-                this.stylesheet = null;
-                this.setGraph();
-            }
-        }
-        if (this.flags.reload_locations) {
-            this.redimension_viewbox();
-            this.set_node_positioning_from_stylesheet();
-            this.flags.reload_locations = false;
-        }
-        if (this.flags.update_locations) {
-            // this.redimension_viewbox();
-            // this.commit_all_nodes_to_stylesheet();
-            // this.update_script();
-            this.flags.update_locations = false;
-        }
-        this.update_graph_from_stylesheet(prevProps)
-        var size_updated = (!_.isEqual(this.props.size, prevProps.size) && this.svg);
-        if (size_updated){
-            this.redimension_viewbox();
-        }
-    }
 
     update_graph_from_stylesheet(prevProps) {
         var style_updated = (!(_.isEqual(this.props.graph_style, prevProps.graph_style))),
@@ -260,6 +295,7 @@ class GraphView extends React.Component {
             }
         }
     }
+
     difference(object, base) {
         function changes(object, base) {
             return _.transform(object, function(result, value, key) {
@@ -305,38 +341,7 @@ class GraphView extends React.Component {
         }
     }
 
-    componentWillUnmount() {
-        window.removeEventListener('resize', this.on_resize);
-        window.removeEventListener('wheel', this.on_mouse_wheel);
-        window.removeEventListener('keydown', this.on_key_down);
-        window.removeEventListener('keyup', this.on_key_up);
-        window.removeEventListener('blur', this.on_blur);
-        var win = document.querySelector('.graph-view');
-        if (win) {
-            win.removeEventListener('scroll', this.update_scroll);
-        }
-        this.setState({mounted:false})
-        this.update_script()
-    }
 
-    componentDidMount() {
-        window.addEventListener('resize', this.on_resize);
-        window.addEventListener('wheel', this.on_mouse_wheel, {passive: false});
-        window.addEventListener('keydown', this.on_key_down);
-        window.addEventListener('keyup', this.on_key_up);
-        window.addEventListener('blur', this.on_blur);
-        if (!(this.state.mounted)){
-            if (this.props.graph === "loading") {
-                d3.selectAll('svg').remove();
-                this.setState({"spinner_visible": true})
-            } else if (!(this.props.graph===null)) {
-                d3.selectAll('svg').remove();
-                this.setState({"spinner_visible": false});
-                this.stylesheet = null;
-                this.setGraph();
-            }
-        }
-    }
 
     unwatch_file(){
         this.props.fileunwatch_fx(this.props.filepath);
@@ -390,7 +395,7 @@ class GraphView extends React.Component {
     }
 
     watch_file(){
-        // console.log('watching')
+        console.log('watching')
         this.props.filewatch_fx(this.props.filepath)
     }
 
@@ -411,7 +416,7 @@ class GraphView extends React.Component {
             }
             this.script_updater.write({styleJSON: stylesheet_str}, callback);
         }
-        // console.log('y')
+        store.dispatch(setStyleSheet({...this.stylesheet}))
     }
 
     reset_graph() {
@@ -1612,4 +1617,8 @@ class GraphView extends React.Component {
     }
 }
 
-export default GraphView
+const mapStateToProps = state => {
+    return { tmp_stylesheet: state.tmp_stylesheet }
+};
+
+export default connect(mapStateToProps, { setStyleSheet })(GraphView)

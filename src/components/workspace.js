@@ -11,7 +11,8 @@ import ErrorDispatcher from "../utility/errors/dispatcher";
 import fs from 'fs'
 import {Resizable} from "re-resizable";
 import {connect} from "react-redux";
-import {setActiveView} from "../app/redux/actions";
+import {setActiveView, setStyleSheet} from "../app/redux/actions";
+import {store} from "../app/redux/store";
 const path = require('path');
 const os = require('os');
 const config_client = window.config_client;
@@ -422,12 +423,15 @@ class WorkSpace extends React.Component {
 
     watch_file(filepath) {
         var self = this;
-        window.fs.watchFile(filepath,{interval:10},()=>{
+        this.render_log('getting here top');
+        window.fs.watchFile(filepath,{interval:10, persistent: true},()=>{
             if (!['loading',null].includes(self.state.graph)){
                 rpc_client.get_style(self.state.filepath, ()=>{
-                    self.setState({
-                        graph_style:rpc_client.script_maintainer.style
-                    })
+                    this.render_log('getting here bottom');
+                    store.dispatch(setStyleSheet(rpc_client.script_maintainer.style));
+                    // self.setState({
+                    //     graph_style:rpc_client.script_maintainer.style
+                    // })
                 })
             }
         })
@@ -645,6 +649,10 @@ class WorkSpace extends React.Component {
 
     set_active_component(component, callback=()=>{}){
         // this.setState({'active_component':component}, callback)
+    }
+
+    render_log(message){
+        console.log(message);
     }
 
     render() {
@@ -878,12 +886,15 @@ class WorkSpace extends React.Component {
 }
 
 const mapStateToProps = state => {
-    return { activeView: state.activeView }
+    return {
+        activeView: state.activeView,
+        graph_style: state.tmp_stylesheet
+            }
 }
 
 export default connect(
     mapStateToProps,
-    { setActiveView }
+    { setActiveView, setStyleSheet }
 )(WorkSpace)
 
 // export default connect(mapStateToProps)(WorkSpace)

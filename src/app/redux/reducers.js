@@ -2,7 +2,8 @@ import {setActiveView} from "./actions";
 import * as atypes from './actionTypes'
 
 const initialState = {
-    activeView: 'graphview'
+    activeView: 'graphview',
+    tmp_stylesheet: {}
 };
 
 export function rootReducer(state = initialState, action) {
@@ -11,6 +12,12 @@ export function rootReducer(state = initialState, action) {
         case atypes.SET_ACTIVE_VIEW:
             return Object.assign({}, state, {
                     activeView: action.view
+                }
+            );
+
+        case atypes.SET_STYLESHEET:
+            return Object.assign({}, state, {
+                tmp_stylesheet: action.stylesheet
                 }
             );
         default:

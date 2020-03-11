@@ -6,3 +6,10 @@ export function setActiveView(id){
         view: id
     }
 }
+
+export function setStyleSheet(stylesheet){
+    return {
+        type: atypes.SET_STYLESHEET,
+        stylesheet: stylesheet
+    }
+}
