@@ -1,12 +1,12 @@
-const path = require('path');
+const log = require('electron-log'),
+    grpc = require('grpc'),
+    protoloader = require('@grpc/proto-loader'),
+    path = require('path');
 
-class RPCClient {
-    constructor(proto_path, module_path) {
-        var PROTO_PATH = proto_path;
-        var log = require(path.join(module_path,'electron-log'));
-        this.grpc = require(path.join(module_path,'grpc'));
-        this.protoLoader = require(path.join(module_path,'@grpc/proto-loader'));
-        this.packageDefinition = this.protoLoader.loadSync(
+class RPCInterface{
+    constructor() {
+        var PROTO_PATH = path.join(__dirname, '../protos/graph.proto');
+        this.packageDefinition = protoloader.loadSync(
             PROTO_PATH,
             {
                 keepCase: true,
@@ -15,13 +15,13 @@ class RPCClient {
                 defaults: true,
                 oneofs: true
             });
-        this.graph_proto = this.grpc.loadPackageDefinition(this.packageDefinition).graph;
+        this.graph_proto = grpc.loadPackageDefinition(this.packageDefinition).graph;
         this.script_maintainer = {
             compositions: {},
             gv: {},
             style: {}
         };
-        this.most_recent_response = {'status':'test'};
+        this.most_recent_response = {'status': 'test'};
         this.instantiate_client = this.instantiate_client.bind(this);
         this.load_script = this.load_script.bind(this);
         this.get_json = this.get_json.bind(this);
@@ -31,11 +31,12 @@ class RPCClient {
     instantiate_client() {
         return new this.graph_proto.ServeGraph(
             'localhost:50051',
-            this.grpc.credentials.createInsecure()
+            grpc.credentials.createInsecure()
         );
     }
 
-    load_script(filepath, callback = function () {}) {
+    load_script(filepath, callback = function () {
+    }) {
         var client = this.instantiate_client();
         var self = this;
         client.LoadScript({
@@ -43,15 +44,15 @@ class RPCClient {
         }, function (err, response) {
             if (err) {
                 callback(err)
-            }
-            else{
+            } else {
                 self.script_maintainer.compositions = response.compositions;
                 callback()
             }
         });
     }
 
-    get_style(filepath, callback = function(){}){
+    get_style(filepath, callback = function () {
+    }) {
         var client = this.instantiate_client();
         var self = this;
         client.LoadGraphics({
@@ -59,15 +60,15 @@ class RPCClient {
         }, function (err, response) {
             if (err) {
                 callback(err)
-            }
-            else{
+            } else {
                 self.script_maintainer.style = JSON.parse(response.styleJSON);
                 callback()
             }
         })
     }
 
-    get_json(name, callback = function () {}) {
+    get_json(name, callback = function () {
+    }) {
         var client = this.instantiate_client();
         var self = this;
         client.GetJSON({
@@ -75,8 +76,7 @@ class RPCClient {
         }, function (err, response) {
             if (err) {
                 callback(err)
-            }
-            else{
+            } else {
                 self.script_maintainer.gv = JSON.parse(response.objectsJSON);
                 self.script_maintainer.style = JSON.parse(response.styleJSON);
                 callback()
@@ -93,15 +93,14 @@ class RPCClient {
             if (err) {
                 // log.debug(err)
                 console.log(err)
-            }
-            else {
+            } else {
                 callback()
             }
         })
     }
 
-    update_stylesheet(callback = function () {})
-    {
+    update_stylesheet(callback = function () {
+    }) {
         var client = this.instantiate_client();
         return client.UpdateStylesheet(callback)
     }
@@ -110,13 +109,11 @@ class RPCClient {
     }) {
         var self = this;
         var client = this.instantiate_client();
-        client.HealthCheck({
-        }, function (err, response) {
+        client.HealthCheck({}, function (err, response) {
             if (err) {
                 // log.debug(err)
                 console.log('error:', err)
-            }
-            else{
+            } else {
                 self.most_recent_response = response;
                 callback();
             }
@@ -124,9 +121,4 @@ class RPCClient {
     }
 }
 
-exports.rpc_client = RPCClient;
-//
-// exports.script_maintainer = script;
-// exports.load_custom_pnl = load_custom_pnl;
-// exports.load_script = load_script;
-// exports.get_json = get_json;
+exports.rpcInterface = new RPCInterface();

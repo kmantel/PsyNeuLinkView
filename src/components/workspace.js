@@ -16,9 +16,9 @@ const path = require('path');
 const os = require('os');
 const config_client = window.config_client;
 var proto_path = path.join(window.electron_root.app_path, 'src', 'protos', 'graph.proto');
-var rpc_client = new window.rpc.rpc_client(proto_path, window.modulePath);
 const fs = window.interfaces.filesystem,
-    interp = window.interfaces.interpreter;
+    interp = window.interfaces.interpreter,
+    rpc_client = window.interfaces.rpc;
 
 class WorkSpace extends React.Component {
     constructor(props) {
@@ -394,33 +394,33 @@ class WorkSpace extends React.Component {
         )
     }
 
-    async validate_server_status(wait_interval, attempt_limit) {
-        var server_ready = false;
-        var server_attempt_current = 0;
-        var self = this;
-        while (!server_ready) {
-            rpc_client.health_check(
-                function () {
-                    if (rpc_client.most_recent_response.status === 'Okay') {
-                        server_ready = true;
-                        rpc_client.most_recent_response.status = null
-                    }
-                }
-            );
-            server_attempt_current += 1;
-            if (server_attempt_current >= attempt_limit) {
-                self.dispatcher.capture(
-                    {
-                        error: "Failed to load Python interpreter. Check path."
-                    },
-                    self.setState({'graph': null})
-                );
-                return false
-            }
-            await this.sleep(wait_interval);
-        }
-        return true
-    }
+    // async validate_server_status(wait_interval, attempt_limit) {
+    //     var server_ready = false;
+    //     var server_attempt_current = 0;
+    //     var self = this;
+    //     while (!server_ready) {
+    //         rpc_client.health_check(
+    //             function () {
+    //                 if (rpc_client.most_recent_response.status === 'Okay') {
+    //                     server_ready = true;
+    //                     rpc_client.most_recent_response.status = null
+    //                 }
+    //             }
+    //         );
+    //         server_attempt_current += 1;
+    //         if (server_attempt_current >= attempt_limit) {
+    //             self.dispatcher.capture(
+    //                 {
+    //                     error: "Failed to load Python interpreter. Check path."
+    //                 },
+    //                 self.setState({'graph': null})
+    //             );
+    //             return false
+    //         }
+    //         await this.sleep(wait_interval);
+    //     }
+    //     return true
+    // }
 
     watch_file(filepath) {
         var self = this;
@@ -510,11 +510,6 @@ class WorkSpace extends React.Component {
         self.filepath = filepath;
         self.setState({graph: "loading"}, ()=>{win.setTitle('PsyNeuLinkView')});
         window.electron_root.addRecentDocument(filepath);
-        // window.electron_root.restart_rpc_server(
-        //     ()=>{
-        //         self.load_script(filepath)
-        //     },
-        // );
         interp.restart_rpc_server(
             ()=>{
                 self.load_script(filepath)
