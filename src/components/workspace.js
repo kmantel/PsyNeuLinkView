@@ -8,14 +8,9 @@ import ControlStrip from "./controlstrip";
 import ParameterControlBox from './parametercontrolbox'
 import SettingsPane from './settings'
 import ErrorDispatcher from "../utility/errors/dispatcher";
-import {Resizable} from "re-resizable";
 import {connect} from "react-redux";
 import {setActiveView, setStyleSheet} from "../app/redux/actions";
 import {store} from "../app/redux/store";
-const path = require('path');
-const os = require('os');
-const config_client = window.config_client;
-var proto_path = path.join(window.electron_root.app_path, 'src', 'protos', 'graph.proto');
 const fs = window.interfaces.filesystem,
     interp = window.interfaces.interpreter,
     rpc_client = window.interfaces.rpc;
@@ -394,45 +389,12 @@ class WorkSpace extends React.Component {
         )
     }
 
-    // async validate_server_status(wait_interval, attempt_limit) {
-    //     var server_ready = false;
-    //     var server_attempt_current = 0;
-    //     var self = this;
-    //     while (!server_ready) {
-    //         rpc_client.health_check(
-    //             function () {
-    //                 if (rpc_client.most_recent_response.status === 'Okay') {
-    //                     server_ready = true;
-    //                     rpc_client.most_recent_response.status = null
-    //                 }
-    //             }
-    //         );
-    //         server_attempt_current += 1;
-    //         if (server_attempt_current >= attempt_limit) {
-    //             self.dispatcher.capture(
-    //                 {
-    //                     error: "Failed to load Python interpreter. Check path."
-    //                 },
-    //                 self.setState({'graph': null})
-    //             );
-    //             return false
-    //         }
-    //         await this.sleep(wait_interval);
-    //     }
-    //     return true
-    // }
-
     watch_file(filepath) {
         var self = this;
-        this.render_log('getting here top');
         window.fs.watchFile(filepath,{interval:10, persistent: true},()=>{
             if (!['loading',null].includes(self.state.graph)){
                 rpc_client.get_style(self.state.filepath, ()=>{
-                    this.render_log('getting here bottom');
                     store.dispatch(setStyleSheet(rpc_client.script_maintainer.style));
-                    // self.setState({
-                    //     graph_style:rpc_client.script_maintainer.style
-                    // })
                 })
             }
         })
@@ -565,14 +527,6 @@ class WorkSpace extends React.Component {
             test_width: 500
         });
         this.forceUpdate()
-    }
-
-    update_config_panel_sizes(){
-        // var cf = {...config_client.get_config()};
-        // cf.env.workspace.row_one_horizontal_factor = Math.round(this.state.row_one_horizontal_factor);
-        // cf.env.workspace.row_two_horizontal_factor = Math.round(this.state.row_two_horizontal_factor);
-        // cf.env.workspace.vertical_factor = Math.round(this.state.vertical_factor); //for some reason this keeps getting converted to a float which is causing errors;
-        // config_client.set_config({...cf});
     }
 
     panel_resize(e, direction, ref, d) {
@@ -897,5 +851,3 @@ export default connect(
     mapStateToProps,
     { setActiveView, setStyleSheet }
 )(WorkSpace)
-
-// export default connect(mapStateToProps)(WorkSpace)
