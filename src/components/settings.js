@@ -13,13 +13,16 @@ const style = {
 };
 
 const config_client = window.config_client;
-const validate_interpreter_path = window.electron_root.validate_interpreter_path;
+const fs = window.interfaces.filesystem,
+      interp = window.interfaces.interpreter,
+      validate_interpreter_path = interp.validate_interpreter_path;
+// console.log(window.interfaces)
 
 class SettingsPane extends React.Component {
     constructor(props) {
         super();
         var id_counter = 0;
-        var config = {...config_client.get_config()};
+        var config = fs.get_config();
         var categories = Object.keys(config);
         var nodes = [];
         for (var i in categories) {
@@ -195,7 +198,6 @@ class SettingsPane extends React.Component {
                                 (new_value) => {
                                     current_config['Python']['Interpreter Path'] = new_value;
                                     this.setState({config: current_config});
-                                    // config_client.set_config(current_config)
                                 }
                             }
                         />
@@ -219,7 +221,6 @@ class SettingsPane extends React.Component {
                                 if (pathArray.length > 0) {
                                     current_config['Python']['PsyNeuLink Path'] = paths.filePaths[0];
                                     self.setState({config: current_config});
-                                    // config_client.set_config(current_config);
                                 }
                             })
                         }}
@@ -357,7 +358,7 @@ class SettingsPane extends React.Component {
                         className={"settings_button"}
                         onClick={
                             function () {
-                                config_client.set_config(self.state.config);
+                                fs.set_config(self.state.config);
                                 self.props.toggleDialog();
                             }
                         }
@@ -368,7 +369,7 @@ class SettingsPane extends React.Component {
                         className={"settings_button"}
                         onClick={
                             function () {
-                                config_client.set_config(self.state.config);
+                                fs.set_config(self.state.config);
                             }
                         }
                     >
@@ -378,8 +379,8 @@ class SettingsPane extends React.Component {
                         className={"settings_button"}
                         onClick={
                             function () {
-                                self.props.toggleDialog();
-                                self.setState({config: config_client.get_config()})
+                                fs.set_config(self.state.config);
+                                self.setState({config: fs.get_config()})
                             }
                         }
                     >

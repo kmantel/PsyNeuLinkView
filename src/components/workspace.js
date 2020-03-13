@@ -8,7 +8,6 @@ import ControlStrip from "./controlstrip";
 import ParameterControlBox from './parametercontrolbox'
 import SettingsPane from './settings'
 import ErrorDispatcher from "../utility/errors/dispatcher";
-import fs from 'fs'
 import {Resizable} from "re-resizable";
 import {connect} from "react-redux";
 import {setActiveView, setStyleSheet} from "../app/redux/actions";
@@ -18,6 +17,8 @@ const os = require('os');
 const config_client = window.config_client;
 var proto_path = path.join(window.electron_root.app_path, 'src', 'protos', 'graph.proto');
 var rpc_client = new window.rpc.rpc_client(proto_path, window.modulePath);
+const fs = window.interfaces.filesystem,
+    interp = window.interfaces.interpreter;
 
 class WorkSpace extends React.Component {
     constructor(props) {
@@ -228,7 +229,7 @@ class WorkSpace extends React.Component {
     }
 
     get_initial_filepath() {
-        var config = {...config_client.get_config()},
+        var config = fs.get_config(),
             filepath = config.env.filepath;
         if (filepath){
             this.validate_server_status_and_load_script(filepath);
@@ -482,9 +483,9 @@ class WorkSpace extends React.Component {
                             catch {
                                 var new_graph_style = {};
                             }
-                            var cf = {...config_client.get_config()};
+                            var cf = fs.get_config();
                             cf.env.filepath = filepath;
-                            config_client.set_config({...cf});
+                            fs.set_config(cf);
                             self.setState({
                                 graph: new_graph,
                                 graph_style: new_graph_style,
@@ -509,7 +510,12 @@ class WorkSpace extends React.Component {
         self.filepath = filepath;
         self.setState({graph: "loading"}, ()=>{win.setTitle('PsyNeuLinkView')});
         window.electron_root.addRecentDocument(filepath);
-        window.electron_root.restart_rpc_server(
+        // window.electron_root.restart_rpc_server(
+        //     ()=>{
+        //         self.load_script(filepath)
+        //     },
+        // );
+        interp.restart_rpc_server(
             ()=>{
                 self.load_script(filepath)
             },
@@ -632,7 +638,7 @@ class WorkSpace extends React.Component {
     }
 
     toggleDialog = () => {
-        var interpreter_path_is_blank = !{...window.config_client.get_config()}['Python']['Interpreter Path'];
+        var interpreter_path_is_blank = !fs.get_config()['Python']['Interpreter Path'];
         if (!interpreter_path_is_blank) {
             this.setState({show_settings: !this.state.show_settings});
         }
@@ -656,7 +662,7 @@ class WorkSpace extends React.Component {
     }
 
     render() {
-        var interpreter_path_is_blank = !{...window.config_client.get_config()}['Python']['Interpreter Path'];
+        var interpreter_path_is_blank = !fs.get_config()['Python']['Interpreter Path'];
         if (!this.state.show_settings && interpreter_path_is_blank) {
             this.setState({show_settings: true})
         }
