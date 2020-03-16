@@ -204,11 +204,11 @@ for i in range(1, len(stabilityFlexibility.controller.input_ports)):
 # print(activation.mod_gain)
 # decisionMaker.log.print_entries()
 
-# PsyNeuLinkView Graphics Info
+# PsyNeuLinkView Graphics Info 
 pnlv_graphics_spec = {
     "Canvas Settings": {
-        "Width": 32.24,
-        "Height": 68.91,
+        "Width": 68.53,
+        "Height": 69.05,
         "Zoom": 100,
         "xScroll": 0,
         "yScroll": 0
@@ -217,37 +217,37 @@ pnlv_graphics_spec = {
         "Scale": 1.41,
         "Components": {
             "Nodes": {
-                "DDM Integrator": {
-                    "x": 51.43,
-                    "y": 32.1
-                },
                 "Stimulus Info * Activity": {
-                    "x": 56.17,
-                    "y": 15.98
+                    "x": 44.99,
+                    "y": 30.38
+                },
+                "DDM Integrator": {
+                    "x": 27.39,
+                    "y": 37.81
                 },
                 "Input": {
-                    "x": 28.76,
-                    "y": 46.41
+                    "x": 13.12,
+                    "y": 45.13
                 },
                 "Activity": {
-                    "x": 44.37,
-                    "y": 92.58
+                    "x": 24.92,
+                    "y": 67.6
                 },
                 "objective_mechanism-0": {
-                    "x": 39.96,
-                    "y": 61.95
+                    "x": 21.6,
+                    "y": 52.75
                 },
                 "Stimulus Info": {
-                    "x": 45.23,
-                    "y": 0.45
+                    "x": 24.73,
+                    "y": 26.16
                 },
                 "DDM": {
-                    "x": 46.5,
-                    "y": 46.41
+                    "x": 26.6,
+                    "y": 45.13
                 },
                 "OptimizationControlMechanism-0": {
-                    "x": 36.94,
-                    "y": 77.26
+                    "x": 19.27,
+                    "y": 60.18
                 }
             }
         }

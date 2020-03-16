@@ -73,9 +73,9 @@ class GraphView extends React.Component {
             this.flags.reload_locations = false;
         }
         if (this.flags.update_locations) {
-            // this.redimension_viewbox();
-            // this.commit_all_nodes_to_stylesheet();
-            // this.update_script();
+            this.redimension_viewbox();
+            this.commit_all_nodes_to_stylesheet();
+            this.update_script();
             this.flags.update_locations = false;
         }
         this.update_graph_from_stylesheet(prevProps)
@@ -775,9 +775,11 @@ class GraphView extends React.Component {
                 }
             )
             .on("mousemove", function () {
-                var anchor_x, anchor_y, current_x, current_y;
-                var s = svg.select("rect.selection");
-                var current_pt = d3.mouse(this);
+                var anchor_x, anchor_y, current_x, current_y,
+                    s = svg.select("rect.selection"),
+                    current_pt = d3.mouse(this),
+                    e = d3.event;
+                e.preventDefault();
                 s
                     .attr('x', (d) => {
                         anchor_x = d.anchor.x;

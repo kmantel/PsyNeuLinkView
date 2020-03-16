@@ -10,7 +10,6 @@ import SettingsPane from './settings'
 import ErrorDispatcher from "../utility/errors/dispatcher";
 import {connect} from "react-redux";
 import {setActiveView, setStyleSheet} from "../app/redux/actions";
-import * as _ from 'lodash';
 import {store} from "../app/redux/store";
 
 const fs = window.interfaces.filesystem,
@@ -435,6 +434,7 @@ class WorkSpace extends React.Component {
                                 graph_style: new_graph_style,
                                 filepath: filepath,
                             });
+                            store.dispatch(setStyleSheet(new_graph_style));
                             var homedir = window.remote.app.getPath('home');
                             if (filepath.startsWith(homedir)){
                                 filepath = `~${filepath.slice(homedir.length)}`
@@ -473,10 +473,6 @@ class WorkSpace extends React.Component {
                 var new_graph_style = {};
             }
             store.dispatch(setStyleSheet(new_graph_style));
-            // self.forceUpdate()
-            // self.setState({
-            //     graph_style: new_graph_style
-            // })
         })
     }
 
