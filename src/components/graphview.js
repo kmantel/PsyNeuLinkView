@@ -132,7 +132,6 @@ class GraphView extends React.Component {
         this.validate_stylesheet = this.validate_stylesheet.bind(this);
         this.set_canvas_state_from_stylesheet = this.set_canvas_state_from_stylesheet.bind(this);
         this.set_node_positioning_from_stylesheet = this.set_node_positioning_from_stylesheet.bind(this);
-        this.set_zoom = this.set_zoom.bind(this);
         this.commit_to_stylesheet_and_update_script = this.commit_to_stylesheet_and_update_script.bind(this);
         this.on_resize = this.on_resize.bind(this);
         this.set_non_react_state = this.set_non_react_state.bind(this);
@@ -385,13 +384,21 @@ class GraphView extends React.Component {
 
     on_scroll_end(e){
         window.removeEventListener('mouseup', this.on_scroll_end)
-        this.update_scroll()
+        this.commit_to_stylesheet_and_update_script();
     }
 
     update_script(callback=()=>{}) {
+        var self = this,
+            callback = callback
+        fs.filewatchers[this.props.filepath].close();
         if (this.props.filepath){
             var stylesheet_str = JSON.stringify({...this.stylesheet});
-            this.script_updater.write({styleJSON: stylesheet_str}, callback);
+            this.script_updater.write({styleJSON: stylesheet_str},
+                ()=>{
+                    fs.watch(self.props.filepath)
+                    callback()
+                }
+            );
         }
         store.dispatch(setStyleSheet({...this.stylesheet}))
     }
@@ -1491,18 +1498,6 @@ class GraphView extends React.Component {
             svg.setAttribute('viewBox',[0, 0, viewBox_w_mod, viewBox_h_mod]);
             this.scaling_factor /= proportion;
             this.scale_graph(proportion);
-        }
-    }
-
-    set_zoom(){
-        var cf = fs.get_config();
-        if (!(cf.env.graphview.zoom_scale == 1)){
-            var win = document.querySelector('.graph-view'),
-                k = cf.env.graphview.zoom_scale,
-                xscroll = cf.env.graphview.x_scroll,
-                yscroll = cf.env.graphview.y_scroll;
-            this.svg.call(this.zoom.scaleTo,k);
-            win.scrollTo(xscroll, yscroll);
         }
     }
 
