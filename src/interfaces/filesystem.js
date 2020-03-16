@@ -10,18 +10,25 @@ class FileSystemInterface {
     }
 
     /**
-     * Adds filepath to watched files. Watched files emit a 'change' event when they are modified.
+     * Adds filepath to watched files. Watched files execute callback when changes to them occur.
+     *
+     * NOTE: due to a known issue causing fs.watch to emit multiple change events, we have to debounce the callback.
+     * It's still possible that the callback could fire twice if the change events are registered by the watch API
+     * with a duration between them greater than the wait value set below.
+     *
+     * For more information on the issues with the watch api, see here: https://github.com/nodejs/node-v0.x-archive/issues/1970
      *
      * @param {string} filepath - path to file that should be watched.
+     * @param {function} callback - function that describes actions to take when change occurs in file.
      * */
-    watch(filepath) {
+    watch(filepath, callback = (e)=>{}) {
         if (filepath.startsWith('~')) {
             filepath = path.join(os.homedir(), filepath.slice(1, filepath.length))
         }
-        if (this.filewatchers.contains(filepath)) {
+        if (filepath in this.filewatchers) {
             this.filewatchers[filepath].close()
         }
-        this.filewatchers[filepath] = path.watch(filepath)
+        this.filewatchers[filepath] = fs.watch(filepath, _.debounce(callback, 50))
     }
 
     /**

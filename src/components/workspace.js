@@ -10,7 +10,9 @@ import SettingsPane from './settings'
 import ErrorDispatcher from "../utility/errors/dispatcher";
 import {connect} from "react-redux";
 import {setActiveView, setStyleSheet} from "../app/redux/actions";
+import * as _ from 'lodash';
 import {store} from "../app/redux/store";
+
 const fs = window.interfaces.filesystem,
     interp = window.interfaces.interpreter,
     rpc_client = window.interfaces.rpc;
@@ -42,6 +44,7 @@ class WorkSpace extends React.Component {
         this.dispatcher = new ErrorDispatcher(this);
         this.container = {};
         // window.this = this;
+        this.get_current_graph_style = this.get_current_graph_style.bind(this);
         this.get_reference_sizing_factors = this.get_reference_sizing_factors.bind(this);
         this.set_graph_size = this.set_graph_size.bind(this);
         this.choose_composition = this.choose_composition.bind(this);
@@ -55,8 +58,6 @@ class WorkSpace extends React.Component {
         this.validate_server_status_and_load_script = this.validate_server_status_and_load_script.bind(this);
         this.handleErrors = this.handleErrors.bind(this);
         this.saveMouseData = this.saveMouseData.bind(this);
-        this.watch_file = this.watch_file.bind(this);
-        this.unwatch_file = this.unwatch_file.bind(this);
         this.set_active_component = this.set_active_component.bind(this);
         this.setMenu();
     }
@@ -124,8 +125,6 @@ class WorkSpace extends React.Component {
                     graph_style = {this.state.graph_style}
                     filepath = {this.state.filepath}
                     rpc_client = {rpc_client}
-                    filewatch_fx = {this.watch_file}
-                    fileunwatch_fx = {this.unwatch_file}
                     graph_size_fx = {this.set_graph_size}
                 />
             </div>
@@ -162,8 +161,6 @@ class WorkSpace extends React.Component {
                     graph_style = {this.state.graph_style}
                     filepath = {this.state.filepath}
                     rpc_client = {rpc_client}
-                    filewatch_fx = {this.watch_file}
-                    fileunwatch_fx = {this.unwatch_file}
                     graph_size_fx = {this.set_graph_size}
                 />
             </div>
@@ -389,21 +386,6 @@ class WorkSpace extends React.Component {
         )
     }
 
-    watch_file(filepath) {
-        var self = this;
-        window.fs.watchFile(filepath,{interval:10, persistent: true},()=>{
-            if (!['loading',null].includes(self.state.graph)){
-                rpc_client.get_style(self.state.filepath, ()=>{
-                    store.dispatch(setStyleSheet(rpc_client.script_maintainer.style));
-                })
-            }
-        })
-    }
-
-    unwatch_file(filepath) {
-        window.fs.unwatchFile(filepath)
-    }
-
     load_script(filepath) {
         var win;
         var self = this;
@@ -457,12 +439,45 @@ class WorkSpace extends React.Component {
                             if (filepath.startsWith(homedir)){
                                 filepath = `~${filepath.slice(homedir.length)}`
                             }
+                            fs.watch(filepath, (e)=>{
+                                window.dispatchEvent(new Event(e));
+                                self.get_current_graph_style()
+                            });
                             window.remote.getCurrentWindow().setTitle(`${composition} \u2014 ${filepath}`)
                         }
                     )
                 }
             }
         );
+    }
+
+    get_current_graph_style(){
+        var self = this;
+        rpc_client.get_style(self.filepath, function (err) {
+            if (err) {
+                self.dispatcher.capture({
+                        error: "Python interpreter crashed while loading script.",
+                        message:
+                            `Message: ${err.cause !== undefined ?
+                                err.cause.message
+                                :
+                                err.message}`
+                    },
+                    {graph: null}
+                );
+                return false
+            }
+            try {
+                var new_graph_style = JSON.parse(JSON.stringify(rpc_client.script_maintainer.style));
+            } catch {
+                var new_graph_style = {};
+            }
+            store.dispatch(setStyleSheet(new_graph_style));
+            // self.forceUpdate()
+            // self.setState({
+            //     graph_style: new_graph_style
+            // })
+        })
     }
 
     async validate_server_status_and_load_script(filepath) {
@@ -575,11 +590,17 @@ class WorkSpace extends React.Component {
     componentWillUnmount() {
         window.removeEventListener('mousemove', this.saveMouseData);
         window.removeEventListener('resize', this.window_resize);
+        window.removeEventListener('change', this.on_change)
     }
 
     componentWillMount() {
         window.addEventListener('mousemove', this.saveMouseData);
         window.addEventListener('resize', this.window_resize);
+        window.addEventListener('change', this.on_change)
+    }
+
+    on_change(e) {
+        console.log(e);
     }
 
     saveMouseData(e) {
@@ -673,11 +694,8 @@ class WorkSpace extends React.Component {
                         }
                     }
                     graph={this.state.graph}
-                    graph_style = {this.state.graph_style}
+                    // graph_style = {this.state.graph_style}
                     filepath = {this.state.filepath}
-                    rpc_client = {rpc_client}
-                    filewatch_fx = {this.watch_file}
-                    fileunwatch_fx = {this.unwatch_file}
                     graph_size_fx = {this.set_graph_size}
                 />
             </div>,
@@ -713,10 +731,6 @@ class WorkSpace extends React.Component {
                     graph={this.state.graph}
                     graph_style = {this.state.graph_style}
                     filepath = {this.state.filepath}
-                    rpc_client = {rpc_client}
-                    filewatch_fx = {this.watch_file}
-                    fileunwatch_fx = {this.unwatch_file}
-                    graph_size_fx = {this.set_graph_size}
                 />
             </div>,
             tipbox = <div key="tipbox">
@@ -843,7 +857,7 @@ class WorkSpace extends React.Component {
 const mapStateToProps = state => {
     return {
         activeView: state.activeView,
-        graph_style: state.tmp_stylesheet
+        graph_style: state.stylesheet
             }
 }
 

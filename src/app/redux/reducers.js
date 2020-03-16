@@ -3,7 +3,7 @@ import * as atypes from './actionTypes'
 
 const initialState = {
     activeView: 'graphview',
-    tmp_stylesheet: {}
+    stylesheet: {}
 };
 
 export function rootReducer(state = initialState, action) {
@@ -17,7 +17,7 @@ export function rootReducer(state = initialState, action) {
 
         case atypes.SET_STYLESHEET:
             return Object.assign({}, state, {
-                tmp_stylesheet: action.stylesheet
+                    stylesheet: action.stylesheet
                 }
             );
         default:

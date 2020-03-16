@@ -27,7 +27,9 @@ const style = {
     justifyContent: "center",
 };
 
-const config_client = window.config_client;
+const fs = window.interfaces.filesystem,
+    interp = window.interfaces.interpreter,
+    rpc_client = window.interfaces.rpc;
 
 class GraphView extends React.Component {
     constructor(props) {
@@ -87,7 +89,6 @@ class GraphView extends React.Component {
         window.removeEventListener('wheel', this.on_mouse_wheel);
         window.removeEventListener('keydown', this.on_key_down);
         window.removeEventListener('keyup', this.on_key_up);
-        window.removeEventListener('blur', this.on_blur);
         var win = document.querySelector('.graph-view');
         if (win) {
             win.removeEventListener('scroll', this.update_scroll);
@@ -101,7 +102,6 @@ class GraphView extends React.Component {
         window.addEventListener('wheel', this.on_mouse_wheel, {passive: false});
         window.addEventListener('keydown', this.on_key_down);
         window.addEventListener('keyup', this.on_key_up);
-        window.addEventListener('blur', this.on_blur);
         if (!(this.state.mounted)){
             if (this.props.graph === "loading") {
                 d3.selectAll('svg').remove();
@@ -130,8 +130,6 @@ class GraphView extends React.Component {
         this.set_aspect_ratio = this.set_aspect_ratio.bind(this);
         this.commit_all_nodes_to_stylesheet = this.commit_all_nodes_to_stylesheet.bind(this);
         this.validate_stylesheet = this.validate_stylesheet.bind(this);
-        this.watch_file = this.watch_file.bind(this);
-        this.unwatch_file = this.unwatch_file.bind(this);
         this.set_canvas_state_from_stylesheet = this.set_canvas_state_from_stylesheet.bind(this);
         this.set_node_positioning_from_stylesheet = this.set_node_positioning_from_stylesheet.bind(this);
         this.set_zoom = this.set_zoom.bind(this);
@@ -153,7 +151,6 @@ class GraphView extends React.Component {
         this.update_script = this.update_script.bind(this);
         this.move_node = this.move_node.bind(this);
         this.on_zoom = this.on_zoom.bind(this);
-        this.on_blur = this.on_blur.bind(this);
         this.move_graph = this.move_graph.bind(this);
         this.refresh_edges_for_node = this.refresh_edges_for_node.bind(this);
         this.move_label_to_corresponding_node = this.move_label_to_corresponding_node.bind(this);
@@ -341,12 +338,6 @@ class GraphView extends React.Component {
         }
     }
 
-
-
-    unwatch_file(){
-        this.props.fileunwatch_fx(this.props.filepath);
-    }
-
     on_key_down(e) {
         if (e.metaKey || e.ctrlKey) {
             if (e.key === '+' || e.key === '=') {
@@ -388,17 +379,6 @@ class GraphView extends React.Component {
         }
     }
 
-    on_blur(e){
-        if (this.props.filewatch_fx && this.props.filepath){
-            this.watch_file();
-        }
-    }
-
-    watch_file(){
-        console.log('watching')
-        this.props.filewatch_fx(this.props.filepath)
-    }
-
     on_key_up(e){
         this.update_script();
     }
@@ -411,9 +391,6 @@ class GraphView extends React.Component {
     update_script(callback=()=>{}) {
         if (this.props.filepath){
             var stylesheet_str = JSON.stringify({...this.stylesheet});
-            if (document.hasFocus()){
-                this.props.fileunwatch_fx(this.props.filepath);
-            }
             this.script_updater.write({styleJSON: stylesheet_str}, callback);
         }
         store.dispatch(setStyleSheet({...this.stylesheet}))
@@ -1389,7 +1366,6 @@ class GraphView extends React.Component {
         var delayedExec = function(after, fn) {
             var timer;
             return function() {
-                // self.unwatch_file();
                 timer && clearTimeout(timer);
                 timer = setTimeout(fn, after);
             };
@@ -1466,7 +1442,7 @@ class GraphView extends React.Component {
     }
 
     set_script_updater(){
-        this.script_updater = this.props.rpc_client.update_stylesheet();
+        this.script_updater = rpc_client.update_stylesheet();
         return this.script_updater;
     }
 
@@ -1517,7 +1493,7 @@ class GraphView extends React.Component {
     }
 
     set_zoom(){
-        var cf = config_client.get_config()
+        var cf = fs.get_config();
         if (!(cf.env.graphview.zoom_scale == 1)){
             var win = document.querySelector('.graph-view'),
                 k = cf.env.graphview.zoom_scale,
@@ -1525,7 +1501,6 @@ class GraphView extends React.Component {
                 yscroll = cf.env.graphview.y_scroll;
             this.svg.call(this.zoom.scaleTo,k);
             win.scrollTo(xscroll, yscroll);
-            // this.set_zoom_config(k,xscroll,yscroll);
         }
     }
 
@@ -1552,10 +1527,6 @@ class GraphView extends React.Component {
         this.set_index();
         this.draw_elements();
         this.parse_stylesheet();
-        // console.log(document.hasFocus())
-        if (!(document.hasFocus())){
-            this.watch_file();
-        }
         this.setState({mounted:true});
         window.this = this
     }
@@ -1618,7 +1589,8 @@ class GraphView extends React.Component {
 }
 
 const mapStateToProps = state => {
-    return { tmp_stylesheet: state.tmp_stylesheet }
+    return { graph_style: state.stylesheet,
+            stylesheet: state.stylesheet}
 };
 
 export default connect(mapStateToProps, { setStyleSheet })(GraphView)
