@@ -7,7 +7,6 @@ const initialState = {
 };
 
 export function rootReducer(state = initialState, action) {
-    console.log(action)
     switch (action.type) {
         case atypes.SET_ACTIVE_VIEW:
             return Object.assign({}, state, {

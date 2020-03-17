@@ -49,7 +49,7 @@ class GraphView extends React.Component {
             reload_locations: false,
             update_locations: false
         };
-        this.update_script = _.debounce(this.update_script, 1000)
+        this.update_script = _.debounce(this.update_script, 500)
     }
 
     // lifecycle methods
@@ -95,6 +95,7 @@ class GraphView extends React.Component {
         }
         this.setState({mounted: false})
         this.update_script()
+        this.efferent_copies = [];
     }
 
     componentDidMount() {
@@ -113,6 +114,7 @@ class GraphView extends React.Component {
                 this.setGraph();
             }
         }
+        this.efferent_copies = [];
     }
 
     set_non_react_state() {
@@ -162,6 +164,25 @@ class GraphView extends React.Component {
         this.associateVisualInformationWithGraphNodes = this.associateVisualInformationWithGraphNodes.bind(this);
     }
 
+    match_exists_in_efferent_copies(stylesheet) {
+        var matching_copy, idx, efferent;
+        for (var i = 0; i < this.efferent_copies.length; i++){
+            efferent = this.efferent_copies[i]
+            if (_.isEqual(stylesheet, efferent)){
+                matching_copy = efferent;
+                idx = i;
+            }
+        }
+        if (matching_copy){
+            console.log(true)
+            this.efferent_copies.splice(idx, 1)
+            return true
+        }
+        else {
+            return false
+        }
+    }
+
     commit_to_stylesheet_and_update_script(callback = () => {
     }) {
         window.removeEventListener('mouseup', this.commit_to_stylesheet_and_update_script);
@@ -184,7 +205,7 @@ class GraphView extends React.Component {
 
         if (prev_and_current_style_exist) {
             var style_diff = this.difference(this.props.graph_style, prevProps.graph_style);
-            if (!_.isEmpty(style_diff)) {
+            if (!_.isEmpty(style_diff) && !this.match_exists_in_efferent_copies(this.props.graph_style)) {
                 this.handle_style_diff(style_diff)
             }
         }
@@ -388,10 +409,12 @@ class GraphView extends React.Component {
     }
 
     update_script(callback = () => {}) {
+        var efferent_copy = {...this.stylesheet}
+        this.efferent_copies.push(efferent_copy);
         if (this.props.filepath) {
-            rpc_client.update_stylesheet({...this.stylesheet}, console.log('yyyyy'));
+            rpc_client.update_stylesheet(efferent_copy);
         }
-        store.dispatch(setStyleSheet({...this.stylesheet}))
+        store.dispatch(setStyleSheet(efferent_copy));
     }
 
     reset_graph() {

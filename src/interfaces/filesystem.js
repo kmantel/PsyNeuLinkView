@@ -6,7 +6,8 @@ const path = require('path'),
 
 class FileSystemInterface {
     constructor() {
-        this.filewatchers = {}
+        this.filewatchers = {};
+        this.initialize_config();
     }
 
     /**
@@ -30,7 +31,6 @@ class FileSystemInterface {
             filepath = path.join(os.homedir(), filepath.slice(1, filepath.length))
         }
         if (filepath in this.filewatchers) {
-            this.filewatchers[filepath][0].close()
             this.filewatchers[filepath].close()
         }
         this.filewatchers[filepath] = fs.watch(filepath, _.debounce(callback, 50))

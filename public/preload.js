@@ -9,4 +9,3 @@ window.getCurrentWindow = remote.getCurrentWindow;
 window.electron_root = electron_root;
 window.remote = remote;
 window.interfaces = electron_root.interfaces;
-window.interfaces.rpc = require('./rpc')

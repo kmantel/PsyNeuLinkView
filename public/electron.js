@@ -13,9 +13,6 @@ var log = require('electron-log');
 const interfaces = require('../src/interfaces/interfaces').interfaces,
     interp = interfaces.interpreter;
 log.transports.console.level = "debug";
-
-let mainWindow;
-var a = 0;
 //TODO: figure out way around fixpath dependency
 fixpath();
 
@@ -28,6 +25,7 @@ function open_log_folder(){
 }
 
 function createWindow() {
+    var mainWindow;
     const {width, height} = electron.screen.getPrimaryDisplay().workAreaSize;
     mainWindow = new BrowserWindow({
         width: width,

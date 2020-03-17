@@ -597,7 +597,6 @@ class WorkSpace extends React.Component {
     }
 
     on_change(e) {
-        console.log(e);
     }
 
     saveMouseData(e) {

@@ -176,8 +176,8 @@ def run(bin_execute):
 # PsyNeuLinkView Graphics Info 
 pnlv_graphics_spec = {
     "Canvas Settings": {
-        "Width": 93.13,
-        "Height": 83.96,
+        "Width": 78.16,
+        "Height": 68.7,
         "Zoom": 100,
         "xScroll": 0,
         "yScroll": 0
@@ -187,32 +187,32 @@ pnlv_graphics_spec = {
         "Components": {
             "Nodes": {
                 "TASK_INPUT": {
-                    "x": 8.23,
-                    "y": 21.9
+                    "x": 15.71,
+                    "y": 53.79
                 },
                 "TASK_LAYER": {
-                    "x": 31.47,
-                    "y": 21.45
+                    "x": 15.44,
+                    "y": 53.79
                 },
                 "WORDS_INPUT": {
-                    "x": 82.06,
-                    "y": 19.93
+                    "x": 15.37,
+                    "y": 53.59
                 },
                 "WORDS_HIDDEN": {
-                    "x": 57.98,
-                    "y": 20.47
+                    "x": 15.44,
+                    "y": 53.79
                 },
                 "COLORS_INPUT": {
-                    "x": 7.06,
-                    "y": 50.67
+                    "x": 15.37,
+                    "y": 53.59
                 },
                 "COLORS_HIDDEN": {
-                    "x": 30.68,
-                    "y": 51.09
+                    "x": 15.44,
+                    "y": 53.79
                 },
                 "RESPONSE": {
-                    "x": 60.14,
-                    "y": 51.22
+                    "x": 55.96,
+                    "y": 55.44
                 }
             }
         }
