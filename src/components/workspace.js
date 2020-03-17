@@ -59,6 +59,7 @@ class WorkSpace extends React.Component {
         this.saveMouseData = this.saveMouseData.bind(this);
         this.set_active_component = this.set_active_component.bind(this);
         this.setMenu();
+        this.rpc_client = rpc_client;
     }
 
     componentDidMount() {
@@ -453,7 +454,7 @@ class WorkSpace extends React.Component {
 
     get_current_graph_style(){
         var self = this;
-        rpc_client.get_style(self.filepath, function (err) {
+        this.rpc_client.get_style(self.filepath, function (err) {
             if (err) {
                 self.dispatcher.capture({
                         error: "Python interpreter crashed while loading script.",

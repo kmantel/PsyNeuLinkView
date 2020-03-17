@@ -21,7 +21,7 @@ class RPCInterface{
             gv: {},
             style: {}
         };
-        this.most_recent_response = {'status': 'test'};
+        this.stylesheet_writer = null;
         this.instantiate_client = this.instantiate_client.bind(this);
         this.load_script = this.load_script.bind(this);
         this.get_json = this.get_json.bind(this);
@@ -99,10 +99,26 @@ class RPCInterface{
         })
     }
 
-    update_stylesheet(callback = function () {
-    }) {
+    instantiate_stylesheet_writer(callback = () => {}) {
         var client = this.instantiate_client();
         return client.UpdateStylesheet(callback)
+    }
+
+    update_stylesheet(stylesheet, callback = () => {}) {
+        var writeToFile;
+        if (!this.stylesheet_writer){
+            this.stylesheet_writer = this.instantiate_stylesheet_writer(callback)
+        }
+        if (typeof stylesheet === 'object' && stylesheet !== null) {
+            writeToFile = JSON.stringify(stylesheet);
+        }
+        else if (typeof stylesheet === 'string' || stylesheet instanceof String) {
+            writeToFile = stylesheet;
+        }
+        else {
+            throw "stylesheet arg of update_stylesheet must be a stylesheet object or a stringified JSON"
+        }
+        this.stylesheet_writer.write({styleJSON:writeToFile}, callback)
     }
 
     health_check(callback = function () {

@@ -10,7 +10,10 @@ class FileSystemInterface {
     }
 
     /**
-     * Adds filepath to watched files. Watched files execute callback when changes to them occur.
+     * Adds {array} to watched files containing the file watcher in the 0th index and the un-debounced callback in the 1st index,
+     * so that the filewatcher can be reconstructed after being closed.
+     *
+     * Watched files execute callback when changes to them occur.
      *
      * NOTE: due to a known issue causing fs.watch to emit multiple change events, we have to debounce the callback.
      * It's still possible that the callback could fire twice if the change events are registered by the watch API
@@ -20,12 +23,14 @@ class FileSystemInterface {
      *
      * @param {string} filepath - path to file that should be watched.
      * @param {function} callback - function that describes actions to take when change occurs in file.
+     *
      * */
     watch(filepath, callback = (e)=>{}) {
         if (filepath.startsWith('~')) {
             filepath = path.join(os.homedir(), filepath.slice(1, filepath.length))
         }
         if (filepath in this.filewatchers) {
+            this.filewatchers[filepath][0].close()
             this.filewatchers[filepath].close()
         }
         this.filewatchers[filepath] = fs.watch(filepath, _.debounce(callback, 50))

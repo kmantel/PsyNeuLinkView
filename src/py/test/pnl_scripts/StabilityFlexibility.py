@@ -204,50 +204,50 @@ for i in range(1, len(stabilityFlexibility.controller.input_ports)):
 # print(activation.mod_gain)
 # decisionMaker.log.print_entries()
 
-# PsyNeuLinkView Graphics Info 
+# PsyNeuLinkView Graphics Info
 pnlv_graphics_spec = {
     "Canvas Settings": {
-        "Width": 68.74,
-        "Height": 69.05,
+        "Width": 69.78,
+        "Height": 78,
         "Zoom": 100,
         "xScroll": 0,
-        "yScroll": 0
+        "yScroll": 117
     },
     "Graph Settings": {
-        "Scale": 1.41,
+        "Scale": 0.94,
         "Components": {
             "Nodes": {
                 "Stimulus Info * Activity": {
-                    "x": 22.42,
-                    "y": 27.48
+                    "x": 91.48,
+                    "y": 96.18
                 },
                 "DDM Integrator": {
-                    "x": 7.03,
-                    "y": 32.16
+                    "x": 63.38,
+                    "y": 38.06
                 },
                 "Input": {
-                    "x": 9.16,
-                    "y": 0.08
+                    "x": 46.29,
+                    "y": 38.02
                 },
                 "Activity": {
-                    "x": 4.96,
-                    "y": 51.2
+                    "x": 61.35,
+                    "y": 38.06
                 },
                 "objective_mechanism-0": {
-                    "x": 2.06,
-                    "y": 41.85
+                    "x": 35.18,
+                    "y": 38.06
                 },
                 "Stimulus Info": {
-                    "x": 4.76,
-                    "y": 24.84
+                    "x": 48.86,
+                    "y": 38.06
                 },
                 "DDM": {
-                    "x": 6.35,
-                    "y": 36.96
+                    "x": 60.14,
+                    "y": 38.06
                 },
                 "OptimizationControlMechanism-0": {
-                    "x": 0.01,
-                    "y": 46.53
+                    "x": 26.84,
+                    "y": 38.06
                 }
             }
         }
