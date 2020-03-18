@@ -1,5 +1,5 @@
 import React from 'react'
-import '../css/plotter.css'
+import '../css/d3plotter.css'
 import * as d3 from 'd3'
 import {Resizable} from 're-resizable'
 import {Spinner} from '@blueprintjs/core'
@@ -12,7 +12,7 @@ const style = {
 };
 
 
-class Plotter extends React.PureComponent {
+class D3plotter extends React.PureComponent {
     constructor(props) {
         super(props);
         this.state = {
@@ -319,4 +319,4 @@ class Plotter extends React.PureComponent {
     }
 }
 
-export default Plotter
+export default D3plotter

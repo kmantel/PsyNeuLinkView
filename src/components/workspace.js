@@ -1,8 +1,8 @@
 import React from 'react'
 import Layout from './layout'
 import SideBar from './sidebar'
-import Plotter from './plotter'
-import GraphView from './graphview'
+import D3plotter from './d3plotter'
+import GraphView from './d3model'
 import ToolTipBox from './tooltipbox'
 import ControlStrip from "./controlstrip";
 import ParameterControlBox from './parametercontrolbox'
@@ -66,157 +66,6 @@ class WorkSpace extends React.Component {
         var self = this,
             padding = 10
         this.get_initial_filepath();
-        this.sidebar = <div key="sidebar">
-            <SideBar
-                hover={() => this.set_tool_tip('sidebar')}
-                className='pnl-panel'
-                onResizeStart={
-                    ()=>{
-                        self.get_reference_sizing_factors('row_one_horizontal_factor', 'vertical_factor')
-                    }
-                }
-                onResize={
-                    self.panel_resize
-                }
-                size={
-                    {
-                        height: this.state.vertical_factor - padding,
-                        width: this.state.row_one_horizontal_factor - padding
-                    }
-                }
-                maxWidth = {
-                    this.panel_max_width
-                }
-                maxHeight = {
-                    this.panel_max_height
-                }
-            />
-        </div>
-        this.graphview = <div key="graphview">
-                <GraphView
-                    className='pnl-panel'
-                    onResizeStart={
-                        ()=>{
-                            self.get_reference_sizing_factors('row_one_horizontal_factor', 'vertical_factor')
-                        }
-                    }
-                    onResize={
-                        self.panel_resize
-                    }
-                    size={
-                        {
-                            height: this.state.vertical_factor - padding,
-                            width: this.state.x_res - this.state.row_one_horizontal_factor - padding * 2
-                        }
-                    }
-                    maxWidth = {
-                        this.panel_max_width
-                    }
-                    maxHeight = {
-                        this.panel_max_height
-                    }
-                    location = {
-                        {
-                            x:this.state.row_one_horizontal_factor,
-                            y:0
-                        }
-                    }
-                    graph={this.state.graph}
-                    graph_style = {this.state.graph_style}
-                    filepath = {this.state.filepath}
-                    rpc_client = {rpc_client}
-                    graph_size_fx = {this.set_graph_size}
-                />
-            </div>
-        this.plotter =  <div key="plotter">
-                <Plotter
-                    className='pnl-panel'
-                    onResizeStart={
-                        ()=>{
-                            self.get_reference_sizing_factors('row_one_horizontal_factor', 'vertical_factor')
-                        }
-                    }
-                    onResize={
-                        self.panel_resize
-                    }
-                    size={
-                        {
-                            height: this.state.vertical_factor - padding,
-                            width: this.state.x_res - this.state.row_one_horizontal_factor - padding * 2
-                        }
-                    }
-                    maxWidth = {
-                        this.panel_max_width
-                    }
-                    maxHeight = {
-                        this.panel_max_height
-                    }
-                    location = {
-                        {
-                            x:this.state.row_one_horizontal_factor,
-                            y:0
-                        }
-                    }
-                    graph={this.state.graph}
-                    graph_style = {this.state.graph_style}
-                    filepath = {this.state.filepath}
-                    rpc_client = {rpc_client}
-                    graph_size_fx = {this.set_graph_size}
-                />
-            </div>
-        this.tipbox = <div key="tipbox">
-                <ToolTipBox
-                    text={this.state.active_tooltip}
-                    className='pnl-panel'
-                    onResizeStart={
-                        ()=>{
-                            self.get_reference_sizing_factors('row_two_horizontal_factor', 'vertical_factor')
-                        }
-                    }
-                    onResize={
-                        self.panel_resize
-                    }
-                    size={
-                        {
-                            height: this.state.y_res - this.state.vertical_factor - padding * 6,
-                            width: this.state.row_two_horizontal_factor - padding
-                        }
-                    }
-                    maxWidth = {
-                        this.panel_max_width
-                    }
-                    maxHeight = {
-                        this.panel_max_height
-                    }
-                />
-
-            </div>
-        this.paramcontrolbox = <div key="paramcontrol">
-                <ParameterControlBox
-                    text={this.state.active_tooltip}
-                    className='pnl-panel'
-                    onResizeStart={
-                        ()=>{
-                            self.get_reference_sizing_factors('row_two_horizontal_factor', 'vertical_factor')
-                        }
-                    }
-                    onResize={
-                        self.panel_resize
-                    }
-                    size={
-                        {
-                            height: this.state.y_res - this.state.vertical_factor - padding * 6,
-                            width: this.state.x_res - this.state.row_two_horizontal_factor - padding * 2
-                        }
-                    }
-                    maxWidth = {
-                        this.panel_max_width
-                    }
-                    maxHeight = {
-                        this.panel_max_height
-                    }
-                />
-            </div>
 
     }
 
@@ -228,29 +77,6 @@ class WorkSpace extends React.Component {
         }
     }
 
-    get_initial_sizing_factors() {
-        var w = window.innerWidth,
-            h = window.innerHeight,
-            row_one_h = null,
-            row_two_h = null,
-            v = null;
-        if (!row_one_h) {
-            row_one_h = Math.ceil(w * 0.2)
-        }
-        if (!row_two_h) {
-            row_two_h = Math.ceil(w * 0.2)
-        }
-        if (!v) {
-            v = Math.ceil(h * 0.7)
-        }
-        return(
-            {
-                row_one_horizontal_factor: row_one_h,
-                row_two_horizontal_factor: row_two_h,
-                vertical_factor: v
-            }
-        )
-    }
 
     setMenu() {
         const electron = window.remote;
@@ -361,6 +187,7 @@ class WorkSpace extends React.Component {
         // exports.menu_bindings = menu_bindings;
     }
 
+
     sleep(ms) {
         return new Promise(resolve => {
             setTimeout(resolve, ms)
@@ -452,6 +279,45 @@ class WorkSpace extends React.Component {
         );
     }
 
+    async validate_server_status_and_load_script(filepath) {
+        var self, previous_title, win;
+        self = this;
+        win = window.remote.getCurrentWindow();
+        self.filepath = filepath;
+        self.setState({graph: "loading"}, ()=>{win.setTitle('PsyNeuLinkView')});
+        window.electron_root.addRecentDocument(filepath);
+        interp.restart_rpc_server(
+            ()=>{
+                self.load_script(filepath)
+            },
+        );
+    }
+
+    get_initial_sizing_factors() {
+        var w = window.innerWidth,
+            h = window.innerHeight,
+            row_one_h = null,
+            row_two_h = null,
+            v = null;
+        if (!row_one_h) {
+            row_one_h = Math.ceil(w * 0.2)
+        }
+        if (!row_two_h) {
+            row_two_h = Math.ceil(w * 0.2)
+        }
+        if (!v) {
+            v = Math.ceil(h * 0.7)
+        }
+        return(
+            {
+                row_one_horizontal_factor: row_one_h,
+                row_two_horizontal_factor: row_two_h,
+                vertical_factor: v
+            }
+        )
+    }
+
+
     get_current_graph_style(){
         var self = this;
         this.rpc_client.get_style(self.filepath, function (err) {
@@ -477,19 +343,6 @@ class WorkSpace extends React.Component {
         })
     }
 
-    async validate_server_status_and_load_script(filepath) {
-        var self, previous_title, win;
-        self = this;
-        win = window.remote.getCurrentWindow();
-        self.filepath = filepath;
-        self.setState({graph: "loading"}, ()=>{win.setTitle('PsyNeuLinkView')});
-        window.electron_root.addRecentDocument(filepath);
-        interp.restart_rpc_server(
-            ()=>{
-                self.load_script(filepath)
-            },
-        );
-    }
 
     choose_composition() {
         var compositions = this.container.json.compositions;
@@ -696,7 +549,7 @@ class WorkSpace extends React.Component {
                 />
             </div>,
             plotter =  <div key="plotter">
-                <Plotter
+                <D3plotter
                     className='pnl-panel'
                     onResizeStart={
                         ()=>{

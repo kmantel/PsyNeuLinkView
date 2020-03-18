@@ -3,7 +3,11 @@
   <component name="ChangeListManager">
     <list default="true" id="0426a943-ef89-4391-a3a0-8152f91aa099" name="Default Changelist" comment="Initial title changed from test to PsyNeuLinkView">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/graphview.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/graphview.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/graphview.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/d3model.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/plotter.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/d3plotter.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/workspace.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/workspace.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/css/graphview.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/css/d3model.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/css/plotter.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/css/d3plotter.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/py/test/pnl_scripts/StabilityFlexibility.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/py/test/pnl_scripts/StabilityFlexibility.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -139,7 +143,7 @@
       <workItem from="1583857873194" duration="665000" />
       <workItem from="1583946495843" duration="5525000" />
       <workItem from="1584118107588" duration="5603000" />
-      <workItem from="1584367744802" duration="33281000" />
+      <workItem from="1584367744802" duration="38031000" />
     </task>
     <task id="LOCAL-00001" summary="Enabled touchpad zoom gestures and windows ctrl shortcuts">
       <created>1581449946471</created>
@@ -321,24 +325,24 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/components/workspace.js</url>
-          <line>456</line>
+          <line>322</line>
           <properties lambdaOrdinal="-1" />
           <option name="timeStamp" value="41" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/components/workspace.js</url>
-          <line>471</line>
+          <line>337</line>
           <properties lambdaOrdinal="-1" />
           <option name="timeStamp" value="42" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/src/components/graphview.js</url>
+          <url>file://$PROJECT_DIR$/src/components/d3model.js</url>
           <line>33</line>
           <properties lambdaOrdinal="-1" />
           <option name="timeStamp" value="45" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/src/components/graphview.js</url>
+          <url>file://$PROJECT_DIR$/src/components/d3model.js</url>
           <line>426</line>
           <properties lambdaOrdinal="-1" />
           <option name="timeStamp" value="47" />
@@ -350,7 +354,7 @@
           <option name="timeStamp" value="48" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/src/components/graphview.js</url>
+          <url>file://$PROJECT_DIR$/src/components/d3model.js</url>
           <line>214</line>
           <properties lambdaOrdinal="-1" />
           <option name="timeStamp" value="53" />

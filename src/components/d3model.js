@@ -1,5 +1,5 @@
 import React from 'react'
-import '../css/graphview.css'
+import '../css/d3model.css'
 import * as d3 from 'd3'
 import add_context_menu from '../utility/add_context_menu'
 import {Resizable} from 're-resizable'
@@ -31,7 +31,7 @@ var fs = window.interfaces.filesystem,
     interp = window.interfaces.interpreter,
     rpc_client = window.interfaces.rpc;
 
-class GraphView extends React.Component {
+class D3model extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -55,7 +55,7 @@ class GraphView extends React.Component {
 
     debounce_functions(){
         this.update_script = _.debounce(this.update_script, 10)
-        this.set_dirty_flag_to_false = _.debounce(this.set_dirty_flag_to_false, 10)
+        this.set_dirty_flag_to_false = _.debounce(this.set_dirty_flag_to_false, 100)
         this.on_resize = _.debounce(this.on_resize, 10)
     }
 
@@ -122,6 +122,10 @@ class GraphView extends React.Component {
             }
         }
         this.efferent_copies = [];
+    }
+
+    mouse_move(e) {
+        e.preventDefault();
     }
 
     set_non_react_state() {
@@ -1633,4 +1637,4 @@ const mapStateToProps = state => {
     }
 };
 
-export default connect(mapStateToProps, {setStyleSheet})(GraphView)
+export default connect(mapStateToProps, {setStyleSheet})(D3model)
