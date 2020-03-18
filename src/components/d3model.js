@@ -96,6 +96,7 @@ class D3model extends React.Component {
         window.removeEventListener('wheel', this.on_mouse_wheel);
         window.removeEventListener('keydown', this.on_key_down);
         window.removeEventListener('keyup', this.on_key_up);
+        window.removeEventListener('mousemove', this.mouse_move);
         var win = document.querySelector('.graph-view');
         if (win) {
             win.removeEventListener('scroll', this.update_scroll);
@@ -106,6 +107,7 @@ class D3model extends React.Component {
     }
 
     componentDidMount() {
+        window.addEventListener('mousemove', this.mouse_move)
         window.addEventListener('resize', this.on_resize);
         window.addEventListener('wheel', this.on_mouse_wheel, {passive: false});
         window.addEventListener('keydown', this.on_key_down);
