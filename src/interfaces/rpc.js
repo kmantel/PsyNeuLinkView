@@ -1,7 +1,8 @@
 const log = require('electron-log'),
     grpc = require('grpc'),
     protoloader = require('@grpc/proto-loader'),
-    path = require('path');
+    path = require('path'),
+    _ = require('lodash');
 
 class RPCInterface{
     constructor() {

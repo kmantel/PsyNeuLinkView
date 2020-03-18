@@ -43,13 +43,14 @@ class GraphView extends React.Component {
             spinner_visible: false
         };
         this.bind_this_to_functions = this.bind_this_to_functions.bind(this);
+        this.set_dirty_flag_to_false = _.debounce(this.set_dirty_flag_to_false, 50)
         this.bind_this_to_functions();
         this.set_non_react_state();
         this.flags = {
+            dirty: false,
             reload_locations: false,
             update_locations: false
         };
-        this.update_script = _.debounce(this.update_script, 500)
     }
 
     // lifecycle methods
@@ -94,7 +95,7 @@ class GraphView extends React.Component {
             win.removeEventListener('scroll', this.update_scroll);
         }
         this.setState({mounted: false})
-        this.update_script()
+        this.update_script();
         this.efferent_copies = [];
     }
 
@@ -174,7 +175,6 @@ class GraphView extends React.Component {
             }
         }
         if (matching_copy){
-            console.log(true)
             this.efferent_copies.splice(idx, 1)
             return true
         }
@@ -205,7 +205,10 @@ class GraphView extends React.Component {
 
         if (prev_and_current_style_exist) {
             var style_diff = this.difference(this.props.graph_style, prevProps.graph_style);
-            if (!_.isEmpty(style_diff) && !this.match_exists_in_efferent_copies(this.props.graph_style)) {
+            if (!_.isEmpty(style_diff) &&
+                !document.hasFocus() &&
+                !this.flags.dirty
+            ) {
                 this.handle_style_diff(style_diff)
             }
         }
@@ -400,7 +403,7 @@ class GraphView extends React.Component {
     }
 
     on_key_up(e) {
-        this.update_script();
+        // this.update_script();
     }
 
     on_scroll_end(e) {
@@ -409,12 +412,13 @@ class GraphView extends React.Component {
     }
 
     update_script(callback = () => {}) {
+        var self = this;
         var efferent_copy = {...this.stylesheet}
         this.efferent_copies.push(efferent_copy);
         if (this.props.filepath) {
+            store.dispatch(setStyleSheet(efferent_copy));
             rpc_client.update_stylesheet(efferent_copy);
         }
-        store.dispatch(setStyleSheet(efferent_copy));
     }
 
     reset_graph() {
@@ -1001,7 +1005,8 @@ class GraphView extends React.Component {
             (s) => {
                 self.move_node(s, dx, dy)
             }
-        )
+        );
+        this.update_script();
     }
 
     get_viewBox() {
@@ -1065,7 +1070,7 @@ class GraphView extends React.Component {
         }
         var dx = d3.event.dx,
             dy = d3.event.dy;
-        self.move_nodes(dx, dy)
+        self.move_nodes(dx, dy);
     }
 
     move_label_to_corresponding_node(node) {
@@ -1305,7 +1310,14 @@ class GraphView extends React.Component {
         this.move_graph(horizontal_offset, vertical_offset)
     }
 
+    set_dirty_flag_to_false() {
+        this.flags.dirty = false;
+        console.log('dirty', this.flags.dirty)
+    }
+
     on_zoom() {
+        this.flags.dirty = true;
+        console.log('dirty', this.flags.dirty)
         var d3e = d3.select('svg.graph');
         var win = document.querySelector('.graph-view')
         if (d3.event.sourceEvent && d3.event.sourceEvent.type === 'mousemove') {
@@ -1342,6 +1354,7 @@ class GraphView extends React.Component {
         ;
         win.scrollTo(xscroll, yscroll);
         this.redimension_viewbox();
+        this.set_dirty_flag_to_false();
     }
 
     get_scroll_bounds() {
