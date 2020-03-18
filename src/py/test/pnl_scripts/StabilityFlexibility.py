@@ -207,47 +207,47 @@ for i in range(1, len(stabilityFlexibility.controller.input_ports)):
 # PsyNeuLinkView Graphics Info
 pnlv_graphics_spec = {
     "Canvas Settings": {
-        "Width": 78.8,
-        "Height": 68.9,
-        "Zoom": 161,
-        "xScroll": 32,
-        "yScroll": 15
+        "Width": 52.25,
+        "Height": 68.76,
+        "Zoom": 100,
+        "xScroll": 0,
+        "yScroll": 0
     },
     "Graph Settings": {
         "Scale": 1.41,
         "Components": {
             "Nodes": {
                 "Stimulus Info * Activity": {
-                    "x": 31.51,
-                    "y": 17.13
+                    "x": 28.49,
+                    "y": 17.59
                 },
                 "DDM Integrator": {
-                    "x": 25.06,
-                    "y": 31.48
+                    "x": 22.05,
+                    "y": 27.15
                 },
                 "Input": {
-                    "x": 10.88,
-                    "y": 45.8
+                    "x": 7.73,
+                    "y": 36.58
                 },
                 "Activity": {
-                    "x": 22.6,
-                    "y": 89.37
+                    "x": 19.55,
+                    "y": 65.59
                 },
                 "objective_mechanism-0": {
-                    "x": 19.3,
-                    "y": 60.5
+                    "x": 16.24,
+                    "y": 46.47
                 },
                 "Stimulus Info": {
-                    "x": 23.25,
-                    "y": 2.43
+                    "x": 20.26,
+                    "y": 7.89
                 },
                 "DDM": {
-                    "x": 24.21,
-                    "y": 45.8
+                    "x": 21.18,
+                    "y": 36.58
                 },
                 "OptimizationControlMechanism-0": {
-                    "x": 16.94,
-                    "y": 74.86
+                    "x": 13.96,
+                    "y": 56.03
                 }
             }
         }

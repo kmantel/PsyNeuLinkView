@@ -43,14 +43,20 @@ class GraphView extends React.Component {
             spinner_visible: false
         };
         this.bind_this_to_functions = this.bind_this_to_functions.bind(this);
-        this.set_dirty_flag_to_false = _.debounce(this.set_dirty_flag_to_false, 50)
         this.bind_this_to_functions();
+        this.debounce_functions();
         this.set_non_react_state();
         this.flags = {
             dirty: false,
             reload_locations: false,
             update_locations: false
         };
+    }
+
+    debounce_functions(){
+        this.update_script = _.debounce(this.update_script, 10)
+        this.set_dirty_flag_to_false = _.debounce(this.set_dirty_flag_to_false, 10)
+        this.on_resize = _.debounce(this.on_resize, 10)
     }
 
     // lifecycle methods
@@ -127,6 +133,7 @@ class GraphView extends React.Component {
     }
 
     bind_this_to_functions() {
+        this.debounce_functions = this.debounce_functions.bind(this);
         this.update_graph_from_stylesheet = this.update_graph_from_stylesheet.bind(this);
         this.redimension_viewbox = this.redimension_viewbox.bind(this);
         this.set_aspect_ratio = this.set_aspect_ratio.bind(this);
