@@ -32,6 +32,7 @@ function createWindow() {
         height: height,
         webPreferences: {
             nodeIntegration: true,
+            webSecurity: false,
             preload: path.join(isDev ? __dirname : `${adjusted_app_path}/build/`, 'preload.js')
         }
     });

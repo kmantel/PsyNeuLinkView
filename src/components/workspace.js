@@ -233,6 +233,7 @@ class WorkSpace extends React.Component {
                 } else {
                     var compositions = rpc_client.script_maintainer.compositions;
                     var composition = compositions[compositions.length - 1];
+                    this.filepath = filepath
                     rpc_client.get_json(composition, function (err) {
                         if (err) {
                             self.dispatcher.capture({
@@ -247,31 +248,38 @@ class WorkSpace extends React.Component {
                             );
                             return false
                         }
-                        var new_graph = JSON.parse(JSON.stringify(rpc_client.script_maintainer.gv));
-                        var new_graph_style = JSON.parse(JSON.stringify(rpc_client.script_maintainer.style))
-                        var cf = fs.get_config();
-                        cf.env.filepath = filepath;
-                        fs.set_config(cf);
-                        store.dispatch(setStyleSheet(new_graph_style));
-                        self.setState({
-                                graph: new_graph,
-                                filepath: filepath,
-                            });
-                        var homedir = window.remote.app.getPath('home');
-                        if (filepath.startsWith(homedir)){
-                            filepath = `~${filepath.slice(homedir.length)}`
-                        }
-                        fs.watch(filepath, (e)=>{
-                            window.dispatchEvent(new Event(e));
-                            self.get_current_graph_style()
-                        });
-                        window.remote.getCurrentWindow().setTitle(`${composition} \u2014 ${filepath}`)
-                        self.forceUpdate();
+                        self.set_state_from_rpc_client()
                         }
                     )
                 }
             }
         );
+    }
+
+    set_state_from_rpc_client(){
+        var self = this,
+            filepath = this.filepath,
+            compositions = rpc_client.script_maintainer.compositions,
+            composition = compositions[compositions.length - 1],
+            new_graph = Object.assign({}, JSON.parse(JSON.stringify(rpc_client.script_maintainer.gv))),
+            new_graph_style = Object.assign({}, JSON.parse(JSON.stringify(rpc_client.script_maintainer.style))),
+            cf = Object.assign({}, fs.get_config());
+        cf.env.filepath = filepath;
+        fs.set_config(cf);
+        store.dispatch(setStyleSheet(new_graph_style));
+        self.setState({
+            graph: new_graph,
+            filepath: filepath,
+        });
+        var homedir = window.remote.app.getPath('home');
+        if (filepath.startsWith(homedir)){
+            filepath = `~${filepath.slice(homedir.length)}`
+        }
+        fs.watch(filepath, (e)=>{
+            window.dispatchEvent(new Event(e));
+            self.get_current_graph_style()
+        });
+        window.remote.getCurrentWindow().setTitle(`${composition} \u2014 ${filepath}`)
     }
 
     async validate_server_status_and_load_script(filepath) {

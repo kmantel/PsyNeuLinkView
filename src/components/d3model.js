@@ -45,7 +45,7 @@ class D3model extends React.Component {
         this.bind_this_to_functions = this.bind_this_to_functions.bind(this);
         this.bind_this_to_functions();
         this.debounce_functions();
-        this.set_non_react_state();
+        this.set_aspect_ratio();
         this.flags = {
             dirty: false,
             reload_locations: false,
@@ -55,7 +55,7 @@ class D3model extends React.Component {
 
     debounce_functions(){
         this.update_script = _.debounce(this.update_script, 100)
-        this.set_dirty_flag_to_false = _.debounce(this.set_dirty_flag_to_false, 100)
+        this.set_dirty_flag_to_false = _.debounce(this.set_dirty_flag_to_false, 200)
         this.on_resize = _.debounce(this.on_resize, 100)
     }
 
@@ -136,7 +136,6 @@ class D3model extends React.Component {
         this.mouse_offset = {x: 0, y: 0};
         this.scaling_factor = 1;
         this.fill_proportion = 1;
-        this.aspect_ratio = 1;
     }
 
     bind_this_to_functions() {
@@ -1507,7 +1506,7 @@ class D3model extends React.Component {
     draw_elements() {
         var container = this.createSVG(),
             self = this;
-        // this.set_aspect_ratio();
+        this.set_aspect_ratio();
         this.drawProjections(container);
         this.drawNodes(container, (node) => {
             self.drag_selected(node)
@@ -1544,6 +1543,7 @@ class D3model extends React.Component {
             proportion = Math.min(w_proportion, h_proportion);
             svg.setAttribute('viewBox', [0, 0, viewBox_w_mod, viewBox_h_mod]);
             this.scale_graph(proportion);
+            this.forceUpdate();
         }
     }
 
@@ -1558,12 +1558,7 @@ class D3model extends React.Component {
 
     set_aspect_ratio() {
         if (!this.props.aspect_ratio){
-            var svg = document.querySelector('svg'),
-                svg_rect = svg.getBoundingClientRect(),
-                svg_rect_w = svg_rect.width,
-                svg_rect_h = svg_rect.height;
-            store.dispatch(setModelAspectRatio(svg_rect_w / svg_rect_h))
-            this.setState({aspect_ratio: svg_rect_w / svg_rect_h})
+            store.dispatch(setModelAspectRatio(this.props.size.width / this.props.size.height));
         }
     }
 
