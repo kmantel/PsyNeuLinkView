@@ -3,7 +3,8 @@ import * as atypes from './actionTypes'
 
 const initialState = {
     activeView: 'graphview',
-    stylesheet: {}
+    stylesheet: {},
+    model_aspect_ratio: null
 };
 
 export function rootReducer(state = initialState, action) {
@@ -19,6 +20,13 @@ export function rootReducer(state = initialState, action) {
                     stylesheet: action.stylesheet
                 }
             );
+
+        case atypes.SET_MODEL_ASPECT_RATIO:
+            return Object.assign({}, state, {
+                    model_aspect_ratio: action.ratio
+                }
+            );
+
         default:
             return state
     }

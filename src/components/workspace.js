@@ -234,44 +234,39 @@ class WorkSpace extends React.Component {
                     var compositions = rpc_client.script_maintainer.compositions;
                     var composition = compositions[compositions.length - 1];
                     rpc_client.get_json(composition, function (err) {
-                            if (err) {
-                                self.dispatcher.capture({
-                                        error: "Python interpreter crashed while loading script.",
-                                        message:
-                                            `Message: ${err.cause !== undefined ?
-                                                err.cause.message
-                                                :
-                                                err.message}`
-                                    },
-                                    {graph: null}
-                                );
-                                return false
-                            }
-                            var new_graph = JSON.parse(JSON.stringify(rpc_client.script_maintainer.gv));
-                            try {
-                                var new_graph_style = JSON.parse(JSON.stringify(rpc_client.script_maintainer.style));
-                            }
-                            catch {
-                                var new_graph_style = {};
-                            }
-                            var cf = fs.get_config();
-                            cf.env.filepath = filepath;
-                            fs.set_config(cf);
-                            self.setState({
+                        if (err) {
+                            self.dispatcher.capture({
+                                    error: "Python interpreter crashed while loading script.",
+                                    message:
+                                        `Message: ${err.cause !== undefined ?
+                                            err.cause.message
+                                            :
+                                            err.message}`
+                                },
+                                {graph: null}
+                            );
+                            return false
+                        }
+                        var new_graph = JSON.parse(JSON.stringify(rpc_client.script_maintainer.gv));
+                        var new_graph_style = JSON.parse(JSON.stringify(rpc_client.script_maintainer.style))
+                        var cf = fs.get_config();
+                        cf.env.filepath = filepath;
+                        fs.set_config(cf);
+                        store.dispatch(setStyleSheet(new_graph_style));
+                        self.setState({
                                 graph: new_graph,
-                                graph_style: new_graph_style,
                                 filepath: filepath,
                             });
-                            store.dispatch(setStyleSheet(new_graph_style));
-                            var homedir = window.remote.app.getPath('home');
-                            if (filepath.startsWith(homedir)){
-                                filepath = `~${filepath.slice(homedir.length)}`
-                            }
-                            fs.watch(filepath, (e)=>{
-                                window.dispatchEvent(new Event(e));
-                                self.get_current_graph_style()
-                            });
-                            window.remote.getCurrentWindow().setTitle(`${composition} \u2014 ${filepath}`)
+                        var homedir = window.remote.app.getPath('home');
+                        if (filepath.startsWith(homedir)){
+                            filepath = `~${filepath.slice(homedir.length)}`
+                        }
+                        fs.watch(filepath, (e)=>{
+                            window.dispatchEvent(new Event(e));
+                            self.get_current_graph_style()
+                        });
+                        window.remote.getCurrentWindow().setTitle(`${composition} \u2014 ${filepath}`)
+                        self.forceUpdate();
                         }
                     )
                 }

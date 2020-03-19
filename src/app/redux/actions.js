@@ -13,3 +13,10 @@ export function setStyleSheet(stylesheet){
         stylesheet: stylesheet
     }
 }
+
+export function setModelAspectRatio(ratio){
+    return {
+        type: atypes.SET_MODEL_ASPECT_RATIO,
+        ratio: ratio
+    }
+}

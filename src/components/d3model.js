@@ -8,7 +8,7 @@ import {Index} from '../utility/d3-helper/d3-helper'
 import * as _ from 'lodash'
 import {connect} from "react-redux";
 import {store} from "../app/redux/store";
-import {setStyleSheet} from "../app/redux/actions";
+import {setStyleSheet, setModelAspectRatio} from "../app/redux/actions";
 
 const context_menu = [
     {
@@ -54,9 +54,9 @@ class D3model extends React.Component {
     }
 
     debounce_functions(){
-        this.update_script = _.debounce(this.update_script, 10)
+        this.update_script = _.debounce(this.update_script, 100)
         this.set_dirty_flag_to_false = _.debounce(this.set_dirty_flag_to_false, 100)
-        this.on_resize = _.debounce(this.on_resize, 10)
+        this.on_resize = _.debounce(this.on_resize, 100)
     }
 
     // lifecycle methods
@@ -136,6 +136,7 @@ class D3model extends React.Component {
         this.mouse_offset = {x: 0, y: 0};
         this.scaling_factor = 1;
         this.fill_proportion = 1;
+        this.aspect_ratio = 1;
     }
 
     bind_this_to_functions() {
@@ -1325,12 +1326,10 @@ class D3model extends React.Component {
 
     set_dirty_flag_to_false() {
         this.flags.dirty = false;
-        console.log('dirty', this.flags.dirty)
     }
 
     on_zoom() {
         this.flags.dirty = true;
-        console.log('dirty', this.flags.dirty)
         var d3e = d3.select('svg.graph');
         var win = document.querySelector('.graph-view')
         if (d3.event.sourceEvent && d3.event.sourceEvent.type === 'mousemove') {
@@ -1526,7 +1525,7 @@ class D3model extends React.Component {
             viewBox_h = parseInt(viewBox[3]),
             svg_w = Math.round(svg.getBoundingClientRect().width),
             svg_h = Math.round(svg.getBoundingClientRect().height),
-            aspect_ratio = this.aspect_ratio,
+            aspect_ratio = this.props.aspect_ratio,
             w_difference = svg_w - viewBox_w,
             h_difference = svg_h - viewBox_h,
             viewBox_w_mod,
@@ -1544,7 +1543,6 @@ class D3model extends React.Component {
                 h_proportion = viewBox_h_mod / viewBox_h;
             proportion = Math.min(w_proportion, h_proportion);
             svg.setAttribute('viewBox', [0, 0, viewBox_w_mod, viewBox_h_mod]);
-            this.scaling_factor /= proportion;
             this.scale_graph(proportion);
         }
     }
@@ -1559,11 +1557,14 @@ class D3model extends React.Component {
     }
 
     set_aspect_ratio() {
-        var svg = document.querySelector('svg'),
-            svg_rect = svg.getBoundingClientRect(),
-            svg_rect_w = svg_rect.width,
-            svg_rect_h = svg_rect.height;
-        this.aspect_ratio = svg_rect_w / svg_rect_h;
+        if (!this.props.aspect_ratio){
+            var svg = document.querySelector('svg'),
+                svg_rect = svg.getBoundingClientRect(),
+                svg_rect_w = svg_rect.width,
+                svg_rect_h = svg_rect.height;
+            store.dispatch(setModelAspectRatio(svg_rect_w / svg_rect_h))
+            this.setState({aspect_ratio: svg_rect_w / svg_rect_h})
+        }
     }
 
     setGraph() {
@@ -1635,8 +1636,9 @@ class D3model extends React.Component {
 const mapStateToProps = state => {
     return {
         graph_style: state.stylesheet,
-        stylesheet: state.stylesheet
+        stylesheet: state.stylesheet,
+        aspect_ratio: state.model_aspect_ratio
     }
 };
 
-export default connect(mapStateToProps, {setStyleSheet})(D3model)
+export default connect(mapStateToProps, {setStyleSheet, setModelAspectRatio})(D3model)
