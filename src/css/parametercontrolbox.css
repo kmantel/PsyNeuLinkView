@@ -1,13 +1,54 @@
-.parametercontrolbox{
-    margin-left:1px;
-    margin-top:1px;
+.controlstrip-container {
+    margin-left: 10px;
+    margin-top: 10px;
+    margin-right: 10px;
 }
-
-.parametercontrolbody{
-    margin: 10px;
+.controlstrip.pnl-panel {
+    padding-top: 0;
 }
-
-.parameter-control-title{
-    width: 20px;
+.bp3-tab {
+    -webkit-user-select: none; /* Safari */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE10+/Edge */
+    user-select: none; /* Standard */
+    outline: none;
     margin: 0 auto;
+}
+
+.param-tab-container {
+    left: 1%;
+    float: left;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.run-flow-container {
+    right: 1%;
+    height: 100%;
+    float: right;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+.run-flow-container .bp3-icon-play{
+    margin:15px
+}
+
+.parameter-control-title {
+    height: 30px;
+    border-bottom-style: ridge;
+}
+
+.bp3-tab[aria-selected="true"], .bp3-tab:not([aria-disabled="true"]):hover {
+    color: palevioletred;
+}
+
+.bp3-tab-indicator-wrapper .bp3-tab-indicator {
+    background-color: palevioletred;
+}
+
+.bp3-tab-indicator-wrapper {
+    height: 28px;
+    bottom: 3px;
 }

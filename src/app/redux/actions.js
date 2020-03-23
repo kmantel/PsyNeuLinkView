@@ -7,6 +7,13 @@ export function setActiveView(id){
     }
 }
 
+export function setActiveParamTab(id){
+    return {
+        type: atypes.SET_ACTIVE_PARAM_TAB,
+        tab: id
+    }
+}
+
 export function setStyleSheet(stylesheet){
     return {
         type: atypes.SET_STYLESHEET,

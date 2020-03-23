@@ -73,22 +73,21 @@ class D3model extends React.Component {
                 this.setGraph();
             }
         }
-        if (this.flags.reload_locations) {
+        var size_updated = (!_.isEqual(this.props.size, prevProps.size) && this.svg);
+        // viewbox must be redimensioned before node positioning is set
+        if (size_updated) {
             this.redimension_viewbox();
+        }
+        if (this.flags.reload_locations) {
             this.set_node_positioning_from_stylesheet();
             this.flags.reload_locations = false;
         }
         if (this.flags.update_locations) {
-            this.redimension_viewbox();
             this.commit_all_nodes_to_stylesheet();
             this.update_script();
             this.flags.update_locations = false;
         }
         this.update_graph_from_stylesheet(prevProps);
-        var size_updated = (!_.isEqual(this.props.size, prevProps.size) && this.svg);
-        if (size_updated) {
-            this.redimension_viewbox();
-        }
     }
 
     componentWillUnmount() {
@@ -207,6 +206,7 @@ class D3model extends React.Component {
     }
 
     on_resize() {
+        console.log('yyyyy')
         if (![null, 'loading'].includes(this.props.graph)) {
             this.commit_to_stylesheet_and_update_script()
         }
@@ -346,6 +346,13 @@ class D3model extends React.Component {
         }
         if (!(this.stylesheet)) {
             this.stylesheet = {}
+        }
+        if (!('Window Settings' in this.stylesheet)) {
+            this.stylesheet['Window Settings'] =
+                {
+                    Width: '',
+                    Height: ''
+                }
         }
         if (!('Canvas Settings' in this.stylesheet)) {
             this.stylesheet['Canvas Settings'] = {
@@ -1056,8 +1063,8 @@ class D3model extends React.Component {
             h_correction = viewport_offset.y;
         this.stylesheet['Graph Settings']['Components']['Nodes'][node.name] =
             {
-                'x': +(((node.data.x - node.data.rx - node.data.stroke_width / 2 + w_correction / 2) / (viewbox.width + w_correction)) * 100).toFixed(2),
-                'y': +(((node.data.y - node.data.ry - node.data.stroke_width / 2 + h_correction / 2) / (viewbox.height + h_correction)) * 100).toFixed(2)
+                'x': +(((node.data.x - node.data.rx - (node.data.stroke_width * this.scaling_factor / 2) + w_correction / 2) / (viewbox.width + w_correction)) * 100).toFixed(2),
+                'y': +(((node.data.y - node.data.ry - node.data.stroke_width * this.scaling_factor / 2 + h_correction / 2) / (viewbox.height + h_correction)) * 100).toFixed(2)
             };
     }
 

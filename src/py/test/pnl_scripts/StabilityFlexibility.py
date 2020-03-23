@@ -206,48 +206,52 @@ for i in range(1, len(stabilityFlexibility.controller.input_ports)):
 
 # PsyNeuLinkView Graphics Info 
 pnlv_graphics_spec = {
+    "Window Settings": {
+        "Width": "",
+        "Height": ""
+    },
     "Canvas Settings": {
-        "Width": 62.97,
-        "Height": 59.89,
+        "Width": 79.24,
+        "Height": 69.04,
         "Zoom": 100,
         "xScroll": 0,
         "yScroll": 0
     },
     "Graph Settings": {
-        "Scale": 1.13,
+        "Scale": 1.43,
         "Components": {
             "Nodes": {
                 "Stimulus Info * Activity": {
-                    "x": 56.04,
-                    "y": 18.85
+                    "x": 55.69,
+                    "y": 16.22
                 },
                 "DDM Integrator": {
-                    "x": 49.53,
-                    "y": 33.02
+                    "x": 49.16,
+                    "y": 31.52
                 },
                 "Input": {
-                    "x": 35.2,
-                    "y": 46.85
+                    "x": 34.6,
+                    "y": 46.26
                 },
                 "Activity": {
-                    "x": 47.08,
-                    "y": 89.24
+                    "x": 46.64,
+                    "y": 93.25
                 },
                 "objective_mechanism-0": {
-                    "x": 43.67,
-                    "y": 61.06
+                    "x": 43.23,
+                    "y": 62.44
                 },
                 "Stimulus Info": {
-                    "x": 47.69,
-                    "y": 4.64
+                    "x": 47.15,
+                    "y": -0.07
                 },
                 "DDM": {
-                    "x": 48.66,
-                    "y": 46.85
+                    "x": 48.12,
+                    "y": 46.26
                 },
                 "OptimizationControlMechanism-0": {
-                    "x": 41.38,
-                    "y": 75.21
+                    "x": 41.24,
+                    "y": 78.06
                 }
             }
         }

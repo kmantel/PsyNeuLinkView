@@ -34,3 +34,16 @@
 .run-flow-container .bp3-icon-play{
     margin:15px
 }
+
+.bp3-tab[aria-selected="true"], .bp3-tab:not([aria-disabled="true"]):hover {
+    color: palevioletred;
+}
+
+.bp3-tab-indicator-wrapper .bp3-tab-indicator {
+    background-color: palevioletred;
+}
+
+.bp3-tab-indicator-wrapper {
+    height: 28px;
+    bottom: 3px;
+}

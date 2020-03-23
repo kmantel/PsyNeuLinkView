@@ -27,7 +27,7 @@ class ControlStrip extends React.Component {
                  }>
                 <div class={'controlstrip pnl-panel'}>
                     <div class={'view-tab-container'}>
-                        <Tabs id="TabsExample" onChange={this.handleTabChange} selectedTabId={this.props.activeView}>
+                        <Tabs id="view-tab-group" onChange={this.handleTabChange} selectedTabId={this.props.activeView}>
                             <Tab id="graphview" title="Construct" panel={<div />} />
                             <Tab id="plotter" title="Monitor" panel={<div />} />
                             {/*<Tabs.Expander />*/}

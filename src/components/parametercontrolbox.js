@@ -1,6 +1,10 @@
 import React from 'react'
 import '../css/parametercontrolbox.css'
 import { Resizable } from 're-resizable'
+import {Icon, Tab, Tabs} from "@blueprintjs/core"
+import {connect} from "react-redux";
+import {setActiveParamTab} from "../app/redux/actions";
+import {store} from "../app/redux/store";
 
 const style = {
   display: "flex",
@@ -19,6 +23,10 @@ export class ParameterControlBox extends React.Component {
 
   updateText(newText) {
     this.setState({ text: newText })
+  }
+
+  handleTabChange(new_tab_id, prev_tab_id, e) {
+      store.dispatch(setActiveParamTab(new_tab_id))
   }
 
   render() {
@@ -61,7 +69,11 @@ export class ParameterControlBox extends React.Component {
         <div className={this.state.class}>
             {this.state.text}
             <div className={'parameter-control-title'}>
-                {/*Parameterization Toolbox*/}
+                <div className={'param-tab-container'}>
+                    <Tabs id="param-tab-group" onChange={this.handleTabChange} selectedTabId={this.props.active_param_tab}>
+                        <Tab id="composition" title="Composition" panel={<div/>}/>
+                    </Tabs>
+                </div>
             </div>
         </div>
       </Resizable>
@@ -69,4 +81,10 @@ export class ParameterControlBox extends React.Component {
   };
 }
 
-export default ParameterControlBox
+const mapStateToProps = state => {
+    return {
+        active_param_tab: state.active_param_tab
+    }
+};
+
+export default connect(mapStateToProps, {setActiveParamTab})(ParameterControlBox)
