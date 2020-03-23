@@ -49,6 +49,11 @@ class ServeGraphStub(object):
         request_serializer=graph__pb2.StyleJSON.SerializeToString,
         response_deserializer=graph__pb2.NullArgument.FromString,
         )
+    self.RunComposition = channel.unary_stream(
+        '/graph.ServeGraph/RunComposition',
+        request_serializer=graph__pb2.RunTimeParams.SerializeToString,
+        response_deserializer=graph__pb2.Entry.FromString,
+        )
 
 
 class ServeGraphServicer(object):
@@ -104,6 +109,13 @@ class ServeGraphServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
+  def RunComposition(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
 
 def add_ServeGraphServicer_to_server(servicer, server):
   rpc_method_handlers = {
@@ -141,6 +153,11 @@ def add_ServeGraphServicer_to_server(servicer, server):
           servicer.UpdateStylesheet,
           request_deserializer=graph__pb2.StyleJSON.FromString,
           response_serializer=graph__pb2.NullArgument.SerializeToString,
+      ),
+      'RunComposition': grpc.unary_stream_rpc_method_handler(
+          servicer.RunComposition,
+          request_deserializer=graph__pb2.RunTimeParams.FromString,
+          response_serializer=graph__pb2.Entry.SerializeToString,
       ),
   }
   generic_handler = grpc.method_handlers_generic_handler(

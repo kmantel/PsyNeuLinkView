@@ -6,7 +6,6 @@
       <change beforePath="$PROJECT_DIR$/src/protos/graph.proto" beforeDir="false" afterPath="$PROJECT_DIR$/src/protos/graph.proto" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/py/graph_pb2.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/py/graph_pb2.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/py/graph_pb2_grpc.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/py/graph_pb2_grpc.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/py/test/pnl_scripts/StabilityFlexibility.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/py/test/pnl_scripts/StabilityFlexibility.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -152,7 +151,7 @@
       <workItem from="1583946495843" duration="5525000" />
       <workItem from="1584118107588" duration="5603000" />
       <workItem from="1584367744802" duration="38031000" />
-      <workItem from="1584968486980" duration="3231000" />
+      <workItem from="1584968486980" duration="5144000" />
     </task>
     <task id="LOCAL-00001" summary="Enabled touchpad zoom gestures and windows ctrl shortcuts">
       <created>1581449946471</created>

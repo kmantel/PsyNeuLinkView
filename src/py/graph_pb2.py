@@ -21,7 +21,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='graph',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x0bgraph.proto\x12\x05graph\"\x0e\n\x0cNullArgument\"\x1e\n\x0cHealthStatus\x12\x0e\n\x06status\x18\x01 \x01(\t\"\x17\n\x07PNLPath\x12\x0c\n\x04path\x18\x01 \x01(\t\"\x1a\n\nScriptPath\x12\x0c\n\x04path\x18\x01 \x01(\t\"*\n\x12ScriptCompositions\x12\x14\n\x0c\x63ompositions\x18\x01 \x03(\t\"\x19\n\tGraphName\x12\x0c\n\x04name\x18\x01 \x01(\t\"3\n\tGraphJSON\x12\x13\n\x0bobjectsJSON\x18\x01 \x01(\t\x12\x11\n\tstyleJSON\x18\x02 \x01(\t\"\x1e\n\tStyleJSON\x12\x11\n\tstyleJSON\x18\x01 \x01(\t\"<\n\x0c\x44oubleMatrix\x12\x0c\n\x04rows\x18\x01 \x01(\r\x12\x0c\n\x04\x63ols\x18\x02 \x01(\r\x12\x10\n\x04\x64\x61ta\x18\x03 \x03(\x01\x42\x02\x10\x01\"x\n\x05\x45ntry\x12\x15\n\rcomponentName\x18\x01 \x01(\t\x12\x15\n\rparameterName\x18\x02 \x01(\t\x12\x0c\n\x04time\x18\x03 \x01(\t\x12\x0f\n\x07\x63ontext\x18\x04 \x01(\t\x12\"\n\x05value\x18\x05 \x01(\x0b\x32\x13.graph.DoubleMatrix\"c\n\tServePref\x12\x15\n\rcomponentName\x18\x01 \x01(\t\x12\x15\n\rparameterName\x18\x02 \x01(\t\x12(\n\tcondition\x18\x03 \x01(\x0e\x32\x15.graph.serveCondition\"4\n\nServePrefs\x12&\n\x0cservePrefSet\x18\x01 \x03(\x0b\x32\x10.graph.ServePref*\x92\x01\n\x0eserveCondition\x12\x12\n\x0eINITIALIZATION\x10\x00\x12\x0e\n\nVALIDATION\x10\x01\x12\r\n\tEXECUTION\x10\x02\x12\x0e\n\nPROCESSING\x10\x03\x12\x0c\n\x08LEARNING\x10\x04\x12\x0b\n\x07\x43ONTROL\x10\x05\x12\x0e\n\nSIMULATION\x10\x06\x12\t\n\x05TRIAL\x10\x07\x12\x07\n\x03RUN\x10\x08\x32\xa9\x03\n\nServeGraph\x12\x36\n\rLoadCustomPnl\x12\x0e.graph.PNLPath\x1a\x13.graph.NullArgument\"\x00\x12<\n\nLoadScript\x12\x11.graph.ScriptPath\x1a\x19.graph.ScriptCompositions\"\x00\x12\x35\n\x0cLoadGraphics\x12\x11.graph.ScriptPath\x1a\x10.graph.StyleJSON\"\x00\x12\x43\n\x0fGetCompositions\x12\x13.graph.NullArgument\x1a\x19.graph.ScriptCompositions\"\x00\x12/\n\x07GetJSON\x12\x10.graph.GraphName\x1a\x10.graph.GraphJSON\"\x00\x12\x39\n\x0bHealthCheck\x12\x13.graph.NullArgument\x1a\x13.graph.HealthStatus\"\x00\x12=\n\x10UpdateStylesheet\x12\x10.graph.StyleJSON\x1a\x13.graph.NullArgument\"\x00(\x01\x62\x06proto3')
+  serialized_pb=_b('\n\x0bgraph.proto\x12\x05graph\"\x0e\n\x0cNullArgument\"\x1e\n\x0cHealthStatus\x12\x0e\n\x06status\x18\x01 \x01(\t\"\x17\n\x07PNLPath\x12\x0c\n\x04path\x18\x01 \x01(\t\"\x1a\n\nScriptPath\x12\x0c\n\x04path\x18\x01 \x01(\t\"*\n\x12ScriptCompositions\x12\x14\n\x0c\x63ompositions\x18\x01 \x03(\t\"\x19\n\tGraphName\x12\x0c\n\x04name\x18\x01 \x01(\t\"3\n\tGraphJSON\x12\x13\n\x0bobjectsJSON\x18\x01 \x01(\t\x12\x11\n\tstyleJSON\x18\x02 \x01(\t\"\x1e\n\tStyleJSON\x12\x11\n\tstyleJSON\x18\x01 \x01(\t\"<\n\x0c\x44oubleMatrix\x12\x0c\n\x04rows\x18\x01 \x01(\r\x12\x0c\n\x04\x63ols\x18\x02 \x01(\r\x12\x10\n\x04\x64\x61ta\x18\x03 \x03(\x01\x42\x02\x10\x01\"x\n\x05\x45ntry\x12\x15\n\rcomponentName\x18\x01 \x01(\t\x12\x15\n\rparameterName\x18\x02 \x01(\t\x12\x0c\n\x04time\x18\x03 \x01(\t\x12\x0f\n\x07\x63ontext\x18\x04 \x01(\t\x12\"\n\x05value\x18\x05 \x01(\x0b\x32\x13.graph.DoubleMatrix\"c\n\tServePref\x12\x15\n\rcomponentName\x18\x01 \x01(\t\x12\x15\n\rparameterName\x18\x02 \x01(\t\x12(\n\tcondition\x18\x03 \x01(\x0e\x32\x15.graph.serveCondition\"4\n\nServePrefs\x12&\n\x0cservePrefSet\x18\x01 \x03(\x0b\x32\x10.graph.ServePref\"\xac\x01\n\rRunTimeParams\x12\x30\n\x06inputs\x18\x01 \x03(\x0b\x32 .graph.RunTimeParams.InputsEntry\x12%\n\nservePrefs\x18\x02 \x01(\x0b\x32\x11.graph.ServePrefs\x1a\x42\n\x0bInputsEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\"\n\x05value\x18\x02 \x01(\x0b\x32\x13.graph.DoubleMatrix:\x02\x38\x01*\x92\x01\n\x0eserveCondition\x12\x12\n\x0eINITIALIZATION\x10\x00\x12\x0e\n\nVALIDATION\x10\x01\x12\r\n\tEXECUTION\x10\x02\x12\x0e\n\nPROCESSING\x10\x03\x12\x0c\n\x08LEARNING\x10\x04\x12\x0b\n\x07\x43ONTROL\x10\x05\x12\x0e\n\nSIMULATION\x10\x06\x12\t\n\x05TRIAL\x10\x07\x12\x07\n\x03RUN\x10\x08\x32\xe3\x03\n\nServeGraph\x12\x36\n\rLoadCustomPnl\x12\x0e.graph.PNLPath\x1a\x13.graph.NullArgument\"\x00\x12<\n\nLoadScript\x12\x11.graph.ScriptPath\x1a\x19.graph.ScriptCompositions\"\x00\x12\x35\n\x0cLoadGraphics\x12\x11.graph.ScriptPath\x1a\x10.graph.StyleJSON\"\x00\x12\x43\n\x0fGetCompositions\x12\x13.graph.NullArgument\x1a\x19.graph.ScriptCompositions\"\x00\x12/\n\x07GetJSON\x12\x10.graph.GraphName\x1a\x10.graph.GraphJSON\"\x00\x12\x39\n\x0bHealthCheck\x12\x13.graph.NullArgument\x1a\x13.graph.HealthStatus\"\x00\x12=\n\x10UpdateStylesheet\x12\x10.graph.StyleJSON\x1a\x13.graph.NullArgument\"\x00(\x01\x12\x38\n\x0eRunComposition\x12\x14.graph.RunTimeParams\x1a\x0c.graph.Entry\"\x00\x30\x01\x62\x06proto3')
 )
 
 _SERVECONDITION = _descriptor.EnumDescriptor(
@@ -69,8 +69,8 @@ _SERVECONDITION = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=619,
-  serialized_end=765,
+  serialized_start=794,
+  serialized_end=940,
 )
 _sym_db.RegisterEnumDescriptor(_SERVECONDITION)
 
@@ -514,9 +514,88 @@ _SERVEPREFS = _descriptor.Descriptor(
   serialized_end=616,
 )
 
+
+_RUNTIMEPARAMS_INPUTSENTRY = _descriptor.Descriptor(
+  name='InputsEntry',
+  full_name='graph.RunTimeParams.InputsEntry',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='key', full_name='graph.RunTimeParams.InputsEntry.key', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='value', full_name='graph.RunTimeParams.InputsEntry.value', index=1,
+      number=2, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=_b('8\001'),
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=725,
+  serialized_end=791,
+)
+
+_RUNTIMEPARAMS = _descriptor.Descriptor(
+  name='RunTimeParams',
+  full_name='graph.RunTimeParams',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='inputs', full_name='graph.RunTimeParams.inputs', index=0,
+      number=1, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='servePrefs', full_name='graph.RunTimeParams.servePrefs', index=1,
+      number=2, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[_RUNTIMEPARAMS_INPUTSENTRY, ],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=619,
+  serialized_end=791,
+)
+
 _ENTRY.fields_by_name['value'].message_type = _DOUBLEMATRIX
 _SERVEPREF.fields_by_name['condition'].enum_type = _SERVECONDITION
 _SERVEPREFS.fields_by_name['servePrefSet'].message_type = _SERVEPREF
+_RUNTIMEPARAMS_INPUTSENTRY.fields_by_name['value'].message_type = _DOUBLEMATRIX
+_RUNTIMEPARAMS_INPUTSENTRY.containing_type = _RUNTIMEPARAMS
+_RUNTIMEPARAMS.fields_by_name['inputs'].message_type = _RUNTIMEPARAMS_INPUTSENTRY
+_RUNTIMEPARAMS.fields_by_name['servePrefs'].message_type = _SERVEPREFS
 DESCRIPTOR.message_types_by_name['NullArgument'] = _NULLARGUMENT
 DESCRIPTOR.message_types_by_name['HealthStatus'] = _HEALTHSTATUS
 DESCRIPTOR.message_types_by_name['PNLPath'] = _PNLPATH
@@ -529,6 +608,7 @@ DESCRIPTOR.message_types_by_name['DoubleMatrix'] = _DOUBLEMATRIX
 DESCRIPTOR.message_types_by_name['Entry'] = _ENTRY
 DESCRIPTOR.message_types_by_name['ServePref'] = _SERVEPREF
 DESCRIPTOR.message_types_by_name['ServePrefs'] = _SERVEPREFS
+DESCRIPTOR.message_types_by_name['RunTimeParams'] = _RUNTIMEPARAMS
 DESCRIPTOR.enum_types_by_name['serveCondition'] = _SERVECONDITION
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
@@ -616,8 +696,24 @@ ServePrefs = _reflection.GeneratedProtocolMessageType('ServePrefs', (_message.Me
   })
 _sym_db.RegisterMessage(ServePrefs)
 
+RunTimeParams = _reflection.GeneratedProtocolMessageType('RunTimeParams', (_message.Message,), {
+
+  'InputsEntry' : _reflection.GeneratedProtocolMessageType('InputsEntry', (_message.Message,), {
+    'DESCRIPTOR' : _RUNTIMEPARAMS_INPUTSENTRY,
+    '__module__' : 'graph_pb2'
+    # @@protoc_insertion_point(class_scope:graph.RunTimeParams.InputsEntry)
+    })
+  ,
+  'DESCRIPTOR' : _RUNTIMEPARAMS,
+  '__module__' : 'graph_pb2'
+  # @@protoc_insertion_point(class_scope:graph.RunTimeParams)
+  })
+_sym_db.RegisterMessage(RunTimeParams)
+_sym_db.RegisterMessage(RunTimeParams.InputsEntry)
+
 
 _DOUBLEMATRIX.fields_by_name['data']._options = None
+_RUNTIMEPARAMS_INPUTSENTRY._options = None
 
 _SERVEGRAPH = _descriptor.ServiceDescriptor(
   name='ServeGraph',
@@ -625,8 +721,8 @@ _SERVEGRAPH = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
-  serialized_start=768,
-  serialized_end=1193,
+  serialized_start=943,
+  serialized_end=1426,
   methods=[
   _descriptor.MethodDescriptor(
     name='LoadCustomPnl',
@@ -689,6 +785,15 @@ _SERVEGRAPH = _descriptor.ServiceDescriptor(
     containing_service=None,
     input_type=_STYLEJSON,
     output_type=_NULLARGUMENT,
+    serialized_options=None,
+  ),
+  _descriptor.MethodDescriptor(
+    name='RunComposition',
+    full_name='graph.ServeGraph.RunComposition',
+    index=7,
+    containing_service=None,
+    input_type=_RUNTIMEPARAMS,
+    output_type=_ENTRY,
     serialized_options=None,
   ),
 ])
