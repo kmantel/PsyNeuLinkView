@@ -222,36 +222,36 @@ pnlv_graphics_spec = {
         "Components": {
             "Nodes": {
                 "Stimulus Info * Activity": {
-                    "x": 55.69,
-                    "y": 16.22
+                    "x": 52.69,
+                    "y": 25.36
                 },
                 "DDM Integrator": {
-                    "x": 49.16,
-                    "y": 31.52
+                    "x": 46.35,
+                    "y": 34.93
                 },
                 "Input": {
-                    "x": 34.6,
-                    "y": 46.26
+                    "x": 36.56,
+                    "y": 45.6
                 },
                 "Activity": {
-                    "x": 46.64,
-                    "y": 93.25
+                    "x": 44.44,
+                    "y": 81.47
                 },
                 "objective_mechanism-0": {
-                    "x": 43.23,
-                    "y": 62.44
+                    "x": 41.84,
+                    "y": 59.14
                 },
                 "Stimulus Info": {
-                    "x": 47.15,
-                    "y": -0.07
+                    "x": 44.3,
+                    "y": 11.93
                 },
                 "DDM": {
-                    "x": 48.12,
-                    "y": 46.26
+                    "x": 45.27,
+                    "y": 45.6
                 },
                 "OptimizationControlMechanism-0": {
-                    "x": 41.24,
-                    "y": 78.06
+                    "x": 40.24,
+                    "y": 70.25
                 }
             }
         }

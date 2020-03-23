@@ -44,3 +44,39 @@ message GraphJSON {
 message StyleJSON {
   string styleJSON = 1;
 }
+
+message DoubleMatrix {
+  uint32 rows = 1;
+  uint32 cols = 2;
+  repeated double data = 3 [packed=true];
+}
+
+message Entry {
+  string componentName = 1;
+  string parameterName = 2;
+  string time = 3;
+  string context = 4;
+  DoubleMatrix value = 5;
+}
+
+enum serveCondition {
+ INITIALIZATION = 0;
+ VALIDATION = 1;
+ EXECUTION = 2;
+ PROCESSING = 3;
+ LEARNING = 4;
+ CONTROL = 5;
+ SIMULATION = 6;
+ TRIAL = 7;
+ RUN = 8;
+}
+
+message ServePref {
+  string componentName = 1;
+  string parameterName = 2;
+  serveCondition condition = 3;
+}
+
+message ServePrefs {
+   repeated ServePref servePrefSet = 1;
+}

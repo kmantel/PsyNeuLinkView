@@ -4,6 +4,7 @@
 
 import sys
 _b=sys.version_info[0]<3 and (lambda x:x) or (lambda x:x.encode('latin1'))
+from google.protobuf.internal import enum_type_wrapper
 from google.protobuf import descriptor as _descriptor
 from google.protobuf import message as _message
 from google.protobuf import reflection as _reflection
@@ -20,9 +21,69 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='graph',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x0bgraph.proto\x12\x05graph\"\x0e\n\x0cNullArgument\"\x1e\n\x0cHealthStatus\x12\x0e\n\x06status\x18\x01 \x01(\t\"\x17\n\x07PNLPath\x12\x0c\n\x04path\x18\x01 \x01(\t\"\x1a\n\nScriptPath\x12\x0c\n\x04path\x18\x01 \x01(\t\"*\n\x12ScriptCompositions\x12\x14\n\x0c\x63ompositions\x18\x01 \x03(\t\"\x19\n\tGraphName\x12\x0c\n\x04name\x18\x01 \x01(\t\"3\n\tGraphJSON\x12\x13\n\x0bobjectsJSON\x18\x01 \x01(\t\x12\x11\n\tstyleJSON\x18\x02 \x01(\t\"\x1e\n\tStyleJSON\x12\x11\n\tstyleJSON\x18\x01 \x01(\t2\xa9\x03\n\nServeGraph\x12\x36\n\rLoadCustomPnl\x12\x0e.graph.PNLPath\x1a\x13.graph.NullArgument\"\x00\x12<\n\nLoadScript\x12\x11.graph.ScriptPath\x1a\x19.graph.ScriptCompositions\"\x00\x12\x35\n\x0cLoadGraphics\x12\x11.graph.ScriptPath\x1a\x10.graph.StyleJSON\"\x00\x12\x43\n\x0fGetCompositions\x12\x13.graph.NullArgument\x1a\x19.graph.ScriptCompositions\"\x00\x12/\n\x07GetJSON\x12\x10.graph.GraphName\x1a\x10.graph.GraphJSON\"\x00\x12\x39\n\x0bHealthCheck\x12\x13.graph.NullArgument\x1a\x13.graph.HealthStatus\"\x00\x12=\n\x10UpdateStylesheet\x12\x10.graph.StyleJSON\x1a\x13.graph.NullArgument\"\x00(\x01\x62\x06proto3')
+  serialized_pb=_b('\n\x0bgraph.proto\x12\x05graph\"\x0e\n\x0cNullArgument\"\x1e\n\x0cHealthStatus\x12\x0e\n\x06status\x18\x01 \x01(\t\"\x17\n\x07PNLPath\x12\x0c\n\x04path\x18\x01 \x01(\t\"\x1a\n\nScriptPath\x12\x0c\n\x04path\x18\x01 \x01(\t\"*\n\x12ScriptCompositions\x12\x14\n\x0c\x63ompositions\x18\x01 \x03(\t\"\x19\n\tGraphName\x12\x0c\n\x04name\x18\x01 \x01(\t\"3\n\tGraphJSON\x12\x13\n\x0bobjectsJSON\x18\x01 \x01(\t\x12\x11\n\tstyleJSON\x18\x02 \x01(\t\"\x1e\n\tStyleJSON\x12\x11\n\tstyleJSON\x18\x01 \x01(\t\"<\n\x0c\x44oubleMatrix\x12\x0c\n\x04rows\x18\x01 \x01(\r\x12\x0c\n\x04\x63ols\x18\x02 \x01(\r\x12\x10\n\x04\x64\x61ta\x18\x03 \x03(\x01\x42\x02\x10\x01\"x\n\x05\x45ntry\x12\x15\n\rcomponentName\x18\x01 \x01(\t\x12\x15\n\rparameterName\x18\x02 \x01(\t\x12\x0c\n\x04time\x18\x03 \x01(\t\x12\x0f\n\x07\x63ontext\x18\x04 \x01(\t\x12\"\n\x05value\x18\x05 \x01(\x0b\x32\x13.graph.DoubleMatrix\"c\n\tServePref\x12\x15\n\rcomponentName\x18\x01 \x01(\t\x12\x15\n\rparameterName\x18\x02 \x01(\t\x12(\n\tcondition\x18\x03 \x01(\x0e\x32\x15.graph.serveCondition\"4\n\nServePrefs\x12&\n\x0cservePrefSet\x18\x01 \x03(\x0b\x32\x10.graph.ServePref*\x92\x01\n\x0eserveCondition\x12\x12\n\x0eINITIALIZATION\x10\x00\x12\x0e\n\nVALIDATION\x10\x01\x12\r\n\tEXECUTION\x10\x02\x12\x0e\n\nPROCESSING\x10\x03\x12\x0c\n\x08LEARNING\x10\x04\x12\x0b\n\x07\x43ONTROL\x10\x05\x12\x0e\n\nSIMULATION\x10\x06\x12\t\n\x05TRIAL\x10\x07\x12\x07\n\x03RUN\x10\x08\x32\xa9\x03\n\nServeGraph\x12\x36\n\rLoadCustomPnl\x12\x0e.graph.PNLPath\x1a\x13.graph.NullArgument\"\x00\x12<\n\nLoadScript\x12\x11.graph.ScriptPath\x1a\x19.graph.ScriptCompositions\"\x00\x12\x35\n\x0cLoadGraphics\x12\x11.graph.ScriptPath\x1a\x10.graph.StyleJSON\"\x00\x12\x43\n\x0fGetCompositions\x12\x13.graph.NullArgument\x1a\x19.graph.ScriptCompositions\"\x00\x12/\n\x07GetJSON\x12\x10.graph.GraphName\x1a\x10.graph.GraphJSON\"\x00\x12\x39\n\x0bHealthCheck\x12\x13.graph.NullArgument\x1a\x13.graph.HealthStatus\"\x00\x12=\n\x10UpdateStylesheet\x12\x10.graph.StyleJSON\x1a\x13.graph.NullArgument\"\x00(\x01\x62\x06proto3')
 )
 
+_SERVECONDITION = _descriptor.EnumDescriptor(
+  name='serveCondition',
+  full_name='graph.serveCondition',
+  filename=None,
+  file=DESCRIPTOR,
+  values=[
+    _descriptor.EnumValueDescriptor(
+      name='INITIALIZATION', index=0, number=0,
+      serialized_options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='VALIDATION', index=1, number=1,
+      serialized_options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='EXECUTION', index=2, number=2,
+      serialized_options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='PROCESSING', index=3, number=3,
+      serialized_options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='LEARNING', index=4, number=4,
+      serialized_options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='CONTROL', index=5, number=5,
+      serialized_options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='SIMULATION', index=6, number=6,
+      serialized_options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='TRIAL', index=7, number=7,
+      serialized_options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='RUN', index=8, number=8,
+      serialized_options=None,
+      type=None),
+  ],
+  containing_type=None,
+  serialized_options=None,
+  serialized_start=619,
+  serialized_end=765,
+)
+_sym_db.RegisterEnumDescriptor(_SERVECONDITION)
+
+serveCondition = enum_type_wrapper.EnumTypeWrapper(_SERVECONDITION)
+INITIALIZATION = 0
+VALIDATION = 1
+EXECUTION = 2
+PROCESSING = 3
+LEARNING = 4
+CONTROL = 5
+SIMULATION = 6
+TRIAL = 7
+RUN = 8
 
 
 
@@ -273,6 +334,189 @@ _STYLEJSON = _descriptor.Descriptor(
   serialized_end=277,
 )
 
+
+_DOUBLEMATRIX = _descriptor.Descriptor(
+  name='DoubleMatrix',
+  full_name='graph.DoubleMatrix',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='rows', full_name='graph.DoubleMatrix.rows', index=0,
+      number=1, type=13, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='cols', full_name='graph.DoubleMatrix.cols', index=1,
+      number=2, type=13, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='data', full_name='graph.DoubleMatrix.data', index=2,
+      number=3, type=1, cpp_type=5, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=_b('\020\001'), file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=279,
+  serialized_end=339,
+)
+
+
+_ENTRY = _descriptor.Descriptor(
+  name='Entry',
+  full_name='graph.Entry',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='componentName', full_name='graph.Entry.componentName', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='parameterName', full_name='graph.Entry.parameterName', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='time', full_name='graph.Entry.time', index=2,
+      number=3, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='context', full_name='graph.Entry.context', index=3,
+      number=4, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='value', full_name='graph.Entry.value', index=4,
+      number=5, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=341,
+  serialized_end=461,
+)
+
+
+_SERVEPREF = _descriptor.Descriptor(
+  name='ServePref',
+  full_name='graph.ServePref',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='componentName', full_name='graph.ServePref.componentName', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='parameterName', full_name='graph.ServePref.parameterName', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='condition', full_name='graph.ServePref.condition', index=2,
+      number=3, type=14, cpp_type=8, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=463,
+  serialized_end=562,
+)
+
+
+_SERVEPREFS = _descriptor.Descriptor(
+  name='ServePrefs',
+  full_name='graph.ServePrefs',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='servePrefSet', full_name='graph.ServePrefs.servePrefSet', index=0,
+      number=1, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=564,
+  serialized_end=616,
+)
+
+_ENTRY.fields_by_name['value'].message_type = _DOUBLEMATRIX
+_SERVEPREF.fields_by_name['condition'].enum_type = _SERVECONDITION
+_SERVEPREFS.fields_by_name['servePrefSet'].message_type = _SERVEPREF
 DESCRIPTOR.message_types_by_name['NullArgument'] = _NULLARGUMENT
 DESCRIPTOR.message_types_by_name['HealthStatus'] = _HEALTHSTATUS
 DESCRIPTOR.message_types_by_name['PNLPath'] = _PNLPATH
@@ -281,6 +525,11 @@ DESCRIPTOR.message_types_by_name['ScriptCompositions'] = _SCRIPTCOMPOSITIONS
 DESCRIPTOR.message_types_by_name['GraphName'] = _GRAPHNAME
 DESCRIPTOR.message_types_by_name['GraphJSON'] = _GRAPHJSON
 DESCRIPTOR.message_types_by_name['StyleJSON'] = _STYLEJSON
+DESCRIPTOR.message_types_by_name['DoubleMatrix'] = _DOUBLEMATRIX
+DESCRIPTOR.message_types_by_name['Entry'] = _ENTRY
+DESCRIPTOR.message_types_by_name['ServePref'] = _SERVEPREF
+DESCRIPTOR.message_types_by_name['ServePrefs'] = _SERVEPREFS
+DESCRIPTOR.enum_types_by_name['serveCondition'] = _SERVECONDITION
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 NullArgument = _reflection.GeneratedProtocolMessageType('NullArgument', (_message.Message,), {
@@ -339,7 +588,36 @@ StyleJSON = _reflection.GeneratedProtocolMessageType('StyleJSON', (_message.Mess
   })
 _sym_db.RegisterMessage(StyleJSON)
 
+DoubleMatrix = _reflection.GeneratedProtocolMessageType('DoubleMatrix', (_message.Message,), {
+  'DESCRIPTOR' : _DOUBLEMATRIX,
+  '__module__' : 'graph_pb2'
+  # @@protoc_insertion_point(class_scope:graph.DoubleMatrix)
+  })
+_sym_db.RegisterMessage(DoubleMatrix)
 
+Entry = _reflection.GeneratedProtocolMessageType('Entry', (_message.Message,), {
+  'DESCRIPTOR' : _ENTRY,
+  '__module__' : 'graph_pb2'
+  # @@protoc_insertion_point(class_scope:graph.Entry)
+  })
+_sym_db.RegisterMessage(Entry)
+
+ServePref = _reflection.GeneratedProtocolMessageType('ServePref', (_message.Message,), {
+  'DESCRIPTOR' : _SERVEPREF,
+  '__module__' : 'graph_pb2'
+  # @@protoc_insertion_point(class_scope:graph.ServePref)
+  })
+_sym_db.RegisterMessage(ServePref)
+
+ServePrefs = _reflection.GeneratedProtocolMessageType('ServePrefs', (_message.Message,), {
+  'DESCRIPTOR' : _SERVEPREFS,
+  '__module__' : 'graph_pb2'
+  # @@protoc_insertion_point(class_scope:graph.ServePrefs)
+  })
+_sym_db.RegisterMessage(ServePrefs)
+
+
+_DOUBLEMATRIX.fields_by_name['data']._options = None
 
 _SERVEGRAPH = _descriptor.ServiceDescriptor(
   name='ServeGraph',
@@ -347,8 +625,8 @@ _SERVEGRAPH = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
-  serialized_start=280,
-  serialized_end=705,
+  serialized_start=768,
+  serialized_end=1193,
   methods=[
   _descriptor.MethodDescriptor(
     name='LoadCustomPnl',
