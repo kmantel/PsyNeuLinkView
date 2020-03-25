@@ -3,9 +3,11 @@
   <component name="ChangeListManager">
     <list default="true" id="0426a943-ef89-4391-a3a0-8152f91aa099" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/protos/graph.proto" beforeDir="false" afterPath="$PROJECT_DIR$/src/protos/graph.proto" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/py/graph_pb2.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/py/graph_pb2.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/py/graph_pb2_grpc.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/py/graph_pb2_grpc.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/interfaces/rpc.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/interfaces/rpc.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/py/.idea/py.iml" beforeDir="false" afterPath="$PROJECT_DIR$/src/py/.idea/py.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/py/rpc_server.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/py/rpc_server.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/py/test/pnl_scripts/NeuroML Example.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/py/test/pnl_scripts/NeuroML Example.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/py/test/pnl_scripts/StabilityFlexibility.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/py/test/pnl_scripts/StabilityFlexibility.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -151,7 +153,9 @@
       <workItem from="1583946495843" duration="5525000" />
       <workItem from="1584118107588" duration="5603000" />
       <workItem from="1584367744802" duration="38031000" />
-      <workItem from="1584968486980" duration="5144000" />
+      <workItem from="1584968486980" duration="6455000" />
+      <workItem from="1585055702330" duration="5505000" />
+      <workItem from="1585142310369" duration="8460000" />
     </task>
     <task id="LOCAL-00001" summary="Enabled touchpad zoom gestures and windows ctrl shortcuts">
       <created>1581449946471</created>
@@ -365,9 +369,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="1016" y="181" key="run.anything.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1584377104414" />
-    <state x="658" y="251" width="672" height="678" key="search.everywhere.popup" timestamp="1584731527255">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state x="877" y="338" width="896" height="913" key="search.everywhere.popup" timestamp="1585079961051">
+      <screen x="0" y="0" width="2560" height="1400" />
     </state>
+    <state x="877" y="338" width="896" height="913" key="search.everywhere.popup/-3840.930.1920.1060/0.0.2560.1400@0.0.2560.1400" timestamp="1585079961051" />
     <state x="658" y="251" width="672" height="678" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1584731527255" />
   </component>
   <component name="XDebuggerManager">

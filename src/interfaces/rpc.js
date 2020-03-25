@@ -136,6 +136,22 @@ class RPCInterface{
             }
         })
     }
+
+    run_composition(inputs, servePrefs, runtime_parameters, callback = () => {}) {
+        var self = this,
+            client = this.instantiate_client(),
+            call = client.RunComposition(
+                {
+                    inputs: inputs,
+                    servePrefs: servePrefs
+                }
+            );
+        call.on('data', function (entry) {
+            console.log('YEET')
+            self.got_data = true
+        })
+
+    }
 }
 
 exports.rpcInterface = new RPCInterface();

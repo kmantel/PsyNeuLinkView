@@ -1,3 +1,5 @@
+from queue import Queue
+
 import graph_pb2
 import graph_pb2_grpc
 import grpc
@@ -9,6 +11,7 @@ import subprocess, os
 from xml.etree.cElementTree import fromstring
 from collections import defaultdict
 import ast_parse
+import threading
 import random
 import warnings
 
@@ -36,6 +39,8 @@ class Container():
         }
         self.filepath = None
         self.AST = None
+        self.shared_queue = Queue()
+        self.shared_queue_lock = threading.RLock()
 
     @property
     def hashable_pnl_objects(self):
@@ -43,7 +48,6 @@ class Container():
             'compositions': [i for i in self.pnl_objects['compositions']],
             'components': [i for i in self.pnl_objects['components']]
         }
-
 
 class GraphServer(graph_pb2_grpc.ServeGraphServicer):
     def LoadCustomPnl(self, request, context):
@@ -80,7 +84,65 @@ class GraphServer(graph_pb2_grpc.ServeGraphServicer):
     def HealthCheck(self, request, context):
         return graph_pb2.HealthStatus(status='Okay')
 
+    def RunComposition(self, request, context):
+        thread = threading.Thread(target=run_composition,
+                                  args=[
+                                      pnl_container.hashable_pnl_objects['compositions'][-1],
+                                      request.inputs
+                                  ])
+        thread.start()
+        i = 0
+        while True:
+            yield graph_pb2.Entry(
+                componentName='a',
+                parameterName='b',
+                time='1:1:1:1',
+                context='c',
+                value=graph_pb2.DoubleMatrix(
+                    rows=1,
+                    cols=1,
+                    data=[1, 2, 3, 4, 5]
+                )
+
+            )
+            # if not pnl_container.shared_queue.empty():
+            #     # yield pnl_container.shared_queue.get()
+            #     print(pnl_container.shared_queue.get())
+            #     yield graph_pb2.Entry(
+            #         componentName = 'a',
+            #         parameterName = 'b',
+            #         time = '1:1:1:1',
+            #         context = 'c',
+            #         value = graph_pb2.DoubleMatrix(
+            #             rows = 1,
+            #             cols = 1,
+            #             data = [1,2,3,4,5]
+            #         )
+            #
+            #     )
+            #     if not thread.is_alive():
+            #         for i in range(pnl_container.shared_queue.qsize()):
+            #             print(pnl_container.shared_queue.get())
+            #             yield graph_pb2.Entry(
+            #                 componentName = 'a',
+            #                 parameterName = 'b',
+            #                 time = '1:1:1:1',
+            #                 context = 'c',
+            #                 value = graph_pb2.DoubleMatrix(
+            #                     rows = 1,
+            #                     cols = 1,
+            #                     data = [1,2,3,4,5]
+            #                 )
+            #             )
+            #         break
+
 pnl_container = Container()
+
+def run_composition(composition, inputs):
+    # composition.run(inputs,
+    #                 call_after_trial = lambda: pnl_container.shared_queue.put([composition.nodes[0].value]))
+    list(pnl_container.pnl_objects['compositions'].values())[-1].run([1],
+                    call_after_trial = lambda: pnl_container.shared_queue.put([1]))
 
 def get_new_pnl_objects(namespace):
     compositions = {}

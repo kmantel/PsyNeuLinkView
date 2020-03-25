@@ -211,47 +211,47 @@ pnlv_graphics_spec = {
         "Height": ""
     },
     "Canvas Settings": {
-        "Width": 79.24,
-        "Height": 69.04,
+        "Width": 79.28,
+        "Height": 67.04,
         "Zoom": 100,
         "xScroll": 0,
         "yScroll": 0
     },
     "Graph Settings": {
-        "Scale": 1.43,
+        "Scale": 1.39,
         "Components": {
             "Nodes": {
                 "Stimulus Info * Activity": {
-                    "x": 52.69,
-                    "y": 25.36
+                    "x": 52.58,
+                    "y": 25.33
                 },
                 "DDM Integrator": {
-                    "x": 46.35,
-                    "y": 34.93
+                    "x": 46.43,
+                    "y": 34.9
                 },
                 "Input": {
-                    "x": 36.56,
-                    "y": 45.6
+                    "x": 36.91,
+                    "y": 45.51
                 },
                 "Activity": {
-                    "x": 44.44,
-                    "y": 81.47
+                    "x": 44.6,
+                    "y": 83.37
                 },
                 "objective_mechanism-0": {
-                    "x": 41.84,
-                    "y": 59.14
+                    "x": 42.06,
+                    "y": 59.11
                 },
                 "Stimulus Info": {
-                    "x": 44.3,
-                    "y": 11.93
+                    "x": 44.42,
+                    "y": 11.85
                 },
                 "DDM": {
-                    "x": 45.27,
-                    "y": 45.6
+                    "x": 45.36,
+                    "y": 45.51
                 },
                 "OptimizationControlMechanism-0": {
-                    "x": 40.24,
-                    "y": 70.25
+                    "x": 40.5,
+                    "y": 70.22
                 }
             }
         }
