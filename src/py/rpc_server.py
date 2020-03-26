@@ -1,5 +1,5 @@
 from queue import Queue
-
+import numpy as np
 import graph_pb2
 import graph_pb2_grpc
 import grpc
@@ -25,6 +25,8 @@ if len(sys.argv) > 1:
     except:
         pass
 
+import sys
+sys.path.append(r'C:\Users\Dillo\PycharmProjects\PsyNeuLink')
 import psyneulink as pnl
 
 class Container():
@@ -90,59 +92,47 @@ class GraphServer(graph_pb2_grpc.ServeGraphServicer):
                                       pnl_container.hashable_pnl_objects['compositions'][-1],
                                       request.inputs
                                   ])
+        thread.daemon = True
         thread.start()
         i = 0
         while True:
-            yield graph_pb2.Entry(
-                componentName='a',
-                parameterName='b',
-                time='1:1:1:1',
-                context='c',
-                value=graph_pb2.DoubleMatrix(
-                    rows=1,
-                    cols=1,
-                    data=[1, 2, 3, 4, 5]
-                )
+            if not pnl_container.shared_queue.empty():
+                # yield pnl_container.shared_queue.get()
+                print(pnl_container.shared_queue.get())
+                yield graph_pb2.Entry(
+                    componentName = 'a',
+                    parameterName = 'b',
+                    time = '1:1:1:1',
+                    context = 'c',
+                    value = graph_pb2.DoubleMatrix(
+                        rows = 1,
+                        cols = 1,
+                        data = [1,2,3,4,5]
+                    )
 
-            )
-            # if not pnl_container.shared_queue.empty():
-            #     # yield pnl_container.shared_queue.get()
-            #     print(pnl_container.shared_queue.get())
-            #     yield graph_pb2.Entry(
-            #         componentName = 'a',
-            #         parameterName = 'b',
-            #         time = '1:1:1:1',
-            #         context = 'c',
-            #         value = graph_pb2.DoubleMatrix(
-            #             rows = 1,
-            #             cols = 1,
-            #             data = [1,2,3,4,5]
-            #         )
-            #
-            #     )
-            #     if not thread.is_alive():
-            #         for i in range(pnl_container.shared_queue.qsize()):
-            #             print(pnl_container.shared_queue.get())
-            #             yield graph_pb2.Entry(
-            #                 componentName = 'a',
-            #                 parameterName = 'b',
-            #                 time = '1:1:1:1',
-            #                 context = 'c',
-            #                 value = graph_pb2.DoubleMatrix(
-            #                     rows = 1,
-            #                     cols = 1,
-            #                     data = [1,2,3,4,5]
-            #                 )
-            #             )
-            #         break
+                )
+            else:
+                if not thread.is_alive():
+                    break
 
 pnl_container = Container()
 
 def run_composition(composition, inputs):
     # composition.run(inputs,
     #                 call_after_trial = lambda: pnl_container.shared_queue.put([composition.nodes[0].value]))
-    list(pnl_container.pnl_objects['compositions'].values())[-1].run([1],
-                    call_after_trial = lambda: pnl_container.shared_queue.put([1]))
+    # raise Exception(f'HERE ARE THE INPUTS {inputs}')
+    import time
+    def put_in_queue_and_wait():
+        pnl_container.shared_queue.put([1])
+        time.sleep(3)
+    formatted_inputs = {}
+    comp = list(pnl_container.pnl_objects['compositions'].values())[-1]
+    for key in inputs.keys():
+        rows = inputs[key].rows
+        cols = inputs[key].cols
+        formatted_inputs[comp.nodes[key]] = np.array(inputs[key].data).reshape(rows, cols)
+    comp.run(inputs = formatted_inputs,
+             call_after_trial = put_in_queue_and_wait)
 
 def get_new_pnl_objects(namespace):
     compositions = {}

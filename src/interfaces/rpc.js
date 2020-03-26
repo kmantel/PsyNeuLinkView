@@ -137,17 +137,40 @@ class RPCInterface{
         })
     }
 
-    run_composition(inputs, servePrefs, runtime_parameters, callback = () => {}) {
+    run_composition(
+        inputs,
+        servePrefs,
+        runtime_parameters,
+        callback = () => {
+        }) {
         var self = this,
             client = this.instantiate_client(),
-            call = client.RunComposition(
-                {
-                    inputs: inputs,
-                    servePrefs: servePrefs
-                }
-            );
+            formatted_inputs = {};
+        Object.keys(inputs).forEach(
+            function (k) {
+                var data = inputs[k],
+                    rows = data.length,
+                    cols = data[0].length,
+                    flattened_data = data.flat(Infinity)
+                Object.assign(formatted_inputs,
+                    {
+                        [k]: {
+                            rows: rows,
+                            cols: cols,
+                            data: flattened_data
+                        }
+                    }
+                )
+            }
+        );
+        var call = client.RunComposition(
+            {
+                inputs: formatted_inputs,
+                servePrefs: servePrefs
+            }
+        );
         call.on('data', function (entry) {
-            console.log('YEET')
+            console.log(entry)
             self.got_data = true
         })
 
