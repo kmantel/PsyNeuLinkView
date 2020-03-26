@@ -87,6 +87,7 @@ class GraphServer(graph_pb2_grpc.ServeGraphServicer):
         return graph_pb2.HealthStatus(status='Okay')
 
     def RunComposition(self, request, context):
+        raise Exception(f'{[i for i in request.servePrefs.data]}')
         thread = threading.Thread(target=run_composition,
                                   args=[
                                       pnl_container.hashable_pnl_objects['compositions'][-1],
@@ -124,13 +125,12 @@ def run_composition(composition, inputs):
     import time
     def put_in_queue_and_wait():
         pnl_container.shared_queue.put([1])
-        time.sleep(3)
     formatted_inputs = {}
     comp = list(pnl_container.pnl_objects['compositions'].values())[-1]
     for key in inputs.keys():
         rows = inputs[key].rows
         cols = inputs[key].cols
-        formatted_inputs[comp.nodes[key]] = np.array(inputs[key].data).reshape(rows, cols)
+        formatted_inputs[comp.nodes[key]] = np.array(inputs[key].data).reshape((rows, cols))
     comp.run(inputs = formatted_inputs,
              call_after_trial = put_in_queue_and_wait)
 

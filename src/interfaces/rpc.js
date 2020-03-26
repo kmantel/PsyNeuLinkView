@@ -166,7 +166,7 @@ class RPCInterface{
         var call = client.RunComposition(
             {
                 inputs: formatted_inputs,
-                servePrefs: servePrefs
+                servePrefs: {servePrefSet: servePrefs}
             }
         );
         call.on('data', function (entry) {
