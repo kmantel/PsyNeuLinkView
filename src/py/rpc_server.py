@@ -28,6 +28,19 @@ if len(sys.argv) > 1:
 import sys
 sys.path.append(r'C:\Users\Dillo\PycharmProjects\PsyNeuLink')
 import psyneulink as pnl
+from psyneulink.core.globals import graph_pb2, graph_pb2_grpc
+
+serve_conditions = {
+    0:'INITIALIZATION',
+    1:'VALIDATION',
+    2:'EXECUTION',
+    3:'PROCESSING',
+    4:'LEARNING',
+    5:'CONTROL',
+    6:'SIMULATION',
+    7:'TRIAL',
+    8:'RUN'
+}
 
 class Container():
     def __init__(self):
@@ -98,37 +111,45 @@ class GraphServer(graph_pb2_grpc.ServeGraphServicer):
         i = 0
         while True:
             if not pnl_container.shared_queue.empty():
-                # yield pnl_container.shared_queue.get()
-                print(pnl_container.shared_queue.get())
-                yield graph_pb2.Entry(
-                    componentName = 'a',
-                    parameterName = 'b',
-                    time = '1:1:1:1',
-                    context = 'c',
-                    value = graph_pb2.DoubleMatrix(
-                        rows = 1,
-                        cols = 1,
-                        data = [1,2,3,4,5]
-                    )
-
-                )
+                e =  pnl_container.shared_queue.get()
+                if isinstance(e, graph_pb2.Entry):
+                    yield e
             else:
                 if not thread.is_alive():
                     break
 
 pnl_container = Container()
 
+def get_current_composition():
+    # gets currently selected composition. currently just takes the last one in the list of instantiated comps.
+    # needs to be improved
+    return list(pnl_container.pnl_objects['compositions'].values())[-1]
+
+def handle_serve_prefs(composition, servePrefs):
+    # turn on RPC communication for all selected parameters
+    comp = get_current_composition()
+    for servePref in servePrefs.servePrefSet:
+        if not servePref.componentName in comp.nodes:
+            warnings.warn(f'Component {servePref.componentName} is not in composition {comp.name}. Skipping Component.')
+        else:
+            node = comp.nodes[servePref.componentName]
+            if not servePref.parameterName in node.loggable_items:
+                warnings.warn(
+                    f'Parameter {servePref.parameterName} is not a loggable item of {node.name}. Skipping Parameter.')
+            else:
+                node.set_delivery_conditions(servePref.parameterName,
+                                             pnl.LogCondition.__dict__[serve_conditions[servePref.condition]])
+
 def run_composition(composition, inputs, servePrefs):
-    def put_in_queue_and_wait():
-        pnl_container.shared_queue.put([1])
     formatted_inputs = {}
-    comp = list(pnl_container.pnl_objects['compositions'].values())[-1]
+    handle_serve_prefs(composition, servePrefs)
+    con = pnl.Context(rpc_pipeline = pnl_container.shared_queue)
+    comp = get_current_composition()
     for key in inputs.keys():
         rows = inputs[key].rows
         cols = inputs[key].cols
         formatted_inputs[comp.nodes[key]] = np.array(inputs[key].data).reshape((rows, cols))
-    comp.run(inputs = formatted_inputs,
-             call_after_trial = put_in_queue_and_wait)
+    comp.run(inputs = formatted_inputs, context = con)
 
 def get_new_pnl_objects(namespace):
     compositions = {}

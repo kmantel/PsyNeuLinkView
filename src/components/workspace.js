@@ -289,6 +289,7 @@ class WorkSpace extends React.Component {
         self.filepath = filepath;
         self.setState({graph: "loading"}, ()=>{win.setTitle('PsyNeuLinkView')});
         window.electron_root.addRecentDocument(filepath);
+        // self.load_script(filepath)
         interp.restart_rpc_server(
             ()=>{
                 self.load_script(filepath)
