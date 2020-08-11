@@ -1,9 +1,10 @@
 import * as React from 'react'
-
 import { Classes, Tree } from '@blueprintjs/core'
 import '../css/sidebar.css'
-
 import { Resizable } from "re-resizable"
+import {connect} from "react-redux";
+import {setActiveView, setStyleSheet} from "../app/redux/actions";
+import {store} from "../app/redux/store";
 
 const style = {
   display: "flex",
@@ -11,11 +12,11 @@ const style = {
   justifyContent: "center",
 };
 
-export default class SideBar extends React.Component {
+class SideBar extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      nodes: INITIAL_STATE,
+      nodes: PLOTVIEW_NODES,
       class: props.className !== undefined ? `${Classes.ELEVATION_0} ${props.className}`:Classes.ELEVATION_0
     }
   }
@@ -50,7 +51,7 @@ export default class SideBar extends React.Component {
         }
       >
         <Tree
-          contents={this.state.nodes}
+          contents={this.props.activeView === 'graphview' ? GRAPHVIEW_NODES : PLOTVIEW_NODES}
           onNodeClick={this.handleNodeClick}
           onNodeCollapse={this.handleNodeCollapse}
           onNodeExpand={this.handleNodeExpand}
@@ -91,162 +92,180 @@ export default class SideBar extends React.Component {
   }
 }
 
-const INITIAL_STATE = [{}];
-//
-// const INITIAL_STATE = [
-//   {
-//     id: 0,
-//     icon: 'folder-close',
-//     hasCaret: false,
-//     isExpanded: true,
-//     label: 'Components',
-//     childNodes: [
-//       {
-//         id: 1,
-//         icon: 'folder-close',
-//         label: 'Mechanisms',
-//         hasCaret: false,
-//         isExpanded: true,
-//         childNodes: [
-//           {
-//             id: 2,
-//             icon: 'folder-close',
-//             label: 'Adaptive',
-//             hasCaret: false,
-//             isExpanded: true,
-//             childNodes: [
-//               {
-//                 id: 3,
-//                 icon: 'folder-close',
-//                 label: 'Control',
-//                 hasCaret: false,
-//                 isExpanded: true,
-//                 childNodes: [
-//                   {
-//                     id: 4,
-//                     icon: 'cog',
-//                     label: 'Control Mechanism'
-//                   },
-//                   {
-//                     id: 5,
-//                     icon: 'cog',
-//                     label: 'Optimization Control Mechanism'
-//                   },
-//                 ]
-//               }
-//             ],
-//           },
-//           {
-//             id: 6,
-//             icon: 'folder-close',
-//             label: 'Gating',
-//             hasCaret: false,
-//             isExpanded: true,
-//             childNodes: [
-//               {
-//                 id: 7,
-//                 icon: 'cog',
-//                 label: 'Gating Mechanism'
-//               }
-//             ],
-//           },
-//           {
-//             id: 8,
-//             icon: 'folder-close',
-//             label: 'Learning',
-//             hasCaret: false,
-//             isExpanded: true,
-//             childNodes: [
-//               {
-//                 id: 7,
-//                 icon: 'cog',
-//                 label: 'Learning Mechanism'
-//               }
-//             ],
-//           },
-//           {
-//             id: 9,
-//             icon: 'folder-close',
-//             label: 'Processing',
-//             hasCaret: false,
-//             isExpanded: true,
-//             childNodes: [
-//               {
-//                 id: 10,
-//                 icon: 'cog',
-//                 label: 'Integrator Mechanism'
-//               },
-//               {
-//                 id: 11,
-//                 icon: 'cog',
-//                 label: 'Objective Mechanism'
-//               },
-//               {
-//                 id: 12,
-//                 icon: 'cog',
-//                 label: 'Processing Mechanism'
-//               },
-//               {
-//                 id: 13,
-//                 icon: 'cog',
-//                 label: 'Transfer Mechanism'
-//               }
-//             ],
-//           }
-//         ]
-//       },
-//       {
-//         id: 14,
-//         icon: 'folder-close',
-//         label: 'Projections',
-//         hasCaret: false,
-//         isExpanded: true,
-//         childNodes: [
-//           {
-//             id: 15,
-//             icon: 'folder-close',
-//             label: 'Modulatory',
-//             hasCaret: false,
-//             isExpanded: true,
-//             childNodes: [
-//               {
-//                 id: 16,
-//                 icon: 'inheritance',
-//                 label: 'Control Projection'
-//               },
-//               {
-//                 id: 17,
-//                 icon: 'inheritance',
-//                 label: 'Gating Projection'
-//               },
-//               {
-//                 id: 18,
-//                 icon: 'inheritance',
-//                 label: 'Learning Projection'
-//               }
-//             ]
-//           },
-//           {
-//             id: 19,
-//             icon: 'folder-close',
-//             label: 'Pathway',
-//             hasCaret: false,
-//             isExpanded: true,
-//             childNodes: [
-//               {
-//                 id: 20,
-//                 icon: 'inheritance',
-//                 label: 'Mapping Projection'
-//               },
-//               {
-//                 id: 21,
-//                 icon: 'inheritance',
-//                 label: 'Pathway Projection'
-//               }
-//             ]
-//           }
-//         ]
-//       }
-//     ]
-//   },
-// ]
+const PLOTVIEW_NODES = [
+  {
+    id: 0,
+    label: 'Line Graph'
+  },
+  {
+    id: 1,
+    label: 'Histogram'
+  }];
+
+const GRAPHVIEW_NODES = [
+  {
+    id: 0,
+    icon: 'folder-close',
+    hasCaret: false,
+    isExpanded: true,
+    label: 'Components',
+    childNodes: [
+      {
+        id: 1,
+        icon: 'folder-close',
+        label: 'Mechanisms',
+        hasCaret: false,
+        isExpanded: true,
+        childNodes: [
+          {
+            id: 2,
+            icon: 'folder-close',
+            label: 'Adaptive',
+            hasCaret: false,
+            isExpanded: true,
+            childNodes: [
+              {
+                id: 3,
+                icon: 'folder-close',
+                label: 'Control',
+                hasCaret: false,
+                isExpanded: true,
+                childNodes: [
+                  {
+                    id: 4,
+                    icon: 'cog',
+                    label: 'Control Mechanism'
+                  },
+                  {
+                    id: 5,
+                    icon: 'cog',
+                    label: 'Optimization Control Mechanism'
+                  },
+                ]
+              }
+            ],
+          },
+          {
+            id: 6,
+            icon: 'folder-close',
+            label: 'Gating',
+            hasCaret: false,
+            isExpanded: true,
+            childNodes: [
+              {
+                id: 7,
+                icon: 'cog',
+                label: 'Gating Mechanism'
+              }
+            ],
+          },
+          {
+            id: 8,
+            icon: 'folder-close',
+            label: 'Learning',
+            hasCaret: false,
+            isExpanded: true,
+            childNodes: [
+              {
+                id: 7,
+                icon: 'cog',
+                label: 'Learning Mechanism'
+              }
+            ],
+          },
+          {
+            id: 9,
+            icon: 'folder-close',
+            label: 'Processing',
+            hasCaret: false,
+            isExpanded: true,
+            childNodes: [
+              {
+                id: 10,
+                icon: 'cog',
+                label: 'Integrator Mechanism'
+              },
+              {
+                id: 11,
+                icon: 'cog',
+                label: 'Objective Mechanism'
+              },
+              {
+                id: 12,
+                icon: 'cog',
+                label: 'Processing Mechanism'
+              },
+              {
+                id: 13,
+                icon: 'cog',
+                label: 'Transfer Mechanism'
+              }
+            ],
+          }
+        ]
+      },
+      {
+        id: 14,
+        icon: 'folder-close',
+        label: 'Projections',
+        hasCaret: false,
+        isExpanded: true,
+        childNodes: [
+          {
+            id: 15,
+            icon: 'folder-close',
+            label: 'Modulatory',
+            hasCaret: false,
+            isExpanded: true,
+            childNodes: [
+              {
+                id: 16,
+                icon: 'inheritance',
+                label: 'Control Projection'
+              },
+              {
+                id: 17,
+                icon: 'inheritance',
+                label: 'Gating Projection'
+              },
+              {
+                id: 18,
+                icon: 'inheritance',
+                label: 'Learning Projection'
+              }
+            ]
+          },
+          {
+            id: 19,
+            icon: 'folder-close',
+            label: 'Pathway',
+            hasCaret: false,
+            isExpanded: true,
+            childNodes: [
+              {
+                id: 20,
+                icon: 'inheritance',
+                label: 'Mapping Projection'
+              },
+              {
+                id: 21,
+                icon: 'inheritance',
+                label: 'Pathway Projection'
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+]
+
+const mapStateToProps = state => {
+  return {
+    activeView: state.activeView,
+  }
+};
+
+export default connect(
+    mapStateToProps,
+)(SideBar)

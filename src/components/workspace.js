@@ -640,15 +640,17 @@ class WorkSpace extends React.Component {
                 />
             </div>
 
-        var components = [
-            sidebar, tipbox, paramcontrolbox,
-        ];
+        var components;
 
         if (this.props.activeView === 'graphview'){
-            components.push(graphview);
+            components = [
+                sidebar, tipbox, paramcontrolbox, graphview
+            ];
         }
         else if (this.props.activeView === 'plotter'){
-            components.push(plotter)
+            components = [
+                sidebar, tipbox, paramcontrolbox, plotter
+            ];
         }
 
         // var components = [
