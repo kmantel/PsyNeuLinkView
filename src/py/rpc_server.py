@@ -28,7 +28,7 @@ if len(sys.argv) > 1:
 import sys
 sys.path.append(r'C:\Users\Dillo\PycharmProjects\PsyNeuLink')
 import psyneulink as pnl
-from psyneulink.core.globals import graph_pb2, graph_pb2_grpc
+from psyneulink.core.rpc import graph_pb2, graph_pb2_grpc
 
 serve_conditions = {
     0:'INITIALIZATION',

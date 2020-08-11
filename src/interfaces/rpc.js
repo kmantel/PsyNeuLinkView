@@ -151,7 +151,7 @@ class RPCInterface{
                 var data = inputs[k],
                     rows = data.length,
                     cols = data[0].length,
-                    flattened_data = data.flat(Infinity)
+                    flattened_data = data.flat(Infinity);
                 Object.assign(formatted_inputs,
                     {
                         [k]: {
@@ -163,6 +163,7 @@ class RPCInterface{
                 )
             }
         );
+        console.log(formatted_inputs, servePrefs)
         var call = client.RunComposition(
             {
                 inputs: formatted_inputs,
@@ -170,7 +171,7 @@ class RPCInterface{
             }
         );
         call.on('data', function (entry) {
-            console.log(entry)
+            console.log(entry);
             self.got_data = true
         })
 

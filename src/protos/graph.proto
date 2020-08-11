@@ -46,7 +46,12 @@ message StyleJSON {
     string styleJSON = 1;
 }
 
-message DoubleMatrix {
+message ndArray {
+    repeated uint32 shape = 1;
+    repeated double data = 2;
+}
+
+message Matrix {
     uint32 rows = 1;
     uint32 cols = 2;
     repeated double data = 3 [packed=true];
@@ -57,7 +62,7 @@ message Entry {
     string parameterName = 2;
     string time = 3;
     string context = 4;
-    DoubleMatrix value = 5;
+    ndArray value = 5;
 }
 
 enum serveCondition {
@@ -83,6 +88,6 @@ message ServePrefs {
 }
 
 message RunTimeParams {
-    map<string, DoubleMatrix> inputs = 1;
+    map<string, Matrix> inputs = 1;
     ServePrefs servePrefs = 2;
 }
