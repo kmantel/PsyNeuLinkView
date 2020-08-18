@@ -15,7 +15,8 @@ const style = {
 
 // DnD Spec
 const PlotSpec = {
-    drop(){
+    drop(props, monitor, component){
+        return {dropped: true}
     }
 }
 
@@ -278,10 +279,11 @@ class D3plotter extends React.PureComponent {
         }
 
     render() {
-        const connectDropTarget = this.props.connectDropTarget;
+        const {connectDropTarget, isOver, canDrop} = this.props;
+        var valid_drag_hover = isOver && canDrop
         return connectDropTarget (
-            <div>
-                <Resizable
+            <div class={valid_drag_hover ? "valid-drag-hover": ""}>
+            <Resizable
                     style={style}
                     onResize={this.props.onResize}
                     onResizeStart={this.props.onResizeStart}
@@ -336,5 +338,7 @@ class D3plotter extends React.PureComponent {
         )
     }
 }
+
+console.log(12345)
 
 export default DropTarget(ItemTypes.PLOT, PlotSpec, collect)(D3plotter)

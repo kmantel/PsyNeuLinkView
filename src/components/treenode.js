@@ -6,7 +6,7 @@ const plotSpec = {
     beginDrag(props){
         console.log(props);
         return{
-            name: 'THIS IS A PLACEHOLDER NAME'
+            name: props.label
         }
     },
     endDrag(props, monitor, component){
@@ -14,7 +14,7 @@ const plotSpec = {
             const dragItem = monitor.getItem(); // from beginDrag
             const dropResult = monitor.getDropResult();
             // Move action goes here
-            console.log("You dropped ", dragItem.name, ' into '+ dropResult.name)
+            // console.log("You dropped ", dragItem.name, ' into '+ dropResult.name)
         }else{
             return;
         }
