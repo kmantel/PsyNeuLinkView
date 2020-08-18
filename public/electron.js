@@ -36,6 +36,9 @@ function createWindow() {
             preload: path.join(isDev ? __dirname : `${adjusted_app_path}/build/`, 'preload.js')
         }
     });
+    if (isDev) {BrowserWindow.addDevToolsExtension(
+        path.join(os.homedir(), 'AppData/Local/Google/Chrome/User Data/Profile 1/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.8.2_0')
+        )}
     mainWindow.loadURL(isDev ? 'http://localhost:3000' : `file://${path.join(adjusted_app_path, 'build/index.html')}`);
     mainWindow.on('closed', () => {
             interp.kill_rpc_server();

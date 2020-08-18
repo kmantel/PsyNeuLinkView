@@ -5,12 +5,10 @@ import '../css/indicatorlight.css'
 export default class IndicatorLight extends React.Component {
     constructor(props) {
         super(props);
-        console.log('PROPS:',props);
         this.state = {
             status: this.props.status,
             className: this.props.className
         };
-        console.log('STATE:',props);
         this.statusBindings = {
             'loading':
                 <Spinner

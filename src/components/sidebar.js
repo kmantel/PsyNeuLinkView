@@ -5,12 +5,31 @@ import { Resizable } from "re-resizable"
 import {connect} from "react-redux";
 import {setActiveView, setStyleSheet} from "../app/redux/actions";
 import {store} from "../app/redux/store";
+import {DragSource, useDrag, DragPreviewImage, DropTarget} from 'react-dnd';
+import { ItemTypes } from './constants';
+import DraggableTreeNode from "./treenode";
+import { getEmptyImage } from 'react-dnd-html5-backend'
 
 const style = {
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
 };
+
+// DnD Spec
+const PlotSpec = {
+  drop(){
+  }
+}
+
+// DnD DropTarget - collect
+let collect = ( connect, monitor )=>{
+  return {
+    connectDropTarget: connect.dropTarget(),
+    isOver: monitor.isOver(),
+    canDrop: monitor.canDrop()
+  };
+}
 
 class SideBar extends React.Component {
   constructor(props) {
@@ -21,47 +40,65 @@ class SideBar extends React.Component {
     }
   }
 
+  componentDidUpdate() {
+  }
+
   render() {
-    return (
-      <Resizable
-        style={style}
-        onResize={this.props.onResize}
-        onResizeStart={this.props.onResizeStart}
-        onResizeStop={this.props.onResizeStop}
-        enable={{
-          top:false, right:true, bottom:true, left:false, topRight:false, bottomRight:true, bottomLeft:false, topLeft:false }}
-        className='sidebar'
-        // defaultSize={
-        //   this.props.defaultSize
-        // }
-        size={
-          this.props.size
-        }
-        minHeight={
-          40
-        }
-        minWidth={
-          40
-        }
-        maxWidth={
-          this.props.maxWidth
-        }
-        maxHeight={
-          this.props.maxHeight
-        }
-      >
-        <Tree
-          contents={this.props.activeView === 'graphview' ? GRAPHVIEW_NODES : PLOTVIEW_NODES}
-          onNodeClick={this.handleNodeClick}
-          onNodeCollapse={this.handleNodeCollapse}
-          onNodeExpand={this.handleNodeExpand}
-          className={this.state.class}
-        />
-      </Resizable>
+    const connectDropTarget = this.props.connectDropTarget;
+    let nodes = this.props.activeView === 'graphview' ? GRAPHVIEW_NODES : PLOTVIEW_NODES
+    return connectDropTarget(
+        <div>
+          <Resizable
+              style={style}
+              onResize={this.props.onResize}
+              onResizeStart={this.props.onResizeStart}
+              onResizeStop={this.props.onResizeStop}
+              enable={{
+                top: false,
+                right: true,
+                bottom: true,
+                left: false,
+                topRight: false,
+                bottomRight: true,
+                bottomLeft: false,
+                topLeft: false
+              }}
+              className='sidebar'
+              // defaultSize={
+              //   this.props.defaultSize
+              // }
+              size={
+                this.props.size
+              }
+              minHeight={
+                40
+              }
+              minWidth={
+                40
+              }
+              maxWidth={
+                this.props.maxWidth
+              }
+              maxHeight={
+                this.props.maxHeight
+              }
+          >
+
+            <Tree
+                contents={nodes}
+                onNodeClick={(nodeData, _nodePath, e) =>
+                    this.handleNodeClick(nodes, nodeData, _nodePath, e)
+                }
+                onNodeCollapse={this.handleNodeCollapse}
+                onNodeExpand={this.handleNodeExpand}
+                className={this.state.class}
+            />
+          </Resizable>
+        </div>
     )
   }
 
-  handleNodeClick = (nodeData, _nodePath, e) => {
+  handleNodeClick = (nodeList, nodeData, _nodePath, e) => {
     const originallySelected = nodeData.isSelected
     if (!e.shiftKey) {
       this.forEachNode(this.state.nodes, n => (n.isSelected = false))
@@ -92,15 +129,30 @@ class SideBar extends React.Component {
   }
 }
 
-const PLOTVIEW_NODES = [
+// var PLOTVIEW_NODES = [
+//   <DraggableTreeNode
+//       id = {0}
+//       icon = {'folder-close'}
+//       hasCaret = {false}
+//       isExpanded = {true}
+//       label = {'Components'}
+//   />
+// ]
+
+var PLOTVIEW_NODES = [
   {
     id: 0,
-    label: 'Line Graph'
+    label: <DraggableTreeNode
+        id={0}
+        label={'Line Graph'}/>
   },
   {
     id: 1,
-    label: 'Histogram'
-  }];
+    label:  <DraggableTreeNode
+        id={1}
+        label={'Bar Graph'}/>
+  }
+];
 
 const GRAPHVIEW_NODES = [
   {
@@ -266,6 +318,4 @@ const mapStateToProps = state => {
   }
 };
 
-export default connect(
-    mapStateToProps,
-)(SideBar)
+export default DropTarget(ItemTypes.PLOT, PlotSpec, collect)(connect(mapStateToProps)(SideBar))

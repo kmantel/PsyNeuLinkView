@@ -3,6 +3,8 @@ import '../css/d3plotter.css'
 import * as d3 from 'd3'
 import {Resizable} from 're-resizable'
 import {Spinner} from '@blueprintjs/core'
+import { DropTarget } from 'react-dnd'
+import { ItemTypes } from './constants'
 import * as _ from "lodash";
 
 const style = {
@@ -11,6 +13,20 @@ const style = {
     justifyContent: "center",
 };
 
+// DnD Spec
+const PlotSpec = {
+    drop(){
+    }
+}
+
+// DnD DropTarget - collect
+let collect = ( connect, monitor )=>{
+    return {
+        connectDropTarget: connect.dropTarget(),
+        isOver: monitor.isOver(),
+        canDrop: monitor.canDrop()
+    };
+}
 
 class D3plotter extends React.PureComponent {
     constructor(props) {
@@ -188,7 +204,6 @@ class D3plotter extends React.PureComponent {
         this.canvas = svg.node()
         // var context = canvas.getContext("2d");
         this.context = svg.node().getContext('2d');
-        console.log(this.context)
         this.apply_select_boxes(svg);
     }
 
@@ -263,60 +278,63 @@ class D3plotter extends React.PureComponent {
         }
 
     render() {
-        return (
-            <Resizable
-                style={style}
-                onResize={this.props.onResize}
-                onResizeStart={this.props.onResizeStart}
-                onResizeStop={this.props.onResizeStop}
-                enable={{
-                    top: false,
-                    right: false,
-                    bottom: true,
-                    left: true,
-                    topRight: false,
-                    bottomRight: false,
-                    bottomLeft: true,
-                    topLeft: false
-                }}
-                className='plotter_canvas'
-                defaultSize={
-                    this.props.defaultSize
-                }
-                size={
-                    this.props.size
-                }
-                minHeight={
-                    40
-                }
-                minWidth={
-                    40
-                }
-                maxWidth={
-                    this.props.maxWidth
-                }
-                maxHeight={
-                    this.props.maxHeight
-                }
-            >
-                <div className={this.state.class}/>
-                <div className={'spinner'}
-                     style={
-                         {
-                             "position": "absolute",
-                         }
-                     }
-                >
-                    {
-                        this.state.spinner_visible ?
-                            <Spinner
-                                className={"graph_loading_spinner"}/> :
-                            <div/>
+        const connectDropTarget = this.props.connectDropTarget;
+        return connectDropTarget (
+            <div>
+                <Resizable
+                    style={style}
+                    onResize={this.props.onResize}
+                    onResizeStart={this.props.onResizeStart}
+                    onResizeStop={this.props.onResizeStop}
+                    enable={{
+                        top: false,
+                        right: false,
+                        bottom: true,
+                        left: true,
+                        topRight: false,
+                        bottomRight: false,
+                        bottomLeft: true,
+                        topLeft: false
+                    }}
+                    className='plotter_canvas'
+                    defaultSize={
+                        this.props.defaultSize
                     }
-                </div>
-            </Resizable>
+                    size={
+                        this.props.size
+                    }
+                    minHeight={
+                        40
+                    }
+                    minWidth={
+                        40
+                    }
+                    maxWidth={
+                        this.props.maxWidth
+                    }
+                    maxHeight={
+                        this.props.maxHeight
+                    }
+                >
+                    <div className={this.state.class}/>
+                    <div className={'spinner'}
+                         style={
+                             {
+                                 "position": "absolute",
+                             }
+                         }
+                    >
+                        {
+                            this.state.spinner_visible ?
+                                <Spinner
+                                    className={"graph_loading_spinner"}/> :
+                                <div/>
+                        }
+                    </div>
+                </Resizable>
+            </div>
         )
     }
 }
 
-export default D3plotter
+export default DropTarget(ItemTypes.PLOT, PlotSpec, collect)(D3plotter)

@@ -52,7 +52,6 @@ class SettingsPane extends React.Component {
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (prevProps.isOpen !== this.props.isOpen) {
-            console.log(prevProps)
         }
     }
 

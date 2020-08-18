@@ -2,11 +2,19 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0426a943-ef89-4391-a3a0-8152f91aa099" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/src/components/constants.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/treenode.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/electron.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/electron.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/d3model.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/d3model.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/d3plotter.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/d3plotter.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/indicator_light.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/indicator_light.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/settings.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/settings.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/sidebar.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/sidebar.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/workspace.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/workspace.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/py/test/pnl_scripts/NeuroML Example.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/py/test/pnl_scripts/NeuroML Example.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/py/test/pnl_scripts/StabilityFlexibility.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/py/test/pnl_scripts/StabilityFlexibility.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/yarn.lock" beforeDir="false" afterPath="$PROJECT_DIR$/yarn.lock" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -20,8 +28,8 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="CSS File" />
-        <option value="JavaScript File" />
         <option value="HTML File" />
+        <option value="JavaScript File" />
       </list>
     </option>
   </component>
@@ -176,7 +184,10 @@
       <workItem from="1596722194860" duration="753000" />
       <workItem from="1596808703974" duration="839000" />
       <workItem from="1597068516101" duration="8402000" />
-      <workItem from="1597153740443" duration="3865000" />
+      <workItem from="1597153740443" duration="5692000" />
+      <workItem from="1597330751929" duration="4532000" />
+      <workItem from="1597420515133" duration="5489000" />
+      <workItem from="1597673710009" duration="19158000" />
     </task>
     <task id="LOCAL-00001" summary="Enabled touchpad zoom gestures and windows ctrl shortcuts">
       <created>1581449946471</created>
@@ -213,7 +224,14 @@
       <option name="project" value="LOCAL" />
       <updated>1597160275945</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Added plot types to monitor view side panel">
+      <created>1597160302126</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1597160302126</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -240,13 +258,18 @@
     <MESSAGE value="turned off show_learning_components on internal show_graph" />
     <MESSAGE value="RPC from PNLV to and from PNL now working" />
     <MESSAGE value="Updated protos to support ndarrays" />
-    <option name="LAST_COMMIT_MESSAGE" value="Updated protos to support ndarrays" />
+    <MESSAGE value="Added plot types to monitor view side panel" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added plot types to monitor view side panel" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="598" y="118" width="1168" height="803" key="CommitChangelistDialog2" timestamp="1597160275282">
+    <state x="710" y="330" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1597708574716">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="598" y="118" width="1168" height="803" key="CommitChangelistDialog2/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1597160275282" />
+    <state x="710" y="330" key="#com.intellij.fileTypes.FileTypeChooser/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1597708574716" />
+    <state x="598" y="118" width="1168" height="803" key="CommitChangelistDialog2" timestamp="1597160301606">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="598" y="118" width="1168" height="803" key="CommitChangelistDialog2/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1597160301606" />
     <state x="355" y="113" width="1536" height="860" key="DiffContextDialog" timestamp="1596467741137">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -255,41 +278,50 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="920" y="261" key="RollbackChangesDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1596467163479" />
+    <state x="92" y="92" width="1736" height="856" key="com.intellij.history.integration.ui.views.FileHistoryDialog" timestamp="1597710339176">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="92" y="92" width="1736" height="856" key="com.intellij.history.integration.ui.views.FileHistoryDialog/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1597710339176" />
     <state x="92" y="92" width="1736" height="856" key="com.intellij.history.integration.ui.views.SelectionHistoryDialog" timestamp="1597158516369">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="92" y="92" width="1736" height="856" key="com.intellij.history.integration.ui.views.SelectionHistoryDialog/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1597158516369" />
-    <state x="606" y="229" width="672" height="678" key="search.everywhere.popup" timestamp="1597080831746">
+    <state x="667" y="154" width="586" height="732" key="find.popup" timestamp="1597709263170">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="606" y="229" width="672" height="678" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1597080831746" />
+    <state x="667" y="154" width="586" height="732" key="find.popup/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1597709263170" />
+    <state x="608" y="231" width="672" height="678" key="search.everywhere.popup" timestamp="1597712226743">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="608" y="231" width="672" height="678" key="search.everywhere.popup/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1597712226743" />
+    <state x="608" y="231" width="672" height="678" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1597429657654" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/components/d3model.js</url>
-          <line>1446</line>
+          <line>1445</line>
           <option name="timeStamp" value="128" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/components/d3model.js</url>
-          <line>1467</line>
+          <line>1466</line>
           <option name="timeStamp" value="129" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/components/d3model.js</url>
-          <line>1484</line>
+          <line>1483</line>
           <option name="timeStamp" value="131" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/components/d3model.js</url>
-          <line>1495</line>
+          <line>1494</line>
           <option name="timeStamp" value="136" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/components/d3model.js</url>
-          <line>1496</line>
+          <line>1495</line>
           <option name="timeStamp" value="137" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">

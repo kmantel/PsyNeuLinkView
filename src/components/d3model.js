@@ -206,7 +206,6 @@ class D3model extends React.Component {
     }
 
     on_resize() {
-        console.log('yyyyy')
         if (![null, 'loading'].includes(this.props.graph)) {
             this.commit_to_stylesheet_and_update_script()
         }

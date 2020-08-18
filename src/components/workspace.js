@@ -1,6 +1,7 @@
 import React from 'react'
 import Layout from './layout'
 import SideBar from './sidebar'
+import Container from './newtree'
 import D3plotter from './d3plotter'
 import GraphView from './d3model'
 import ToolTipBox from './tooltipbox'
@@ -11,6 +12,8 @@ import ErrorDispatcher from "../utility/errors/dispatcher";
 import {connect} from "react-redux";
 import {setActiveView, setStyleSheet} from "../app/redux/actions";
 import {store} from "../app/redux/store";
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 
 const fs = window.interfaces.filesystem,
     interp = window.interfaces.interpreter,
@@ -666,44 +669,46 @@ class WorkSpace extends React.Component {
                     // isOpen={true}
                     toggleDialog={this.toggleDialog}
                     config={window.config}/>
-                <Layout
-                    className={'workspace_grid'}
-                    margin={[0, 0]}
-                    layout={[
-                        {
-                            i: 'sidebar',
-                            x: 0,
-                            y: 0,
-                            w: this.state.row_one_horizontal_factor,
-                            h: this.state.vertical_factor
-                        },
-                        {
-                            i: this.props.activeView,
-                            x: this.state.row_one_horizontal_factor,
-                            y: 0,
-                            w: this.state.x_res - this.state.row_one_horizontal_factor,
-                            h: this.state.vertical_factor
-                        },
-                        {
-                            i: 'tipbox',
-                            x: 0,
-                            y: this.state.vertical_factor,
-                            w: this.state.row_two_horizontal_factor,
-                            h: this.state.y_res - this.state.vertical_factor - this.panel_padding * 6
-                        },
-                        {
-                            i: 'paramcontrol',
-                            x: this.state.row_two_horizontal_factor,
-                            y: this.state.vertical_factor,
-                            w: this.state.x_res - this.state.row_two_horizontal_factor,
-                            h: this.state.y_res - this.state.vertical_factor - this.panel_padding * 6
-                        }
-                    ]}
-                    cols={this.state.x_res}
-                    rowHeight={1}
-                    width={this.state.x_res}
-                    components={components}
-                />
+                <DndProvider backend={ HTML5Backend } >
+                    <Layout
+                        className={'workspace_grid'}
+                        margin={[0, 0]}
+                        layout={[
+                            {
+                                i: 'sidebar',
+                                x: 0,
+                                y: 0,
+                                w: this.state.row_one_horizontal_factor,
+                                h: this.state.vertical_factor
+                            },
+                            {
+                                i: this.props.activeView,
+                                x: this.state.row_one_horizontal_factor,
+                                y: 0,
+                                w: this.state.x_res - this.state.row_one_horizontal_factor,
+                                h: this.state.vertical_factor
+                            },
+                            {
+                                i: 'tipbox',
+                                x: 0,
+                                y: this.state.vertical_factor,
+                                w: this.state.row_two_horizontal_factor,
+                                h: this.state.y_res - this.state.vertical_factor - this.panel_padding * 6
+                            },
+                            {
+                                i: 'paramcontrol',
+                                x: this.state.row_two_horizontal_factor,
+                                y: this.state.vertical_factor,
+                                w: this.state.x_res - this.state.row_two_horizontal_factor,
+                                h: this.state.y_res - this.state.vertical_factor - this.panel_padding * 6
+                            }
+                        ]}
+                        cols={this.state.x_res}
+                        rowHeight={1}
+                        width={this.state.x_res}
+                        components={components}
+                    />
+                </DndProvider>
             </div>
         )
     }
