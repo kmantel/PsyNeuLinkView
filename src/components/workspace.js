@@ -1,7 +1,6 @@
 import React from 'react'
 import Layout from './layout'
 import SideBar from './sidebar'
-import Container from './newtree'
 import D3plotter from './d3plotter'
 import GraphView from './d3model'
 import ToolTipBox from './tooltipbox'

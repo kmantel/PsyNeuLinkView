@@ -16,6 +16,8 @@ log.transports.console.level = "debug";
 //TODO: figure out way around fixpath dependency
 fixpath();
 
+//TODO: replace gRPC with gRPC-js for better compatibility with electron https://www.npmjs.com/package/@grpc/grpc-js
+
 function open_log_file(){
     exec(`open ${path.join(os.homedir(),'Library','Logs','psyneulinkview','log.log')}`)
 }
