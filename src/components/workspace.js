@@ -1,7 +1,7 @@
 import React from 'react'
 import Layout from './layout'
 import SideBar from './sidebar'
-import D3plotter from './d3plotter'
+import D3plotter from './plotter'
 import GraphView from './d3model'
 import ToolTipBox from './tooltipbox'
 import ControlStrip from "./controlstrip";
@@ -579,7 +579,7 @@ class WorkSpace extends React.Component {
                     }
                     location = {
                         {
-                            x:this.state.row_one_horizontal_factor,
+                            x:this.state.row_one_horizontal_factor - padding,
                             y:0
                         }
                     }
@@ -615,7 +615,8 @@ class WorkSpace extends React.Component {
                 />
 
             </div>,
-            paramcontrolbox =     <div key="paramcontrol">
+            paramcontrolbox =
+                <div key="paramcontrol">
                 <ParameterControlBox
                     text={this.state.active_tooltip}
                     className='pnl-panel'
@@ -640,7 +641,7 @@ class WorkSpace extends React.Component {
                         this.panel_max_height
                     }
                 />
-            </div>
+            </div>;
 
         var components;
 
@@ -655,8 +656,6 @@ class WorkSpace extends React.Component {
             ];
         }
 
-        // var components = [
-        // ];
         return (
             <div>
                 <ControlStrip
@@ -684,7 +683,7 @@ class WorkSpace extends React.Component {
                                 i: this.props.activeView,
                                 x: this.state.row_one_horizontal_factor,
                                 y: 0,
-                                w: this.state.x_res - this.state.row_one_horizontal_factor,
+                                w: this.state.x_res - this.state.row_one_horizontal_factor - this.panel_padding,
                                 h: this.state.vertical_factor
                             },
                             {
@@ -702,9 +701,11 @@ class WorkSpace extends React.Component {
                                 h: this.state.y_res - this.state.vertical_factor - this.panel_padding * 6
                             }
                         ]}
-                        cols={this.state.x_res}
                         rowHeight={1}
+                        cols={this.state.x_res}
                         width={this.state.x_res}
+                        // cols={this.state.x_res}
+                        // width={this.state.x_res}
                         components={components}
                     />
                 </DndProvider>

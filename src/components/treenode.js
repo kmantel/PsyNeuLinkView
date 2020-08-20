@@ -4,7 +4,6 @@ import { ItemTypes } from './constants';
 
 const plotSpec = {
     beginDrag(props){
-        console.log(props);
         return{
             name: props.label
         }

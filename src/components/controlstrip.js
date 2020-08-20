@@ -13,7 +13,6 @@ class ControlStrip extends React.Component {
 
     handleTabChange(new_tab_id, prev_tab_id, e){
         store.dispatch(setActiveView(new_tab_id));
-        console.log(this.props)
     }
 
     render() {

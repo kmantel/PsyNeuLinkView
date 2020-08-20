@@ -1,5 +1,95 @@
-.valid-drag-hover .graph{
+.valid-drag-hover .plotter.pnl-panel{
     background-color: #cee1ff
+}
+
+.subplot{
+    border-style: dotted;
+    border-width: 0px;
+    border-color: #00a9d4;
+}
+
+.subplot.selected-left{
+    border-left-width: 1px;
+}
+.subplot.selected-left .recharts-wrapper{
+    margin-left: -1px;
+}
+.subplot.selected-top{
+    border-top-width: 1px;
+}
+.subplot.selected-top .recharts-wrapper{
+    margin-top: -1px;
+}
+.subplot.selected-right{
+    border-right-width: 1px;
+}
+.subplot.selected-right .recharts-wrapper{
+    margin-right: -1px;
+}
+.subplot.selected-bottom {
+    border-bottom-width: 1px;
+}
+.subplot.selected-bottom .recharts-wrapper{
+    margin-bottom: -1px
+}
+.subplot_boundary.right {
+    height: 100%;
+    width: 25%;
+    right: 0;
+    bottom: 0;
+    position: absolute;
+    border-right-color: transparent;
+}
+
+.subplot_boundary.right.selected {
+    border-right-style: solid;
+    border-right-color: #00a9d4;
+    border-right-width: 2px;
+}
+
+.subplot_boundary.left {
+    height: 100%;
+    width: 25%;
+    left: 0;
+    bottom: 0;
+    position: absolute;
+    border-left-color: transparent;
+}
+
+.subplot_boundary.left.selected {
+    border-left-style: solid;
+    border-left-color: #00a9d4;
+    border-left-width: 2px;
+}
+
+.subplot_boundary.top {
+    height: 25%;
+    width: 100%;
+    top: 0;
+    bottom: 0;
+    position: absolute;
+    border-left-color: transparent;
+}
+
+.subplot_boundary.top.selected {
+    border-top-style: solid;
+    border-top-color: #00a9d4;
+    border-top-width: 2px;
+}
+
+.subplot_boundary.bottom {
+    height: 25%;
+    width: 100%;
+    top: 75%;
+    bottom: 0;
+    position: absolute;
+    border-left-color: transparent;
+}
+
+.subplot_boundary.bottom.selected {
+    border-bottom-style: solid;
+    border-bottom-color: #00a9d4;
+    border-bottom-width: 2px;
 }
 
 .plotter_canvas {
