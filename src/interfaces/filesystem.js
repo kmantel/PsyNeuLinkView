@@ -5,6 +5,8 @@ const path = require('path'),
     _ = require('lodash');
 
 class FileSystemInterface {
+    appPath = null;
+
     constructor() {
         this.filewatchers = {};
         this.initialize_config();
@@ -100,6 +102,10 @@ class FileSystemInterface {
             writeToFile = JSON.parse(content);
         }
         this.write(this.get_config_path(), writeToFile);
+    }
+
+    get_application_path(){
+        return this.appPath ? this.appPath : false
     }
 
     /**

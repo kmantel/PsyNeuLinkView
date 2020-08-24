@@ -5,7 +5,7 @@ const path = require('path'),
     compareVersions = require('compare-versions'),
     log = require('electron-log'),
     {spawn, spawnSync, exec, execSync} = require('child_process'),
-    isWin = os.platform() === 'win32'
+    isWin = os.platform() === 'win32';
 
 class InterpreterInterface{
     constructor(){
@@ -30,7 +30,8 @@ class InterpreterInterface{
         var callback = callback,
             config = ifs.get_config(),
             pnl_path = config['Python']['PsyNeuLink Path'],
-            self = this;
+            self = this,
+            appPath = ifs.get_application_path();
         pnl_path = pnl_path ? pnl_path : '';
         log.debug('' +
             'execute_script' +
@@ -46,7 +47,7 @@ class InterpreterInterface{
                 [prefix + interpreter_path,
                     [
                         '-u -W ignore',
-                        `"${path.join(__dirname, '..', 'py', 'rpc_server.py')}"`,
+                        `"${path.join(appPath, 'src', 'py', 'rpc_server.py')}"`,
                         `"${pnl_path}"`
                     ]
                 ]
@@ -55,7 +56,7 @@ class InterpreterInterface{
         var child_proc = spawn(prefix + interpreter_path,
             [
                 '-u -W ignore',
-                `"${path.join(__dirname, '..', 'py', 'rpc_server.py')}"`,
+                `"${path.join(appPath, 'src', 'py', 'rpc_server.py')}"`,
                 `"${pnl_path}"`
             ],
             {
@@ -256,14 +257,14 @@ class InterpreterInterface{
                 [prefix + `"${interpreter_path}"`,
                     [
                         '-u',
-                        `${path.join(__dirname, 'py', 'validate_interpreter.py')}`,
+                        `${path.join(ifs.get_application_path(), 'src', 'py', 'validate_interpreter.py')}`,
                         `${pnl_path}`
                     ]
                 ]
             }`
         );
 
-        var launch_interpreter_validater_cmd = `${prefix} "${interpreter_path}" -u "${path.join(__dirname, '..', 'py', 'validate_interpreter.py')}" "${pnl_path}"`;
+        var launch_interpreter_validater_cmd = `${prefix} "${interpreter_path}" -u "${path.join(ifs.get_application_path(), 'src', 'py', 'validate_interpreter.py')}" "${pnl_path}"`;
         exec(launch_interpreter_validater_cmd,
             {
                 shell: true,

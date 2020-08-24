@@ -308,10 +308,10 @@ class WorkSpace extends React.Component {
             row_two_h = null,
             v = null;
         if (!row_one_h) {
-            row_one_h = Math.ceil(w * 0.2)
+            row_one_h = Math.ceil(w * 0.15)
         }
         if (!row_two_h) {
-            row_two_h = Math.ceil(w * 0.2)
+            row_two_h = Math.ceil(w * 0.15)
         }
         if (!v) {
             v = Math.ceil(h * 0.7)

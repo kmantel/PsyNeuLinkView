@@ -56,6 +56,7 @@ function createWindow() {
         }
     );
     mainWindow.setTitle('PsyNeuLinkView');
+    mainWindow.webContents.send('appPath', adjusted_app_path);
     windows['renderMain'] = mainWindow;
 }
 

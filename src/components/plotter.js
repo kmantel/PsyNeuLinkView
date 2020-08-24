@@ -107,11 +107,11 @@ class Plotter extends React.Component {
         this.forceLayoutSetState = [];
         this.bind_this_to_functions = this.bind_this_to_functions.bind(this);
         this.bind_this_to_functions();
-        this.debuffFunctions();
+        this.debounceFunctions();
     }
 
-    debuffFunctions(){
-        this.updatePlotSize = _.debounce(this.updatePlotSize, 100)
+    debounceFunctions(){
+        // this.updatePlotSize = _.debounce(this.updatePlotSize, 100)
     }
 
     bind_this_to_functions(){
@@ -125,7 +125,7 @@ class Plotter extends React.Component {
         this.lateralShift = this.lateralShift.bind(this);
         this.verticalShift = this.verticalShift.bind(this);
         this.updatePlotSize = this.updatePlotSize.bind(this);
-        this.debuffFunctions = this.debuffFunctions.bind(this);
+        this.debounceFunctions = this.debounceFunctions.bind(this);
     }
 
     insertSubPlot(type, position, shiftDirection='right'){

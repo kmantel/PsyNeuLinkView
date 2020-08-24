@@ -22,7 +22,7 @@ export class ParameterControlBox extends React.PureComponent {
             text: props.text,
             class: props.className !== undefined ? `parametercontrolbox ${props.className}`:'parametercontrolbox',
             activeTabId: 'composition',
-            tabs: ['composition']
+            tabs: [{id: 'composition', label: 'Composition'}]
         };
         this.bindThisToFunctions = this.bindThisToFunctions.bind(this);
         this.bindThisToFunctions();
@@ -45,7 +45,9 @@ export class ParameterControlBox extends React.PureComponent {
 
     instantiatePlots(){
         this.setState({
-            tabs: ['composition', Object.keys(this.props.plots).map(id => `LinePlot-${id}`)],
+            tabs: [{label: 'Composition', id:'composition'}, ...Object.keys(this.props.plots).map(id => {
+                return {label:`LinePlot-${id}`, id:id}
+            })],
         })
     }
 
@@ -115,7 +117,7 @@ export class ParameterControlBox extends React.PureComponent {
                         <div className={'param-tab-container'}>
                             <Tabs id="param-tab-group" onChange={this.handleTabChange} selectedTabId={this.state.activeTabId}>
                                 {this.state.tabs.map(
-                                    tab=><Tab key={tab} id={tab} title= {tab} panel={<div/>}/>
+                                    tab=><Tab key={tab.id} id={tab.id} title= {tab.label} panel={<div/>}/>
                                 )}
                             </Tabs>
                         </div>

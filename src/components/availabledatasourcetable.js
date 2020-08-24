@@ -5,7 +5,10 @@ import * as React from "react"
 import ComponentSelect from "./component_select";
 import Highlighter from 'react-highlight-words';
 import { SendOutlined, SearchOutlined } from "@ant-design/icons"
+import { connect } from 'react-redux'
+
 import * as _ from "lodash";
+import {addPlot, setPlotSpecs} from "../app/redux/actions";
 
 const { Text } = Typography;
 
@@ -13,13 +16,20 @@ const electron = window.require('electron');
 const ipcRenderer  = electron.ipcRenderer;
 const rpc = window.interfaces.rpc;
 
-export default class AvailableDataSourceTable extends React.PureComponent{
+class AvailableDataSourceTable extends React.Component{
     state = {
-        activeDataSource:'',
+        trackedIds:new Set(),
+        activeDataSource:{},
         dataTables:{},
         searchText: '',
         searchedColumn: '',
-        selectedDataSources: {}
+        selectedDataSources: {},
+        parameterLists: {},
+        selectedRowKeys: [],
+        activeDataTable: '',
+        currentlySelectedRowKeys: [],
+        currentlyActiveTable: [],
+        currentlyActiveDataSource: ''
     };
     selectionType = 'checkbox';
 
@@ -29,17 +39,41 @@ export default class AvailableDataSourceTable extends React.PureComponent{
         this.bindThisToFunctions();
         ipcRenderer.on(
             'parameterList', (event, message)=> {
-                var dataTable = this.buildDataTable(message.parameters),
-                    dataTables = this.state.dataTables;
+                var dataTable = this.buildDataTable(message.name, message.parameters),
+                    dataTables = this.state.dataTables,
+                    parameterLists = _.cloneDeep(this.state.parameterLists);
                 dataTables[message.name] = dataTable;
-                this.setState({dataTables:dataTables})
+                parameterLists[message.name] = message.parameters;
+                this.setState({
+                    dataTables:dataTables,
+                    parameterLists:parameterLists
+                })
             }
-        )
+        );
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (!_.isEqual(prevProps.components, this.props.components)){
             this.initializeDataSourceState();
+        }
+        if (!this.state.trackedIds.has(this.props.id)){
+            this.initializeTrackedId(this.props.id);
+
+            // if (!_.isEmpty(this.props.components)){
+            //     this.initializeDataSourceState();
+            // }
+        }
+        if (!_.isEqual(prevProps.id, this.props.id)){
+            var dataTable = {};
+            for (const [key, val] of Object.entries(this.state.parameterLists)){
+                dataTable[key] = this.buildDataTable(key, val)
+            }
+            this.setState(
+                {dataTable:dataTable},
+                );
+        }
+        if (!_.isEqual(prevState.currentlyActiveDataSource, this.state.currentlyActiveDataSource)){
+            this.updateSelectedRowsFromProps();
         }
     }
 
@@ -49,34 +83,51 @@ export default class AvailableDataSourceTable extends React.PureComponent{
         }
     }
 
+    initializeTrackedId(id){
+        var activeDataSource = {...this.state.activeDataSource, ...{[id]:''}}
+        this.state.trackedIds.add(id);
+        this.setState(
+            {
+                activeDataSource:activeDataSource,
+            }
+        )
+    }
+
     initializeDataSourceState(){
-        var selectedDataSources = _.fromPairs(this.props.components.map(component => [component, {}]));
-        for (const component of this.props.components){this.getDataTable(component)}
-        this.setState({selectedDataSources:selectedDataSources});
+        for (const component of this.props.components){
+            this.getDataTable(component)
+        }
     }
 
     bindThisToFunctions(){
         this.render = this.render.bind(this);
         this.setActiveDataSource = this.setActiveDataSource.bind(this);
         this.getDataTable = this.getDataTable.bind(this);
-        this.updateSelectedRows = this.updateSelectedRows.bind(this);
+        this.onSelectedRowChange = this.onSelectedRowChange.bind(this);
+        this.initializeTrackedId = this.initializeTrackedId.bind(this);
+        this.buildDataTable = this.buildDataTable.bind(this);
+        this.updateSelectedRowsFromProps = this.updateSelectedRowsFromProps.bind(this);
     }
 
     setActiveDataSource(source){
-        var self = this;
-        self.setState(
+        var dataSource = this.state.activeDataSource;
+        dataSource[this.props.id]=source;
+        this.setState(
             {
-                activeDataSource:source,
+                currentlyActiveDataSource:source,
+                activeDataSource:dataSource,
             }
         )
     }
 
-    buildDataTable(parameterList){
-        var dataTable = [];
+    buildDataTable(mechanismName, parameterList){
+        var dataTable = [],
+            id = this.props.id,
+            dataSource = this.state.activeDataSource[this.props.id];
         for (var i = 0; i < parameterList.length; i++) {
             dataTable.push(
                 {
-                    id: `${this.props.id}-${this.state.activeDataSource}-${i}`,
+                    id: `${id}-${mechanismName}-${i}`,
                     name: parameterList[i],
                 }
             )
@@ -88,18 +139,37 @@ export default class AvailableDataSourceTable extends React.PureComponent{
         rpc.get_parameters(source)
     }
 
-    updateSelectedRows(selectedRowKeys, selectedRows){
-        var selectedDataSources = {...this.state.selectedDataSources},
-            activeDataSource = this.state.activeDataSource;
-        selectedDataSources[activeDataSource] = _.fromPairs(selectedRows.map(row => [row.id, row.name]));
-        this.setState({selectedDataSources:selectedDataSources})
+    onSelectedRowChange(selectedRowKeys, selectedRows){
+        var activeDataSource = this.state.activeDataSource[this.props.id],
+            loggedParameters = [];
+        for (const selected of selectedRows){
+            loggedParameters.push({
+                name:selected.name,
+                rowKey:selected.id
+            });
+        }
+        this.props.setPlotSpecs(this.props.id, {mechanism:activeDataSource, parameters:loggedParameters});
+    }
+
+    updateSelectedRowsFromProps(){
+        var id = this.props.id,
+            selectedDataSources = this.props.plotSpecs[this.props.id],
+            dataAreSelected = !_.isEmpty(selectedDataSources),
+            activeDataSource = id in this.state.activeDataSource ? this.state.activeDataSource[id] : '',
+            selectedRowKeys =  dataAreSelected && activeDataSource in selectedDataSources ? Object.values(selectedDataSources[activeDataSource]).map( row => row.rowKey ) : [],
+            dataAreAvailable = !_.isEmpty(activeDataSource),
+            activeDataTable = dataAreAvailable  ? this.state.dataTables[activeDataSource] : [];
+        this.setState({
+            'currentlySelectedRowKeys': selectedRowKeys,
+            'currentlyActiveTable': activeDataTable,
+            'currentlyActiveDataSource':activeDataSource
+        })
     }
 
     render() {
-        var selectedDataSources = {...this.state.selectedDataSources},
-            activeDataSource = this.state.activeDataSource,
-            selectedRowKeys = activeDataSource ? Object.keys(selectedDataSources[activeDataSource]) : [],
-            activeDataTable = activeDataSource ? this.state.dataTables[this.state.activeDataSource] : [];
+        var activeDataSource = this.state.currentlyActiveDataSource,
+            activeDataTable = this.state.currentlyActiveTable,
+            selectedRowKeys = this.state.currentlySelectedRowKeys
         return (
             <div>
                 <div className={'table-title-label-container'}
@@ -124,6 +194,7 @@ export default class AvailableDataSourceTable extends React.PureComponent{
                             bordered={false}
                             components={this.props.components}
                             selectionHook={this.setActiveDataSource}
+                            activeDataSource={activeDataSource}
                         />
                     </div>
                 </div>
@@ -146,7 +217,7 @@ export default class AvailableDataSourceTable extends React.PureComponent{
                     scroll={{ y: this.props.size.height - 100}}
                     rowSelection={{
                         type: this.selectionType,
-                        onChange: this.updateSelectedRows,
+                        onChange: this.onSelectedRowChange,
                         getCheckboxProps: record => ({
                             name: record.name,
                         }),
@@ -167,3 +238,17 @@ export default class AvailableDataSourceTable extends React.PureComponent{
         )
     }
 }
+
+const mapStateToProps = state => {
+    return {
+        plotSpecs:state.plotSpecs
+    }
+};
+
+const mapDispatchToProps = dispatch => ({
+    setPlotSpecs: (id, plotSpecs) => dispatch(setPlotSpecs(id, plotSpecs)),
+});
+
+AvailableDataSourceTable = connect(mapStateToProps, mapDispatchToProps)(AvailableDataSourceTable);
+
+export default AvailableDataSourceTable

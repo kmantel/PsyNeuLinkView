@@ -5,10 +5,6 @@ import { Select } from 'antd';
 const { Option } = Select;
 
 export default class ComponentSelect extends React.Component {
-    state = {
-        selectedComponent:''
-    }
-
     constructor(props) {
         super(props);
         this.bindThisToFunctions = this.bindThisToFunctions.bind(this);
@@ -24,25 +20,19 @@ export default class ComponentSelect extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        if (prevState.selectedComponent !== this.state.selectedComponent){
-            this.props.selectionHook(this.state.selectedComponent);
-        }
     }
 
     onChange(value) {
-        this.setState({selectedComponent:value})
+        this.props.selectionHook(value);
     }
 
     onBlur() {
-        console.log('blur');
     }
 
     onFocus() {
-        console.log('focus');
     }
 
     onSearch(val) {
-        console.log('search:', val);
     }
     render() {
         var componentNames = [];
@@ -65,6 +55,7 @@ export default class ComponentSelect extends React.Component {
                 filterOption={(input, option) =>
                     option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                 }
+                value={this.props.activeDataSource}
             >
                 {componentNames}
             </Select>)

@@ -12,3 +12,5 @@ window.remote = remote;
 window.interfaces = electron_root.interfaces;
 
 window.interfaces.electron.windows = window.windows;
+window.interfaces.electron.sendMessage('appPath', electron_root.app_path);
+window.interfaces.filesystem.appPath = electron_root.app_path;

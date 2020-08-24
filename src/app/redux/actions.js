@@ -48,3 +48,18 @@ export function removePlot(id){
         id: id
     }
 }
+
+export function setPlotSpecs(id, plotSpec){
+    return {
+        type: atypes.SET_PLOT_SPECS,
+        id: id,
+        plotSpec: plotSpec
+    }
+}
+
+export function removePlotSpec(plotSpec){
+    return {
+        type: atypes.REMOVE_PLOT_SPEC,
+        plotSpec: plotSpec
+    }
+}
