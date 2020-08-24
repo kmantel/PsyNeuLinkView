@@ -18,7 +18,7 @@ const fs = window.interfaces.filesystem,
       validate_interpreter_path = interp.validate_interpreter_path;
 // console.log(window.interfaces)
 
-class SettingsPane extends React.Component {
+class SettingsPane extends React.PureComponent {
     constructor(props) {
         super();
         var id_counter = 0;

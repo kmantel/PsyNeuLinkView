@@ -41,13 +41,13 @@ class SelectedDataSourceTable extends React.PureComponent{
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        if (!_.isEqual(prevProps.plotSpecs,this.props.plotSpecs) ||
-             !_.isEqual(prevProps.id, this.props.id)){
-            this.buildDataTable();
-        }
-        if (!_.isEqual(prevState.dataTable, this.state.dataTable)){
-            console.log(this.state.dataTable)
-        }
+        // if (!_.isEqual(prevProps.plotSpecs,this.props.plotSpecs) ||
+        //      !_.isEqual(prevProps.id, this.props.id)){
+        //     this.buildDataTable();
+        // }
+        // if (!_.isEqual(prevState.dataTable, this.state.dataTable)){
+        //     // console.log(this.state.dataTable)
+        // }
     }
 
     removeRecord(record){
@@ -66,6 +66,7 @@ class SelectedDataSourceTable extends React.PureComponent{
         var updatedPlotSpec = {mechanism:mechanismName, parameters: plotSpecs[id][mechanismName][matchingKey]}
         this.props.setPlotSpecs(id, updatedPlotSpec);
     }
+
     render() {
         return (
                 <div>
@@ -94,12 +95,12 @@ class SelectedDataSourceTable extends React.PureComponent{
                         locale={{ emptyText: <Empty
                                 image={Empty.PRESENTED_IMAGE_SIMPLE}
                                 style={{
-                                    'height':this.props.size.height-117,
+                                    // 'height':this.props.size.height-117,
                                     'display': 'flex',
                                     'flexDirection': 'column',
                                     'justifyContent': 'center'
                                 }}/> }}
-                        scroll={{ y: this.props.size.height - 100}}
+                        // scroll={{ y: this.props.size.height - 100}}
                         columns={[
                             {
                                 title: "Mechanism",

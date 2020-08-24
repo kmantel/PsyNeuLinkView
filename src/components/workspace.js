@@ -19,7 +19,7 @@ const fs = window.interfaces.filesystem,
     interp = window.interfaces.interpreter,
     rpc_client = window.interfaces.rpc;
 
-class WorkSpace extends React.Component {
+class WorkSpace extends React.PureComponent {
     constructor(props) {
         super(props);
         var w = window.innerWidth;
@@ -308,10 +308,10 @@ class WorkSpace extends React.Component {
             row_two_h = null,
             v = null;
         if (!row_one_h) {
-            row_one_h = Math.ceil(w * 0.15)
+            row_one_h = Math.ceil(w * 0.2)
         }
         if (!row_two_h) {
-            row_two_h = Math.ceil(w * 0.15)
+            row_two_h = Math.ceil(w * 0.2)
         }
         if (!v) {
             v = Math.ceil(h * 0.7)
@@ -521,31 +521,6 @@ class WorkSpace extends React.Component {
                     }
                 />
             </div>,
-            plotterSideBar = <div key="plotterSideBar">
-                <SideBar
-                    className='pnl-panel'
-                    onResizeStart={
-                        ()=>{
-                            self.get_reference_sizing_factors('row_one_horizontal_factor', 'vertical_factor')
-                        }
-                    }
-                    onResize={
-                        self.panel_resize
-                    }
-                    size={
-                        {
-                            height: this.state.vertical_factor - padding,
-                            width: this.state.row_one_horizontal_factor - padding
-                        }
-                    }
-                    maxWidth = {
-                        this.panel_max_width
-                    }
-                    maxHeight = {
-                        this.panel_max_height
-                    }
-                />
-            </div>,
             graphview = <div key="graphview">
                 <GraphView
                     className='pnl-panel'
@@ -674,12 +649,18 @@ class WorkSpace extends React.Component {
 
         if (this.props.activeView === 'graphview'){
             components = [
-                sidebar, tipbox, paramcontrolbox, graphview
+                sidebar,
+                tipbox,
+                paramcontrolbox,
+                graphview
             ];
         }
         else if (this.props.activeView === 'plotter'){
             components = [
-                plotterSideBar, tipbox, paramcontrolbox, plotter
+                sidebar,
+                tipbox,
+                paramcontrolbox,
+                plotter
             ];
         }
 

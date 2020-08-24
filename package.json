@@ -11,6 +11,7 @@
     "@grpc/proto-loader": "^0.5.2",
     "antd": "^4.5.4",
     "blueprintjs": "^0.0.8",
+    "classnames": "^2.2.6",
     "compare-versions": "^3.5.1",
     "electron-is-dev": "^1.1.0",
     "electron-log": "^3.0.9",
@@ -20,13 +21,15 @@
     "grpc": "^1.24.1",
     "lodash": "^4.17.15",
     "mathjs": "^6.6.4",
-    "re-resizable": "^6.1.0",
+    "rc-resize-observer": "^0.2.5",
+    "re-resizable": "^6.5.4",
     "react-dnd": "^11.1.3",
     "react-dnd-html5-backend": "^11.1.3",
     "react-dom": "^16.10.2",
     "react-grid-layout": "^1.0.0",
     "react-redux": "^7.2.0",
     "react-scripts": "3.2.0",
+    "react-window": "^1.8.5",
     "recharts": "^1.8.5",
     "redux": "^4.0.5",
     "sanitize-filename": "^1.6.3",
@@ -42,7 +45,7 @@
     "electron-pack": "yarn build --em.main=build/electron.js",
     "build": "yarn react-build && yarn electron-build",
     "preelectron-pack": "yarn build",
-    "postinstall": "npm rebuild --runtime=electron --target=6.0.12 --disturl=https://atom.io/download/electron"
+    "postinstall": "npm rebuild --runtime=electron --target=6.1.12 --disturl=https://atom.io/download/electron"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -62,7 +65,7 @@
   "devDependencies": {
     "concurrently": "^5.0.0",
     "d3": "^5.12.0",
-    "electron": "^6.0.12",
+    "electron": "^6.1.12",
     "electron-builder": "^21.2.0",
     "formik": "^2.1.5",
     "react": "^16.10.2",

@@ -58,7 +58,7 @@ pnlv_graphics_spec = {
         "Height": ""
     },
     "Canvas Settings": {
-        "Width": 83.9,
+        "Width": 78.92,
         "Height": 69.04,
         "Zoom": 100,
         "xScroll": 0,

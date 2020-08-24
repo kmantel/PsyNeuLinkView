@@ -104,8 +104,10 @@ class MonitorParamForm extends React.PureComponent{
                         </Tabs>
                     </div>
                     <Divider type={'vertical'}/>
+                    {/*<Divider />*/}
                     <AvailableDataSourceTable name={`${this.props.id}-available-data`} id={this.props.id} components={this.state.components} size={{height: tableHeight, width:"100%"}}/>
                     <Divider type={'vertical'}/>
+                    {/*<Divider />*/}
                     <SelectedDataSourceTable name={`${this.props.id}-selected-data`} id={this.props.id} size={{height: tableHeight, width:"100%"}}/>
                 </Form>
         </Formik>;
