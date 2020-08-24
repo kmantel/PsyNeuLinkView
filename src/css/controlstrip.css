@@ -21,6 +21,7 @@
     position: relative;
     display: flex;
     align-items: center;
+    height: 100%;
 }
 
 .run-flow-container {
@@ -46,4 +47,12 @@
 .bp3-tab-indicator-wrapper {
     height: 28px;
     bottom: 3px;
+}
+
+.bp3-tabs {
+    height: 100%;
+}
+
+.bp3-tab-list {
+    height: 100%;
 }

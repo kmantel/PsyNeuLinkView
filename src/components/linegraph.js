@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import Plot from "./plot";
 import {
-    LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
+    LineChart, Line, XAxis, YAxis, CartesianGrid, Label, Tooltip, Legend,
 } from 'recharts';
 import '../css/d3plotter.css'
 import * as d3 from 'd3'
@@ -82,40 +82,26 @@ export default class LinePlot extends Plot {
                     <LineChart
                         width={width}
                         height={height}
-                        data={data = [
-                            {
-                                name: 'Page A', uv: 4000, pv: 2400, amt: 2400,
-                            },
-                            {
-                                name: 'Page B', uv: 3000, pv: 1398, amt: 2210,
-                            },
-                            {
-                                name: 'Page C', uv: 2000, pv: 9800, amt: 2290,
-                            },
-                            {
-                                name: 'Page D', uv: 2780, pv: 3908, amt: 2000,
-                            },
-                            {
-                                name: 'Page E', uv: 1890, pv: 4800, amt: 2181,
-                            },
-                            {
-                                name: 'Page F', uv: 2390, pv: 3800, amt: 2500,
-                            },
-                            {
-                                name: 'Page G', uv: 3490, pv: 4300, amt: 2100,
-                            },
+                        data={data=[
+                            {'a': 100, 'b': 200, 'c': 300},
+                            {'a': 500, 'b': 600, 'c': 700},
                         ]}
                         margin={{
-                            top: 20, right: 30, left: 10, bottom: 0,
+                            top: 20, right: 30, left: 0, bottom: 0,
                         }}
                     >
                         <CartesianGrid strokeDasharray="3 3"/>
-                        <XAxis dataKey="name"/>
+                        <XAxis
+                            tick={false}>
+                            {/*<Label value={this.props.id} offset={0} position="insideBottom" />*/}
+                        </XAxis>
                         <YAxis
-                            width={60}/>
-                        <Legend/>
-                        <Line type="monotone" dataKey="pv" stroke="#8884d8" isAnimationActive={false}/>
-                        <Line type="monotone" dataKey="uv" stroke="#82ca9d" isAnimationActive={false}/>
+                            tick={false}
+                            width={35}
+                            />
+                        {/*<Legend/>*/}
+                        <Line type="monotone" dataKey="b" stroke="#8884d8" isAnimationActive={false}/>
+                        <Line type="monotone" dataKey="c" stroke="#82ca9d" isAnimationActive={false}/>
                     </LineChart>
                 }
                 {super.render()}

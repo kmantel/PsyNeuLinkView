@@ -334,4 +334,42 @@ class InterpreterInterface{
     }
 }
 
+/**
+ * Stub interpreter interface to be swapped out for real one in cases where a dev wants to debug the rpc server
+ * separately from the main application in an interactive python session
+ * */
+class DebugInterpreterInterface{
+    constructor(){}
+    get_child_procs(){}
+    start_server(prefix = '', interpreter_path, callback, errorhandler){
+        callback()
+    }
+    validate_interpreter_path(filepath, callback){
+        callback()
+    }
+    check_conda(interpreter_path, callback) {
+        callback()
+    }
+    find_conda_binary(nal_interpreter_path, callback, path_to_check) {
+        callback()
+    }
+    find_env_name(interpreter_path, binary_path, callback) {
+        callback()
+    }
+    construct_prefix(env_name, binary_path, interpreter_path, callback) {
+        callback()
+    }
+    execute_validation_script(prefix = '', interpreter_path, callback){
+        callback()
+    }
+    spawn_rpc_server(callback, errorhandler) {
+        callback()
+    }
+    kill_rpc_server() {}
+    restart_rpc_server(callback, errorhandler) {
+        callback()
+    }
+}
+
+exports.debugInterpreterInterface = new DebugInterpreterInterface();
 exports.interpreterInterface = new InterpreterInterface();

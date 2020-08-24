@@ -1,7 +1,5 @@
 from queue import Queue
 import numpy as np
-import graph_pb2
-import graph_pb2_grpc
 import grpc
 from concurrent import futures
 import redbaron
@@ -84,6 +82,19 @@ class GraphServer(graph_pb2_grpc.ServeGraphServicer):
     def GetCompositions(self, request, context):
         return graph_pb2.ScriptCompositions(compositions=pnl_container.hashable_pnl_objects['compositions'])
 
+    def GetComponents(self, request, context):
+        name = request.name
+        return graph_pb2.ScriptComponents(
+            components=[i.name for i in pnl_container.pnl_objects['compositions'][name].mechanisms]
+        )
+
+    def GetLoggableParameters(self, request, context):
+        name = request.name
+        parameter_list = list(pnl_container.pnl_objects['components'][name].loggable_items.keys())
+        return graph_pb2.ParameterList(
+            parameters = parameter_list
+        )
+
     def GetJSON(self, request, context):
         graph_name = request.name
         gv = get_gv_json(graph_name)
@@ -156,7 +167,7 @@ def get_new_pnl_objects(namespace):
     for cat in pnl.CompositionRegistry:
         for comp_name in pnl.CompositionRegistry[cat][1]:
             compositions.update({comp_name:pnl.CompositionRegistry[cat][1][comp_name]})
-    components = {i.name: i for i in namespace if isinstance(i, pnl.Component)}
+    components = {i.name: i for i in namespace.values() if isinstance(i, pnl.Mechanism)}
     pnl_container.pnl_objects['compositions'].update(compositions)
     pnl_container.pnl_objects['components'].update(components)
     return compositions, components

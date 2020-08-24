@@ -17,6 +17,7 @@ log.transports.console.level = "debug";
 fixpath();
 
 //TODO: replace gRPC with gRPC-js for better compatibility with electron https://www.npmjs.com/package/@grpc/grpc-js
+const windows = {};
 
 function open_log_file(){
     exec(`open ${path.join(os.homedir(),'Library','Logs','psyneulinkview','log.log')}`)
@@ -54,7 +55,8 @@ function createWindow() {
             )
         }
     );
-    mainWindow.setTitle('PsyNeuLinkView')
+    mainWindow.setTitle('PsyNeuLinkView');
+    windows['renderMain'] = mainWindow;
 }
 
 app.on('ready', function () {
@@ -71,6 +73,7 @@ app.on('quit', () => {
     interp.kill_rpc_server();
 });
 
+exports.windows = windows;
 exports.app_path = adjusted_app_path;
 exports.isDev = isDev;
 exports.interfaces = interfaces;

@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Classes, Tree } from '@blueprintjs/core'
+import { Classes, Tree, Icon } from '@blueprintjs/core'
 import '../css/sidebar.css'
 import { Resizable } from "re-resizable"
 import {connect} from "react-redux";
@@ -9,11 +9,18 @@ import {DragSource, useDrag, DragPreviewImage, DropTarget} from 'react-dnd';
 import { ItemTypes } from './constants';
 import DraggableTreeNode from "./treenode";
 import { getEmptyImage } from 'react-dnd-html5-backend'
+import {Select, List, Typography, Avatar, Button} from "antd";
+import {PlusOutlined} from '@ant-design/icons'
+
+const {Text} = Typography;
 
 const style = {
+  overflowY: "auto",
+  overflowX: "hidden",
   display: "flex",
+  flexDirection: "column",
   alignItems: "center",
-  justifyContent: "center",
+  justifyContent: "start",
 };
 
 // DnD Spec
@@ -31,6 +38,159 @@ let collect = ( connect, monitor )=>{
   };
 }
 
+
+class SidebarSelect extends React.Component {
+  components = ['Mechanisms', 'Projections'];
+
+  constructor(props) {
+    super(props);
+    this.bindThisToFunctions = this.bindThisToFunctions.bind(this);
+    this.bindThisToFunctions();
+  }
+
+  bindThisToFunctions(){
+    var _ = this;
+    this.onChange = this.onChange.bind(this);
+  }
+
+  onChange(value) {
+  }
+
+  onBlur() {
+  }
+
+  onFocus() {
+  }
+
+  onSearch(val) {
+  }
+  render() {
+    return (
+        <Select
+            showSearch
+            style={{width: this.props.size.width}}
+            placeholder="Select a component type"
+            onChange={this.onChange}
+            onFocus={this.onFocus}
+            onBlur={this.onBlur}
+            onSearch={this.onSearch}
+            bordered={false}
+            filterOption={(input, option) =>
+                option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+            }
+        >
+          {this.components}
+        </Select>)
+  }
+}
+
+
+const structureData = [
+  {
+    categoryName: 'Control',
+    components: [
+      {
+        id: 0,
+        label: 'Control Mechanism',
+        icon: 'cog'
+      },
+      {
+        id: 1,
+        label: 'Optimization Control Mechanism',
+        icon: 'cog'
+      },
+      {
+        id: 2,
+        label: 'Control Projection',
+        icon: 'inheritance'
+      },
+    ]
+  },
+  {
+    categoryName: 'Gating',
+    components: [
+      {
+        id: 3,
+        label: 'Gating Mechanism',
+        icon: 'cog'
+      },
+      {
+        id: 4,
+        label: 'Gating Projection',
+        icon: 'inheritance'
+      }
+    ]
+  },
+  {
+    categoryName: 'Learning',
+    components: [
+      {
+        id: 5,
+        label: 'Learning Mechanism',
+        icon: 'cog'
+      },
+      {
+        id: 6,
+        label: 'Learning Projection',
+        icon: 'inheritance'
+      }
+    ]
+  },
+  {
+    categoryName: 'Processing',
+    components: [
+      {
+        id: 7,
+        label: 'Integrator Mechanism',
+        icon: 'cog'
+      },
+      {
+        id: 8,
+        label: 'Objective Mechanism',
+        icon: 'cog'
+      },
+      {
+        id: 9,
+        label: 'Processing Mechanism',
+        icon: 'cog'
+      },
+      {
+        id: 10,
+        label: 'Transfer Mechanism',
+        icon: 'cog'
+      },
+      {
+        id: 11,
+        label: 'Mapping Projection',
+        icon: 'inheritance'
+      },
+      {
+        id: 12,
+        label: 'Pathway Projection',
+        icon: 'inheritance'
+      },
+    ]
+  },
+];
+
+const plottingData = [
+  {categoryName: 'Plots',
+    components: [
+      {
+        id: 13,
+        label:
+          <div className={'linePlotListItem'}>
+            <DraggableTreeNode
+              id={13}
+              label={'Line Graph'}/>
+          </div>,
+        icon: 'timeline-line-chart'
+      }
+
+    ]
+  }
+];
+
 class SideBar extends React.Component {
   constructor(props) {
     super(props)
@@ -44,8 +204,16 @@ class SideBar extends React.Component {
   }
 
   render() {
+    var nodes, listHeader;
     const connectDropTarget = this.props.connectDropTarget;
-    let nodes = this.props.activeView === 'graphview' ? GRAPHVIEW_NODES : PLOTVIEW_NODES
+    if (this.props.activeView === 'graphview'){
+        nodes = structureData;
+        listHeader = <SidebarSelect
+            size = {this.props.size}/>}
+    else {
+        nodes = plottingData;
+        listHeader = ''
+    }
     return connectDropTarget(
         <div>
           <Resizable
@@ -63,10 +231,7 @@ class SideBar extends React.Component {
                 bottomLeft: false,
                 topLeft: false
               }}
-              className='sidebar'
-              // defaultSize={
-              //   this.props.defaultSize
-              // }
+              className='sidebar pnl-panel'
               size={
                 this.props.size
               }
@@ -83,16 +248,42 @@ class SideBar extends React.Component {
                 this.props.maxHeight
               }
           >
-
-            <Tree
-                contents={nodes}
-                onNodeClick={(nodeData, _nodePath, e) =>
-                    this.handleNodeClick(nodes, nodeData, _nodePath, e)
-                }
-                onNodeCollapse={this.handleNodeCollapse}
-                onNodeExpand={this.handleNodeExpand}
-                className={this.state.class}
+            {/*{listHeader}*/}
+            <List
+                style={{width:'100%', height:'100%', padding:'5px'}}
+                size={'small'}
+                itemLayout="vertical"
+                dataSource={nodes}
+                renderItem={item => (
+                    <List.Item>
+                      <List.Item.Meta
+                          title={item.categoryName}
+                          style={{marginBottom:0}}
+                      />
+                      {item.components.map(component =>
+                          <List.Item.Meta
+                              avatar={<Icon
+                                  icon={component.icon}
+                              />}
+                              description={component.label}
+                              style={{
+                                marginLeft:'5px',
+                                marginBottom:'7px',
+                                cursor:'pointer'
+                              }}
+                          />)}
+                    </List.Item>
+                )}
             />
+            {/*<Tree*/}
+            {/*    contents={nodes}*/}
+            {/*    onNodeClick={(nodeData, _nodePath, e) =>*/}
+            {/*        this.handleNodeClick(nodes, nodeData, _nodePath, e)*/}
+            {/*    }*/}
+            {/*    onNodeCollapse={this.handleNodeCollapse}*/}
+            {/*    onNodeExpand={this.handleNodeExpand}*/}
+            {/*    className={this.state.class}*/}
+            {/*/>*/}
           </Resizable>
         </div>
     )
@@ -144,7 +335,7 @@ var PLOTVIEW_NODES = [
     id: 0,
     label: <DraggableTreeNode
         id={0}
-        label={'Line Graph'}/>
+        label={'Line Plot'}/>
   },
   {
     id: 1,

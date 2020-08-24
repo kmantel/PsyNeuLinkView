@@ -21,7 +21,8 @@ class Plot extends React.PureComponent{
 
     render() {
         return <PlotBoundaries
-            id={this.props.id}/>
+            id={this.props.id}
+            cursorSignal={this.props.cursorSignal}/>
     }
 }
 

@@ -1,6 +1,7 @@
 import React from 'react'
 import Layout from './layout'
 import SideBar from './sidebar'
+import PlotterSideBar from "./plotter_sidebar";
 import D3plotter from './plotter'
 import GraphView from './d3model'
 import ToolTipBox from './tooltipbox'
@@ -9,7 +10,7 @@ import ParameterControlBox from './parametercontrolbox'
 import SettingsPane from './settings'
 import ErrorDispatcher from "../utility/errors/dispatcher";
 import {connect} from "react-redux";
-import {setActiveView, setStyleSheet} from "../app/redux/actions";
+import {setActiveView, setStyleSheet, setActiveComposition} from "../app/redux/actions";
 import {store} from "../app/redux/store";
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -269,6 +270,7 @@ class WorkSpace extends React.Component {
         cf.env.filepath = filepath;
         fs.set_config(cf);
         store.dispatch(setStyleSheet(new_graph_style));
+        store.dispatch(setActiveComposition(composition));
         self.setState({
             graph: new_graph,
             filepath: filepath,
@@ -519,6 +521,31 @@ class WorkSpace extends React.Component {
                     }
                 />
             </div>,
+            plotterSideBar = <div key="plotterSideBar">
+                <SideBar
+                    className='pnl-panel'
+                    onResizeStart={
+                        ()=>{
+                            self.get_reference_sizing_factors('row_one_horizontal_factor', 'vertical_factor')
+                        }
+                    }
+                    onResize={
+                        self.panel_resize
+                    }
+                    size={
+                        {
+                            height: this.state.vertical_factor - padding,
+                            width: this.state.row_one_horizontal_factor - padding
+                        }
+                    }
+                    maxWidth = {
+                        this.panel_max_width
+                    }
+                    maxHeight = {
+                        this.panel_max_height
+                    }
+                />
+            </div>,
             graphview = <div key="graphview">
                 <GraphView
                     className='pnl-panel'
@@ -652,7 +679,7 @@ class WorkSpace extends React.Component {
         }
         else if (this.props.activeView === 'plotter'){
             components = [
-                sidebar, tipbox, paramcontrolbox, plotter
+                plotterSideBar, tipbox, paramcontrolbox, plotter
             ];
         }
 

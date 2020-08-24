@@ -1,6 +1,9 @@
-const remote = require('electron').remote
 class ElectronInterface {
-    constructor() {
+    windows = {};
+
+    sendMessage(channel, message){
+        var mainWindow = this.windows.renderMain;
+        mainWindow.webContents.send(channel, message)
     }
 }
 

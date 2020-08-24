@@ -2,11 +2,13 @@ const log = require('electron-log'),
     grpc = require('grpc'),
     protoloader = require('@grpc/proto-loader'),
     path = require('path'),
-    _ = require('lodash');
+    _ = require('lodash'),
+    ifs = require('./filesystem').fileSystemInterface,
+    efs = require('./electron').electronInterface;
 
 class RPCInterface{
     constructor() {
-        var PROTO_PATH = path.join(__dirname, '../protos/graph.proto');
+        const PROTO_PATH = path.join(ifs.get_config()['Python']['PsyNeuLink Path'], 'psyneulink/core/rpc/graph.proto');
         this.packageDefinition = protoloader.loadSync(
             PROTO_PATH,
             {
@@ -18,6 +20,8 @@ class RPCInterface{
             });
         this.graph_proto = grpc.loadPackageDefinition(this.packageDefinition).graph;
         this.script_maintainer = {
+            parameters: {},
+            components: {},
             compositions: {},
             gv: {},
             style: {}
@@ -34,6 +38,39 @@ class RPCInterface{
             'localhost:50051',
             grpc.credentials.createInsecure()
         );
+    }
+
+    get_parameters(name, callback = function () {}){
+        var client = this.instantiate_client();
+        var self = this;
+        client.GetLoggableParameters({
+            name: name
+        }, function (err, response) {
+            if (err) {
+                console.log(err);
+                callback(err)
+            } else {
+                efs.sendMessage('parameterList', response.parameters)
+                // self.script_maintainer.parameters[name] = response.parameters;
+                callback()
+            }
+        });
+    }
+
+    get_components(name, callback = function () {}){
+        var client = this.instantiate_client();
+        var self = this;
+        client.GetComponents({
+            name: name
+        }, function (err, response) {
+            if (err) {
+                console.log(err)
+                callback(err)
+            } else {
+                efs.sendMessage('componentList', response.components);
+                callback()
+            }
+        });
     }
 
     load_script(filepath, callback = function () {

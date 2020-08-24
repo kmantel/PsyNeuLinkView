@@ -92,6 +92,17 @@
     border-bottom-width: 2px;
 }
 
+.subplot_boundary.null {
+    height: 50%;
+    width: 50%;
+    top: 25%;
+    bottom: 25%;
+    right: 25%;
+    left: 25%;
+    position: absolute;
+    border-left-color: transparent;
+}
+
 .plotter_canvas {
     width: 100%;
     height: 100%;

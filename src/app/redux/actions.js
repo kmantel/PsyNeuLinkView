@@ -7,6 +7,13 @@ export function setActiveView(id){
     }
 }
 
+export function setActiveComposition(name) {
+    return {
+        type: atypes.SET_ACTIVE_COMPOSITION,
+        name: name
+    }
+}
+
 export function setActiveParamTab(id){
     return {
         type: atypes.SET_ACTIVE_PARAM_TAB,
@@ -25,5 +32,19 @@ export function setModelAspectRatio(ratio){
     return {
         type: atypes.SET_MODEL_ASPECT_RATIO,
         ratio: ratio
+    }
+}
+
+export function addPlot(plotSpec){
+    return {
+        type: atypes.ADD_PLOT,
+        plotSpec: plotSpec
+    }
+}
+
+export function removePlot(id){
+    return {
+        type: atypes.REMOVE_PLOT,
+        id: id
     }
 }

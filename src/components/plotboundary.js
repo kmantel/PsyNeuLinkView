@@ -11,6 +11,14 @@ const style = {
 const PlotSpec = {
     drop(props, monitor, component){
         return {dropped:true}
+    },
+    hover(props, monitor, component){
+        var pingPlotter = monitor.isOver() && monitor.canDrop() && component.props.cursorSignal,
+            id = component.props.id,
+            direction = component.props.direction;
+        if (pingPlotter) {
+            component.props.cursorSignal(id, direction);
+        }
     }
 };
 
@@ -31,7 +39,8 @@ class PlotBoundary extends React.Component {
         const {connectDropTarget, isOver, canDrop} = this.props;
         var id = this.props.id,
             direction = this.props.direction,
-            active = isOver && canDrop;
+            active = isOver && canDrop,
+            pingPlotter = active && this.props.cursorSignal;
         return connectDropTarget(
             <div
                 id={`${id}-${direction}-boundary`}
@@ -53,16 +62,24 @@ class PlotBoundaries extends React.Component {
         return <div id={`${id}-boundaries`} className={'subplot_boundaries'}>
             <PlotBoundary
                 id={id}
-                direction={'left'}/>
+                direction={'left'}
+                cursorSignal={this.props.cursorSignal}/>
             <PlotBoundary
                 id={id}
-                direction={'right'}/>
+                direction={'right'}
+                cursorSignal={this.props.cursorSignal}/>
             <PlotBoundary
                 id={id}
-                direction={'top'}/>
+                direction={'top'}
+                cursorSignal={this.props.cursorSignal}/>
             <PlotBoundary
                 id={id}
-                direction={'bottom'}/>
+                direction={'bottom'}
+                cursorSignal={this.props.cursorSignal}/>
+            <PlotBoundary
+                id={id}
+                direction={null}
+                cursorSignal={this.props.cursorSignal}/>
         </div>;
     }
 }
