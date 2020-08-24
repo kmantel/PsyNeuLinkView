@@ -7,6 +7,7 @@ import {setActiveParamTab} from "../app/redux/actions";
 import {store} from "../app/redux/store";
 import MonitorParamForm from "./forms/monitorparamform";
 import CompositionParamForm from "./forms/compositionparamform";
+import * as _ from 'lodash'
 
 const style = {
     display: "flex",
@@ -14,13 +15,14 @@ const style = {
     justifyContent: "center",
 };
 
-export class ParameterControlBox extends React.Component {
+export class ParameterControlBox extends React.PureComponent {
     constructor(props) {
         super();
         this.state = {
             text: props.text,
             class: props.className !== undefined ? `parametercontrolbox ${props.className}`:'parametercontrolbox',
-            activeTab: 'composition'
+            activeTabId: 'composition',
+            tabs: ['composition']
         };
         this.bindThisToFunctions = this.bindThisToFunctions.bind(this);
         this.bindThisToFunctions();
@@ -28,6 +30,7 @@ export class ParameterControlBox extends React.Component {
 
     bindThisToFunctions(){
         this.handleTabChange = this.handleTabChange.bind(this);
+        this.instantiatePlots = this.instantiatePlots.bind(this);
     }
 
     updateText(newText) {
@@ -35,25 +38,48 @@ export class ParameterControlBox extends React.Component {
     }
 
     handleTabChange(new_tab_id, prev_tab_id, e) {
-        this.setState({activeTab:new_tab_id});
+        this.setState({activeTabId:new_tab_id});
         store.dispatch(setActiveParamTab(new_tab_id))
     }
 
+
+    instantiatePlots(){
+        this.setState({
+            tabs: ['composition', Object.keys(this.props.plots).map(id => `LinePlot-${id}`)],
+        })
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        var activeTabUpdated,
+            plotsInstantiated
+        if (prevProps.plots !== this.props.plots){
+            this.instantiatePlots();
+            plotsInstantiated = true
+        }
+        if (prevState.activeTabId !== this.state.activeTabId){
+            activeTabUpdated = true
+        }
+    }
+
+    getFormForActiveTab(id){
+        if (id === 'composition'){
+            return <CompositionParamForm id={'composition'}/>
+        }
+        else {
+            return <MonitorParamForm id={id}
+                              size={{height:this.props.size.height-30}}
+                              padding={10}/>
+        }
+    }
+
     render() {
-        var plotTabs = [];
-        var plotForms = {'composition':<CompositionParamForm id={'composition'}/>};
-        for (const [key, val] of Object.entries(this.props.plots)){
-            plotTabs.push(<Tab key={key} id={key} title= {`LinePlot-${key}`} panel={<div/>}/>)
-            plotForms[key] = <MonitorParamForm id={key}
-                                size={{height:this.props.size.height-30}}
-                                padding={10}/>
-        };
+        var id = this.state.activeTabId;
         return (
             <Resizable
                 style={style}
                 onResize={this.props.onResize}
                 onResizeStart={this.props.onResizeStart}
-                onResizeStop={this.props.onResizeStop}
+                onResizeStop={()=>{console.log('does this work')}}
                 enable={{
                     top:true,
                     right:false,
@@ -87,14 +113,15 @@ export class ParameterControlBox extends React.Component {
                 <div className={this.state.class}>
                     <div className={'parameter-control-title'}>
                         <div className={'param-tab-container'}>
-                            <Tabs id="param-tab-group" onChange={this.handleTabChange} selectedTabId={this.state.activeTab}>
-                                <Tab key='composition' id="composition" title="Composition"/>
-                                {plotTabs}
+                            <Tabs id="param-tab-group" onChange={this.handleTabChange} selectedTabId={this.state.activeTabId}>
+                                {this.state.tabs.map(
+                                    tab=><Tab key={tab} id={tab} title= {tab} panel={<div/>}/>
+                                )}
                             </Tabs>
                         </div>
                     </div>
                     <div className={'active-tab-container'}>
-                        {plotForms[this.state.activeTab]}
+                        {this.getFormForActiveTab(id)}
                     </div>
                 </div>
             </Resizable>

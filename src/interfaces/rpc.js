@@ -50,7 +50,7 @@ class RPCInterface{
                 console.log(err);
                 callback(err)
             } else {
-                efs.sendMessage('parameterList', response.parameters)
+                efs.sendMessage('parameterList', {name:name, parameters:response.parameters});
                 // self.script_maintainer.parameters[name] = response.parameters;
                 callback()
             }

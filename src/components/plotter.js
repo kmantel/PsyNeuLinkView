@@ -107,6 +107,11 @@ class Plotter extends React.Component {
         this.forceLayoutSetState = [];
         this.bind_this_to_functions = this.bind_this_to_functions.bind(this);
         this.bind_this_to_functions();
+        this.debuffFunctions();
+    }
+
+    debuffFunctions(){
+        this.updatePlotSize = _.debounce(this.updatePlotSize, 100)
     }
 
     bind_this_to_functions(){
@@ -120,6 +125,7 @@ class Plotter extends React.Component {
         this.lateralShift = this.lateralShift.bind(this);
         this.verticalShift = this.verticalShift.bind(this);
         this.updatePlotSize = this.updatePlotSize.bind(this);
+        this.debuffFunctions = this.debuffFunctions.bind(this);
     }
 
     insertSubPlot(type, position, shiftDirection='right'){
@@ -362,19 +368,11 @@ class Plotter extends React.Component {
         );
     }
 
-    render() {
-        const {connectDropTarget, isOver, canDrop} = this.props;
-        var isEmpty = Object.keys(this.state.plot_props_lookup).length == 0,
-            empty_valid_drag_hover = isOver && canDrop && isEmpty,
-            components = [],
-            layout = [],
-            plotSpecs = this.state.plot_props_lookup,
-            activeLocation = this.state.activeLocation,
+    getPlots(plotSpecs){
+        var activeLocation = this.state.activeLocation,
             classList,
-            cols = this.state.cols,
-            self = this,
-            rowHeight = (this.props.size.height - 30)/(this.state.maxRows!==1 ? this.state.maxRows - 1:1);
-
+            components = [],
+            layout = []
         for (const [key, value] of Object.entries(plotSpecs)) {
             classList = ['subplot', `${key}`];
             if (activeLocation!== null && key == activeLocation[0]) {classList.push(activeLocation[1])};
@@ -393,7 +391,19 @@ class Plotter extends React.Component {
                 value.layout
             );
         }
+        return [components, layout]
+    }
 
+    render() {
+        const {connectDropTarget, isOver, canDrop} = this.props;
+        var isEmpty = Object.keys(this.state.plot_props_lookup).length == 0,
+            empty_valid_drag_hover = isOver && canDrop && isEmpty,
+            components = [],
+            layout = [],
+            plotSpecs = this.state.plot_props_lookup,
+            cols = this.state.cols,
+            rowHeight = (this.props.size.height - 30)/(this.state.maxRows!==1 ? this.state.maxRows - 1:1);
+        [components, layout] = this.getPlots(plotSpecs);
         return connectDropTarget (
             <div class={empty_valid_drag_hover ? "valid-drag-hover": ""}>
             <Resizable

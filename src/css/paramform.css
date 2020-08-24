@@ -1,0 +1,10 @@
+.ant-empty.ant-empty-normal{
+    margin: 0;
+}
+
+.active-tab-container .ant-form .ant-form-horizontal{
+    position:inherit!important;
+    margin: 0;
+    padding: 10px;
+    height: 100%;
+}

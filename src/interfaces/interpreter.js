@@ -5,8 +5,7 @@ const path = require('path'),
     compareVersions = require('compare-versions'),
     log = require('electron-log'),
     {spawn, spawnSync, exec, execSync} = require('child_process'),
-    isWin = os.platform() === 'win32',
-    treekill = require('tree-kill');
+    isWin = os.platform() === 'win32'
 
 class InterpreterInterface{
     constructor(){

@@ -213,7 +213,7 @@ class D3model extends React.Component {
 
     update_graph_from_stylesheet(prevProps) {
         var style_updated = (!(_.isEqual(this.props.graph_style, prevProps.graph_style))),
-            prev_and_current_style_exist = (prevProps.graph_style && this.props.graph_style);
+            prev_and_current_style_exist = (!_.isEmpty(prevProps.graph_style) && !_.isEmpty(this.props.graph_style));
 
         if (prev_and_current_style_exist) {
             var style_diff = this.difference(this.props.graph_style, prevProps.graph_style);
