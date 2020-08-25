@@ -17,7 +17,7 @@ const style = {
 
 const PlotSpec = {
     drop(props, monitor, component){
-        if (monitor.getItem().name === 'Line Graph') {
+        if (monitor.getItem().name === 'Line Plot') {
             var type = ItemTypes.LINE_GRAPH,
                 componentHasSubPlots = Object.keys(component.state.plot_props_lookup).length > 0,
                 currentActiveLocation,

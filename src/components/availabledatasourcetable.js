@@ -19,19 +19,8 @@ const rpc = window.interfaces.rpc;
 
 class AvailableDataSourceTable extends React.Component{
     state = {
-        trackedIds:new Set(),
-        activeDataSource:{},
-        dataTables:{},
-        searchText: '',
-        searchedColumn: '',
         selectedDataSources: {},
         parameterLists: {},
-        allSelectedRowKeys: {},
-        activeDataTable: '',
-        currentlySelectedRowKeys: new Set(),
-        currentlySelectedRows: new Set(),
-        currentlyActiveTable: [],
-        currentlyActiveDataSource: ''
     };
     selectionType = 'checkbox';
 
@@ -42,66 +31,26 @@ class AvailableDataSourceTable extends React.Component{
         ipcRenderer.on(
             'parameterList', (event, message)=> {
                 var parameterLists = _.cloneDeep(this.state.parameterLists);
+                parameterLists[message.name] = message.parameters;
                 this.setState({parameterLists:parameterLists})
             }
         );
-        this.updateDataTablesForId(this.props.id)
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        if (!_.isEqual(prevProps.components, this.props.components)){
-            this.initializeDataSourceState();
-        }
-        if (!_.isEqual(prevProps.id, this.props.id)){
-            if (!this.state.trackedIds.has(this.props.id)){
-                this.initializeTrackedId(this.props.id);
-            }
-            this.updateDataTablesForId(this.props.id)
-        }
-        if (!_.isEqual(prevState.parameterLists, this.state.parameterLists)){
-            for (const id of this.state.trackedIds){
-                this.updateDataTablesForId(id)
-            }
-        }
-        if (!_.isEqual(prevState.currentlyActiveDataSource, this.state.currentlyActiveDataSource)){
-            this.updateSelectedRowsFromProps();
+        if (!_.isEqual(prevProps.components, this.props.components)) {
+            this.props.components.forEach( component => {this.getDataTable(component)} )
         }
     }
 
     updateDataTablesForId(id){
-        var dataTables = _.cloneDeep(this.state.dataTables);
-        if (!id in dataTables){ dataTables[id] = {} }
-        if (!_.isEmpty(this.state.parameterLists)){
-            for (const [key, val] of Object.entries(this.state.parameterLists)){
-                dataTables[id][key] = this.buildDataTable(key, val)
-            }
-        }
-        this.setState({dataTables:dataTables})
     }
 
     componentDidMount() {
-        if (!_.isEmpty(this.props.components)){
-            this.initializeDataSourceState();
-        }
-    }
-
-    initializeTrackedId(id){
-        var activeDataSource = {...this.state.activeDataSource, ...{[id]:''}},
-            allSelectedRowKeys = {...this.state.allSelectedRowKeys, ...{[id]: new Set()}},
-            dataTable = {...this.state.allSelectedRowKeys, ...{[id]: {}}};
-        this.state.trackedIds.add(id);
-        this.setState(
-            {
-                activeDataSource:activeDataSource,
-                allSelectedRowKeys: allSelectedRowKeys,
-                dataTables:dataTable
-            }
-        )
-    }
-
-    initializeDataSourceState(){
-        for (const component of this.props.components){
-            this.getDataTable(component)
+        if (!(this.props.id in this.state.selectedDataSources)){
+            var selectedDataSources = _.cloneDeep(this.state.selectedDataSources);
+            selectedDataSources[this.props.id] = '';
+            this.setState({selectedDataSources:selectedDataSources})
         }
     }
 
@@ -110,107 +59,102 @@ class AvailableDataSourceTable extends React.Component{
         this.setActiveDataSource = this.setActiveDataSource.bind(this);
         this.getDataTable = this.getDataTable.bind(this);
         this.onSelectedRowChange = this.onSelectedRowChange.bind(this);
-        this.initializeTrackedId = this.initializeTrackedId.bind(this);
         this.buildDataTable = this.buildDataTable.bind(this);
         this.updateSelectedRowsFromProps = this.updateSelectedRowsFromProps.bind(this);
         this.onChange = this.onChange.bind(this);
     }
 
     setActiveDataSource(source){
-        var dataSource = this.state.activeDataSource;
-        dataSource[this.props.id]=source;
+        var selectedDataSources = this.state.selectedDataSources;
+        selectedDataSources[this.props.id]=source;
         this.setState(
             {
-                currentlyActiveDataSource:source,
-                activeDataSource:dataSource,
+                selectedDataSources:selectedDataSources
             }
         )
     }
 
-    buildDataTable(mechanismName, parameterList){
-        var dataTable = [],
-            id = this.props.id,
-            selectedRowKeys = this.state.allSelectedRowKeys[id] || new Set(),
-            rowid;
-        for (var i = 0; i < parameterList.length; i++) {
-            rowid = `${id}-${mechanismName}-${i}`
+    getActiveDataSource(id){
+        return id in this.state.selectedDataSources ? this.state.selectedDataSources[id] : ''
+    }
+
+    getSelectedKeys(source, id){
+        return new Set(Object.values(_.cloneDeep(this.props.plotSpecs[id][source] || {})).map(row=>row.rowKey));
+    }
+
+    getSelectedRowsAndIds(source, id){
+        var ids = this.getSelectedKeys(source, id),
+            rows = new Set(this.getActiveDataTable(source, id).map(row=>{return ids.has(row.id) ? row : ''}));
+        rows.delete('')
+        return {selectedRows: rows, selectedIds: ids}
+    }
+
+    getActiveDataTable(source, id){
+        if (_.isEmpty(source) || _.isEmpty(id)){
+            return []
+        }
+        var baseParameterList, plotSpecs, rowid, selectedKeys, dataTable = [];
+        selectedKeys = this.getSelectedKeys(source, id);
+        baseParameterList = _.cloneDeep(this.state.parameterLists[source]);
+        for (var i = 0; i < baseParameterList.length; i++) {
+            rowid = `${id}-${source}-${i}`;
             dataTable.push(
                 {
                     id: rowid,
-                    name: parameterList[i],
-                    selected: selectedRowKeys.has(rowid)
+                    name: baseParameterList[i],
+                    selected: selectedKeys.has(rowid)
                 }
             )
         }
         return dataTable
     }
 
+    buildDataTable(mechanismName, parameterList){
+    }
+
     getDataTable(source){
-        console.log('get data table');
         rpc.get_parameters(source)
     }
 
-    onChange(e, row){
-
-
-    }
-
-    onSelectedRowChange(selectedRowKeys, selectedRows){
-        var activeDataSource = this.state.activeDataSource[this.props.id],
-            loggedParameters = [],
-            parameterList = this.state.parameterLists[activeDataSource],
-            newDataTable;
+    onSelectedRowChange(selectedRows){
+        var activeDataSource = this.state.selectedDataSources[this.props.id],
+            loggedParameters = [];
         for (const selected of selectedRows){
             loggedParameters.push({
                 name:selected.name,
                 rowKey:selected.id
             });
         }
-        this.setState({
-            currentlySelectedRowKeys: selectedRowKeys,
-            currentlySelectedRows: selectedRows,
-            allSelectedRowKeys: {...this.state.allSelectedRowKeys, ...{[this.props.id]:selectedRowKeys}}
-        }, ()=>{
-            var id = this.props.id;
-            this.updateDataTablesForId(id)
-        });
         this.props.setPlotSpecs(this.props.id, {mechanism:activeDataSource, parameters:loggedParameters});
     }
 
     updateSelectedRowsFromProps(){
-        var id = this.props.id,
-            selectedDataSources = this.props.plotSpecs[this.props.id],
-            dataAreSelected = !_.isEmpty(selectedDataSources),
-            activeDataSource = id in this.state.activeDataSource ? this.state.activeDataSource[id] : '',
-            selectedRowKeys =  dataAreSelected && activeDataSource in selectedDataSources ? new Set(Object.values(selectedDataSources[activeDataSource]).map( row => row.rowKey )) : new Set([]),
-            dataAreAvailable = !_.isEmpty(activeDataSource),
-            activeDataTable = dataAreAvailable  ? this.state.dataTables[id][activeDataSource] : [];
-        this.setState({
-            'currentlySelectedRowKeys': selectedRowKeys,
-            'currentlyActiveTable': activeDataTable,
-            'currentlyActiveDataSource':activeDataSource
-        })
     }
 
     onChange(e, row){
-        const isChecked = e.target.checked;
-        const currentlySelectedKeys = _.cloneDeep(this.state.currentlySelectedRowKeys);
-        const currentlySelectedRows = _.cloneDeep(this.state.currentlySelectedRows);
+        const isChecked = e.target.checked,
+            id = this.props.id,
+            source = this.getActiveDataSource(id),
+            idsAndRows = this.getSelectedRowsAndIds(source, id),
+            currentlySelectedRows = idsAndRows['selectedRows'];
         if (isChecked){
-            currentlySelectedKeys.add(row.id);
             currentlySelectedRows.add(row);
         }
         else {
-            currentlySelectedKeys.remove(row.id)
-            currentlySelectedRows.add(row);
+            for (const val of currentlySelectedRows){
+                if (val.id === row.id){
+                    currentlySelectedRows.delete(val)
+                    break
+                }
+            };
         }
-        this.onSelectedRowChange(currentlySelectedKeys, currentlySelectedRows)
+        this.onSelectedRowChange(currentlySelectedRows)
     }
 
     render() {
-        var activeDataSource = this.state.currentlyActiveDataSource,
-            id = this.props.id,
-            activeDataTable = !_.isEmpty(this.state.dataTables[id]) && !_.isEmpty(this.state.dataTables[id][activeDataSource])? this.state.dataTables[id][activeDataSource] : [];
+        var id = this.props.id,
+            activeDataSource = this.getActiveDataSource(id),
+            activeDataTable = this.getActiveDataTable(activeDataSource, id);
         return (
             <div>
                 <div className={'table-title-label-container'}
@@ -244,11 +188,13 @@ class AvailableDataSourceTable extends React.Component{
                     name={`${this.props.id}-dataTables`}
                     rowKey={(row) => row.id}
                     size="small"
+                    cellCheckbox={true}
+                    cellDelete={false}
                     onChange={this.onChange}
                     locale={{ emptyText: <Empty
                                             image={Empty.PRESENTED_IMAGE_SIMPLE}
                                             style={{
-                                                // 'height':this.props.size.height-117,
+                                                'height':this.props.size.height-117,
                                                 'display': 'flex',
                                                 'flexDirection': 'column',
                                                 'justifyContent': 'center'
@@ -272,17 +218,9 @@ class AvailableDataSourceTable extends React.Component{
                             // width: 300
                         },
                     ]}
-                    // rowSelection={{
-                    //     // onChange: this.onSelectedRowChange,
-                    //     onChange: this.onChange,
-                    //     getCheckboxProps: record => ({
-                    //         name: record.name,
-                    //     }),
-                    //     selectedRowKeys: selectedRowKeys
-                    // }}
                     dataSource={activeDataTable}
                     scroll={{
-                        y: this.props.size.height - 100,
+                        y: this.props.size.height - 117,
                     }}
                 />,
             </div>

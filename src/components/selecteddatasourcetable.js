@@ -2,10 +2,11 @@ import { Table, AddRowButton, RemoveRowButton, Form, Input } from "formik-antd"
 import { Formik } from "formik"
 import * as React from "react"
 import { DeleteOutlined } from "@ant-design/icons"
-import {Divider, Empty, Typography, Button} from "antd";
+import {Divider, Empty, Typography, Button, Checkbox} from "antd";
 import { connect } from 'react-redux'
 import * as _ from 'lodash';
 import {setPlotSpecs} from "../app/redux/actions";
+import VirtualTable from "./virtualtable";
 
 const { Text } = Typography;
 
@@ -24,6 +25,12 @@ class SelectedDataSourceTable extends React.PureComponent{
         this.buildDataTable = this.buildDataTable.bind(this);
     }
 
+    getDeleteButton(mechanism, rowId){
+        return <Button
+                    style={{ border: "none" }}
+                    icon={<DeleteOutlined />}
+                    onClick={()=>{this.removeRecord(mechanism, rowId)}}/>
+    }
     buildDataTable() {
         var dataTable = [];
         for (const [key, val] of Object.entries(this.props.plotSpecs[this.props.id])) {
@@ -32,39 +39,36 @@ class SelectedDataSourceTable extends React.PureComponent{
                     {
                         id: loggedParameter.rowKey,
                         mechanismName: key,
-                        parameterName: loggedParameter.name
+                        parameterName: loggedParameter.name,
+                        button: this.getDeleteButton(key, loggedParameter.rowKey)
                     }
                 )
             }
         }
-        this.setState({dataTable:dataTable})
+        return dataTable
     }
 
-    componentDidUpdate(prevProps, prevState, snapshot) {
-        // if (!_.isEqual(prevProps.plotSpecs,this.props.plotSpecs) ||
-        //      !_.isEqual(prevProps.id, this.props.id)){
-        //     this.buildDataTable();
-        // }
-        // if (!_.isEqual(prevState.dataTable, this.state.dataTable)){
-        //     // console.log(this.state.dataTable)
-        // }
+    onSelectedRowChange(source, rows){
+        var loggedParameters = [];
+        for (const selected of rows){
+            loggedParameters.push({
+                name:selected.name,
+                rowKey:selected.id
+            });
+        }
+        this.props.setPlotSpecs(this.props.id, {mechanism:source, parameters:loggedParameters});
     }
-
-    removeRecord(record){
-        var id = this.props.id,
-            match = {name: record.parameterName, rowKey: record.id},
-            mechanismName = record.mechanismName,
-            plotSpecs = _.cloneDeep(this.props.plotSpecs),
-            matchingKey;
-        for (const [key, val] of Object.entries(this.props.plotSpecs[id][mechanismName])){
-            if (_.isEqual(val, match)){
-                matchingKey = key;
+    removeRecord(mechanism, rowId){
+        const
+            source = mechanism,
+            rows = new Set(_.cloneDeep(this.buildDataTable()));
+        for (const val of rows){
+            if (val.id === rowId){
+                rows.delete(val);
                 break
             }
-        }
-        delete plotSpecs[id][mechanismName][matchingKey];
-        var updatedPlotSpec = {mechanism:mechanismName, parameters: plotSpecs[id][mechanismName][matchingKey]}
-        this.props.setPlotSpecs(id, updatedPlotSpec);
+        };
+        this.onSelectedRowChange(source, rows)
     }
 
     render() {
@@ -86,22 +90,37 @@ class SelectedDataSourceTable extends React.PureComponent{
                         </div>
                     </div>
                     <Divider />
-                    <Table
-                        name="selectedDataTable"
+                    <VirtualTable
+                        name={`${this.props.id}-dataTables`}
                         rowKey={(row) => row.id}
-                        dataSource={this.state.dataTable}
                         size="small"
-                        pagination={false}
+                        onChange={this.onChange}
+                        cellCheckbox={false}
+                        cellDelete={true}
+                        removeRecord={()=>{}}
                         locale={{ emptyText: <Empty
                                 image={Empty.PRESENTED_IMAGE_SIMPLE}
                                 style={{
-                                    // 'height':this.props.size.height-117,
+                                    'height':this.props.size.height-117,
                                     'display': 'flex',
                                     'flexDirection': 'column',
                                     'justifyContent': 'center'
                                 }}/> }}
-                        // scroll={{ y: this.props.size.height - 100}}
                         columns={[
+                            {
+                                title:<div className={'title-wrapper'}
+                                           style={{'marginLeft':'8px'}}>
+                                    <Text style={{width:"50px"}} className={'param-name-col-title'}>
+                                        Parameter
+                                    </Text>
+                                </div>,
+                                key: "parameterName",
+                                render: (text, record, i) => (
+                                    <Text>
+                                        {this.state.dataTable[i].mechanismName}
+                                    </Text>
+                                ),
+                            },
                             {
                                 title: "Mechanism",
                                 key: "mechanismName",
@@ -112,18 +131,15 @@ class SelectedDataSourceTable extends React.PureComponent{
                                 ),
                             },
                             {
-                                key: "actions",
-                                align: 'right',
-                                render: (text, record, index) => (
-                                    <Button
-                                        style={{ border: "none" }}
-                                        icon={<DeleteOutlined />}
-                                        onClick={()=>{this.removeRecord(record)}}
-                                    />
-                                ),
+                                key: "button",
+                                align: 'right'
                             },
                         ]}
-                    />
+                        dataSource={this.buildDataTable()}
+                        scroll={{
+                            y: this.props.size.height - 117,
+                        }}
+                    />,
                 </div>
         )
     }

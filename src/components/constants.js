@@ -1,6 +1,6 @@
 import React from 'react';
 export const ItemTypes = {
     PLOT: 'plot',
-    LINE_GRAPH: 'line graph',
+    LINE_PLOT: 'line plot',
     BAR_GRAPH: 'bar graph'
 };

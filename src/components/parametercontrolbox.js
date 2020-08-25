@@ -22,7 +22,9 @@ export class ParameterControlBox extends React.PureComponent {
             text: props.text,
             class: props.className !== undefined ? `parametercontrolbox ${props.className}`:'parametercontrolbox',
             activeTabId: 'composition',
-            tabs: [{id: 'composition', label: 'Composition'}]
+            tabs: [{id: 'composition', label: 'Composition'}],
+            linePlotCounter: {},
+            linePlotGlobal: 0
         };
         this.bindThisToFunctions = this.bindThisToFunctions.bind(this);
         this.bindThisToFunctions();
@@ -44,10 +46,21 @@ export class ParameterControlBox extends React.PureComponent {
 
 
     instantiatePlots(){
+        var linePlotCounter = _.cloneDeep(this.state.linePlotCounter),
+            linePlotGlobal = this.state.linePlotGlobal,
+            activeTabId = this.state.activeTabId;
         this.setState({
             tabs: [{label: 'Composition', id:'composition'}, ...Object.keys(this.props.plots).map(id => {
-                return {label:`LinePlot-${id}`, id:id}
+                var numericId;
+                if (!(id in linePlotCounter)){
+                    linePlotCounter[id] = linePlotGlobal;
+                    linePlotGlobal += 1
+                }
+                numericId = linePlotCounter[id];
+                return {label:`LinePlot-${numericId}`, id:id}
             })],
+            linePlotCounter: linePlotCounter,
+            linePlotGlobal: linePlotGlobal
         })
     }
 

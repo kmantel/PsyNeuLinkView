@@ -26,3 +26,6 @@
     border-bottom: 1px solid #303030;
     background: #141414;
 }
+.ant-select-selection {
+    /*background-color: green;*/
+}

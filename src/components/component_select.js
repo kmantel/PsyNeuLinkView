@@ -1,6 +1,7 @@
 import React from 'react';
 import 'antd/dist/antd.css';
 import { Select } from 'antd';
+import {Icon} from "@blueprintjs/core";
 
 const { Option } = Select;
 
@@ -38,15 +39,22 @@ export default class ComponentSelect extends React.Component {
         var componentNames = [];
         for (const name of this.props.components){
             componentNames.push(
-                <Option key={name} value={name}>{name}</Option>
+                <Option key={name}
+                        value={name}
+                        style={
+                            {position:'flex',
+                             flexDirection:'row',
+                             justifyContent:'center',
+                             alignContent:'center'}}><Icon iconSize={14} icon={'cog'} style={{'marginRight':'10px'}}/>{name}</Option>
             )
         }
         return (
             <Select
                 showSearch
-                style={{width: 200}}
+                style={{width: 300}}
                 placeholder="Select a mechanism"
                 optionFilterProp="PsyNeuLink Mechanisms"
+                // dropdownStyle={{backgroundColor:'palevioletred'}}
                 onChange={this.onChange}
                 onFocus={this.onFocus}
                 onBlur={this.onBlur}
