@@ -269,8 +269,8 @@ class WorkSpace extends React.PureComponent {
             cf = Object.assign({}, fs.get_config());
         cf.env.filepath = filepath;
         fs.set_config(cf);
-        store.dispatch(setStyleSheet(new_graph_style));
-        store.dispatch(setActiveComposition(composition));
+        this.props.setStyleSheet(new_graph_style);
+        this.props.setActiveComposition(composition);
         self.setState({
             graph: new_graph,
             filepath: filepath,
@@ -347,7 +347,7 @@ class WorkSpace extends React.PureComponent {
             } catch {
                 var new_graph_style = {};
             }
-            store.dispatch(setStyleSheet(new_graph_style));
+            self.props.setStyleSheet(new_graph_style);
         })
     }
 
@@ -722,14 +722,19 @@ class WorkSpace extends React.PureComponent {
     }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = ({core}) => {
     return {
-        activeView: state.activeView,
-        graph_style: state.stylesheet
+        activeView: core.activeView,
+        graph_style: core.stylesheet
             }
 }
 
+const mapDispatchToProps = dispatch => ({
+    setStyleSheet: graphStyle => {dispatch(setStyleSheet(graphStyle))},
+    setActiveComposition: name => {dispatch(setActiveComposition(name))}
+});
+
 export default connect(
     mapStateToProps,
-    { setActiveView, setStyleSheet }
+    mapDispatchToProps
 )(WorkSpace)

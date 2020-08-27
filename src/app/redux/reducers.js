@@ -10,7 +10,7 @@ const initialState = {
     plotSpecs: {},
 };
 
-export function rootReducer(state = initialState, action) {
+export function coreReducer(state = initialState, action) {
     switch (action.type) {
         case atypes.SET_ACTIVE_VIEW:
             return Object.assign({}, state, {

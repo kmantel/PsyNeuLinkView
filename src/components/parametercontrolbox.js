@@ -144,9 +144,9 @@ export class ParameterControlBox extends React.PureComponent {
     };
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = ({core}) => {
     return {
-        plots: state.plots
+        plots: core.plots
     }
 };
 

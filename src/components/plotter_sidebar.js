@@ -138,9 +138,9 @@ var PLOTVIEW_NODES = [
     }
 ];
 
-const mapStateToProps = state => {
+const mapStateToProps = ({core}) => {
     return {
-        activeView: state.activeView,
+        activeView: core.activeView,
     }
 };
 

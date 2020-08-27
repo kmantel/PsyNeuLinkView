@@ -50,7 +50,6 @@ composition.add_projection(
     sender=fnPop1,
     receiver=fnPop2,
 )
-
 # PsyNeuLinkView Graphics Info 
 pnlv_graphics_spec = {
     "Window Settings": {

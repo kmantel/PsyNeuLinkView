@@ -1,10 +1,18 @@
-import React, { PureComponent } from 'react';
+import React from 'react';
 import Plot from "./plot";
 import {
     LineChart, Line, XAxis, YAxis, CartesianGrid, Label, Tooltip, Legend,
 } from 'recharts';
 import '../css/d3plotter.css'
-import * as d3 from 'd3'
+import {connect} from "react-redux";
+import {getGridDropFocus} from "../app/redux/plotting/subplot-grid/selectors";
+import {setDropFocus} from "../app/redux/plotting/subplot-grid/actions";
+
+const mapStateToProps = ({plotting}) => {
+    return {
+
+    }
+};
 
 const style = {
     display: "flex",

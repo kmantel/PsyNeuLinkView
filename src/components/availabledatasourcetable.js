@@ -10,12 +10,20 @@ import VirtualTable from "./virtualtable";
 
 import * as _ from "lodash";
 import {addPlot, setPlotSpecs} from "../app/redux/actions";
+import {registerParameters} from "../app/redux/psyneulink/actions";
 
 const { Text } = Typography;
 
 const electron = window.require('electron');
 const ipcRenderer  = electron.ipcRenderer;
 const rpc = window.interfaces.rpc;
+
+/**
+ * Redux-managed state
+ *
+ *
+ *
+ * */
 
 class AvailableDataSourceTable extends React.Component{
     state = {
@@ -31,6 +39,7 @@ class AvailableDataSourceTable extends React.Component{
         ipcRenderer.on(
             'parameterList', (event, message)=> {
                 var parameterLists = _.cloneDeep(this.state.parameterLists);
+                this.props.registerParameters(message.name, message.parameters);
                 parameterLists[message.name] = message.parameters;
                 this.setState({parameterLists:parameterLists})
             }
@@ -91,6 +100,9 @@ class AvailableDataSourceTable extends React.Component{
 
     getActiveDataTable(source, id){
         if (_.isEmpty(source) || _.isEmpty(id)){
+            return []
+        }
+        if (!(source in this.state.parameterLists)){
             return []
         }
         var baseParameterList, plotSpecs, rowid, selectedKeys, dataTable = [];
@@ -228,14 +240,17 @@ class AvailableDataSourceTable extends React.Component{
     }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = ({core, pnl}) => {
     return {
-        plotSpecs:state.plotSpecs
+        registeredMechanisms:pnl.mechanisms,
+        registeredParameters:pnl.parameters,
+        plotSpecs:core.plotSpecs
     }
 };
 
 const mapDispatchToProps = dispatch => ({
     setPlotSpecs: (id, plotSpecs) => dispatch(setPlotSpecs(id, plotSpecs)),
+    registerParameters: (mechanism, parameterList) => dispatch(registerParameters(mechanism, parameterList))
 });
 
 AvailableDataSourceTable = connect(mapStateToProps, mapDispatchToProps)(AvailableDataSourceTable);

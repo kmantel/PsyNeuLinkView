@@ -2,16 +2,48 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0426a943-ef89-4391-a3a0-8152f91aa099" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/src/app/redux/constants.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/redux/plotting/actions.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/redux/plotting/constants.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/redux/plotting/reducers.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/redux/plotting/selectors.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/redux/plotting/subplot-grid/actions.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/redux/plotting/subplot-grid/constants.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/redux/plotting/subplot-grid/reducers.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/redux/plotting/subplot-grid/selectors.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/redux/plotting/subplot-input-forms/actions.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/redux/plotting/subplot-input-forms/constants.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/redux/plotting/subplot-input-forms/reducers.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/redux/plotting/subplot-input-forms/selectors.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/redux/plotting/subplots/actions.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/redux/plotting/subplots/constants.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/redux/plotting/subplots/reducers.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/redux/plotting/subplots/selectors.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/redux/psyneulink/actionTypes.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/redux/psyneulink/actions.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/redux/psyneulink/data.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/redux/psyneulink/initialState.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/redux/psyneulink/options.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/redux/psyneulink/reducers.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/redux/psyneulink/view.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/redux/util.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/redux/reducers.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/redux/reducers.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/redux/store.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/redux/store.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/availabledatasourcetable.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/availabledatasourcetable.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/component_select.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/component_select.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/constants.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/constants.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/controlstrip.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/controlstrip.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/d3model.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/d3model.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/forms/monitorparamform.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/forms/monitorparamform.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/linegraph.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/linegraph.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/parametercontrolbox.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/parametercontrolbox.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/plotter.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/plotter.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/plotter_sidebar.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/plotter_sidebar.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/selecteddatasourcetable.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/selecteddatasourcetable.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/sidebar.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/sidebar.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/css/paramform.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/css/paramform.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/workspace.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/workspace.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/py/test/pnl_scripts/NeuroML Example.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/py/test/pnl_scripts/NeuroML Example.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/yarn.lock" beforeDir="false" afterPath="$PROJECT_DIR$/yarn.lock" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -53,22 +85,29 @@
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="com.intellij.ide.scratch.LRUPopupBuilder$1/New Scratch File" value="JavaScript" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../psyneulink_sphinx_theme" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/app/redux/plotting" />
     <property name="list.type.of.created.stylesheet" value="CSS" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="nodejs_interpreter_path" value="node" />
     <property name="nodejs_package_manager_path" value="yarn" />
-    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
+    <property name="settings.editor.selected.configurable" value="editor.preferences.fonts.default" />
     <property name="ts.external.directory.path" value="$APPLICATION_HOME_DIR$/plugins/JavaScriptLanguage/jsLanguageServicesImpl/external" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Dillo\WebstormProjects\PsyNeuLinkView\src\app\redux\plotting" />
+      <recent name="C:\Users\Dillo\WebstormProjects\PsyNeuLinkView\src\app\redux\plotting\input-forms" />
+      <recent name="C:\Users\Dillo\WebstormProjects\PsyNeuLinkView\src\app\redux\plotting\layout" />
+      <recent name="C:\Users\Dillo\WebstormProjects\PsyNeuLinkView\src\app\redux\psyneulink" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Dillo\WebstormProjects\PsyNeuLinkView\src\app\redux\plotting\subplot" />
+      <recent name="C:\Users\Dillo\WebstormProjects\PsyNeuLinkView\src\app\redux" />
       <recent name="C:\Users\Dillo\WebstormProjects\PsyNeuLinkView\src\components\forms" />
       <recent name="C:\Users\Dillon\WebstormProjects\PsyNeuLinkView\src\app\redux" />
       <recent name="$PROJECT_DIR$/src/test" />
-      <recent name="$PROJECT_DIR$/src" />
     </key>
   </component>
   <component name="RunManager" selected="Attach to Node.js/Chrome.Debug Render">
@@ -199,7 +238,10 @@
       <workItem from="1598219639786" duration="24052000" />
       <workItem from="1598243903331" duration="8538000" />
       <workItem from="1598252502032" duration="17296000" />
-      <workItem from="1598283671436" duration="34353000" />
+      <workItem from="1598283671436" duration="40831000" />
+      <workItem from="1598324771211" duration="4000" />
+      <workItem from="1598326517029" duration="26154000" />
+      <workItem from="1598496973796" duration="29364000" />
     </task>
     <task id="LOCAL-00001" summary="Enabled touchpad zoom gestures and windows ctrl shortcuts">
       <created>1581449946471</created>
@@ -299,7 +341,14 @@
       <option name="project" value="LOCAL" />
       <updated>1598303837830</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="somewhat polished the data table interface">
+      <created>1598318222067</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1598318222067</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -335,7 +384,8 @@
     <MESSAGE value="mostly added new files to repo" />
     <MESSAGE value="performance tweaks, selected data sources now working, windows production mode now working" />
     <MESSAGE value="implemented virtual table - significant speedups" />
-    <option name="LAST_COMMIT_MESSAGE" value="implemented virtual table - significant speedups" />
+    <MESSAGE value="somewhat polished the data table interface" />
+    <option name="LAST_COMMIT_MESSAGE" value="somewhat polished the data table interface" />
   </component>
   <component name="WindowStateProjectService">
     <state x="414" y="178" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1597713369456">
@@ -346,81 +396,85 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="710" y="330" key="#com.intellij.fileTypes.FileTypeChooser/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598040614855" />
-    <state x="765" y="207" width="889" height="580" key="#xdebugger.evaluate" timestamp="1598310546468">
+    <state x="765" y="236" key="#com.intellij.ide.util.MemberChooser" timestamp="1598555539579">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="937" y="415" width="983" height="582" key="#xdebugger.evaluate/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598252608899" />
-    <state x="765" y="207" width="889" height="580" key="#xdebugger.evaluate/0.0.1920.1040@0.0.1920.1040" timestamp="1598310546468" />
-    <state x="598" y="118" width="1168" height="803" key="CommitChangelistDialog2" timestamp="1598303837150">
+    <state x="765" y="236" key="#com.intellij.ide.util.MemberChooser/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598555539579" />
+    <state x="937" y="415" width="889" height="580" key="#xdebugger.evaluate" timestamp="1598551195659">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="937" y="415" width="983" height="582" key="#xdebugger.evaluate/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598551195659" />
+    <state x="1031" y="178" width="889" height="580" key="#xdebugger.evaluate/0.0.1920.1040@0.0.1920.1040" timestamp="1598498028414" />
+    <state x="598" y="118" width="1168" height="803" key="CommitChangelistDialog2" timestamp="1598318221407">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="598" y="118" width="1168" height="803" key="CommitChangelistDialog2/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598244133419" />
-    <state x="598" y="118" key="CommitChangelistDialog2/0.0.1920.1040@0.0.1920.1040" timestamp="1598303837150" />
+    <state x="598" y="118" key="CommitChangelistDialog2/0.0.1920.1040@0.0.1920.1040" timestamp="1598318221407" />
     <state x="355" y="113" width="1536" height="860" key="DiffContextDialog" timestamp="1598287233355">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="355" y="113" width="1536" height="860" key="DiffContextDialog/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1597945476787" />
     <state x="355" y="113" width="1536" height="860" key="DiffContextDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1598287233355" />
-    <state width="1900" height="365" key="GridCell.Tab.0.bottom" timestamp="1598316930654">
+    <state width="1900" height="364" key="GridCell.Tab.0.bottom" timestamp="1598560187098">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1899" height="281" key="GridCell.Tab.0.bottom/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598285857263" />
-    <state width="1900" height="365" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1598316930654" />
-    <state width="1900" height="365" key="GridCell.Tab.0.center" timestamp="1598316930654">
+    <state width="1900" height="364" key="GridCell.Tab.0.bottom/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598560187098" />
+    <state width="1900" height="365" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1598510350559" />
+    <state width="1900" height="364" key="GridCell.Tab.0.center" timestamp="1598560187098">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1899" height="281" key="GridCell.Tab.0.center/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598285857263" />
-    <state width="1900" height="365" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1598316930654" />
-    <state width="1900" height="365" key="GridCell.Tab.0.left" timestamp="1598316930654">
+    <state width="1900" height="364" key="GridCell.Tab.0.center/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598560187098" />
+    <state width="1900" height="365" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1598510350559" />
+    <state width="1900" height="364" key="GridCell.Tab.0.left" timestamp="1598560187098">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1899" height="281" key="GridCell.Tab.0.left/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598285857263" />
-    <state width="1900" height="365" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1598316930654" />
-    <state width="1900" height="365" key="GridCell.Tab.0.right" timestamp="1598316930654">
+    <state width="1900" height="364" key="GridCell.Tab.0.left/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598560187098" />
+    <state width="1900" height="365" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1598510350559" />
+    <state width="1900" height="364" key="GridCell.Tab.0.right" timestamp="1598560187098">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1899" height="281" key="GridCell.Tab.0.right/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598285857263" />
-    <state width="1900" height="365" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1598316930654" />
-    <state width="1900" height="365" key="GridCell.Tab.1.bottom" timestamp="1598316930654">
+    <state width="1900" height="364" key="GridCell.Tab.0.right/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598560187098" />
+    <state width="1900" height="365" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1598510350559" />
+    <state width="1900" height="364" key="GridCell.Tab.1.bottom" timestamp="1598560187098">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1900" height="365" key="GridCell.Tab.1.bottom/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598258866700" />
-    <state width="1900" height="365" key="GridCell.Tab.1.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1598316930654" />
-    <state width="1900" height="365" key="GridCell.Tab.1.center" timestamp="1598316930654">
+    <state width="1900" height="364" key="GridCell.Tab.1.bottom/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598560187098" />
+    <state width="1900" height="365" key="GridCell.Tab.1.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1598510350559" />
+    <state width="1900" height="364" key="GridCell.Tab.1.center" timestamp="1598560187098">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1900" height="365" key="GridCell.Tab.1.center/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598258866700" />
-    <state width="1900" height="365" key="GridCell.Tab.1.center/0.0.1920.1040@0.0.1920.1040" timestamp="1598316930654" />
-    <state width="1900" height="365" key="GridCell.Tab.1.left" timestamp="1598316930654">
+    <state width="1900" height="364" key="GridCell.Tab.1.center/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598560187098" />
+    <state width="1900" height="365" key="GridCell.Tab.1.center/0.0.1920.1040@0.0.1920.1040" timestamp="1598510350559" />
+    <state width="1900" height="364" key="GridCell.Tab.1.left" timestamp="1598560187098">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1900" height="365" key="GridCell.Tab.1.left/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598258866700" />
-    <state width="1900" height="365" key="GridCell.Tab.1.left/0.0.1920.1040@0.0.1920.1040" timestamp="1598316930654" />
-    <state width="1900" height="365" key="GridCell.Tab.1.right" timestamp="1598316930654">
+    <state width="1900" height="364" key="GridCell.Tab.1.left/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598560187098" />
+    <state width="1900" height="365" key="GridCell.Tab.1.left/0.0.1920.1040@0.0.1920.1040" timestamp="1598510350559" />
+    <state width="1900" height="364" key="GridCell.Tab.1.right" timestamp="1598560187098">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1900" height="365" key="GridCell.Tab.1.right/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598258866700" />
-    <state width="1900" height="365" key="GridCell.Tab.1.right/0.0.1920.1040@0.0.1920.1040" timestamp="1598316930654" />
-    <state width="1900" height="365" key="GridCell.Tab.2.bottom" timestamp="1598316930655">
+    <state width="1900" height="364" key="GridCell.Tab.1.right/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598560187098" />
+    <state width="1900" height="365" key="GridCell.Tab.1.right/0.0.1920.1040@0.0.1920.1040" timestamp="1598510350559" />
+    <state width="1900" height="364" key="GridCell.Tab.2.bottom" timestamp="1598560187099">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1900" height="365" key="GridCell.Tab.2.bottom/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598258866701" />
-    <state width="1900" height="365" key="GridCell.Tab.2.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1598316930655" />
-    <state width="1900" height="365" key="GridCell.Tab.2.center" timestamp="1598316930654">
+    <state width="1900" height="364" key="GridCell.Tab.2.bottom/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598560187099" />
+    <state width="1900" height="365" key="GridCell.Tab.2.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1598510350559" />
+    <state width="1900" height="364" key="GridCell.Tab.2.center" timestamp="1598560187099">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1900" height="365" key="GridCell.Tab.2.center/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598258866701" />
-    <state width="1900" height="365" key="GridCell.Tab.2.center/0.0.1920.1040@0.0.1920.1040" timestamp="1598316930654" />
-    <state width="1900" height="365" key="GridCell.Tab.2.left" timestamp="1598316930654">
+    <state width="1900" height="364" key="GridCell.Tab.2.center/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598560187099" />
+    <state width="1900" height="365" key="GridCell.Tab.2.center/0.0.1920.1040@0.0.1920.1040" timestamp="1598510350559" />
+    <state width="1900" height="364" key="GridCell.Tab.2.left" timestamp="1598560187098">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1900" height="365" key="GridCell.Tab.2.left/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598258866700" />
-    <state width="1900" height="365" key="GridCell.Tab.2.left/0.0.1920.1040@0.0.1920.1040" timestamp="1598316930654" />
-    <state width="1900" height="365" key="GridCell.Tab.2.right" timestamp="1598316930654">
+    <state width="1900" height="364" key="GridCell.Tab.2.left/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598560187098" />
+    <state width="1900" height="365" key="GridCell.Tab.2.left/0.0.1920.1040@0.0.1920.1040" timestamp="1598510350559" />
+    <state width="1900" height="364" key="GridCell.Tab.2.right" timestamp="1598560187099">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1900" height="365" key="GridCell.Tab.2.right/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598258866701" />
-    <state width="1900" height="365" key="GridCell.Tab.2.right/0.0.1920.1040@0.0.1920.1040" timestamp="1598316930654" />
+    <state width="1900" height="364" key="GridCell.Tab.2.right/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598560187099" />
+    <state width="1900" height="365" key="GridCell.Tab.2.right/0.0.1920.1040@0.0.1920.1040" timestamp="1598510350559" />
     <state width="1370" height="370" key="GridCell.Tab.3.bottom" timestamp="1597765893088">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -442,20 +496,25 @@
     </state>
     <state x="920" y="261" key="RollbackChangesDialog/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1597851384558" />
     <state x="920" y="261" key="RollbackChangesDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1598287234054" />
-    <state x="463" y="165" key="SettingsEditor" timestamp="1598038332815">
+    <state x="463" y="165" key="SettingsEditor" timestamp="1598499598853">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="463" y="165" key="SettingsEditor/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598038332815" />
-    <state x="552" y="256" key="Vcs.Push.Dialog.v2" timestamp="1598269549152">
+    <state x="463" y="165" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1598499598853" />
+    <state x="552" y="256" key="Vcs.Push.Dialog.v2" timestamp="1598318224761">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="552" y="256" key="Vcs.Push.Dialog.v2/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1597890484033" />
-    <state x="552" y="256" key="Vcs.Push.Dialog.v2/0.0.1920.1040@0.0.1920.1040" timestamp="1598269549152" />
-    <state x="92" y="92" width="1736" height="856" key="com.intellij.history.integration.ui.views.FileHistoryDialog" timestamp="1598316232767">
+    <state x="552" y="256" key="Vcs.Push.Dialog.v2/0.0.1920.1040@0.0.1920.1040" timestamp="1598318224761" />
+    <state x="93" y="93" width="1733" height="853" key="com.intellij.history.integration.ui.views.DirectoryHistoryDialog" timestamp="1598505904781">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="92" y="92" width="1736" height="856" key="com.intellij.history.integration.ui.views.FileHistoryDialog/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598260261600" />
-    <state x="92" y="92" width="1736" height="856" key="com.intellij.history.integration.ui.views.FileHistoryDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1598316232767" />
+    <state x="93" y="93" width="1733" height="853" key="com.intellij.history.integration.ui.views.DirectoryHistoryDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1598505904781" />
+    <state x="92" y="92" width="1736" height="856" key="com.intellij.history.integration.ui.views.FileHistoryDialog" timestamp="1598548668797">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="92" y="92" width="1736" height="856" key="com.intellij.history.integration.ui.views.FileHistoryDialog/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598548668797" />
+    <state x="92" y="92" width="1736" height="856" key="com.intellij.history.integration.ui.views.FileHistoryDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1598333373209" />
     <state x="92" y="92" width="1736" height="856" key="com.intellij.history.integration.ui.views.SelectionHistoryDialog" timestamp="1597945428516">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -468,11 +527,11 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="771" y="439" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1597856965654" />
-    <state x="603" y="460" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2" timestamp="1598316331443">
+    <state x="555" y="290" width="877" height="750" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2" timestamp="1598555606201">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="555" y="518" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598257739518" />
-    <state x="603" y="460" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/0.0.1920.1040@0.0.1920.1040" timestamp="1598316331443" />
+    <state x="555" y="290" width="877" height="750" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598555606201" />
+    <state x="603" y="460" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/0.0.1920.1040@0.0.1920.1040" timestamp="1598498232273" />
     <state x="-2855" y="590" width="825" height="575" key="dock-window-1" timestamp="1597770570215">
       <screen x="-3840" y="0" width="1920" height="1060" />
     </state>
@@ -486,30 +545,37 @@
       <screen x="-3840" y="0" width="1920" height="1060" />
     </state>
     <state x="-2533" y="292" width="1058" height="830" key="dock-window-3/-3840.0.1920.1060/0.0.1920.1040@-3840.0.1920.1060" timestamp="1597770570215" />
-    <state x="667" y="154" width="828" height="732" key="find.popup" timestamp="1598286857688">
+    <state x="667" y="154" width="828" height="732" key="find.popup" timestamp="1598364123179">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="667" y="154" width="828" height="732" key="find.popup/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598286857688" />
-    <state x="667" y="154" width="592" height="732" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1598209249795" />
-    <state x="583" y="290" width="672" height="677" key="run.anything.popup" timestamp="1598246998487">
+    <state x="667" y="154" width="828" height="732" key="find.popup/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598364123179" />
+    <state x="667" y="154" width="825" height="732" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1598334242696" />
+    <state x="584" y="291" width="672" height="677" key="run.anything.popup" timestamp="1598508067013">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="583" y="290" width="672" height="677" key="run.anything.popup/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598246998487" />
-    <state x="636" y="259" width="672" height="678" key="search.everywhere.popup" timestamp="1598317491079">
+    <state x="583" y="290" width="672" height="677" key="run.anything.popup/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598371204866" />
+    <state x="584" y="291" width="672" height="677" key="run.anything.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1598508067013" />
+    <state x="608" y="231" width="672" height="678" key="search.everywhere.popup" timestamp="1598559701978">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="-3230" y="237" width="672" height="692" key="search.everywhere.popup/-3840.0.1920.1060/0.0.1920.1040@-3840.0.1920.1060" timestamp="1598065172325" />
-    <state x="608" y="231" width="672" height="678" key="search.everywhere.popup/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598287036139" />
-    <state x="636" y="259" width="672" height="678" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1598317491079" />
+    <state x="608" y="231" width="672" height="678" key="search.everywhere.popup/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598559701978" />
+    <state x="648" y="271" width="672" height="678" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1598508347034" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/src/components/availabledatasourcetable.js</url>
-          <line>157</line>
+        <line-breakpoint type="javascript">
+          <url>file://$PROJECT_DIR$/src/components/plotter.js</url>
+          <line>371</line>
           <properties lambdaOrdinal="-1" />
-          <option name="timeStamp" value="300" />
+          <option name="timeStamp" value="55" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/src/components/plotter.js</url>
+          <line>479</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="73" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

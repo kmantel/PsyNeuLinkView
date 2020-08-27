@@ -1634,11 +1634,11 @@ class D3model extends React.Component {
     }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = ({core}) => {
     return {
-        graph_style: state.stylesheet,
-        stylesheet: state.stylesheet,
-        aspect_ratio: state.model_aspect_ratio
+        graph_style: core.stylesheet,
+        stylesheet: core.stylesheet,
+        aspect_ratio: core.model_aspect_ratio
     }
 };
 

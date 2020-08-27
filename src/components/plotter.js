@@ -8,6 +8,42 @@ import * as _ from "lodash";
 import Layout from "./layout";
 import {addPlot, removePlot} from "../app/redux/actions"
 import {connect} from "react-redux";
+import { initializeSubplotBundle } from "../app/redux/plotting/actions";
+import { createId } from "../app/redux/util";
+import { PLOT_PREFIX, PLOT_ID_LEN } from "../app/redux/plotting/constants";
+import {
+    getGridLayout,
+    getGridPositions,
+    getGridShape
+} from "../app/redux/plotting/subplot-grid/selectors";
+import {getSubplotIdSet} from "../app/redux/plotting/selectors";
+import {editPlotLayout} from "../app/redux/plotting/subplot-grid/actions";
+
+const mapStateToProps = ({plotting}) => {
+    return {
+        gridLayout: getGridLayout(plotting.subplotGrid),
+        gridShape: getGridShape(plotting.subplotGrid),
+        gridPositions: getGridPositions(plotting.subplotGrid),
+        subplotIdSet: getSubplotIdSet(plotting)
+    }
+};
+
+const mapDispatchToProps = dispatch => ({
+    addPlot: (plotSpec) => dispatch(addPlot(plotSpec)),
+    initializeSubplotBundle: (id, plotType, name, dataSources, position, width, colSpan, height, rowSpan) =>
+        dispatch(initializeSubplotBundle(id, plotType, name, dataSources, position, width, colSpan, height, rowSpan)),
+    editPlotLayout: (id, width, height, colSpan, rowSpan, position) =>
+        dispatch(editPlotLayout(id, width, height, colSpan, rowSpan, position))
+});
+
+// DnD DropTarget - collect
+let collect = ( connect, monitor )=>{
+    return {
+        connectDropTarget: connect.dropTarget(),
+        isOver: monitor.isOver(),
+        canDrop: monitor.canDrop()
+    };
+};
 
 const style = {
     display: "flex",
@@ -18,7 +54,7 @@ const style = {
 const PlotSpec = {
     drop(props, monitor, component){
         if (monitor.getItem().name === 'Line Plot') {
-            var type = ItemTypes.LINE_GRAPH,
+            var type = ItemTypes.LINE_PLOT,
                 componentHasSubPlots = Object.keys(component.state.plot_props_lookup).length > 0,
                 currentActiveLocation,
                 referencePlotProps,
@@ -51,7 +87,8 @@ const PlotSpec = {
                         break;
                 }
             }
-            component.insertSubPlot(type, position, shiftDirection)
+            component.insertSubPlot(type, position, shiftDirection);
+            component._insertSubPlot(type, position, shiftDirection);
         }
         return {dropped: true}
     },
@@ -70,19 +107,6 @@ const PlotSpec = {
     }
 };
 
-const mapDispatchToProps = dispatch => ({
-    addPlot: (plotSpec) => dispatch(addPlot(plotSpec)),
-});
-
-// DnD DropTarget - collect
-let collect = ( connect, monitor )=>{
-    return {
-        connectDropTarget: connect.dropTarget(),
-        isOver: monitor.isOver(),
-        canDrop: monitor.canDrop()
-    };
-};
-
 class Plotter extends React.Component {
     constructor(props) {
         super(props);
@@ -90,7 +114,8 @@ class Plotter extends React.Component {
             class: `plotter ${this.props.className}`,
             mounted: false,
             spinner_visible: false,
-            cols: 0,
+            cols:0,
+            rows:0,
             plot_data: {},
             plot_props_lookup: {},
             position_id_lookup: {},
@@ -102,7 +127,6 @@ class Plotter extends React.Component {
             plotWidth:0,
             plotHeight:0,
             activeLocation: [null, null],
-            maxRows:0,
         };
         this.forceLayoutSetState = [];
         this.bind_this_to_functions = this.bind_this_to_functions.bind(this);
@@ -122,8 +146,11 @@ class Plotter extends React.Component {
         this.handleNewLayout = this.handleNewLayout.bind(this);
         this.getSinglePlotSize = this.getSinglePlotSize.bind(this);
         this.insertSubPlot = this.insertSubPlot.bind(this);
+        this._insertSubPlot = this._insertSubPlot.bind(this);
         this.lateralShift = this.lateralShift.bind(this);
+        this._lateralShift = this._lateralShift.bind(this);
         this.verticalShift = this.verticalShift.bind(this);
+        this._verticalShift = this._verticalShift.bind(this);
         this.updatePlotSize = this.updatePlotSize.bind(this);
         this.debounceFunctions = this.debounceFunctions.bind(this);
     }
@@ -134,7 +161,7 @@ class Plotter extends React.Component {
             plotSpecs = this.state.plot_props_lookup,
             positionSpecs = this.state.position_id_lookup,
             cols = this.state.cols,
-            rows = this.state.maxRows == 1 ? 1 : this.state.maxRows -1 ,
+            rows = this.state.rows,
             id = this.generateRandomID(),
             component_size = this.getSinglePlotSize(cols+1,rows),
             component_height = component_size.height,
@@ -142,7 +169,9 @@ class Plotter extends React.Component {
             new_component_type,
             new_component_props,
             shiftSpec,
-            padding;
+            padding,
+            colSpan = 1,
+            rowSpan = 1;
 
         // in case generateRandomID happens to pull the same id for multiple components
         while (this.state.plot_props_lookup.hasOwnProperty(id)){
@@ -168,12 +197,12 @@ class Plotter extends React.Component {
             }
             else {
                 cols += 1
-        }}
+            }}
         for (const [key, val] of Object.entries(plotSpecs)) {
             updated_plot_props_lookup[key].props.size = {width: component_width, height:component_height};
         };
         updated_plot_props_lookup[id] = {
-            type: ItemTypes.LINE_GRAPH,
+            type: ItemTypes.LINE_PLOT,
             id: id,
             props: new_component_props,
             position: [position[0], position[1]],
@@ -186,11 +215,14 @@ class Plotter extends React.Component {
             }
         };
         this.props.addPlot(updated_plot_props_lookup[id]);
+        // this.props.initializeSubplotBundle(
+        //     undefined, undefined, undefined, position, undefined, undefined, undefined, undefined
+        // );
         updated_position_id_lookup[position] = id;
         this.setState(
             {
                 cols: cols,
-                maxRows: rows + 1,
+                rows: rows,
                 plot_props_lookup: updated_plot_props_lookup,
                 plotSize:{
                     width:component_width,
@@ -199,6 +231,27 @@ class Plotter extends React.Component {
                 position_id_lookup:updated_position_id_lookup
             }
         )
+    }
+
+    _insertSubPlot(type, position, shiftDirection='right'){
+        var {gridPositions, subplotIdSet} = this.props,
+            [rows, cols] = this.props.gridShape,
+            updatedLayout = {},
+            id = createId(subplotIdSet, PLOT_PREFIX, PLOT_ID_LEN);
+        this.getSinglePlotSize(rows, cols+1);
+        if (position in gridPositions){
+            if (shiftDirection=='right'){
+                updatedLayout =  this._lateralShift(position[1], position[0]);
+            }
+            else if (shiftDirection=='bottom'){
+                updatedLayout = this._verticalShift(position[0], position[1]);
+            }
+        }
+        for ( const [subplotId, layout] of Object.entries(updatedLayout) ){
+            this.props.editPlotLayout(subplotId, undefined, undefined, undefined, undefined, layout.pos)
+        }
+        this.props.initializeSubplotBundle(id, undefined, undefined, undefined, position,
+            undefined, undefined, undefined, undefined);
     }
 
     lateralShift(row, startIndex){
@@ -219,18 +272,34 @@ class Plotter extends React.Component {
         return [updatedPlotSpec, updatedPositionIdLookup]
     }
 
+    _lateralShift(row, startIndex){
+        var id,
+            gridLayout = this.props.gridLayout,
+            updatedLayout = {...gridLayout},
+            gridPositions = this.props.gridPositions,
+            cols = this.props.gridShape[0],
+            range = _.range(startIndex, cols);
+
+        range.forEach(
+            i=>{
+                id = gridPositions[[i, row]];
+                updatedLayout[id].position[0] += 1;
+            }
+        );
+        return updatedLayout
+    }
+
     updatePlotSize(){
         var cols = this.state.cols,
-            rows = this.state.maxRows - 1,
+            rows = this.state.rows,
             updatedPlotSize = this.getSinglePlotSize(cols, rows)
         this.setState(
             {plotSize:updatedPlotSize}
         )
     }
-
     verticalShift(column, startIndex){
         var updatedPlotSpec = {...this.state.plot_props_lookup},
-            range = _.range(startIndex, this.state.maxRows - 1),
+            range = _.range(startIndex, this.state.rows),
             updatedPositionIdLookup = _.cloneDeep(this.state.position_id_lookup),
             currentPositionIdLookup = this.state.position_id_lookup,
             id;
@@ -246,15 +315,29 @@ class Plotter extends React.Component {
         return [updatedPlotSpec, updatedPositionIdLookup]
     }
 
-    componentDidMount() {
-        if (!this.state.mounted){
-            // this.set_graph();
-        }
+    _verticalShift(column, startIndex){
+        var id,
+            gridLayout = this.props.gridLayout,
+            updatedLayout = {...gridLayout},
+            gridPositions = this.props.gridPositions,
+            rows = this.props.gridShape[1],
+            range = _.range(startIndex, rows);
+
+        range.forEach(
+            i=>{
+                id = gridPositions[[column, i]];
+                updatedLayout[id].position[1] += 1;
+            }
+        );
+        return updatedLayout
     }
 
-    getSinglePlotSize(cols, rows){
-        var component_height = (this.props.size.height-30)/(rows),
-            component_width = (this.props.size.width-30)/(cols);
+    componentDidMount() {
+    }
+
+    getSinglePlotSize(rows, cols){
+        var component_height = (this.props.size.height-30)/(rows ? rows: 1),
+            component_width = (this.props.size.width-30)/(cols ? cols: 1);
         return {width: component_width, height: component_height}
     }
 
@@ -278,6 +361,17 @@ class Plotter extends React.Component {
                 this.setState({activeLocation: [id, type]})
             }
         }
+    }
+
+    _handleNewLayout(newLayoutArr){
+        // TODO: COME BACK TO THIS
+        var {gridLayout, gridPositions, gridShape} = this.props,
+            updatedGridLayout = {...gridLayout};
+        newLayoutArr.forEach(
+            (layout)=>{
+                console.log(12345)
+            }
+        )
     }
 
     handleNewLayout(newLayouts){
@@ -368,11 +462,21 @@ class Plotter extends React.Component {
         );
     }
 
+    _getPlots(){
+        const { gridLayout } = this.props,
+            layout  = [];
+        for (const [id, metadata] of gridLayout){
+            classList = ['subplot', `${id}`]
+        }
+    }
+
     getPlots(plotSpecs){
         var activeLocation = this.state.activeLocation,
             classList,
             components = [],
-            layout = []
+            layout = [];
+        const { gridLayout } = this.props;
+
         for (const [key, value] of Object.entries(plotSpecs)) {
             classList = ['subplot', `${key}`];
             if (activeLocation!== null && key == activeLocation[0]) {classList.push(activeLocation[1])};
@@ -402,7 +506,7 @@ class Plotter extends React.Component {
             layout = [],
             plotSpecs = this.state.plot_props_lookup,
             cols = this.state.cols,
-            rowHeight = (this.props.size.height - 30)/(this.state.maxRows!==1 ? this.state.maxRows - 1:1);
+            rowHeight = (this.props.size.height - 30)/(this.state.rows ===0 ? 1 : this.state.rows + 1);
         [components, layout] = this.getPlots(plotSpecs);
         return connectDropTarget (
             <div class={empty_valid_drag_hover ? "valid-drag-hover": ""}>
@@ -451,8 +555,13 @@ class Plotter extends React.Component {
                             width={this.props.size.width-30}
                             components = {components}
                             isDraggable={true}
-                            maxRows={this.state.maxRows}
-                            onLayoutChange={this.handleNewLayout}
+                            maxRows={this.state.rows+1}
+                            onLayoutChange={
+                                (layout)=>{
+                                    this.handleNewLayout(layout);
+                                    this._handleNewLayout(layout);
+                                }
+                            }
                             preventCollision={false}
                             forceLayoutSetState={this.forceLayoutSetState}
                         />
@@ -466,6 +575,6 @@ class Plotter extends React.Component {
 // connect DnD
 Plotter = DropTarget(ItemTypes.PLOT, PlotSpec, collect)(Plotter);
 // connect Redux
-Plotter = connect(null, mapDispatchToProps)(Plotter);
+Plotter = connect(mapStateToProps, mapDispatchToProps)(Plotter);
 
 export default Plotter

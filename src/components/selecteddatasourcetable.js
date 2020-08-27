@@ -10,7 +10,9 @@ import VirtualTable from "./virtualtable";
 
 const { Text } = Typography;
 
-class SelectedDataSourceTable extends React.PureComponent{
+class SelectedDataSourceTable extends React.Component{
+    reduxPrefix = 'sdst';
+
     state = {
         dataTable:[],
     };
@@ -145,9 +147,9 @@ class SelectedDataSourceTable extends React.PureComponent{
     }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = ({core}) => {
     return {
-        plotSpecs:state.plotSpecs
+        plotSpecs:core.plotSpecs
     }
 };
 

@@ -59,8 +59,8 @@ class ControlStrip extends React.Component {
     }
 }
 
-const mapStateToProps = state => {
-    return { activeView: state.activeView }
+const mapStateToProps = ({core}) => {
+    return { activeView: core.activeView }
 }
 
 export default connect(
