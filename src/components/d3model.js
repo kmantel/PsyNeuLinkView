@@ -73,29 +73,29 @@ class D3model extends React.Component {
                 this.setGraph();
             }
         }
-        var size_updated = (!_.isEqual(this.props.size, prevProps.size) && this.svg);
-        // viewbox must be redimensioned before node positioning is set
-        if (size_updated) {
-            this.redimension_viewbox();
-        }
-        if (this.flags.reload_locations) {
-            this.set_node_positioning_from_stylesheet();
-            this.flags.reload_locations = false;
-        }
-        if (this.flags.update_locations) {
-            this.commit_all_nodes_to_stylesheet();
-            this.update_script();
-            this.flags.update_locations = false;
-        }
-        this.update_graph_from_stylesheet(prevProps);
+        // var size_updated = (!_.isEqual(this.props.size, prevProps.size) && this.svg);
+        // // viewbox must be redimensioned before node positioning is set
+        // if (size_updated) {
+        //     this.redimension_viewbox();
+        // }
+        // if (this.flags.reload_locations) {
+        //     this.set_node_positioning_from_stylesheet();
+        //     this.flags.reload_locations = false;
+        // }
+        // if (this.flags.update_locations) {
+        //     this.commit_all_nodes_to_stylesheet();
+        //     this.update_script();
+        //     this.flags.update_locations = false;
+        // }
+        // this.update_graph_from_stylesheet(prevProps);
     }
 
     componentWillUnmount() {
-        window.removeEventListener('resize', this.on_resize);
-        window.removeEventListener('wheel', this.on_mouse_wheel);
-        window.removeEventListener('keydown', this.on_key_down);
-        window.removeEventListener('keyup', this.on_key_up);
-        window.removeEventListener('mousemove', this.mouse_move);
+        // window.removeEventListener('resize', this.on_resize);
+        // window.removeEventListener('wheel', this.on_mouse_wheel);
+        // window.removeEventListener('keydown', this.on_key_down);
+        // window.removeEventListener('keyup', this.on_key_up);
+        // window.removeEventListener('mousemove', this.mouse_move);
         var win = document.querySelector('.graph-view');
         if (win) {
             win.removeEventListener('scroll', this.update_scroll);
@@ -106,11 +106,11 @@ class D3model extends React.Component {
     }
 
     componentDidMount() {
-        window.addEventListener('mousemove', this.mouse_move)
-        window.addEventListener('resize', this.on_resize);
-        window.addEventListener('wheel', this.on_mouse_wheel, {passive: false});
-        window.addEventListener('keydown', this.on_key_down);
-        window.addEventListener('keyup', this.on_key_up);
+        // window.addEventListener('mousemove', this.mouse_move)
+        // window.addEventListener('resize', this.on_resize);
+        // window.addEventListener('wheel', this.on_mouse_wheel, {passive: false});
+        // window.addEventListener('keydown', this.on_key_down);
+        // window.addEventListener('keyup', this.on_key_up);
         if (!(this.state.mounted)) {
             if (this.props.graph === "loading") {
                 d3.selectAll('svg').remove();

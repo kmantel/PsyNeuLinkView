@@ -115,6 +115,10 @@ class Plotter extends React.Component {
         this.verticalShift = this.verticalShift.bind(this);
     }
 
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        console.log('hi')
+    }
+
     insertSubPlot(type, position, shiftDirection='right'){
         var {gridPositions, subplotIdSet} = this.props,
             updatedLayout = {}, maxXNew, maxYNew,

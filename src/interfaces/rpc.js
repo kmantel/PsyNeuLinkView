@@ -1,5 +1,5 @@
 const log = require('electron-log'),
-    grpc = require('grpc'),
+    grpc = require('@grpc/grpc-js'),
     protoloader = require('@grpc/proto-loader'),
     path = require('path'),
     _ = require('lodash'),

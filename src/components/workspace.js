@@ -32,6 +32,9 @@ class WorkSpace extends React.PureComponent {
             row_one_horizontal_factor: sizing_factors.row_one_horizontal_factor,
             row_two_horizontal_factor: sizing_factors.row_two_horizontal_factor,
             vertical_factor: sizing_factors.vertical_factor,
+            baseline_row_one_h:sizing_factors.row_one_horizontal_factor,
+            baseline_row_two_h:sizing_factors.row_two_horizontal_factor,
+            baseline_vertical:sizing_factors.vertical_factor,
             graph: null,
             graph_style:null,
             show_settings: false,
@@ -375,49 +378,49 @@ class WorkSpace extends React.PureComponent {
     }
 
     get_reference_sizing_factors(horizontal, vertical){
-        this.reference_factors = {
-            horizontal_key:horizontal,
-            horizontal_value:this.state[horizontal],
-            vertical_key:vertical,
-            vertical_value:this.state[vertical]
-        }
+        // this.reference_factors = {
+        //     horizontal_key:horizontal,
+        //     horizontal_value:this.state[horizontal],
+        //     vertical_key:vertical,
+        //     vertical_value:this.state[vertical]
+        // }
     }
 
     window_resize() {
-        var old_x_res = this.state.x_res;
-        var old_y_res = this.state.y_res;
-        var old_r1_h_factor = this.state.row_one_horizontal_factor;
-        var old_r2_h_factor = this.state.row_two_horizontal_factor;
-        var old_v_factor = this.state.vertical_factor;
-        var w = window.innerWidth;
-        var h = window.innerHeight;
-        this.setState({
-            x_res: w,
-            y_res: h,
-            row_one_horizontal_factor: (old_r1_h_factor / old_x_res) * w,
-            row_two_horizontal_factor: (old_r2_h_factor / old_x_res) * w,
-            vertical_factor: (old_v_factor / old_y_res) * h,
-            test_width: 500
-        });
-        this.forceUpdate()
+        // var old_x_res = this.state.x_res;
+        // var old_y_res = this.state.y_res;
+        // var old_r1_h_factor = this.state.row_one_horizontal_factor;
+        // var old_r2_h_factor = this.state.row_two_horizontal_factor;
+        // var old_v_factor = this.state.vertical_factor;
+        // var w = window.innerWidth;
+        // var h = window.innerHeight;
+        // this.setState({
+        //     x_res: w,
+        //     y_res: h,
+        //     row_one_horizontal_factor: (old_r1_h_factor / old_x_res) * w,
+        //     row_two_horizontal_factor: (old_r2_h_factor / old_x_res) * w,
+        //     vertical_factor: (old_v_factor / old_y_res) * h,
+        //     test_width: 500
+        // });
+        // this.forceUpdate()
     }
 
     panel_resize(e, direction, ref, d) {
-        var h_key = this.reference_factors.horizontal_key,
-            h_val = this.reference_factors.horizontal_value,
-            v_key = this.reference_factors.vertical_key,
-            v_val = this.reference_factors.vertical_value;
-        if (direction.toLowerCase().includes('left')){d.width*=-1}
-        if (direction.toLowerCase().includes('top')){d.height*=-1}
-        if (['bottomRight', 'bottomLeft', 'topRight', 'topLeft'].includes(direction)) {
-            this.setState({[h_key]: h_val + d.width});
-            this.setState({[v_key]: v_val + d.height})
-        } else if (['left', 'right'].includes(direction)) {
-            this.setState({[h_key]: h_val + d.width})
-        } else {
-            this.setState({[v_key]: v_val + d.height})
-        }
-        window.dispatchEvent(new Event('resize'));
+        // var h_key = this.reference_factors.horizontal_key,
+        //     h_val = this.reference_factors.horizontal_value,
+        //     v_key = this.reference_factors.vertical_key,
+        //     v_val = this.reference_factors.vertical_value;
+        // if (direction.toLowerCase().includes('left')){d.width*=-1}
+        // if (direction.toLowerCase().includes('top')){d.height*=-1}
+        // if (['bottomRight', 'bottomLeft', 'topRight', 'topLeft'].includes(direction)) {
+        //     this.setState({[h_key]: h_val + d.width});
+        //     this.setState({[v_key]: v_val + d.height})
+        // } else if (['left', 'right'].includes(direction)) {
+        //     this.setState({[h_key]: h_val + d.width})
+        // } else {
+        //     this.setState({[v_key]: v_val + d.height})
+        // }
+        // window.dispatchEvent(new Event('resize'));
     }
 
     set_graph_size(width=this.state.row_one_horizontal_factor,
@@ -446,15 +449,15 @@ class WorkSpace extends React.PureComponent {
     }
 
     componentWillUnmount() {
-        window.removeEventListener('mousemove', this.saveMouseData);
-        window.removeEventListener('resize', this.window_resize);
-        window.removeEventListener('change', this.on_change)
+        // window.removeEventListener('mousemove', this.saveMouseData);
+        // window.removeEventListener('resize', this.window_resize);
+        // window.removeEventListener('change', this.on_change)
     }
 
     componentWillMount() {
-        window.addEventListener('mousemove', this.saveMouseData);
-        window.addEventListener('resize', this.window_resize);
-        window.addEventListener('change', this.on_change)
+        // window.addEventListener('mousemove', this.saveMouseData);
+        // window.addEventListener('resize', this.window_resize);
+        // window.addEventListener('change', this.on_change)
     }
 
     on_change(e) {
@@ -476,8 +479,8 @@ class WorkSpace extends React.PureComponent {
     }
 
     on_resize(e, direction, ref, d) {
-        this.panel_resize('row_one_horizontal_factor', 'vertical_factor', e, direction, ref, d)
-        window.dispatchEvent(new Event('resize'));
+        // this.panel_resize('row_one_horizontal_factor', 'vertical_factor', e, direction, ref, d)
+        // window.dispatchEvent(new Event('resize'));
     }
 
     set_active_component(component, callback=()=>{}){
@@ -489,23 +492,37 @@ class WorkSpace extends React.PureComponent {
     }
 
     render() {
-        var interpreter_path_is_blank = !fs.get_config()['Python']['Interpreter Path'];
-        if (!this.state.show_settings && interpreter_path_is_blank) {
-            this.setState({show_settings: true})
-        }
+        // var interpreter_path_is_blank = !fs.get_config()['Python']['Interpreter Path'];
+        // var interpreter_path_is_blank = false;
+        // if (!this.state.show_settings && interpreter_path_is_blank) {
+        //     this.setState({show_settings: true})
+        // }
         var self = this;
         var padding = 10,
             sidebar = <div key="sidebar">
                 <SideBar
                     hover={() => this.set_tool_tip('sidebar')}
                     className='pnl-panel'
-                    onResizeStart={
-                        ()=>{
-                            self.get_reference_sizing_factors('row_one_horizontal_factor', 'vertical_factor')
+                    onResize={
+                        // self.panel_resize
+                        (e, dir, ref, delta)=>{
+                            this.setState(
+                                {
+                                    row_one_horizontal_factor:this.state.baseline_row_one_h + delta.width,
+                                    vertical_factor:this.state.baseline_vertical + delta.height
+                                }
+                            )
                         }
                     }
-                    onResize={
-                        self.panel_resize
+                    onResizeStop={
+                        (e, dir, ref, delta)=>{
+                            this.setState(
+                                {
+                                    baseline_row_one_h:this.state.baseline_row_one_h + delta.width,
+                                    baseline_vertical:this.state.baseline_vertical + delta.height
+                                }
+                            )
+                        }
                     }
                     size={
                         {
@@ -524,13 +541,26 @@ class WorkSpace extends React.PureComponent {
             graphview = <div key="graphview">
                 <GraphView
                     className='pnl-panel'
-                    onResizeStart={
-                        ()=>{
-                            self.get_reference_sizing_factors('row_one_horizontal_factor', 'vertical_factor')
+                    onResize={
+                        // self.panel_resize
+                        (e, dir, ref, delta)=>{
+                            this.setState(
+                                {
+                                    row_one_horizontal_factor:this.state.baseline_row_one_h - delta.width,
+                                    vertical_factor:this.state.baseline_vertical + delta.height
+                                }
+                            )
                         }
                     }
-                    onResize={
-                        self.panel_resize
+                    onResizeStop={
+                        (e, dir, ref, delta)=>{
+                            this.setState(
+                                {
+                                    baseline_row_one_h:this.state.baseline_row_one_h - delta.width,
+                                    baseline_vertical:this.state.baseline_vertical + delta.height
+                                }
+                            )
+                        }
                     }
                     size={
                         {
@@ -559,13 +589,26 @@ class WorkSpace extends React.PureComponent {
             plotter =  <div key="plotter">
                 <D3plotter
                     className='pnl-panel'
-                    onResizeStart={
-                        ()=>{
-                            self.get_reference_sizing_factors('row_one_horizontal_factor', 'vertical_factor')
+                    onResize={
+                        // self.panel_resize
+                        (e, dir, ref, delta)=>{
+                            this.setState(
+                                {
+                                    row_one_horizontal_factor:this.state.baseline_row_one_h - delta.width,
+                                    vertical_factor:this.state.baseline_vertical + delta.height
+                                }
+                            )
                         }
                     }
-                    onResize={
-                        self.panel_resize
+                    onResizeStop={
+                        (e, dir, ref, delta)=>{
+                            this.setState(
+                                {
+                                    baseline_row_one_h:this.state.baseline_row_one_h - delta.width,
+                                    baseline_vertical:this.state.baseline_vertical + delta.height
+                                }
+                            )
+                        }
                     }
                     size={
                         {
@@ -594,13 +637,26 @@ class WorkSpace extends React.PureComponent {
                 <ToolTipBox
                     text={this.state.active_tooltip}
                     className='pnl-panel'
-                    onResizeStart={
-                        ()=>{
-                            self.get_reference_sizing_factors('row_two_horizontal_factor', 'vertical_factor')
+                    onResize={
+                        // self.panel_resize
+                        (e, dir, ref, delta)=>{
+                            this.setState(
+                                {
+                                    row_two_horizontal_factor:this.state.baseline_row_two_h + delta.width,
+                                    vertical_factor:this.state.baseline_vertical - delta.height
+                                }
+                            )
                         }
                     }
-                    onResize={
-                        self.panel_resize
+                    onResizeStop={
+                        (e, dir, ref, delta)=>{
+                            this.setState(
+                                {
+                                    baseline_row_two_h:this.state.baseline_row_two_h + delta.width,
+                                    baseline_vertical:this.state.baseline_vertical - delta.height
+                                }
+                            )
+                        }
                     }
                     size={
                         {
@@ -622,13 +678,26 @@ class WorkSpace extends React.PureComponent {
                 <ParameterControlBox
                     text={this.state.active_tooltip}
                     className='pnl-panel'
-                    onResizeStart={
-                        ()=>{
-                            self.get_reference_sizing_factors('row_two_horizontal_factor', 'vertical_factor')
+                    onResize={
+                        // self.panel_resize
+                        (e, dir, ref, delta)=>{
+                            this.setState(
+                                {
+                                    row_two_horizontal_factor:this.state.baseline_row_two_h - delta.width,
+                                    vertical_factor:this.state.baseline_vertical - delta.height
+                                }
+                            )
                         }
                     }
-                    onResize={
-                        self.panel_resize
+                    onResizeStop={
+                        (e, dir, ref, delta)=>{
+                            this.setState(
+                                {
+                                    baseline_row_two_h:this.state.baseline_row_two_h - delta.width,
+                                    baseline_vertical:this.state.baseline_vertical - delta.height
+                                }
+                            )
+                        }
                     }
                     size={
                         {
@@ -671,7 +740,7 @@ class WorkSpace extends React.PureComponent {
                     activePanelControl={this.set_active_component}
                 />
                 <SettingsPane
-                    isOpen={this.state.show_settings}
+                    isOpen={false}
                     // isOpen={true}
                     toggleDialog={this.toggleDialog}
                     config={window.config}/>
