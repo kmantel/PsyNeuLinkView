@@ -3,36 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="0426a943-ef89-4391-a3a0-8152f91aa099" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/redux/plotting/actions.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/redux/plotting/actions.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/redux/plotting/reducers.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/redux/plotting/reducers.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/redux/plotting/subplot-grid/actions.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/redux/plotting/subplot-grid/actions.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/redux/plotting/subplot-grid/reducers.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/redux/plotting/subplot-grid/reducers.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/redux/plotting/subplot-grid/selectors.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/redux/plotting/subplot-grid/selectors.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/redux/plotting/subplots/actions.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/redux/plotting/subplots/actions.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/redux/plotting/subplots/constants.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/redux/plotting/subplots/constants.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/redux/plotting/subplots/reducers.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/redux/plotting/subplots/reducers.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/redux/plotting/subplots/selectors.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/redux/plotting/subplots/selectors.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/availabledatasourcetable.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/available-data-source-table.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/component_select.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/component-select.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/controlstrip.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/control-strip.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/forcegrid.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/force-grid.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/forms/compositionparamform.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/forms/composition-param-form.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/forms/monitorparamform.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/forms/monitor-param-form.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/indicator_light.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/indicator-light.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/layout.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/layout.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/linegraph.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/line-plot.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/parametercontrolbox.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/parameter-control-box.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/plot.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/plot.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/plotboundary.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/plot-boundary.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/plotter.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/plotter.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/plotter_sidebar.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/plotter-sidebar.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/resizable_dialog.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/resizable-dialog.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/selecteddatasourcetable.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/selected-data-source-table.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/settings.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/settings.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/sidebar.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/sidebar.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/tooltipbox.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/tooltip-box.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/treenode.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/tree-node.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/workspace.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/workspace.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -233,7 +204,8 @@
       <workItem from="1598496973796" duration="29364000" />
       <workItem from="1598560210666" duration="3396000" />
       <workItem from="1598563689075" duration="2364000" />
-      <workItem from="1598566063958" duration="19786000" />
+      <workItem from="1598566063958" duration="20190000" />
+      <workItem from="1598586599402" duration="275000" />
     </task>
     <task id="LOCAL-00001" summary="Enabled touchpad zoom gestures and windows ctrl shortcuts">
       <created>1581449946471</created>
@@ -347,7 +319,14 @@
       <option name="project" value="LOCAL" />
       <updated>1598560451555</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL-00017" summary="finished refactoring plotter to use only redux state">
+      <created>1598586100125</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1598586100125</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -385,7 +364,8 @@
     <MESSAGE value="implemented virtual table - significant speedups" />
     <MESSAGE value="somewhat polished the data table interface" />
     <MESSAGE value="Offloading state management to be handled solely by redux - in progress" />
-    <option name="LAST_COMMIT_MESSAGE" value="Offloading state management to be handled solely by redux - in progress" />
+    <MESSAGE value="finished refactoring plotter to use only redux state" />
+    <option name="LAST_COMMIT_MESSAGE" value="finished refactoring plotter to use only redux state" />
   </component>
   <component name="WindowStateProjectService">
     <state x="414" y="178" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1597713369456">
@@ -405,11 +385,11 @@
     </state>
     <state x="937" y="250" width="983" height="582" key="#xdebugger.evaluate/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598578244583" />
     <state x="750" y="457" width="889" height="580" key="#xdebugger.evaluate/0.0.1920.1040@0.0.1920.1040" timestamp="1598583847159" />
-    <state x="598" y="118" width="1168" height="803" key="CommitChangelistDialog2" timestamp="1598586073754">
+    <state x="598" y="118" width="1168" height="803" key="CommitChangelistDialog2" timestamp="1598586098711">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="598" y="118" width="1168" height="803" key="CommitChangelistDialog2/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598560450572" />
-    <state x="598" y="118" key="CommitChangelistDialog2/0.0.1920.1040@0.0.1920.1040" timestamp="1598586073754" />
+    <state x="598" y="118" key="CommitChangelistDialog2/0.0.1920.1040@0.0.1920.1040" timestamp="1598586098711" />
     <state x="236" y="107" width="1536" height="860" key="DiffContextDialog" timestamp="1598571083557">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>

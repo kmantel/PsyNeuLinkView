@@ -62,7 +62,7 @@ const PlotSpec = {
     drop(props, monitor, component){
         if (monitor.getItem().name === 'Line Plot') {
             if (props.subplotIdSet.size === 0){
-                component._insertSubPlot(LINE_PLOT, [0, 0]);
+                component.insertSubPlot(LINE_PLOT, [0, 0]);
                 return {dropped: true}
             }
             var type = ItemTypes.LINE_PLOT,
@@ -87,7 +87,7 @@ const PlotSpec = {
                     shiftDirection = 'bottom';
                     break;
             }
-            component._insertSubPlot(type, dropFocusPosition, shiftDirection);
+            component.insertSubPlot(type, dropFocusPosition, shiftDirection);
         }
         return {dropped: true}
     },
@@ -108,7 +108,6 @@ class Plotter extends React.Component {
     }
 
     bind_this_to_functions(){
-        this.componentDidMount = this.componentDidMount.bind(this);
         this.render = this.render.bind(this);
         this.getSinglePlotSize = this.getSinglePlotSize.bind(this);
         this.insertSubPlot = this.insertSubPlot.bind(this);
