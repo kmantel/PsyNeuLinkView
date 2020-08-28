@@ -1,24 +1,18 @@
 import { createSelector } from 'reselect'
 
-const getMapIdToWidth = state => state.mapIdToWidth;
 const getMapIdToColSpan = state => state.mapIdToColSpan;
-const getMapIdToHeight = state => state.mapIdToHeight;
 const getMapIdToRowSpan = state => state.mapIdToRowSpan;
 const getMapIdToPosition = state => state.mapIdToPosition;
 const getDropFocus = state => state.dropFocus;
 
 export const getGridLayout = createSelector(
     getMapIdToPosition,
-    getMapIdToWidth,
     getMapIdToColSpan,
-    getMapIdToHeight,
     getMapIdToRowSpan,
-    (position, width, colSpan, height, rowSpan) => {
-        var ids = Object.keys(width),
-            metaData = {};
-        for ( const id of ids ){
-            metaData[id] = {position:position[id], width:width[id], colSpan:colSpan[id],
-                height:height[id], rowSpan:rowSpan[id]}
+    (position, colSpan, rowSpan) => {
+        var metaData = {};
+        for ( const id of Object.keys(position) ){
+            metaData[id] = {x:position[id][0], y:position[id][1], w:colSpan[id], h:rowSpan[id], i:id}
         }
         return metaData
     }
@@ -33,7 +27,7 @@ export const getGridShape = createSelector(
             maxX = x>maxX ? x:maxX;
             maxY = y>maxY ? y:maxY;
         }
-        return [maxX + 1, maxY + 1] // add 1 to return dimension sizes instead of indices
+        return {rows: maxY + 1, cols: maxX + 1} // add 1 to return dimension sizes instead of indices
     }
 );
 

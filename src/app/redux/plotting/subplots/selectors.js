@@ -1,4 +1,5 @@
 import { createSelector } from 'reselect'
+import { LINE_PLOT } from './constants';
 
 const getMapIdToName = state => state.mapIdToName;
 const getMapIdToPlotType = state => state.mapIdToPlotType;
@@ -9,10 +10,11 @@ export const getSubplotMetaData = createSelector(
     getMapIdToPlotType,
     getMapIdToDataSources,
     (name, plotType, dataSources) => {
-        var ids = Object.keys(w),
-            metaData;
+        const ids = Object.keys(name),
+            metaData = {};
         ids.forEach( (id)=>{
             metaData[id] = {name:name[id], plotType:plotType[id], dataSources:dataSources[id]}
-        } )
+        });
+        return metaData
     }
 );

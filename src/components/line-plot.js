@@ -4,15 +4,6 @@ import {
     LineChart, Line, XAxis, YAxis, CartesianGrid, Label, Tooltip, Legend,
 } from 'recharts';
 import '../css/d3plotter.css'
-import {connect} from "react-redux";
-import {getGridDropFocus} from "../app/redux/plotting/subplot-grid/selectors";
-import {setDropFocus} from "../app/redux/plotting/subplot-grid/actions";
-
-const mapStateToProps = ({plotting}) => {
-    return {
-
-    }
-};
 
 const style = {
     display: "flex",
@@ -78,10 +69,9 @@ export default class LinePlot extends Plot {
     }
 
     render(){
-        var [width, height, data] = [this.props.size.width,this.props.size.height,this.props.data];
-        var self = this;
+        var {id, data, width, height} = this.props;
         return(
-            <div class={this.props.classList.join(' ')}
+            <div className={[['subplot', `${id}`], 'pnl-lineplot']}
                  onClick={() => {
                  }}
                  onContextMenu={this.handleRightClick}
@@ -101,7 +91,7 @@ export default class LinePlot extends Plot {
                         <CartesianGrid strokeDasharray="3 3"/>
                         <XAxis
                             tick={false}>
-                            {/*<Label value={this.props.id} offset={0} position="insideBottom" />*/}
+                            <Label value={id} offset={0} position="insideBottom" />
                         </XAxis>
                         <YAxis
                             tick={false}

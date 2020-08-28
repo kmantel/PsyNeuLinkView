@@ -5,8 +5,8 @@ import {Icon, Tab, Tabs} from "@blueprintjs/core"
 import {connect} from "react-redux";
 import {setActiveParamTab} from "../app/redux/actions";
 import {store} from "../app/redux/store";
-import MonitorParamForm from "./forms/monitorparamform";
-import CompositionParamForm from "./forms/compositionparamform";
+import MonitorParamForm from "./forms/monitor-param-form";
+import CompositionParamForm from "./forms/composition-param-form";
 import * as _ from 'lodash'
 
 const style = {

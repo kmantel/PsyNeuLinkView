@@ -5,7 +5,7 @@ import { Resizable } from "re-resizable"
 import {connect} from "react-redux";
 import {DropTarget} from 'react-dnd';
 import { ItemTypes } from './constants';
-import DraggableTreeNode from "./treenode";
+import DraggableTreeNode from "./tree-node";
 
 const style = {
     display: "flex",

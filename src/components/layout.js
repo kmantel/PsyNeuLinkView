@@ -1,5 +1,5 @@
 import React from 'react'
-import ForceGrid from "./forcegrid";
+import ForceGrid from "./force-grid";
 
 export default class Layout extends React.PureComponent {
   constructor(props) {
@@ -19,12 +19,12 @@ export default class Layout extends React.PureComponent {
                   width={this.props.width}
                   rowHeight={this.props.rowHeight}
                   margin={this.props.margin}
-                  isDraggable={this.state.isDraggable}
+                  isDraggable={this.props.isDraggable ?? false}
                   onLayoutChange={this.props.onLayoutChange}
                   maxRows={this.props.maxRows}
                   preventCollision={this.props.preventCollision}
                   isResizable={false}
-                  compactType={null}
+                  compactType={this.props.compactType}
                   forceSetState={this.state.forceLayoutSetState}
                   >
         {

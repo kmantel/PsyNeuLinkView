@@ -6,7 +6,7 @@ import {Divider, Empty, Typography, Button, Checkbox} from "antd";
 import { connect } from 'react-redux'
 import * as _ from 'lodash';
 import {setPlotSpecs} from "../app/redux/actions";
-import VirtualTable from "./virtualtable";
+import VirtualTable from "./virtual-table";
 
 const { Text } = Typography;
 

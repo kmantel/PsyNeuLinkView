@@ -2,9 +2,9 @@ import * as React from 'react'
 import {Dialog, Tree, EditableText, Spinner, Callout, Icon, Button} from '@blueprintjs/core'
 import Layout from "./layout";
 import '../css/settings.css'
-import IndicatorLight from "./indicator_light";
+import IndicatorLight from "./indicator-light";
 import {Resizable} from "re-resizable";
-import ResizableDialog from "./resizable_dialog"
+import ResizableDialog from "./resizable-dialog"
 
 const style = {
     display: "flex",

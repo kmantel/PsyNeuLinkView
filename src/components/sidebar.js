@@ -7,7 +7,7 @@ import {setActiveView, setStyleSheet} from "../app/redux/actions";
 import {store} from "../app/redux/store";
 import {DragSource, useDrag, DragPreviewImage, DropTarget} from 'react-dnd';
 import { ItemTypes } from './constants';
-import DraggableTreeNode from "./treenode";
+import DraggableTreeNode from "./tree-node";
 import { getEmptyImage } from 'react-dnd-html5-backend'
 import {Select, List, Typography, Avatar, Button} from "antd";
 import {PlusOutlined} from '@ant-design/icons'

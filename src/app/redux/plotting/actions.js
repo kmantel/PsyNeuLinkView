@@ -11,9 +11,7 @@ export function initializeSubplotBundle(
     dataSources = AUTO,
     // args for subplot grid
     position,
-    width = AUTO,
     colSpan = AUTO,
-    height = AUTO,
     rowSpan = AUTO
 ) {
     return {
@@ -23,9 +21,7 @@ export function initializeSubplotBundle(
         name: name,
         dataSources: dataSources,
         position: position,
-        width: width,
         colSpan: colSpan,
-        height: height,
         rowSpan: rowSpan
     }
 }

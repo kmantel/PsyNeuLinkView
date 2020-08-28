@@ -2,11 +2,11 @@ import { Table, AddRowButton, RemoveRowButton, Form, Input, Radio } from "formik
 import {Divider, Button, Typography, Space, Empty, Checkbox} from "antd"
 import { Formik } from "formik"
 import * as React from "react"
-import ComponentSelect from "./component_select";
+import ComponentSelect from "./component-select";
 import Highlighter from 'react-highlight-words';
 import { SendOutlined, SearchOutlined } from "@ant-design/icons"
 import { connect } from 'react-redux'
-import VirtualTable from "./virtualtable";
+import VirtualTable from "./virtual-table";
 
 import * as _ from "lodash";
 import {addPlot, setPlotSpecs} from "../app/redux/actions";

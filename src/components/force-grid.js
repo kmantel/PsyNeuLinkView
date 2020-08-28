@@ -7,9 +7,9 @@ import GridLayout from 'react-grid-layout'
 export default class ForceGrid extends GridLayout {
     constructor(props) {
         super(props);
-        if (props.forceSetState){
-            this.setState = this.setState.bind(this);
-            props.forceSetState.push(this.setState)
-        }
+        // if (props.forceSetState){
+        //     this.setState = this.setState.bind(this);
+        //     props.forceSetState.push(this.setState)
+        // }
     }
 }

@@ -4,13 +4,13 @@ import { SubmitButton, Input, Checkbox,
     ResetButton, FormikDebug, Form, FormItem} from "formik-antd"
 import { message, Button, Row, Col, Divider } from "antd"
 import { Persist } from 'formik-persist'
-import SelectedDataSourceTable from "../selecteddatasourcetable";
+import SelectedDataSourceTable from "../selected-data-source-table";
 import {Tab, Tabs} from "@blueprintjs/core";
 import {store} from "../../app/redux/store";
 import {setActiveParamTab} from "../../app/redux/actions";
 import {registerMechanism} from "../../app/redux/psyneulink/actions";
 import '../../css/paramform.css';
-import AvailableDataSourceTable from "../availabledatasourcetable";
+import AvailableDataSourceTable from "../available-data-source-table";
 import {connect} from "react-redux";
 import * as _ from 'lodash'
 
