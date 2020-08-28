@@ -1,5 +1,4 @@
-const fs = require('fs'),
-      remote = require('electron').remote,
+const remote = require('electron').remote,
       electron_root = remote.require('./electron'),
       dialog = remote.dialog;
 
@@ -12,5 +11,4 @@ window.remote = remote;
 window.interfaces = electron_root.interfaces;
 
 window.interfaces.electron.windows = window.windows;
-window.interfaces.electron.sendMessage('appPath', electron_root.app_path);
 window.interfaces.filesystem.appPath = electron_root.app_path;

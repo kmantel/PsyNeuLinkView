@@ -7,6 +7,7 @@ const path = require('path');
 const isDev = require('electron-is-dev');
 const {spawn, spawnSync, exec, execSync} = require('child_process');
 const os = require('os');
+
 var adjusted_app_path;
 isDev ? adjusted_app_path = app_path : adjusted_app_path = path.join(app_path, '../app.asar.unpacked');
 var log = require('electron-log');
@@ -34,14 +35,12 @@ function createWindow() {
         width: width,
         height: height,
         webPreferences: {
+            enableRemoteModule:true,
             nodeIntegration: true,
             webSecurity: false,
             preload: path.join(isDev ? __dirname : `${adjusted_app_path}/build/`, 'preload.js')
         }
     });
-    if (isDev) {BrowserWindow.addDevToolsExtension(
-        path.join(os.homedir(), 'AppData/Local/Google/Chrome/User Data/Profile 1/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.8.2_0')
-        )}
     mainWindow.loadURL(isDev ? 'http://localhost:3000' : `file://${path.join(adjusted_app_path, 'build/index.html')}`);
     mainWindow.on('closed', () => {
             interp.kill_rpc_server();
@@ -57,11 +56,12 @@ function createWindow() {
     );
     mainWindow.setTitle('PsyNeuLinkView');
     mainWindow.webContents.send('appPath', adjusted_app_path);
+    mainWindow.webContents.session.loadExtension(path.join(os.homedir(), 'AppData/Local/Google/Chrome/User Data/Profile 1/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.8.2_0')).then(()=>{})
     windows['renderMain'] = mainWindow;
 }
 
 app.on('ready', function () {
-    createWindow();
+    createWindow()
 });
 
 app.on('window-all-closed', function(){

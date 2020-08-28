@@ -10,6 +10,7 @@
     "@ant-design/icons": "latest",
     "@blueprintjs/core": "^3.19.1",
     "@flatten-js/interval-tree": "^1.0.11",
+    "@grpc/grpc-js": "^1.1.5",
     "@grpc/proto-loader": "^0.5.2",
     "antd": "^4.5.4",
     "blueprintjs": "^0.0.8",
@@ -20,7 +21,6 @@
     "fix-path": "^2.1.0",
     "formik-antd": "^2.0.1",
     "formik-persist": "^1.1.0",
-    "grpc": "^1.24.1",
     "lodash": "^4.17.15",
     "mathjs": "^6.6.4",
     "rc-resize-observer": "^0.2.5",
@@ -47,8 +47,7 @@
     "electron-dev": "concurrently \"yarn start\" \"wait-on http://localhost:3000 && electron . --remote-debugging-port=9222\"",
     "electron-pack": "yarn build --em.main=build/electron.js",
     "build": "yarn react-build && yarn electron-build",
-    "preelectron-pack": "yarn build",
-    "postinstall": "npm rebuild --runtime=electron --target=6.1.12 --disturl=https://atom.io/download/electron"
+    "preelectron-pack": "yarn build"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -68,7 +67,7 @@
   "devDependencies": {
     "concurrently": "^5.0.0",
     "d3": "^5.12.0",
-    "electron": "^6.1.12",
+    "electron": "10.1.0",
     "electron-builder": "^21.2.0",
     "formik": "^2.1.5",
     "react": "^16.10.2",
