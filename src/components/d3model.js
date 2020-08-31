@@ -10,6 +10,14 @@ import {connect} from "react-redux";
 import {store} from "../state/store";
 import {setStyleSheet, setModelAspectRatio} from "../state/core/actions";
 
+const mapStateToProps = ({core}) => {
+    return {
+        graph_style: core.stylesheet,
+        stylesheet: core.stylesheet,
+        aspect_ratio: core.model_aspect_ratio
+    }
+};
+
 const context_menu = [
     {
         onClick: {},
@@ -1633,13 +1641,5 @@ class D3model extends React.Component {
         )
     }
 }
-
-const mapStateToProps = ({core}) => {
-    return {
-        graph_style: core.stylesheet,
-        stylesheet: core.stylesheet,
-        aspect_ratio: core.model_aspect_ratio
-    }
-};
 
 export default connect(mapStateToProps, {setStyleSheet, setModelAspectRatio})(D3model)

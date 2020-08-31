@@ -14,15 +14,15 @@ import '../../css/paramform.css';
 import AvailableDataSourceTable from "../available-data-source-table";
 import {connect} from "react-redux";
 import * as _ from 'lodash'
-import {getMapParentIdToTabFocus} from "../../state/forms/subplot-config-form/selectors";
-import {setTabFocus} from "../../state/forms/subplot-config-form/actions";
+import {getMapParentIdToTabFocus} from "../../state/subplot-config-form/selectors";
+import {setTabFocus} from "../../state/subplot-config-form/actions";
 
 function validateRequired(value) {
 }
 
-const mapStateToProps = ({core, forms}) => {
+const mapStateToProps = ({core, subplotConfigForm}) => {
     return {
-        mapIdToTabFocus: getMapParentIdToTabFocus(forms.subPlotConfig),
+        mapIdToTabFocus: getMapParentIdToTabFocus(subplotConfigForm),
         activeComposition: core.activeComposition
     }
 };

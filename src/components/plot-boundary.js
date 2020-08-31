@@ -1,14 +1,14 @@
 import React from 'react';
-import { DropTarget } from 'react-dnd'
+import { DropTarget } from 'react-dnd';
 import {ItemTypes} from "./constants";
-import {setGridDropFocus} from "../state/plotting/subplot-grid/actions";
-import {getGridDropFocus} from "../state/plotting/subplot-grid/selectors";
+import {setGridDropFocus} from "../state/subplot-grid/actions";
+import {getGridDropFocus} from "../state/subplot-grid/selectors";
 import {connect} from "react-redux";
 import * as _ from 'lodash';
 
-const mapStateToProps = ({plotting}) => {
+const mapStateToProps = ({subplotGrid}) => {
     return {
-        gridDropFocus: getGridDropFocus(plotting.subplotGrid)
+        gridDropFocus: getGridDropFocus(subplotGrid)
     }
 };
 

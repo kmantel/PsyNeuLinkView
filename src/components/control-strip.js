@@ -5,6 +5,10 @@ import { setActiveView } from "../state/core/actions";
 import {Icon, Tab, Tabs} from "@blueprintjs/core"
 import '../css/controlstrip.css'
 
+const mapStateToProps = ({core}) => {
+    return { activeView: core.activeView }
+}
+
 class ControlStrip extends React.Component {
     constructor(props){
         super(props);
@@ -57,10 +61,6 @@ class ControlStrip extends React.Component {
             </div>
         )
     }
-}
-
-const mapStateToProps = ({core}) => {
-    return { activeView: core.activeView }
 }
 
 export default connect(

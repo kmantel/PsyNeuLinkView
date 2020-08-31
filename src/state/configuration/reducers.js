@@ -1,5 +1,4 @@
-import { ACTION_TYPES as atypes, KEYWORDS as keywords } from './constants';
-import { INITIALIZE_SUBPLOT_BUNDLE } from "../plotting/constants";
+import * as atypes from "../action-types"
 
 export const initialState = {
     arrParentIds: [],
@@ -9,7 +8,7 @@ export const initialState = {
 
 export function reducer(state = initialState, action) {
     switch (action.type) {
-        case INITIALIZE_SUBPLOT_BUNDLE:
+        case atypes.SUBPLOT_INITIALIZE:
             var {id, name} = action;
             return Object.assign({}, state, {
                 arrParentIds: [...state.arrParentIds, id],
@@ -17,7 +16,7 @@ export function reducer(state = initialState, action) {
             });
             return state;
 
-        case atypes.SET_MAIN_TAB_FOCUS:
+        case atypes.CONFIG_PANEL_SET_TAB_FOCUS:
             var {parentId} = action;
             return Object.assign({}, state, {
                 tabInFocus: parentId

@@ -8,43 +8,41 @@ import * as _ from "lodash";
 import Layout from "./layout";
 import {addPlot, removePlot} from "../state/core/actions"
 import {connect} from "react-redux";
-import { initializeSubplotBundle } from "../state/plotting/actions";
+import {initializeSubplot} from "../state/subplots/actions";
 import { createId } from "../state/util";
-import {PLOT_PREFIX, PLOT_ID_LEN, KEYWORDS as keywords} from "../state/plotting/constants";
+import {PLOT_PREFIX, ID_LEN, LINE_PLOT} from "../keywords";
 import {
     getGridLayout,
     getGridPositions,
     getGridShape,
     getGridDropFocus
-} from "../state/plotting/subplot-grid/selectors";
-import {getSubplotIdSet} from "../state/plotting/selectors";
-import {editGridLayout} from "../state/plotting/subplot-grid/actions";
+} from "../state/subplot-grid/selectors";
+import {getSubplotIdSet} from "../state/subplot-registry/selectors";
+import {editGridLayout} from "../state/subplot-grid/actions";
 import {
     getSubplotMetaData,
     getMapIdToName,
     getMapPlotTypeToDefaultNameCounter
-} from "../state/plotting/subplots/selectors";
-import {LINE_PLOT} from "../state/plotting/subplots/constants";
-import {editSubplotMetaData} from "../state/plotting/subplots/actions";
-import {ID_LEN} from "../state/core/constants";
+} from "../state/subplots/selectors";
+import {editSubplotMetaData} from "../state/subplots/actions";
 
-const mapStateToProps = ({plotting}) => {
+const mapStateToProps = ({subplots, subplotGrid, subplotRegistry}) => {
     return {
-        subplotIdSet: getSubplotIdSet(plotting),
-        mapIdToName: getMapIdToName(plotting.subplots),
-        mapPlotTypeToDefaultNameCounter: getMapPlotTypeToDefaultNameCounter(plotting.subplots),
-        subplotMetadata: getSubplotMetaData(plotting.subplots),
-        gridLayout: getGridLayout(plotting.subplotGrid),
-        gridShape: getGridShape(plotting.subplotGrid),
-        gridPositions: getGridPositions(plotting.subplotGrid),
-        gridDropFocus: getGridDropFocus(plotting.subplotGrid),
+        subplotIdSet: getSubplotIdSet(subplotRegistry),
+        mapIdToName: getMapIdToName(subplots),
+        mapPlotTypeToDefaultNameCounter: getMapPlotTypeToDefaultNameCounter(subplots),
+        subplotMetadata: getSubplotMetaData(subplots),
+        gridLayout: getGridLayout(subplotGrid),
+        gridShape: getGridShape(subplotGrid),
+        gridPositions: getGridPositions(subplotGrid),
+        gridDropFocus: getGridDropFocus(subplotGrid),
     }
 };
 
 const mapDispatchToProps = dispatch => ({
     addPlot: (plotSpec) => dispatch(addPlot(plotSpec)),
-    initializeSubplotBundle: ({id, plotType, name, dataSources, position, colSpan, rowSpan}) =>
-        dispatch(initializeSubplotBundle({id, plotType, name, dataSources, position, colSpan, rowSpan})),
+    initializeSubplot: ({id, plotType, name, dataSources, position, colSpan, rowSpan}) =>
+        dispatch(initializeSubplot({id, plotType, name, dataSources, position, colSpan, rowSpan})),
     editGridLayout: (id, colSpan, rowSpan, position) =>
         dispatch(editGridLayout(id, colSpan, rowSpan, position)),
     editSubplotMetadata: ({id, plotType, name, dataSources})=> dispatch(editSubplotMetaData({id, plotType, name, dataSources}))
@@ -205,7 +203,7 @@ class Plotter extends React.Component {
     insertSubPlot(type, position, shiftDirection='right'){
         var {gridPositions, subplotIdSet} = this.props,
             updatedLayout = {}, maxXNew, maxYNew,
-            id = createId(subplotIdSet, PLOT_PREFIX, PLOT_ID_LEN);
+            id = createId(subplotIdSet, PLOT_PREFIX, ID_LEN);
         if (position in gridPositions){
             if (shiftDirection=='right'){
                 updatedLayout =  this.lateralShift(position[1], position[0]);
@@ -217,7 +215,7 @@ class Plotter extends React.Component {
         for ( const [subplotId, layout] of Object.entries(updatedLayout) ){
             this.props.editGridLayout(subplotId, layout.w, layout.h, [layout.x, layout.y])
         }
-        this.props.initializeSubplotBundle({
+        this.props.initializeSubplot({
             id:id,
             plotType:LINE_PLOT,
             name:this.generateDefaultName(LINE_PLOT),

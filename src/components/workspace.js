@@ -19,6 +19,18 @@ const fs = window.interfaces.filesystem,
     interp = window.interfaces.interpreter,
     rpc_client = window.interfaces.rpc;
 
+const mapStateToProps = ({core}) => {
+    return {
+        activeView: core.activeView,
+        graph_style: core.stylesheet
+    }
+};
+
+const mapDispatchToProps = dispatch => ({
+    setStyleSheet: graphStyle => {dispatch(setStyleSheet(graphStyle))},
+    setActiveComposition: name => {dispatch(setActiveComposition(name))}
+});
+
 class WorkSpace extends React.PureComponent {
     constructor(props) {
         super(props);
@@ -795,18 +807,6 @@ class WorkSpace extends React.PureComponent {
         )
     }
 }
-
-const mapStateToProps = ({core}) => {
-    return {
-        activeView: core.activeView,
-        graph_style: core.stylesheet
-            }
-}
-
-const mapDispatchToProps = dispatch => ({
-    setStyleSheet: graphStyle => {dispatch(setStyleSheet(graphStyle))},
-    setActiveComposition: name => {dispatch(setActiveComposition(name))}
-});
 
 export default connect(
     mapStateToProps,

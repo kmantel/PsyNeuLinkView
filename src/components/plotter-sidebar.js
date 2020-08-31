@@ -7,6 +7,12 @@ import {DropTarget} from 'react-dnd';
 import { ItemTypes } from './constants';
 import DraggableTreeNode from "./tree-node";
 
+const mapStateToProps = ({core}) => {
+    return {
+        activeView: core.activeView,
+    }
+};
+
 const style = {
     display: "flex",
     alignItems: "center",
@@ -137,11 +143,5 @@ var PLOTVIEW_NODES = [
             label={'Bar Graph'}/>
     }
 ];
-
-const mapStateToProps = ({core}) => {
-    return {
-        activeView: core.activeView,
-    }
-};
 
 export default DropTarget(ItemTypes.PLOT, PlotSpec, collect)(connect(mapStateToProps)(PlotterSideBar))

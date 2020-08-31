@@ -8,15 +8,15 @@ import {store} from "../state/store";
 import MonitorParamForm from "./forms/subplot-config-form";
 import CompositionConfigForm from "./forms/composition-config-form";
 import * as _ from 'lodash'
-import {getSubplotIdArr} from "../state/plotting/selectors";
-import {getSubplotMetaData} from "../state/plotting/subplots/selectors";
-import {getGridLayout} from "../state/plotting/subplot-grid/selectors";
+import {getSubplotIdArr} from "../state/subplot-registry/selectors";
+import {getSubplotMetaData} from "../state/subplots/selectors";
+import {getGridLayout} from "../state/subplot-grid/selectors";
 
-const mapStateToProps = ({plotting}) => {
+const mapStateToProps = ({subplotRegistry, subplots, subplotGrid}) => {
     return {
-        subplotIdArr: getSubplotIdArr(plotting),
-        subplotMetadata: getSubplotMetaData(plotting.subplots),
-        gridLayout : getGridLayout(plotting.subplotGrid)
+        subplotIdArr: getSubplotIdArr(subplotRegistry),
+        subplotMetadata: getSubplotMetaData(subplots),
+        gridLayout : getGridLayout(subplotGrid)
     };
 };
 

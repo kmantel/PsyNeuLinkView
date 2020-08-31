@@ -12,6 +12,12 @@ import { getEmptyImage } from 'react-dnd-html5-backend'
 import {Select, List, Typography, Avatar, Button} from "antd";
 import {PlusOutlined} from '@ant-design/icons'
 
+const mapStateToProps = ({core}) => {
+  return {
+    activeView: core.activeView,
+  }
+};
+
 const {Text} = Typography;
 
 const style = {
@@ -335,11 +341,5 @@ var PLOTVIEW_NODES = [
         label={'Bar Graph'}/>
   }
 ];
-
-const mapStateToProps = ({core}) => {
-  return {
-    activeView: core.activeView,
-  }
-};
 
 export default DropTarget(ItemTypes.PLOT, PlotSpec, collect)(connect(mapStateToProps)(SideBar))

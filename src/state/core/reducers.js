@@ -1,5 +1,4 @@
 import * as atypes from './actionTypes';
-import { INITIALIZE_SUBPLOT_BUNDLE } from "../plotting/constants";
 
 const initialState = {
     activeComposition:'',
@@ -11,7 +10,7 @@ const initialState = {
     plotSpecs: {},
 };
 
-export function coreReducer(state = initialState, action) {
+export function reducer(state = initialState, action) {
     switch (action.type) {
         case atypes.SET_ACTIVE_VIEW:
             return Object.assign({}, state, {

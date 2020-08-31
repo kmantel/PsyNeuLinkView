@@ -11,7 +11,7 @@ import VirtualTable from "./virtual-table";
 import * as _ from "lodash";
 import {addPlot, setPlotSpecs} from "../state/core/actions";
 import {registerParameters} from "../state/psyneulink/actions";
-import {addDataSource, removeDataSource} from "../state/plotting/subplots/actions";
+import {addDataSource, removeDataSource} from "../state/subplots/actions";
 
 const { Text } = Typography;
 
@@ -19,10 +19,8 @@ const electron = window.require('electron');
 const ipcRenderer  = electron.ipcRenderer;
 const rpc = window.interfaces.rpc;
 
-const mapStateToProps = ({core, pnl}) => {
+const mapStateToProps = ({core, psyneulinkParameters}) => {
     return {
-        registeredMechanisms:pnl.mechanisms,
-        registeredParameters:pnl.parameters,
         plotSpecs:core.plotSpecs
     }
 };

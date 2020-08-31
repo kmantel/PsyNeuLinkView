@@ -1,87 +1,71 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="0426a943-ef89-4391-a3a0-8152f91aa099" name="Default Changelist" comment="cleaned up dependencies">
-      <change afterPath="$PROJECT_DIR$/src/state/actions.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/state/configuration/actions.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/state/configuration/constants.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/state/configuration/reducers.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/state/configuration/selectors.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/state/constants.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/state/forms/actions.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/state/forms/constants.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/state/forms/reducers.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/state/forms/selectors.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/state/forms/subplot-config-form/actions.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/state/forms/subplot-config-form/constants.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/state/forms/subplot-config-form/reducers.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/state/forms/subplot-config-form/selectors.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/state/forms/util.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/state/plotting/subplot-input-forms/actions.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/state/plotting/subplot-input-forms/constants.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/state/plotting/subplot-input-forms/reducers.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/state/plotting/subplot-input-forms/selectors.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/state/plotting/subplots/actions.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/state/plotting/subplots/reducers.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/state/plotting/subplots/util.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/state/psyneulink/components/actions.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/state/psyneulink/components/constants.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/state/psyneulink/components/reducers.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/state/psyneulink/components/selectors.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/state/psyneulink/constants.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/state/psyneulink/parameters/actions.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/state/psyneulink/parameters/constants.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/state/psyneulink/parameters/reducers.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/state/psyneulink/parameters/selectors.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/state/psyneulink/selectors.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/state/reducers.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/state/selectors.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+    <list default="true" id="0426a943-ef89-4391-a3a0-8152f91aa099" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/dictionaries/Dillo.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/keywords.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/state/action-types.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/state/subplot-config-form/constants.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/state/subplots/constants.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/state/subplots/util.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/app.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/redux/actionTypes.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/core/actionTypes.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/redux/actions.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/core/actions.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/redux/constants.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/core/constants.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/redux/plotting/actions.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/plotting/actions.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/redux/plotting/constants.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/plotting/constants.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/redux/plotting/reducers.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/plotting/reducers.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/redux/plotting/selectors.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/plotting/selectors.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/redux/plotting/subplot-grid/actions.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/plotting/subplot-grid/actions.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/redux/plotting/subplot-grid/constants.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/plotting/subplot-grid/constants.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/redux/plotting/subplot-grid/reducers.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/plotting/subplot-grid/reducers.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/redux/plotting/subplot-grid/selectors.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/plotting/subplot-grid/selectors.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/redux/plotting/subplot-input-forms/actions.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/redux/plotting/subplot-input-forms/constants.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/redux/plotting/subplot-input-forms/reducers.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/redux/plotting/subplot-input-forms/selectors.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/redux/plotting/subplots/actions.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/redux/plotting/subplots/constants.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/plotting/subplots/constants.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/redux/plotting/subplots/reducers.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/redux/plotting/subplots/selectors.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/plotting/subplots/selectors.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/redux/psyneulink/actionTypes.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/redux/psyneulink/actions.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/psyneulink/actions.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/redux/psyneulink/data.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/redux/psyneulink/initialState.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/redux/psyneulink/options.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/redux/psyneulink/reducers.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/psyneulink/reducers.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/redux/psyneulink/util.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/psyneulink/util.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/redux/psyneulink/view.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/redux/reducers.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/core/reducers.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/redux/store.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/store.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/redux/util.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/util.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/available-data-source-table.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/available-data-source-table.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/configuration-panel.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/configuration-panel.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/control-strip.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/control-strip.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/d3model.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/d3model.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/forms/composition-param-form.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/forms/composition-config-form.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/forms/monitor-param-form.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/forms/subplot-config-form.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/line-plot.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/line-plot.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/parameter-control-box.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/configuration-panel.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/forms/subplot-config-form.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/forms/subplot-config-form.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/plot-boundary.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/plot-boundary.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/plotter-sidebar.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/plotter-sidebar.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/plotter.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/plotter.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/selected-data-source-table.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/selected-data-source-table.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/sidebar.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/sidebar.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/workspace.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/workspace.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/py/test/pnl_scripts/NeuroML Example.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/py/test/pnl_scripts/NeuroML Example.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/state/actions.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/state/configuration/actions.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/configuration/actions.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/state/configuration/constants.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/state/configuration/reducers.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/configuration/reducers.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/state/configuration/selectors.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/state/constants.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/state/core/reducers.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/core/reducers.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/state/forms/actions.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/state/forms/constants.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/state/forms/reducers.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/state/forms/selectors.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/state/forms/subplot-config-form/actions.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/subplot-config-form/actions.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/state/forms/subplot-config-form/constants.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/state/forms/subplot-config-form/reducers.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/subplot-config-form/reducers.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/state/forms/subplot-config-form/selectors.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/subplot-config-form/selectors.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/state/forms/util.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/state/plotting/actions.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/state/plotting/constants.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/state/plotting/reducers.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/subplot-registry/reducers.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/state/plotting/selectors.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/subplot-registry/selectors.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/state/plotting/subplot-grid/actions.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/subplot-grid/actions.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/state/plotting/subplot-grid/constants.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/state/plotting/subplot-grid/reducers.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/subplot-grid/reducers.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/state/plotting/subplot-grid/selectors.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/subplot-grid/selectors.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/state/plotting/subplot-input-forms/actions.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/state/plotting/subplot-input-forms/constants.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/state/plotting/subplot-input-forms/reducers.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/state/plotting/subplot-input-forms/selectors.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/state/plotting/subplots/actions.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/subplots/actions.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/state/plotting/subplots/constants.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/state/plotting/subplots/reducers.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/subplots/reducers.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/state/plotting/subplots/selectors.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/subplots/selectors.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/state/plotting/subplots/util.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/state/psyneulink/actions.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/psyneulink/actions.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/state/psyneulink/components/actions.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/psyneulink-components/actions.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/state/psyneulink/components/constants.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/state/psyneulink/components/reducers.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/psyneulink-components/reducers.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/state/psyneulink/components/selectors.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/state/psyneulink/constants.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/state/psyneulink/parameters/actions.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/psyneulink-parameters/actions.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/state/psyneulink/parameters/constants.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/state/psyneulink/parameters/reducers.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/psyneulink-parameters/reducers.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/state/psyneulink/parameters/selectors.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/state/psyneulink/reducers.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/psyneulink/reducers.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/state/psyneulink/util.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/state/reducers.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/reducers.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/state/selectors.js" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -293,6 +277,8 @@
       <workItem from="1598835580297" duration="12416000" />
       <workItem from="1598851731744" duration="7302000" />
       <workItem from="1598882464437" duration="593000" />
+      <workItem from="1598896495724" duration="2039000" />
+      <workItem from="1598898568196" duration="5002000" />
     </task>
     <task id="LOCAL-00001" summary="Enabled touchpad zoom gestures and windows ctrl shortcuts">
       <created>1581449946471</created>
@@ -448,7 +434,14 @@
       <option name="project" value="LOCAL" />
       <updated>1598654916887</updated>
     </task>
-    <option name="localTasksCounter" value="23" />
+    <task id="LOCAL-00023" summary="refactor of state management to redux still in progress - plotter and composition-config-form mostly done">
+      <created>1598896679231</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1598896679231</updated>
+    </task>
+    <option name="localTasksCounter" value="24" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -468,6 +461,7 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
+    <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <MESSAGE value="." />
     <MESSAGE value="Enabled touchpad zoom gestures and windows ctrl shortcuts" />
     <MESSAGE value="Fixed missing stroke width bug" />
@@ -492,7 +486,8 @@
     <MESSAGE value="replaced some event listeners that were causing bottlenecks; disabled some other code that was also slowing things down which still needs to be replaced" />
     <MESSAGE value="cleaned up dependencies" />
     <MESSAGE value="added some files to repo" />
-    <option name="LAST_COMMIT_MESSAGE" value="added some files to repo" />
+    <MESSAGE value="refactor of state management to redux still in progress - plotter and composition-config-form mostly done" />
+    <option name="LAST_COMMIT_MESSAGE" value="refactor of state management to redux still in progress - plotter and composition-config-form mostly done" />
   </component>
   <component name="WindowStateProjectService">
     <state x="414" y="178" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1597713369456">
@@ -513,16 +508,16 @@
     </state>
     <state x="937" y="250" width="983" height="582" key="#xdebugger.evaluate/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598578244583" />
     <state x="750" y="457" width="889" height="580" key="#xdebugger.evaluate/0.0.1920.1040@0.0.1920.1040" timestamp="1598857283780" />
-    <state x="598" y="118" width="1168" height="803" key="CommitChangelistDialog2" timestamp="1598654916230">
+    <state x="598" y="118" width="1168" height="803" key="CommitChangelistDialog2" timestamp="1598904360683">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="598" y="118" width="1168" height="803" key="CommitChangelistDialog2/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598654916230" />
-    <state x="598" y="118" key="CommitChangelistDialog2/0.0.1920.1040@0.0.1920.1040" timestamp="1598587020391" />
-    <state x="355" y="113" width="1536" height="860" key="DiffContextDialog" timestamp="1598849619901">
+    <state x="598" y="118" key="CommitChangelistDialog2/0.0.1920.1040@0.0.1920.1040" timestamp="1598904360683" />
+    <state x="355" y="113" width="1536" height="860" key="DiffContextDialog" timestamp="1598904275815">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="236" y="107" width="1536" height="860" key="DiffContextDialog/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598654041290" />
-    <state x="355" y="113" width="1536" height="860" key="DiffContextDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1598849619901" />
+    <state x="355" y="113" width="1536" height="860" key="DiffContextDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1598904275815" />
     <state x="740" y="275" key="FileChooserDialogImpl" timestamp="1598821670790">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -618,20 +613,20 @@
     </state>
     <state x="463" y="165" key="SettingsEditor/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598038332815" />
     <state x="463" y="165" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1598821862583" />
-    <state x="552" y="256" key="Vcs.Push.Dialog.v2" timestamp="1598653613533">
+    <state x="552" y="256" key="Vcs.Push.Dialog.v2" timestamp="1598896688373">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="552" y="256" key="Vcs.Push.Dialog.v2/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598653613533" />
-    <state x="552" y="256" key="Vcs.Push.Dialog.v2/0.0.1920.1040@0.0.1920.1040" timestamp="1598587024207" />
-    <state x="93" y="93" width="1733" height="853" key="com.intellij.history.integration.ui.views.DirectoryHistoryDialog" timestamp="1598856836647">
+    <state x="552" y="256" key="Vcs.Push.Dialog.v2/0.0.1920.1040@0.0.1920.1040" timestamp="1598896688373" />
+    <state x="93" y="93" width="1733" height="853" key="com.intellij.history.integration.ui.views.DirectoryHistoryDialog" timestamp="1598904275815">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="93" y="93" width="1733" height="853" key="com.intellij.history.integration.ui.views.DirectoryHistoryDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1598856836647" />
-    <state x="92" y="92" width="1736" height="856" key="com.intellij.history.integration.ui.views.FileHistoryDialog" timestamp="1598856836647">
+    <state x="93" y="93" width="1733" height="853" key="com.intellij.history.integration.ui.views.DirectoryHistoryDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1598904275815" />
+    <state x="92" y="92" width="1736" height="856" key="com.intellij.history.integration.ui.views.FileHistoryDialog" timestamp="1598904275815">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="92" y="92" width="1736" height="856" key="com.intellij.history.integration.ui.views.FileHistoryDialog/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598653184200" />
-    <state x="92" y="92" width="1736" height="856" key="com.intellij.history.integration.ui.views.FileHistoryDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1598856836647" />
+    <state x="92" y="92" width="1736" height="856" key="com.intellij.history.integration.ui.views.FileHistoryDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1598904275815" />
     <state x="92" y="92" width="1736" height="856" key="com.intellij.history.integration.ui.views.SelectionHistoryDialog" timestamp="1597945428516">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -662,22 +657,22 @@
       <screen x="-3840" y="0" width="1920" height="1060" />
     </state>
     <state x="-2533" y="292" width="1058" height="830" key="dock-window-3/-3840.0.1920.1060/0.0.1920.1040@-3840.0.1920.1060" timestamp="1597770570215" />
-    <state x="640" y="228" width="825" height="732" key="find.popup" timestamp="1598845032684">
+    <state x="640" y="228" width="825" height="732" key="find.popup" timestamp="1598902635166">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="910" y="146" width="828" height="732" key="find.popup/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598653810544" />
-    <state x="640" y="228" width="825" height="732" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1598845032684" />
-    <state x="584" y="291" width="672" height="677" key="run.anything.popup" timestamp="1598508067013">
+    <state x="640" y="228" width="825" height="732" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1598902635166" />
+    <state x="585" y="292" width="672" height="677" key="run.anything.popup" timestamp="1598899616193">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="583" y="290" width="672" height="677" key="run.anything.popup/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598371204866" />
-    <state x="584" y="291" width="672" height="677" key="run.anything.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1598508067013" />
-    <state x="670" y="293" width="672" height="678" key="search.everywhere.popup" timestamp="1598855941913">
+    <state x="585" y="292" width="672" height="677" key="run.anything.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1598899616193" />
+    <state x="677" y="300" width="672" height="678" key="search.everywhere.popup" timestamp="1598903533760">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="-3230" y="237" width="672" height="692" key="search.everywhere.popup/-3840.0.1920.1060/0.0.1920.1040@-3840.0.1920.1060" timestamp="1598065172325" />
     <state x="608" y="231" width="672" height="678" key="search.everywhere.popup/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598575787538" />
-    <state x="670" y="293" width="672" height="678" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1598855941913" />
+    <state x="677" y="300" width="672" height="678" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1598903533760" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
