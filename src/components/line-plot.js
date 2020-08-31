@@ -69,7 +69,7 @@ export default class LinePlot extends Plot {
     }
 
     render(){
-        var {id, data, width, height} = this.props;
+        var {id, data, width, height, name} = this.props;
         return(
             <div className={[['subplot', `${id}`], 'pnl-lineplot']}
                  onClick={() => {
@@ -91,7 +91,7 @@ export default class LinePlot extends Plot {
                         <CartesianGrid strokeDasharray="3 3"/>
                         <XAxis
                             tick={false}>
-                            <Label value={id} offset={0} position="insideBottom" />
+                            <Label value={name} offset={0} position="insideBottom" />
                         </XAxis>
                         <YAxis
                             tick={false}

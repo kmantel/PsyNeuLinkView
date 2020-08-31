@@ -1,10 +1,87 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="0426a943-ef89-4391-a3a0-8152f91aa099" name="Default Changelist" comment="">
+    <list default="true" id="0426a943-ef89-4391-a3a0-8152f91aa099" name="Default Changelist" comment="cleaned up dependencies">
+      <change afterPath="$PROJECT_DIR$/src/state/actions.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/state/configuration/actions.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/state/configuration/constants.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/state/configuration/reducers.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/state/configuration/selectors.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/state/constants.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/state/forms/actions.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/state/forms/constants.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/state/forms/reducers.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/state/forms/selectors.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/state/forms/subplot-config-form/actions.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/state/forms/subplot-config-form/constants.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/state/forms/subplot-config-form/reducers.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/state/forms/subplot-config-form/selectors.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/state/forms/util.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/state/plotting/subplot-input-forms/actions.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/state/plotting/subplot-input-forms/constants.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/state/plotting/subplot-input-forms/reducers.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/state/plotting/subplot-input-forms/selectors.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/state/plotting/subplots/actions.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/state/plotting/subplots/reducers.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/state/plotting/subplots/util.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/state/psyneulink/components/actions.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/state/psyneulink/components/constants.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/state/psyneulink/components/reducers.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/state/psyneulink/components/selectors.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/state/psyneulink/constants.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/state/psyneulink/parameters/actions.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/state/psyneulink/parameters/constants.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/state/psyneulink/parameters/reducers.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/state/psyneulink/parameters/selectors.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/state/psyneulink/selectors.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/state/reducers.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/state/selectors.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/yarn.lock" beforeDir="false" afterPath="$PROJECT_DIR$/yarn.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/app.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/redux/actionTypes.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/core/actionTypes.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/redux/actions.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/core/actions.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/redux/constants.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/core/constants.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/redux/plotting/actions.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/plotting/actions.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/redux/plotting/constants.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/plotting/constants.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/redux/plotting/reducers.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/plotting/reducers.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/redux/plotting/selectors.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/plotting/selectors.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/redux/plotting/subplot-grid/actions.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/plotting/subplot-grid/actions.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/redux/plotting/subplot-grid/constants.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/plotting/subplot-grid/constants.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/redux/plotting/subplot-grid/reducers.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/plotting/subplot-grid/reducers.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/redux/plotting/subplot-grid/selectors.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/plotting/subplot-grid/selectors.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/redux/plotting/subplot-input-forms/actions.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/redux/plotting/subplot-input-forms/constants.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/redux/plotting/subplot-input-forms/reducers.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/redux/plotting/subplot-input-forms/selectors.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/redux/plotting/subplots/actions.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/redux/plotting/subplots/constants.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/plotting/subplots/constants.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/redux/plotting/subplots/reducers.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/redux/plotting/subplots/selectors.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/plotting/subplots/selectors.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/redux/psyneulink/actionTypes.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/redux/psyneulink/actions.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/psyneulink/actions.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/redux/psyneulink/data.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/redux/psyneulink/initialState.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/redux/psyneulink/options.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/redux/psyneulink/reducers.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/psyneulink/reducers.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/redux/psyneulink/util.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/psyneulink/util.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/redux/psyneulink/view.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/redux/reducers.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/core/reducers.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/redux/store.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/store.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/redux/util.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/util.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/available-data-source-table.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/available-data-source-table.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/control-strip.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/control-strip.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/d3model.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/d3model.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/forms/composition-param-form.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/forms/composition-config-form.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/forms/monitor-param-form.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/forms/subplot-config-form.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/line-plot.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/line-plot.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/parameter-control-box.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/configuration-panel.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/plot-boundary.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/plot-boundary.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/plotter.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/plotter.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/selected-data-source-table.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/selected-data-source-table.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/sidebar.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/sidebar.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/workspace.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/workspace.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/py/test/pnl_scripts/NeuroML Example.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/py/test/pnl_scripts/NeuroML Example.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -46,32 +123,33 @@
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="com.intellij.ide.scratch.LRUPopupBuilder$1/New Scratch File" value="JavaScript" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/app/redux/plotting" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/state" />
     <property name="list.type.of.created.stylesheet" value="CSS" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="nodejs_interpreter_path" value="node" />
     <property name="nodejs_package_manager_path" value="yarn" />
-    <property name="settings.editor.selected.configurable" value="editor.preferences.fonts.default" />
+    <property name="settings.editor.selected.configurable" value="settings.nodejs" />
     <property name="ts.external.directory.path" value="$APPLICATION_HOME_DIR$/plugins/JavaScriptLanguage/jsLanguageServicesImpl/external" />
   </component>
   <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\Dillo\WebstormProjects\PsyNeuLinkView\src\app\redux\plotting" />
-      <recent name="C:\Users\Dillo\WebstormProjects\PsyNeuLinkView\src\app\redux\plotting\input-forms" />
-      <recent name="C:\Users\Dillo\WebstormProjects\PsyNeuLinkView\src\app\redux\plotting\layout" />
-      <recent name="C:\Users\Dillo\WebstormProjects\PsyNeuLinkView\src\app\redux\psyneulink" />
-    </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Dillo\WebstormProjects\PsyNeuLinkView\src\state" />
+      <recent name="C:\Users\Dillo\WebstormProjects\PsyNeuLinkView\src\state\root" />
+      <recent name="C:\Users\Dillo\WebstormProjects\PsyNeuLinkView\src\state\core" />
+      <recent name="C:\Users\Dillo\WebstormProjects\PsyNeuLinkView\src" />
       <recent name="C:\Users\Dillo\WebstormProjects\PsyNeuLinkView\src\app\redux\plotting\subplot" />
-      <recent name="C:\Users\Dillo\WebstormProjects\PsyNeuLinkView\src\app\redux" />
-      <recent name="C:\Users\Dillo\WebstormProjects\PsyNeuLinkView\src\components\forms" />
-      <recent name="C:\Users\Dillon\WebstormProjects\PsyNeuLinkView\src\app\redux" />
-      <recent name="$PROJECT_DIR$/src/test" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Dillo\WebstormProjects\PsyNeuLinkView\src\state" />
+      <recent name="C:\Users\Dillo\WebstormProjects\PsyNeuLinkView\src\state\configuration" />
+      <recent name="C:\Users\Dillo\WebstormProjects\PsyNeuLinkView\src\state\forms\subplot-config-form" />
+      <recent name="C:\Users\Dillo\WebstormProjects\PsyNeuLinkView\src\state\forms" />
+      <recent name="C:\Users\Dillo\WebstormProjects\PsyNeuLinkView\src\state\configuration-panel" />
     </key>
   </component>
-  <component name="RunManager" selected="Node.js.Main">
+  <component name="RunManager" selected="Attach to Node.js/Chrome.Debug Render">
     <configuration name="Debug Render" type="ChromiumRemoteDebugType" factoryName="Chromium Remote" port="9222">
       <method v="2" />
     </configuration>
@@ -207,7 +285,14 @@
       <workItem from="1598563689075" duration="2364000" />
       <workItem from="1598566063958" duration="20190000" />
       <workItem from="1598586599402" duration="2150000" />
-      <workItem from="1598591532507" duration="9558000" />
+      <workItem from="1598591532507" duration="11094000" />
+      <workItem from="1598655521032" duration="758000" />
+      <workItem from="1598743907640" duration="2791000" />
+      <workItem from="1598821398728" duration="534000" />
+      <workItem from="1598822202639" duration="13331000" />
+      <workItem from="1598835580297" duration="12416000" />
+      <workItem from="1598851731744" duration="7302000" />
+      <workItem from="1598882464437" duration="593000" />
     </task>
     <task id="LOCAL-00001" summary="Enabled touchpad zoom gestures and windows ctrl shortcuts">
       <created>1581449946471</created>
@@ -349,7 +434,21 @@
       <option name="project" value="LOCAL" />
       <updated>1598653611878</updated>
     </task>
-    <option name="localTasksCounter" value="21" />
+    <task id="LOCAL-00021" summary="cleaned up dependencies">
+      <created>1598653948648</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1598653948648</updated>
+    </task>
+    <task id="LOCAL-00022" summary="added some files to repo">
+      <created>1598654916887</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1598654916887</updated>
+    </task>
+    <option name="localTasksCounter" value="23" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -391,96 +490,104 @@
     <MESSAGE value="fixed some broken references" />
     <MESSAGE value="Switched to electron 10, switched to grpc-js" />
     <MESSAGE value="replaced some event listeners that were causing bottlenecks; disabled some other code that was also slowing things down which still needs to be replaced" />
-    <option name="LAST_COMMIT_MESSAGE" value="replaced some event listeners that were causing bottlenecks; disabled some other code that was also slowing things down which still needs to be replaced" />
+    <MESSAGE value="cleaned up dependencies" />
+    <MESSAGE value="added some files to repo" />
+    <option name="LAST_COMMIT_MESSAGE" value="added some files to repo" />
   </component>
   <component name="WindowStateProjectService">
     <state x="414" y="178" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1597713369456">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="414" y="178" key="#com.intellij.execution.impl.EditConfigurationsDialog/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1597713369456" />
-    <state x="710" y="330" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1598040614855">
+    <state x="710" y="330" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1598831512771">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="710" y="330" key="#com.intellij.fileTypes.FileTypeChooser/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598040614855" />
+    <state x="710" y="330" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1920.1040@0.0.1920.1040" timestamp="1598831512771" />
     <state x="765" y="236" key="#com.intellij.ide.util.MemberChooser" timestamp="1598555539579">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="765" y="236" key="#com.intellij.ide.util.MemberChooser/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598555539579" />
-    <state x="750" y="457" width="889" height="580" key="#xdebugger.evaluate" timestamp="1598583847159">
+    <state x="750" y="457" width="889" height="580" key="#xdebugger.evaluate" timestamp="1598857283780">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="937" y="250" width="983" height="582" key="#xdebugger.evaluate/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598578244583" />
-    <state x="750" y="457" width="889" height="580" key="#xdebugger.evaluate/0.0.1920.1040@0.0.1920.1040" timestamp="1598583847159" />
-    <state x="598" y="118" width="1168" height="803" key="CommitChangelistDialog2" timestamp="1598653611328">
+    <state x="750" y="457" width="889" height="580" key="#xdebugger.evaluate/0.0.1920.1040@0.0.1920.1040" timestamp="1598857283780" />
+    <state x="598" y="118" width="1168" height="803" key="CommitChangelistDialog2" timestamp="1598654916230">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="598" y="118" width="1168" height="803" key="CommitChangelistDialog2/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598653611328" />
+    <state x="598" y="118" width="1168" height="803" key="CommitChangelistDialog2/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598654916230" />
     <state x="598" y="118" key="CommitChangelistDialog2/0.0.1920.1040@0.0.1920.1040" timestamp="1598587020391" />
-    <state x="355" y="113" width="1536" height="860" key="DiffContextDialog" timestamp="1598597173203">
+    <state x="355" y="113" width="1536" height="860" key="DiffContextDialog" timestamp="1598849619901">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="236" y="107" width="1536" height="860" key="DiffContextDialog/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598571083557" />
-    <state x="355" y="113" width="1536" height="860" key="DiffContextDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1598597173203" />
-    <state width="1900" height="307" key="GridCell.Tab.0.bottom" timestamp="1598596420374">
+    <state x="236" y="107" width="1536" height="860" key="DiffContextDialog/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598654041290" />
+    <state x="355" y="113" width="1536" height="860" key="DiffContextDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1598849619901" />
+    <state x="740" y="275" key="FileChooserDialogImpl" timestamp="1598821670790">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="740" y="275" key="FileChooserDialogImpl/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598654683273" />
+    <state x="740" y="275" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1598821670790" />
+    <state width="1900" height="307" key="GridCell.Tab.0.bottom" timestamp="1598862143974">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1900" height="223" key="GridCell.Tab.0.bottom/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598578199480" />
-    <state width="1900" height="307" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1598596420374" />
-    <state width="1900" height="307" key="GridCell.Tab.0.center" timestamp="1598596420374">
+    <state width="1900" height="307" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1598862143974" />
+    <state width="1900" height="307" key="GridCell.Tab.0.center" timestamp="1598862143973">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1900" height="223" key="GridCell.Tab.0.center/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598578199480" />
-    <state width="1900" height="307" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1598596420374" />
-    <state width="1900" height="307" key="GridCell.Tab.0.left" timestamp="1598596420374">
+    <state width="1900" height="307" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1598862143973" />
+    <state width="1900" height="307" key="GridCell.Tab.0.left" timestamp="1598862143972">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1900" height="223" key="GridCell.Tab.0.left/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598578199480" />
-    <state width="1900" height="307" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1598596420374" />
-    <state width="1900" height="307" key="GridCell.Tab.0.right" timestamp="1598596420374">
+    <state width="1900" height="307" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1598862143972" />
+    <state width="1900" height="307" key="GridCell.Tab.0.right" timestamp="1598862143974">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1900" height="223" key="GridCell.Tab.0.right/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598578199480" />
-    <state width="1900" height="307" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1598596420374" />
-    <state width="1900" height="307" key="GridCell.Tab.1.bottom" timestamp="1598596420375">
+    <state width="1900" height="307" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1598862143974" />
+    <state width="1900" height="307" key="GridCell.Tab.1.bottom" timestamp="1598862143978">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1900" height="223" key="GridCell.Tab.1.bottom/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598578199480" />
-    <state width="1900" height="307" key="GridCell.Tab.1.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1598596420375" />
-    <state width="1900" height="307" key="GridCell.Tab.1.center" timestamp="1598596420374">
+    <state width="1900" height="307" key="GridCell.Tab.1.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1598862143978" />
+    <state width="1900" height="307" key="GridCell.Tab.1.center" timestamp="1598862143976">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1900" height="223" key="GridCell.Tab.1.center/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598578199480" />
-    <state width="1900" height="307" key="GridCell.Tab.1.center/0.0.1920.1040@0.0.1920.1040" timestamp="1598596420374" />
-    <state width="1900" height="307" key="GridCell.Tab.1.left" timestamp="1598596420374">
+    <state width="1900" height="307" key="GridCell.Tab.1.center/0.0.1920.1040@0.0.1920.1040" timestamp="1598862143976" />
+    <state width="1900" height="307" key="GridCell.Tab.1.left" timestamp="1598862143975">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1900" height="223" key="GridCell.Tab.1.left/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598578199480" />
-    <state width="1900" height="307" key="GridCell.Tab.1.left/0.0.1920.1040@0.0.1920.1040" timestamp="1598596420374" />
-    <state width="1900" height="307" key="GridCell.Tab.1.right" timestamp="1598596420374">
+    <state width="1900" height="307" key="GridCell.Tab.1.left/0.0.1920.1040@0.0.1920.1040" timestamp="1598862143975" />
+    <state width="1900" height="307" key="GridCell.Tab.1.right" timestamp="1598862143977">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1900" height="223" key="GridCell.Tab.1.right/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598578199480" />
-    <state width="1900" height="307" key="GridCell.Tab.1.right/0.0.1920.1040@0.0.1920.1040" timestamp="1598596420374" />
-    <state width="1900" height="307" key="GridCell.Tab.2.bottom" timestamp="1598596420375">
+    <state width="1900" height="307" key="GridCell.Tab.1.right/0.0.1920.1040@0.0.1920.1040" timestamp="1598862143977" />
+    <state width="1900" height="307" key="GridCell.Tab.2.bottom" timestamp="1598862143980">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1900" height="223" key="GridCell.Tab.2.bottom/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598578199480" />
-    <state width="1900" height="307" key="GridCell.Tab.2.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1598596420375" />
-    <state width="1900" height="307" key="GridCell.Tab.2.center" timestamp="1598596420375">
+    <state width="1900" height="307" key="GridCell.Tab.2.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1598862143980" />
+    <state width="1900" height="307" key="GridCell.Tab.2.center" timestamp="1598862143979">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1900" height="223" key="GridCell.Tab.2.center/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598578199480" />
-    <state width="1900" height="307" key="GridCell.Tab.2.center/0.0.1920.1040@0.0.1920.1040" timestamp="1598596420375" />
-    <state width="1900" height="307" key="GridCell.Tab.2.left" timestamp="1598596420375">
+    <state width="1900" height="307" key="GridCell.Tab.2.center/0.0.1920.1040@0.0.1920.1040" timestamp="1598862143979" />
+    <state width="1900" height="307" key="GridCell.Tab.2.left" timestamp="1598862143979">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1900" height="223" key="GridCell.Tab.2.left/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598578199480" />
-    <state width="1900" height="307" key="GridCell.Tab.2.left/0.0.1920.1040@0.0.1920.1040" timestamp="1598596420375" />
-    <state width="1900" height="307" key="GridCell.Tab.2.right" timestamp="1598596420375">
+    <state width="1900" height="307" key="GridCell.Tab.2.left/0.0.1920.1040@0.0.1920.1040" timestamp="1598862143979" />
+    <state width="1900" height="307" key="GridCell.Tab.2.right" timestamp="1598862143979">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1900" height="223" key="GridCell.Tab.2.right/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598578199480" />
-    <state width="1900" height="307" key="GridCell.Tab.2.right/0.0.1920.1040@0.0.1920.1040" timestamp="1598596420375" />
+    <state width="1900" height="307" key="GridCell.Tab.2.right/0.0.1920.1040@0.0.1920.1040" timestamp="1598862143979" />
     <state width="1900" height="307" key="GridCell.Tab.3.bottom" timestamp="1598596420375">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -506,25 +613,25 @@
     </state>
     <state x="920" y="261" key="RollbackChangesDialog/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1597851384558" />
     <state x="920" y="261" key="RollbackChangesDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1598597173363" />
-    <state x="463" y="165" key="SettingsEditor" timestamp="1598499598853">
+    <state x="463" y="165" key="SettingsEditor" timestamp="1598821862583">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="463" y="165" key="SettingsEditor/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598038332815" />
-    <state x="463" y="165" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1598499598853" />
+    <state x="463" y="165" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1598821862583" />
     <state x="552" y="256" key="Vcs.Push.Dialog.v2" timestamp="1598653613533">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="552" y="256" key="Vcs.Push.Dialog.v2/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598653613533" />
     <state x="552" y="256" key="Vcs.Push.Dialog.v2/0.0.1920.1040@0.0.1920.1040" timestamp="1598587024207" />
-    <state x="93" y="93" width="1733" height="853" key="com.intellij.history.integration.ui.views.DirectoryHistoryDialog" timestamp="1598505904781">
+    <state x="93" y="93" width="1733" height="853" key="com.intellij.history.integration.ui.views.DirectoryHistoryDialog" timestamp="1598856836647">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="93" y="93" width="1733" height="853" key="com.intellij.history.integration.ui.views.DirectoryHistoryDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1598505904781" />
-    <state x="92" y="92" width="1736" height="856" key="com.intellij.history.integration.ui.views.FileHistoryDialog" timestamp="1598653184200">
+    <state x="93" y="93" width="1733" height="853" key="com.intellij.history.integration.ui.views.DirectoryHistoryDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1598856836647" />
+    <state x="92" y="92" width="1736" height="856" key="com.intellij.history.integration.ui.views.FileHistoryDialog" timestamp="1598856836647">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="92" y="92" width="1736" height="856" key="com.intellij.history.integration.ui.views.FileHistoryDialog/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598653184200" />
-    <state x="92" y="92" width="1736" height="856" key="com.intellij.history.integration.ui.views.FileHistoryDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1598579797273" />
+    <state x="92" y="92" width="1736" height="856" key="com.intellij.history.integration.ui.views.FileHistoryDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1598856836647" />
     <state x="92" y="92" width="1736" height="856" key="com.intellij.history.integration.ui.views.SelectionHistoryDialog" timestamp="1597945428516">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -537,11 +644,11 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="771" y="439" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1597856965654" />
-    <state x="603" y="460" width="1079" height="750" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2" timestamp="1598582838260">
+    <state x="603" y="460" width="1079" height="750" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2" timestamp="1598858085333">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="667" y="290" width="1079" height="750" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598577644998" />
-    <state x="603" y="460" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/0.0.1920.1040@0.0.1920.1040" timestamp="1598582838260" />
+    <state x="603" y="460" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/0.0.1920.1040@0.0.1920.1040" timestamp="1598858085333" />
     <state x="-2855" y="590" width="825" height="575" key="dock-window-1" timestamp="1597770570215">
       <screen x="-3840" y="0" width="1920" height="1060" />
     </state>
@@ -555,43 +662,40 @@
       <screen x="-3840" y="0" width="1920" height="1060" />
     </state>
     <state x="-2533" y="292" width="1058" height="830" key="dock-window-3/-3840.0.1920.1060/0.0.1920.1040@-3840.0.1920.1060" timestamp="1597770570215" />
-    <state x="910" y="146" width="828" height="732" key="find.popup" timestamp="1598653810544">
+    <state x="640" y="228" width="825" height="732" key="find.popup" timestamp="1598845032684">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="910" y="146" width="828" height="732" key="find.popup/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598653810544" />
-    <state x="667" y="154" width="825" height="732" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1598651582679" />
+    <state x="640" y="228" width="825" height="732" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1598845032684" />
     <state x="584" y="291" width="672" height="677" key="run.anything.popup" timestamp="1598508067013">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="583" y="290" width="672" height="677" key="run.anything.popup/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598371204866" />
     <state x="584" y="291" width="672" height="677" key="run.anything.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1598508067013" />
-    <state x="655" y="278" width="672" height="678" key="search.everywhere.popup" timestamp="1598595466664">
+    <state x="670" y="293" width="672" height="678" key="search.everywhere.popup" timestamp="1598855941913">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="-3230" y="237" width="672" height="692" key="search.everywhere.popup/-3840.0.1920.1060/0.0.1920.1040@-3840.0.1920.1060" timestamp="1598065172325" />
     <state x="608" y="231" width="672" height="678" key="search.everywhere.popup/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598575787538" />
-    <state x="655" y="278" width="672" height="678" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1598595466664" />
+    <state x="670" y="293" width="672" height="678" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1598855941913" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/public/electron.js</url>
-          <line>36</line>
-          <properties lambdaOrdinal="-1" />
-          <option name="timeStamp" value="1" />
+          <url>file://$PROJECT_DIR$/src/components/forms/subplot-config-form.js</url>
+          <line>108</line>
+          <option name="timeStamp" value="22" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/public/electron.js</url>
-          <line>34</line>
-          <properties lambdaOrdinal="-1" />
-          <option name="timeStamp" value="2" />
+          <url>file://$PROJECT_DIR$/src/components/forms/subplot-config-form.js</url>
+          <line>107</line>
+          <option name="timeStamp" value="23" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/public/electron.js</url>
-          <line>33</line>
-          <properties lambdaOrdinal="-1" />
-          <option name="timeStamp" value="4" />
+          <url>file://$PROJECT_DIR$/src/components/forms/subplot-config-form.js</url>
+          <line>106</line>
+          <option name="timeStamp" value="24" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

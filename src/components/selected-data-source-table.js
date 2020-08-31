@@ -5,10 +5,16 @@ import { DeleteOutlined } from "@ant-design/icons"
 import {Divider, Empty, Typography, Button, Checkbox} from "antd";
 import { connect } from 'react-redux'
 import * as _ from 'lodash';
-import {setPlotSpecs} from "../app/redux/actions";
+import {setPlotSpecs} from "../state/core/actions";
 import VirtualTable from "./virtual-table";
 
 const { Text } = Typography;
+
+const mapStateToProps = ({core}) => {
+    return {
+        plotSpecs:core.plotSpecs
+    }
+};
 
 class SelectedDataSourceTable extends React.Component{
     reduxPrefix = 'sdst';
@@ -137,7 +143,8 @@ class SelectedDataSourceTable extends React.Component{
                                 align: 'right'
                             },
                         ]}
-                        dataSource={this.buildDataTable()}
+                        // dataSource={this.buildDataTable()}
+                        dataSource={[]}
                         scroll={{
                             y: this.props.size.height - 117,
                         }}
@@ -146,12 +153,6 @@ class SelectedDataSourceTable extends React.Component{
         )
     }
 }
-
-const mapStateToProps = ({core}) => {
-    return {
-        plotSpecs:core.plotSpecs
-    }
-};
 
 const mapDispatchToProps = dispatch => ({
     setPlotSpecs: (id, plotSpecs) => dispatch(setPlotSpecs(id, plotSpecs)),

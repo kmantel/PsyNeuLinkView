@@ -9,8 +9,9 @@ import { connect } from 'react-redux'
 import VirtualTable from "./virtual-table";
 
 import * as _ from "lodash";
-import {addPlot, setPlotSpecs} from "../app/redux/actions";
-import {registerParameters} from "../app/redux/psyneulink/actions";
+import {addPlot, setPlotSpecs} from "../state/core/actions";
+import {registerParameters} from "../state/psyneulink/actions";
+import {addDataSource, removeDataSource} from "../state/plotting/subplots/actions";
 
 const { Text } = Typography;
 
@@ -18,12 +19,20 @@ const electron = window.require('electron');
 const ipcRenderer  = electron.ipcRenderer;
 const rpc = window.interfaces.rpc;
 
-/**
- * Redux-managed state
- *
- *
- *
- * */
+const mapStateToProps = ({core, pnl}) => {
+    return {
+        registeredMechanisms:pnl.mechanisms,
+        registeredParameters:pnl.parameters,
+        plotSpecs:core.plotSpecs
+    }
+};
+
+const mapDispatchToProps = dispatch => ({
+    addDataSource: (id, dataSourceId) => dispatch(addDataSource(id, dataSourceId)),
+    removeDataSource: (id, dataSourceId) => dispatch(removeDataSource(id, dataSourceId)),
+    setPlotSpecs: (id, plotSpecs) => dispatch(setPlotSpecs(id, plotSpecs)),
+    registerParameters: (mechanism, parameterList) => dispatch(registerParameters(mechanism, parameterList))
+});
 
 class AvailableDataSourceTable extends React.Component{
     state = {
@@ -88,7 +97,8 @@ class AvailableDataSourceTable extends React.Component{
     }
 
     getSelectedKeys(source, id){
-        return new Set(Object.values(_.cloneDeep(this.props.plotSpecs[id][source] || {})).map(row=>row.rowKey));
+        return new Set()
+        // return new Set(Object.values(_.cloneDeep(this.props.plotSpecs[id][source] || {})).map(row=>row.rowKey));
     }
 
     getSelectedRowsAndIds(source, id){
@@ -150,6 +160,7 @@ class AvailableDataSourceTable extends React.Component{
             idsAndRows = this.getSelectedRowsAndIds(source, id),
             currentlySelectedRows = idsAndRows['selectedRows'];
         if (isChecked){
+
             currentlySelectedRows.add(row);
         }
         else {
@@ -239,19 +250,6 @@ class AvailableDataSourceTable extends React.Component{
         )
     }
 }
-
-const mapStateToProps = ({core, pnl}) => {
-    return {
-        registeredMechanisms:pnl.mechanisms,
-        registeredParameters:pnl.parameters,
-        plotSpecs:core.plotSpecs
-    }
-};
-
-const mapDispatchToProps = dispatch => ({
-    setPlotSpecs: (id, plotSpecs) => dispatch(setPlotSpecs(id, plotSpecs)),
-    registerParameters: (mechanism, parameterList) => dispatch(registerParameters(mechanism, parameterList))
-});
 
 AvailableDataSourceTable = connect(mapStateToProps, mapDispatchToProps)(AvailableDataSourceTable);
 

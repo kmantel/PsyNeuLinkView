@@ -6,7 +6,7 @@ import "antd/dist/antd.css"
 
 // import redux provider and store
 import { Provider } from 'react-redux'
-import { store } from './redux/store'
+import { store } from '../state/store'
 
 // import css
 import '../css/app.css';

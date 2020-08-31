@@ -6,26 +6,33 @@ import { DropTarget } from 'react-dnd'
 import { ItemTypes } from './constants'
 import * as _ from "lodash";
 import Layout from "./layout";
-import {addPlot, removePlot} from "../app/redux/actions"
+import {addPlot, removePlot} from "../state/core/actions"
 import {connect} from "react-redux";
-import { initializeSubplotBundle } from "../app/redux/plotting/actions";
-import { createId } from "../app/redux/util";
-import { PLOT_PREFIX, PLOT_ID_LEN } from "../app/redux/plotting/constants";
+import { initializeSubplotBundle } from "../state/plotting/actions";
+import { createId } from "../state/util";
+import {PLOT_PREFIX, PLOT_ID_LEN, KEYWORDS as keywords} from "../state/plotting/constants";
 import {
     getGridLayout,
     getGridPositions,
     getGridShape,
     getGridDropFocus
-} from "../app/redux/plotting/subplot-grid/selectors";
-import {getSubplotIdSet} from "../app/redux/plotting/selectors";
-import {editGridLayout} from "../app/redux/plotting/subplot-grid/actions";
-import {getSubplotMetaData} from "../app/redux/plotting/subplots/selectors";
-import {LINE_PLOT} from "../app/redux/plotting/subplots/constants";
-import {editSubplotMetaData} from "../app/redux/plotting/subplots/actions";
+} from "../state/plotting/subplot-grid/selectors";
+import {getSubplotIdSet} from "../state/plotting/selectors";
+import {editGridLayout} from "../state/plotting/subplot-grid/actions";
+import {
+    getSubplotMetaData,
+    getMapIdToName,
+    getMapPlotTypeToDefaultNameCounter
+} from "../state/plotting/subplots/selectors";
+import {LINE_PLOT} from "../state/plotting/subplots/constants";
+import {editSubplotMetaData} from "../state/plotting/subplots/actions";
+import {ID_LEN} from "../state/core/constants";
 
 const mapStateToProps = ({plotting}) => {
     return {
         subplotIdSet: getSubplotIdSet(plotting),
+        mapIdToName: getMapIdToName(plotting.subplots),
+        mapPlotTypeToDefaultNameCounter: getMapPlotTypeToDefaultNameCounter(plotting.subplots),
         subplotMetadata: getSubplotMetaData(plotting.subplots),
         gridLayout: getGridLayout(plotting.subplotGrid),
         gridShape: getGridShape(plotting.subplotGrid),
@@ -36,8 +43,8 @@ const mapStateToProps = ({plotting}) => {
 
 const mapDispatchToProps = dispatch => ({
     addPlot: (plotSpec) => dispatch(addPlot(plotSpec)),
-    initializeSubplotBundle: (id, plotType, name, dataSources, position, colSpan, rowSpan) =>
-        dispatch(initializeSubplotBundle(id, plotType, name, dataSources, position, colSpan, rowSpan)),
+    initializeSubplotBundle: ({id, plotType, name, dataSources, position, colSpan, rowSpan}) =>
+        dispatch(initializeSubplotBundle({id, plotType, name, dataSources, position, colSpan, rowSpan})),
     editGridLayout: (id, colSpan, rowSpan, position) =>
         dispatch(editGridLayout(id, colSpan, rowSpan, position)),
     editSubplotMetadata: ({id, plotType, name, dataSources})=> dispatch(editSubplotMetaData({id, plotType, name, dataSources}))
@@ -119,6 +126,82 @@ class Plotter extends React.Component {
         console.log('hi')
     }
 
+    snakeCaseToUpperCamelCase(word) {
+        return word.split('_').map(word=>word.charAt(0).toUpperCase() + word.slice(1)).join('')
+    }
+
+    generateDefaultName(plotType, counter=null){
+        const prefix = this.snakeCaseToUpperCamelCase(plotType);
+        counter = counter ?? this.props.mapPlotTypeToDefaultNameCounter[plotType];
+        return `${prefix}-${counter}`
+    }
+
+    parseName(plotType, name, allowDuplicates){
+        /**
+         * validates legality of name and returns it including any necessary modifications
+         */
+        const nameSet = new Set([...Object.values(this.props.mapIdToName)]);
+        name = name.trim();
+        if (name === '' || !name){
+            name = this.generateDefaultName(plotType);
+        }
+        if (!allowDuplicates){
+            if (nameSet.has(name)){
+                const namePrefix = name;
+                let nameSuffixCounter = 1;
+                while (nameSet.has(name)){
+                    name = `${namePrefix}(${nameSuffixCounter})`;
+                    nameSuffixCounter += 1;
+                }
+            }
+        }
+        return name
+    }
+
+    getDefaultNameCounter(plotType, name){
+        /**
+         * checks if adding subplot with `name` should increment the default name counter for `plotType` and returns
+         * the counter, including increment if necessary
+         */
+        let counter = this.props.mapPlotTypeToDefaultNameCounter[plotType];
+        if (name == this.generateDefaultName(plotType)){
+            counter += 1
+        }
+        return counter
+    }
+
+    parseNameOnEdit(id, plotType, name){
+        /**
+         * checks if newly entered name differs from name currently in store. if so, passes it to parseName
+         */
+        // null value for name means no edit, so don't parse in that case
+        if (name){
+            let baseName = this.props.mapIdToName[id];
+            name = name.trim();
+            if (baseName!==name){
+                name = this.parseName(plotType, name)
+            }
+        }
+        return name
+    }
+
+    parseDefaultNameCounterOnEdit(id, plotType, name){
+        /**
+         * checks if default name counter for `plotType` should be decremented due to a change in `name`
+         */
+        let baseCounter = this.props.mapPlotTypeToDefaultNameCounter[plotType];
+        // null value for name means no edit, so don't parse in that case
+        if (name){
+            let baseName = this.props.mapIdToName[id];
+            if (baseName!==name){
+                if (name==this.generateDefaultName(plotType, baseCounter-1)){
+                    return baseCounter - 1
+                }
+            }
+        }
+        return baseCounter
+    }
+
     insertSubPlot(type, position, shiftDirection='right'){
         var {gridPositions, subplotIdSet} = this.props,
             updatedLayout = {}, maxXNew, maxYNew,
@@ -134,7 +217,15 @@ class Plotter extends React.Component {
         for ( const [subplotId, layout] of Object.entries(updatedLayout) ){
             this.props.editGridLayout(subplotId, layout.w, layout.h, [layout.x, layout.y])
         }
-        this.props.initializeSubplotBundle(id, LINE_PLOT, '', [], position, 1, 1);
+        this.props.initializeSubplotBundle({
+            id:id,
+            plotType:LINE_PLOT,
+            name:this.generateDefaultName(LINE_PLOT),
+            dataSources:[],
+            position:position,
+            colSpan:1,
+            rowSpan:1
+        });
     }
 
     lateralShift(row, startIndex){
@@ -188,6 +279,7 @@ class Plotter extends React.Component {
         return <div key={id}>
             <LinePlot
                 id={id}
+                name={name}
                 width={width}
                 height={height}
                 data={dataSources}

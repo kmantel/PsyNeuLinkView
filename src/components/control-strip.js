@@ -1,7 +1,7 @@
 import React from 'react'
 import {connect} from "react-redux";
-import {store} from "../app/redux/store";
-import { setActiveView } from "../app/redux/actions";
+import {store} from "../state/store";
+import { setActiveView } from "../state/core/actions";
 import {Icon, Tab, Tabs} from "@blueprintjs/core"
 import '../css/controlstrip.css'
 

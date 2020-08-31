@@ -3,8 +3,8 @@ import { Classes, Tree, Icon } from '@blueprintjs/core'
 import '../css/sidebar.css'
 import { Resizable } from "re-resizable"
 import {connect} from "react-redux";
-import {setActiveView, setStyleSheet} from "../app/redux/actions";
-import {store} from "../app/redux/store";
+import {setActiveView, setStyleSheet} from "../state/core/actions";
+import {store} from "../state/store";
 import {DragSource, useDrag, DragPreviewImage, DropTarget} from 'react-dnd';
 import { ItemTypes } from './constants';
 import DraggableTreeNode from "./tree-node";

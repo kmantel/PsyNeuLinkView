@@ -6,12 +6,12 @@ import D3plotter from './plotter'
 import GraphView from './d3model'
 import ToolTipBox from './tooltip-box'
 import ControlStrip from "./control-strip";
-import ParameterControlBox from './parameter-control-box'
+import ParameterControlBox from './configuration-panel'
 import SettingsPane from './settings'
 import ErrorDispatcher from "../utility/errors/dispatcher";
 import {connect} from "react-redux";
-import {setActiveView, setStyleSheet, setActiveComposition} from "../app/redux/actions";
-import {store} from "../app/redux/store";
+import {setActiveView, setStyleSheet, setActiveComposition} from "../state/core/actions";
+import {store} from "../state/store";
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 
@@ -520,7 +520,8 @@ class WorkSpace extends React.PureComponent {
                                 {
                                     baseline_row_one_h:this.state.baseline_row_one_h + delta.width,
                                     baseline_vertical:this.state.baseline_vertical + delta.height
-                                }
+                                },
+                                this.forceUpdate
                             )
                         }
                     }
@@ -558,7 +559,8 @@ class WorkSpace extends React.PureComponent {
                                 {
                                     baseline_row_one_h:this.state.baseline_row_one_h - delta.width,
                                     baseline_vertical:this.state.baseline_vertical + delta.height
-                                }
+                                },
+                                this.forceUpdate
                             )
                         }
                     }
@@ -606,7 +608,8 @@ class WorkSpace extends React.PureComponent {
                                 {
                                     baseline_row_one_h:this.state.baseline_row_one_h - delta.width,
                                     baseline_vertical:this.state.baseline_vertical + delta.height
-                                }
+                                },
+                                this.forceUpdate
                             )
                         }
                     }
@@ -654,7 +657,8 @@ class WorkSpace extends React.PureComponent {
                                 {
                                     baseline_row_two_h:this.state.baseline_row_two_h + delta.width,
                                     baseline_vertical:this.state.baseline_vertical - delta.height
-                                }
+                                },
+                                this.forceUpdate
                             )
                         }
                     }
@@ -695,7 +699,8 @@ class WorkSpace extends React.PureComponent {
                                 {
                                     baseline_row_two_h:this.state.baseline_row_two_h - delta.width,
                                     baseline_vertical:this.state.baseline_vertical - delta.height
-                                }
+                                },
+                                this.forceUpdate
                             )
                         }
                     }

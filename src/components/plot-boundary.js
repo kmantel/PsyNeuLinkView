@@ -1,8 +1,8 @@
 import React from 'react';
 import { DropTarget } from 'react-dnd'
 import {ItemTypes} from "./constants";
-import {setGridDropFocus} from "../app/redux/plotting/subplot-grid/actions";
-import {getGridDropFocus} from "../app/redux/plotting/subplot-grid/selectors";
+import {setGridDropFocus} from "../state/plotting/subplot-grid/actions";
+import {getGridDropFocus} from "../state/plotting/subplot-grid/selectors";
 import {connect} from "react-redux";
 import * as _ from 'lodash';
 

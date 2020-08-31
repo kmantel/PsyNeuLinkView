@@ -7,8 +7,8 @@ import {Spinner} from '@blueprintjs/core'
 import {Index} from '../utility/d3-helper/d3-helper'
 import * as _ from 'lodash'
 import {connect} from "react-redux";
-import {store} from "../app/redux/store";
-import {setStyleSheet, setModelAspectRatio} from "../app/redux/actions";
+import {store} from "../state/store";
+import {setStyleSheet, setModelAspectRatio} from "../state/core/actions";
 
 const context_menu = [
     {
