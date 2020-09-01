@@ -20,28 +20,30 @@ import {
     getMapParentIdToSelectedDataSources
 } from "../state/subplot-config-form/selectors";
 import {setComponentFocus} from "../state/subplot-config-form/actions";
-import {getComponentMapIdToParameterSet} from "../state/psyneulink-components/selectors";
+import {getComponentMapIdToParameterSet, getMapIdToName} from "../state/psyneulink-components/selectors";
+import {getMapIdToDataSources} from "../state/subplots/selectors";
 
 const { Text } = Typography;
 const electron = window.require('electron');
 const ipcRenderer  = electron.ipcRenderer;
 const rpc = window.interfaces.rpc;
 
-const mapStateToProps = ({core, psyNeuLinkRegistry, psyNeuLinkComponents, subplotConfigForm}) => {
+const mapStateToProps = ({core, psyNeuLinkRegistry, psyNeuLinkComponents, subplots, subplotConfigForm}) => {
     return {
         plotSpecs:core.plotSpecs,
         psyNeuLinkIdSet:getPsyNeuLinkIdSet(psyNeuLinkRegistry),
         psyNeuLinkMapIdToName:getPsyNeuLinkMapIdToName(psyNeuLinkRegistry),
         psyNeuLinkMapNameToId:getPsyNeuLinkMapNameToId(psyNeuLinkRegistry),
         psyNeuLinkMapComponentIdToParameterIds:getComponentMapIdToParameterSet(psyNeuLinkComponents),
+        psyNeuLinkMapComponentIdToName:getMapIdToName(psyNeuLinkComponents),
         subplotMapIdToComponentFocus:getMapParentIdToComponentFocus(subplotConfigForm),
-        subplotMapIdToSelectedDataSources:getMapParentIdToSelectedDataSources(subplotConfigForm)
+        subplotMapIdToSelectedDataSources:getMapIdToDataSources(subplots)
     }
 };
 
 const mapDispatchToProps = dispatch => ({
-    addDataSource: (id, dataSourceId) => dispatch(addDataSource(id, dataSourceId)),
-    removeDataSource: (id, dataSourceId) => dispatch(removeDataSource(id, dataSourceId)),
+    addDataSource: ({id, dataSourceId}) => dispatch(addDataSource({id, dataSourceId})),
+    removeDataSource: ({id, dataSourceId}) => dispatch(removeDataSource({id, dataSourceId})),
     setPlotSpecs: (id, plotSpecs) => dispatch(setPlotSpecs(id, plotSpecs)),
     registerParameters: ({ownerId, parameterSpecs}) => dispatch(registerParameters({ownerId, parameterSpecs})),
     setComponentFocus: ({id, tabKey}) => dispatch(setComponentFocus({id, tabKey}))
@@ -58,27 +60,27 @@ class AvailableDataSourceTable extends React.Component{
         super(props);
         this.bindThisToFunctions = this.bindThisToFunctions.bind(this);
         this.bindThisToFunctions();
-        if (this.props.components.length > 0){
-            this.props.components.forEach( component => {this.getDataTable(component)} )
-        }
+        if (this.props.components.length > 0){this.updateComponents()}
         ipcRenderer.on('parameterList', this.handleParameterList);
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (!_.isEqual(prevProps.components, this.props.components)) {
-            this.props.components.forEach( component => {this.getDataTable(component)} )
+            this.updateComponents();
+        }
+    }
+
+    updateComponents(){
+        const {psyNeuLinkMapNameToId: nameToId,
+            psyNeuLinkMapComponentIdToParameterIds: idToParameters} = this.props;
+        for (const component of this.props.components){
+            if (!(nameToId[component] in idToParameters)){
+                rpc.get_parameters(component)
+            }
         }
     }
 
     updateDataTablesForId(id){
-    }
-
-    componentDidMount() {
-        if (!(this.props.id in this.state.selectedDataSources)){
-            var selectedDataSources = _.cloneDeep(this.state.selectedDataSources);
-            selectedDataSources[this.props.id] = '';
-            this.setState({selectedDataSources:selectedDataSources})
-        }
     }
 
     handleParameterList(event, message) {
@@ -96,39 +98,8 @@ class AvailableDataSourceTable extends React.Component{
 
     bindThisToFunctions(){
         this.render = this.render.bind(this);
-        this.setActiveDataSource = this.setActiveDataSource.bind(this);
-        this.getDataTable = this.getDataTable.bind(this);
-        this.onSelectedRowChange = this.onSelectedRowChange.bind(this);
-        this.buildDataTable = this.buildDataTable.bind(this);
-        this.updateSelectedRowsFromProps = this.updateSelectedRowsFromProps.bind(this);
         this.onChange = this.onChange.bind(this);
         this.handleParameterList = this.handleParameterList.bind(this);
-    }
-
-    setActiveDataSource(source){
-        var selectedDataSources = this.state.selectedDataSources;
-        selectedDataSources[this.props.id]=source;
-        this.setState(
-            {
-                selectedDataSources:selectedDataSources
-            }
-        )
-    }
-
-    getActiveDataSource(id){
-        return id in this.state.selectedDataSources ? this.state.selectedDataSources[id] : ''
-    }
-
-    getSelectedKeys(source, id){
-        return new Set()
-        // return new Set(Object.values(_.cloneDeep(this.props.plotSpecs[id][source] || {})).map(row=>row.rowKey));
-    }
-
-    getSelectedRowsAndIds(source, id){
-        var ids = this.getSelectedKeys(source, id),
-            rows = new Set(this.getActiveDataTable(source, id).map(row=>{return ids.has(row.id) ? row : ''}));
-        rows.delete('')
-        return {selectedRows: rows, selectedIds: ids}
     }
 
     getActiveDataTable(source){
@@ -156,53 +127,19 @@ class AvailableDataSourceTable extends React.Component{
         );
     }
 
-    buildDataTable(mechanismName, parameterList){
-    }
-
-    getDataTable(source){
-        rpc.get_parameters(source)
-    }
-
-    onSelectedRowChange(selectedRows){
-        var activeDataSource = this.state.selectedDataSources[this.props.id],
-            loggedParameters = [];
-        for (const selected of selectedRows){
-            loggedParameters.push({
-                name:selected.name,
-                rowKey:selected.id
-            });
-        }
-        this.props.setPlotSpecs(this.props.id, {mechanism:activeDataSource, parameters:loggedParameters});
-    }
-
-    updateSelectedRowsFromProps(){
-    }
-
     onChange(e, row){
-        const isChecked = e.target.checked,
-            id = this.props.id,
-            source = this.getActiveDataSource(id),
-            idsAndRows = this.getSelectedRowsAndIds(source, id),
-            currentlySelectedRows = idsAndRows['selectedRows'];
+        const {id, addDataSource, removeDataSource} = this.props,
+            isChecked = e.target.checked;
         if (isChecked){
-
-            currentlySelectedRows.add(row);
+            addDataSource({id:id, dataSourceId:row.id})
         }
         else {
-            for (const val of currentlySelectedRows){
-                if (val.id === row.id){
-                    currentlySelectedRows.delete(val)
-                    break
-                }
-            };
+            removeDataSource({id:id, dataSourceId:row.id})
         }
-        this.onSelectedRowChange(currentlySelectedRows)
     }
 
     render() {
-        var id = this.props.id,
-            activeDataSource = this.getActiveDataSource(id),
-            activeDataTable = this.getActiveDataTable(activeDataSource, id);
+        let activeDataTable = this.getActiveDataTable();
         return (
             <div>
                 <div className={'table-title-label-container'}

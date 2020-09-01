@@ -4,7 +4,6 @@ import {DEFAULT_TAB_KEY} from "./constants";
 export const initialState = {
     mapParentIdToTabFocus:{},
     mapParentIdToComponentFocus:{},
-    mapParentIdToSelectedDataSources:{},
     mapParentIdToPlotType:{}
 };
 

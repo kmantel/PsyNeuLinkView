@@ -3,7 +3,6 @@ import * as _ from 'lodash';
 
 export const getMapParentIdToTabFocus = state => state.mapParentIdToTabFocus;
 export const getMapParentIdToComponentFocus = state => state.mapParentIdToComponentFocus;
-export const getMapParentIdToSelectedDataSources = state => state.mapParentIdToSelectedDataSources;
 export const getMapParentIdToPlotType = state => state.mapParentIdToPlotType;
 
 export const getSubplotConfigFormMetadata = createSelector(
@@ -24,13 +23,11 @@ export const getSubplotConfigFormMetadata = createSelector(
 
 export const getConfigureTabMetadata = createSelector(
     getMapParentIdToComponentFocus,
-    getMapParentIdToSelectedDataSources,
-    (com, sel) => {
+    com => {
         let ids = Object.keys(com);
         return _.fromPairs(ids.map(
             id => [id, {
-                comFocus:com[id],
-                selected:sel[id]
+                comFocus:com[id]
             }]
         )) ?? {}
     }

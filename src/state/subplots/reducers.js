@@ -16,7 +16,7 @@ export function reducer(state = initialState, action) {
         case atypes.SUBPLOT_INITIALIZE:
             var {id, plotType, name, dataSources} = action,
                 counter = util.getDefaultNameCounter(state, plotType, name);
-            dataSources = dataSources ?? new Set();
+            dataSources = new Set([...dataSources]) ?? new Set();
             return Object.assign({}, state, {
                 mapIdToName: {...state.mapIdToName, [id]:name},
                 mapIdToPlotType: {...state.mapIdToPlotType, [id]:plotType},
