@@ -1,11 +1,24 @@
 import React from 'react';
 import 'antd/dist/antd.css';
-import { Select } from 'antd';
+import {Select} from 'antd';
 import {Icon} from "@blueprintjs/core";
+import {connect} from "react-redux";
+import {setComponentFocus} from "../state/subplot-config-form/actions";
+import {getMapParentIdToComponentFocus} from "../state/subplot-config-form/selectors";
 
 const { Option } = Select;
 
-export default class ComponentSelect extends React.Component {
+const mapStateToProps = ({subplotConfigForm}) => {
+    return {
+        idToComponentFocus: getMapParentIdToComponentFocus(subplotConfigForm)
+    }
+};
+
+const mapDispatchToProps = dispatch => ({
+    setComponentFocus: ({parentId, tabKey}) => dispatch(setComponentFocus({parentId, tabKey}))
+});
+
+class ComponentSelect extends React.Component {
     constructor(props) {
         super(props);
         this.bindThisToFunctions = this.bindThisToFunctions.bind(this);
@@ -24,7 +37,8 @@ export default class ComponentSelect extends React.Component {
     }
 
     onChange(value) {
-        this.props.selectionHook(value);
+        let {id, setComponentFocus} = this.props;
+        setComponentFocus({parentId: id, tabKey: value});
     }
 
     onBlur() {
@@ -36,7 +50,9 @@ export default class ComponentSelect extends React.Component {
     onSearch(val) {
     }
     render() {
+        var {id, idToComponentFocus} = this.props;
         var componentNames = [];
+        var activeOption = idToComponentFocus[id] ?? null;
         for (const name of this.props.components){
             componentNames.push(
                 <Option key={name}
@@ -63,9 +79,11 @@ export default class ComponentSelect extends React.Component {
                 filterOption={(input, option) =>
                     option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                 }
-                value={this.props.activeDataSource}
+                value={activeOption}
             >
                 {componentNames}
             </Select>)
     }
 }
+
+export default connect(mapStateToProps, mapDispatchToProps)(ComponentSelect);

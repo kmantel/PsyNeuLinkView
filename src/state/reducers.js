@@ -1,6 +1,5 @@
 import {reducer as configuration} from './configuration/reducers'
 import {reducer as core} from "./core/reducers";
-import {reducer as psyNeuLink} from "./psyneulink/reducers"
 import {reducer as psyNeuLinkComponents} from "./psyneulink-components/reducers"
 import {reducer as psyNeuLinkParameters} from "./psyneulink-parameters/reducers"
 import {reducer as psyNeuLinkRegistry} from "./psyneulink-registry/reducers"
@@ -15,7 +14,6 @@ export const rootReducer = combineReducers(
     {
         configuration: configuration,
         core: core,
-        psyNeuLink: psyNeuLink,
         psyNeuLinkComponents: psyNeuLinkComponents,
         psyNeuLinkParameters: psyNeuLinkParameters,
         psyNeuLinkRegistry:psyNeuLinkRegistry,

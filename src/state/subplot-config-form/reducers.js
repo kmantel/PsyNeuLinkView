@@ -3,6 +3,8 @@ import {DEFAULT_TAB_KEY} from "./constants";
 
 export const initialState = {
     mapParentIdToTabFocus:{},
+    mapParentIdToComponentFocus:{},
+    mapParentIdToSelectedDataSources:{},
     mapParentIdToPlotType:{}
 };
 
@@ -18,6 +20,11 @@ export function reducer(state = initialState, action) {
             var {parentId, tabKey} = action;
             return Object.assign({}, state, {
                 mapParentIdToTabFocus: {...state.mapParentIdToTabFocus, [parentId]:tabKey}
+            });
+        case atypes.SUBPLOT_CONFIG_FORM_SET_COMPONENT_FOCUS:
+            var {parentId, tabKey} = action;
+            return Object.assign({}, state, {
+                mapParentIdToComponentFocus: {...state.mapParentIdToComponentFocus, [parentId]:tabKey}
             });
         default:
             return state

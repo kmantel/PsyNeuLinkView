@@ -9,6 +9,7 @@ export const SUBPLOT_INITIALIZE = 'initialize_subplot_config_form';
 export const SUBPLOT_ADD_DATA_SOURCE = 'add_datasource';
 export const SUBPLOT_REMOVE_DATA_SOURCE = 'remove_datasource';
 export const SUBPLOT_EDIT_METADATA = 'edit_subplot_metadata';
+export const SUBPLOT_CONFIG_FORM_SET_COMPONENT_FOCUS = 'subplot_config_form_set_component_focus';
 export const SUBPLOT_CONFIG_FORM_SET_TAB_FOCUS = 'subplot_config_form_set_tab_focus';
 export const SUBPLOT_GRID_SET_PLOT = 'set_plot_in_grid';
 export const SUBPLOT_GRID_SET_DROP_FOCUS = 'set_grid_drop_focus';

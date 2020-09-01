@@ -1,15 +1,11 @@
 import React from 'react'
 import {Formik} from 'formik'
 import {createId} from "../../state/util";
-import {PNL_PREFIX, ID_LEN} from "../../keywords";
-import {
-    SubmitButton, Input, Checkbox,
-    ResetButton, FormikDebug, Form, FormItem
-} from "formik-antd"
-import {message, Button, Row, Col, Divider} from "antd"
+import {ID_LEN, PNL_PREFIX} from "../../keywords";
+import {Form} from "formik-antd"
+import {Divider, message} from "antd"
 import SelectedDataSourceTable from "../selected-data-source-table";
 import {Tab, Tabs} from "@blueprintjs/core";
-import {registerMechanism} from "../../state/psyneulink/actions";
 import '../../css/paramform.css';
 import AvailableDataSourceTable from "../available-data-source-table";
 import {connect} from "react-redux";
@@ -32,7 +28,6 @@ const mapStateToProps = ({core, subplotConfigForm, psyNeuLinkRegistry}) => {
 const mapDispatchToProps = dispatch => (
     {
         registerComponent: ({id, name}) => dispatch(registerComponent({id, name})),
-        registerMechanism: mechanismName => dispatch(registerMechanism(mechanismName)),
         setTabFocus: ({parentId, tabKey})=>dispatch(setTabFocus({parentId, tabKey}))
     }
 );
@@ -94,7 +89,6 @@ class SubplotConfigForm extends React.Component{
             let id = createId(idSet, PNL_PREFIX, ID_LEN);
             idSet.add(id);
             this.props.registerComponent({id:id, name:m});
-            this.props.registerMechanism(m);
         });
         this.setState({components:message})
     }
@@ -103,9 +97,16 @@ class SubplotConfigForm extends React.Component{
         var tableHeight = this.props.size.height - (this.props.padding * 2);
         return([
             <Divider type={'vertical'}/>,
-            <AvailableDataSourceTable name={`${this.props.id}-available-data`} id={this.props.id} components={this.state.components} size={{height: tableHeight, width:"100%"}}/>,
+            <AvailableDataSourceTable
+                name={`${this.props.id}-available-data`}
+                id={this.props.id}
+                components={this.state.components}
+                size={{height: tableHeight, width:"100%"}}/>,
             <Divider type={'vertical'}/>,
-            <SelectedDataSourceTable name={`${this.props.id}-selected-data`} id={this.props.id} size={{height: tableHeight, width:"100%"}}/>
+            <SelectedDataSourceTable
+                name={`${this.props.id}-selected-data`}
+                id={this.props.id}
+                size={{height: tableHeight, width:"100%"}}/>
         ])
     }
 

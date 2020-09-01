@@ -1,33 +1,41 @@
-import { Table, AddRowButton, RemoveRowButton, Form, Input, Radio } from "formik-antd"
-import {Divider, Button, Typography, Space, Empty, Checkbox} from "antd"
-import { Formik } from "formik"
+import {Input} from "formik-antd"
+import {Checkbox, Divider, Empty, Typography} from "antd"
 import * as React from "react"
 import ComponentSelect from "./component-select";
-import Highlighter from 'react-highlight-words';
-import { SendOutlined, SearchOutlined } from "@ant-design/icons"
-import { connect } from 'react-redux'
+import {connect} from 'react-redux';
 import VirtualTable from "./virtual-table";
-
 import * as _ from "lodash";
-import {addPlot, setPlotSpecs} from "../state/core/actions";
-import {registerParameters} from "../state/psyneulink/actions";
-import {registerParameters as _registerParameters} from "../state/psyneulink-parameters/actions"
+import {setPlotSpecs} from "../state/core/actions";
+import {registerParameters} from "../state/psyneulink-parameters/actions"
 import {addDataSource, removeDataSource} from "../state/subplots/actions";
 import {createId} from "../state/util";
 import {ID_LEN, PNL_PREFIX} from "../keywords";
-import {getPsyNeuLinkIdSet, getPsyNeuLinkMapNameToId} from "../state/psyneulink-registry/selectors";
+import {
+    getPsyNeuLinkIdSet,
+    getPsyNeuLinkMapIdToName,
+    getPsyNeuLinkMapNameToId
+} from "../state/psyneulink-registry/selectors";
+import {
+    getMapParentIdToComponentFocus,
+    getMapParentIdToSelectedDataSources
+} from "../state/subplot-config-form/selectors";
+import {setComponentFocus} from "../state/subplot-config-form/actions";
+import {getComponentMapIdToParameterSet} from "../state/psyneulink-components/selectors";
 
 const { Text } = Typography;
-
 const electron = window.require('electron');
 const ipcRenderer  = electron.ipcRenderer;
 const rpc = window.interfaces.rpc;
 
-const mapStateToProps = ({core, psyNeuLinkRegistry}) => {
+const mapStateToProps = ({core, psyNeuLinkRegistry, psyNeuLinkComponents, subplotConfigForm}) => {
     return {
         plotSpecs:core.plotSpecs,
         psyNeuLinkIdSet:getPsyNeuLinkIdSet(psyNeuLinkRegistry),
-        psyNeuLinkMapNameToId:getPsyNeuLinkMapNameToId(psyNeuLinkRegistry)
+        psyNeuLinkMapIdToName:getPsyNeuLinkMapIdToName(psyNeuLinkRegistry),
+        psyNeuLinkMapNameToId:getPsyNeuLinkMapNameToId(psyNeuLinkRegistry),
+        psyNeuLinkMapComponentIdToParameterIds:getComponentMapIdToParameterSet(psyNeuLinkComponents),
+        subplotMapIdToComponentFocus:getMapParentIdToComponentFocus(subplotConfigForm),
+        subplotMapIdToSelectedDataSources:getMapParentIdToSelectedDataSources(subplotConfigForm)
     }
 };
 
@@ -35,8 +43,8 @@ const mapDispatchToProps = dispatch => ({
     addDataSource: (id, dataSourceId) => dispatch(addDataSource(id, dataSourceId)),
     removeDataSource: (id, dataSourceId) => dispatch(removeDataSource(id, dataSourceId)),
     setPlotSpecs: (id, plotSpecs) => dispatch(setPlotSpecs(id, plotSpecs)),
-    registerParameters: (mechanism, parameterList) => dispatch(registerParameters(mechanism, parameterList)),
-    _registerParameters: ({ownerId, parameterSpecs}) => dispatch(_registerParameters({ownerId, parameterSpecs}))
+    registerParameters: ({ownerId, parameterSpecs}) => dispatch(registerParameters({ownerId, parameterSpecs})),
+    setComponentFocus: ({id, tabKey}) => dispatch(setComponentFocus({id, tabKey}))
 });
 
 class AvailableDataSourceTable extends React.Component{
@@ -83,7 +91,7 @@ class AvailableDataSourceTable extends React.Component{
             idSet.add(id);
             parameterSpecs[id] = p
         });
-        this.props._registerParameters({ownerId: ownerId, parameterSpecs: parameterSpecs})
+        this.props.registerParameters({ownerId: ownerId, parameterSpecs: parameterSpecs})
     }
 
     bindThisToFunctions(){
@@ -123,27 +131,29 @@ class AvailableDataSourceTable extends React.Component{
         return {selectedRows: rows, selectedIds: ids}
     }
 
-    getActiveDataTable(source, id){
-        if (_.isEmpty(source) || _.isEmpty(id)){
-            return []
-        }
-        if (!(source in this.state.parameterLists)){
-            return []
-        }
-        var baseParameterList, plotSpecs, rowid, selectedKeys, dataTable = [];
-        selectedKeys = this.getSelectedKeys(source, id);
-        baseParameterList = _.cloneDeep(this.state.parameterLists[source]);
-        for (var i = 0; i < baseParameterList.length; i++) {
-            rowid = `${id}-${source}-${i}`;
-            dataTable.push(
-                {
-                    id: rowid,
-                    name: baseParameterList[i],
-                    selected: selectedKeys.has(rowid)
+    getActiveDataTable(source){
+        let {
+            id: plotId,
+            subplotMapIdToComponentFocus: mapIdToFocus,
+            subplotMapIdToSelectedDataSources: selected,
+            psyNeuLinkMapComponentIdToParameterIds: mapComponentIdToParameterIds,
+            psyNeuLinkMapNameToId: mapNameToId,
+            psyNeuLinkMapIdToName: idToName
+            } = this.props;
+        let componentFocus = mapIdToFocus[plotId];
+        if (!componentFocus){return []}
+        let componentId = mapNameToId[componentFocus];
+        let available = mapComponentIdToParameterIds[componentId];
+        selected = selected[plotId] ?? new Set();
+        return [...available].map(
+            parameterId => {
+                return {
+                    id: parameterId,
+                    name: idToName[parameterId],
+                    selected: selected.has(parameterId)
                 }
-            )
-        }
-        return dataTable
+            }
+        );
     }
 
     buildDataTable(mechanismName, parameterList){
@@ -214,10 +224,9 @@ class AvailableDataSourceTable extends React.Component{
                         style={{float:"right"}}
                     >
                         <ComponentSelect
+                            id={this.props.id}
                             bordered={false}
                             components={this.props.components}
-                            selectionHook={this.setActiveDataSource}
-                            activeDataSource={activeDataSource}
                         />
                     </div>
                 </div>

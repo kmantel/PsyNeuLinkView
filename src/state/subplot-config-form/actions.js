@@ -15,3 +15,11 @@ export function setTabFocus({parentId, tabKey}) {
         tabKey: tabKey
     }
 }
+
+export function setComponentFocus({parentId, tabKey}) {
+    return {
+        type: atypes.SUBPLOT_CONFIG_FORM_SET_COMPONENT_FOCUS,
+        parentId: parentId,
+        tabKey: tabKey
+    }
+}

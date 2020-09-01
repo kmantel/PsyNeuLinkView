@@ -12,6 +12,12 @@ export function reducer(state = initialState, action) {
             return Object.assign({}, state, {
                 mapIdToName: {...state.mapIdToName, [id]:name}
             });
+        case atypes.PSYNEULINK_REGISTER_PARAMETERS:
+            var {ownerId, parameterSpecs} = action;
+            var parameterIds = Object.keys(parameterSpecs);
+            return Object.assign({}, state, {
+                mapIdToParameterSet: {...state.mapIdToParameterSet, [ownerId]:new Set([...parameterIds])}
+            });
         default:
             return state
     }
