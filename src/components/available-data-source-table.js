@@ -11,7 +11,11 @@ import VirtualTable from "./virtual-table";
 import * as _ from "lodash";
 import {addPlot, setPlotSpecs} from "../state/core/actions";
 import {registerParameters} from "../state/psyneulink/actions";
+import {registerParameters as _registerParameters} from "../state/psyneulink-parameters/actions"
 import {addDataSource, removeDataSource} from "../state/subplots/actions";
+import {createId} from "../state/util";
+import {ID_LEN, PNL_PREFIX} from "../keywords";
+import {getPsyNeuLinkIdSet, getPsyNeuLinkMapNameToId} from "../state/psyneulink-registry/selectors";
 
 const { Text } = Typography;
 
@@ -19,9 +23,11 @@ const electron = window.require('electron');
 const ipcRenderer  = electron.ipcRenderer;
 const rpc = window.interfaces.rpc;
 
-const mapStateToProps = ({core, psyneulinkParameters}) => {
+const mapStateToProps = ({core, psyNeuLinkRegistry}) => {
     return {
-        plotSpecs:core.plotSpecs
+        plotSpecs:core.plotSpecs,
+        psyNeuLinkIdSet:getPsyNeuLinkIdSet(psyNeuLinkRegistry),
+        psyNeuLinkMapNameToId:getPsyNeuLinkMapNameToId(psyNeuLinkRegistry)
     }
 };
 
@@ -29,7 +35,8 @@ const mapDispatchToProps = dispatch => ({
     addDataSource: (id, dataSourceId) => dispatch(addDataSource(id, dataSourceId)),
     removeDataSource: (id, dataSourceId) => dispatch(removeDataSource(id, dataSourceId)),
     setPlotSpecs: (id, plotSpecs) => dispatch(setPlotSpecs(id, plotSpecs)),
-    registerParameters: (mechanism, parameterList) => dispatch(registerParameters(mechanism, parameterList))
+    registerParameters: (mechanism, parameterList) => dispatch(registerParameters(mechanism, parameterList)),
+    _registerParameters: ({ownerId, parameterSpecs}) => dispatch(_registerParameters({ownerId, parameterSpecs}))
 });
 
 class AvailableDataSourceTable extends React.Component{
@@ -43,14 +50,10 @@ class AvailableDataSourceTable extends React.Component{
         super(props);
         this.bindThisToFunctions = this.bindThisToFunctions.bind(this);
         this.bindThisToFunctions();
-        ipcRenderer.on(
-            'parameterList', (event, message)=> {
-                var parameterLists = _.cloneDeep(this.state.parameterLists);
-                this.props.registerParameters(message.name, message.parameters);
-                parameterLists[message.name] = message.parameters;
-                this.setState({parameterLists:parameterLists})
-            }
-        );
+        if (this.props.components.length > 0){
+            this.props.components.forEach( component => {this.getDataTable(component)} )
+        }
+        ipcRenderer.on('parameterList', this.handleParameterList);
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
@@ -70,6 +73,19 @@ class AvailableDataSourceTable extends React.Component{
         }
     }
 
+    handleParameterList(event, message) {
+        let idSet = new Set([...this.props.psyNeuLinkIdSet]);
+        let {ownerName, parameters} = message;
+        let ownerId = this.props.psyNeuLinkMapNameToId[ownerName];
+        let parameterSpecs = {};
+        parameters.forEach(p=>{
+            let id = createId(idSet, PNL_PREFIX, ID_LEN);
+            idSet.add(id);
+            parameterSpecs[id] = p
+        });
+        this.props._registerParameters({ownerId: ownerId, parameterSpecs: parameterSpecs})
+    }
+
     bindThisToFunctions(){
         this.render = this.render.bind(this);
         this.setActiveDataSource = this.setActiveDataSource.bind(this);
@@ -78,6 +94,7 @@ class AvailableDataSourceTable extends React.Component{
         this.buildDataTable = this.buildDataTable.bind(this);
         this.updateSelectedRowsFromProps = this.updateSelectedRowsFromProps.bind(this);
         this.onChange = this.onChange.bind(this);
+        this.handleParameterList = this.handleParameterList.bind(this);
     }
 
     setActiveDataSource(source){

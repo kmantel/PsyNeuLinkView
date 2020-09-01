@@ -1,27 +1,29 @@
 import React from 'react'
-import { Formik } from 'formik'
-import { SubmitButton, Input, Checkbox,
-    ResetButton, FormikDebug, Form, FormItem} from "formik-antd"
-import { message, Button, Row, Col, Divider } from "antd"
-import { Persist } from 'formik-persist'
+import {Formik} from 'formik'
+import {createId} from "../../state/util";
+import {PNL_PREFIX, ID_LEN} from "../../keywords";
+import {
+    SubmitButton, Input, Checkbox,
+    ResetButton, FormikDebug, Form, FormItem
+} from "formik-antd"
+import {message, Button, Row, Col, Divider} from "antd"
 import SelectedDataSourceTable from "../selected-data-source-table";
 import {Tab, Tabs} from "@blueprintjs/core";
-import {store} from "../../state/store";
-import {setActiveParamTab} from "../../state/core/actions";
 import {registerMechanism} from "../../state/psyneulink/actions";
-import {setMainTabFocus} from "../../state/configuration/actions";
 import '../../css/paramform.css';
 import AvailableDataSourceTable from "../available-data-source-table";
 import {connect} from "react-redux";
-import * as _ from 'lodash'
 import {getMapParentIdToTabFocus} from "../../state/subplot-config-form/selectors";
 import {setTabFocus} from "../../state/subplot-config-form/actions";
+import {registerComponent} from "../../state/psyneulink-components/actions";
+import {getPsyNeuLinkIdSet} from "../../state/psyneulink-registry/selectors";
 
 function validateRequired(value) {
 }
 
-const mapStateToProps = ({core, subplotConfigForm}) => {
+const mapStateToProps = ({core, subplotConfigForm, psyNeuLinkRegistry}) => {
     return {
+        psyNeuLinkIdSet: getPsyNeuLinkIdSet(psyNeuLinkRegistry),
         mapIdToTabFocus: getMapParentIdToTabFocus(subplotConfigForm),
         activeComposition: core.activeComposition
     }
@@ -29,6 +31,7 @@ const mapStateToProps = ({core, subplotConfigForm}) => {
 
 const mapDispatchToProps = dispatch => (
     {
+        registerComponent: ({id, name}) => dispatch(registerComponent({id, name})),
         registerMechanism: mechanismName => dispatch(registerMechanism(mechanismName)),
         setTabFocus: ({parentId, tabKey})=>dispatch(setTabFocus({parentId, tabKey}))
     }
@@ -44,12 +47,7 @@ class SubplotConfigForm extends React.Component{
         super(props);
         this.bindThisToFunctions = this.bindThisToFunctions.bind(this);
         this.bindThisToFunctions();
-        ipcRenderer.on(
-            'componentList', (event, message)=> {
-                message.forEach(m=>this.props.registerMechanism(m));
-                this.setState({components:message})
-            }
-        );
+        ipcRenderer.on('componentList', this.handleComponentList);
         this.state = {
             activeTab:`${this.props.id}-data`,
             components:[]
@@ -64,6 +62,7 @@ class SubplotConfigForm extends React.Component{
         this.getOptionsForm = this.getOptionsForm.bind(this);
         this.getDataForm = this.getDataForm.bind(this);
         this.getActiveForm = this.getActiveForm.bind(this);
+        this.handleComponentList = this.handleComponentList.bind(this);
     }
 
     componentDidMount() {
@@ -87,6 +86,17 @@ class SubplotConfigForm extends React.Component{
         let {id, setTabFocus} = this.props;
         this.setState({activeTab:new_tab_id});
         setTabFocus({parentId:id, tabKey:new_tab_id});
+    }
+
+    handleComponentList(event, message) {
+        let idSet = new Set([...this.props.psyNeuLinkIdSet]);
+        message.forEach(m=>{
+            let id = createId(idSet, PNL_PREFIX, ID_LEN);
+            idSet.add(id);
+            this.props.registerComponent({id:id, name:m});
+            this.props.registerMechanism(m);
+        });
+        this.setState({components:message})
     }
 
     getDataForm(){

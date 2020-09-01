@@ -24,26 +24,26 @@ export function reducer(state = initialState, action) {
             });
 
         case atypes.PSYNEULINK_REGISTER_PARAMETERS:
-            var paramNameList = action.parameters,
-                paramId,
-                idBuffer = {},
-                mechName = action.mechanismName,
-                mechNameParamNameBuffer = {};
-            for (const paramName of paramNameList){
-                paramId = createId(state.setIds, PNL_PREFIX, ID_LEN);
-                mechNameParamNameBuffer[[mechName, paramName]] = paramId;
-                idBuffer[paramId] = {
-                    type:'parameter',
-                    name:paramName,
-                    mechanism:mechName,
-                    mechanismId:state.mapMechNameToId[mechName]
-                }
-            }
-            return Object.assign({}, state, {
-                mapMechNameParamNameToId:{...state.parameters, ...mechNameParamNameBuffer},
-                mapIdToData:{...state.idLookup, ...idBuffer},
-                mapMechNameToParamDataArr:{...state.mapMechNameToParamDataArr, [mechName]:Object.values(idBuffer)}
-            });
+            // var paramNameList = action.parameters,
+            //     paramId,
+            //     idBuffer = {},
+            //     mechName = action.mechanismName,
+            //     mechNameParamNameBuffer = {};
+            // for (const paramName of paramNameList){
+            //     paramId = createId(state.setIds, PNL_PREFIX, ID_LEN);
+            //     mechNameParamNameBuffer[[mechName, paramName]] = paramId;
+            //     idBuffer[paramId] = {
+            //         type:'parameter',
+            //         name:paramName,
+            //         mechanism:mechName,
+            //         mechanismId:state.mapMechNameToId[mechName]
+            //     }
+            // }
+            // return Object.assign({}, state, {
+            //     mapMechNameParamNameToId:{...state.parameters, ...mechNameParamNameBuffer},
+            //     mapIdToData:{...state.idLookup, ...idBuffer},
+            //     mapMechNameToParamDataArr:{...state.mapMechNameToParamDataArr, [mechName]:Object.values(idBuffer)}
+            // });
 
         default:
             return state

@@ -44,7 +44,7 @@ export default class CompositionConfigForm extends React.Component{
                 {/*<pre style={{ flex: 1 }}>*/}
                 {/*    <FormikDebug />*/}
                 {/*</pre>*/}
-                <Persist name="composition-form" />
+                {/*<Persist name="composition-form" />*/}
             </Form>
         </Formik>;
     }

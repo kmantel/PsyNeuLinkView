@@ -1,12 +1,12 @@
 import * as atypes from '../action-types';
 
-export function registerParameters(
+export function registerParameters({
     ownerId,
-    name
-){
+    parameterSpecs
+}){
     return {
         type: atypes.PSYNEULINK_REGISTER_PARAMETERS,
         ownerId: ownerId,
-        name: name
+        parameterSpecs: parameterSpecs
     }
 }
