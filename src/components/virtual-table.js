@@ -1,19 +1,24 @@
-import React, { useState, useEffect, useRef, createRef } from 'react';
+import React, {createRef} from 'react';
 import 'antd/dist/antd.css';
-import { VariableSizeGrid as Grid } from 'react-window';
+import {VariableSizeGrid as Grid} from 'react-window';
 import ResizeObserver from 'rc-resize-observer';
 import classNames from 'classnames';
-import {Button, Table, Icons} from 'antd';
-import { Checkbox } from 'antd';
+import {Checkbox, Table} from 'antd';
 import '../css/paramform.css'
-import {row} from "mathjs";
-import {DeleteOutlined} from '@ant-design/icons';
+import {connect} from 'react-redux'
+import {getMapParentIdToTabFocus} from "../state/subplot-config-form/selectors";
+
+const mapStateToProps = ({subplotConfigForm}) => {
+    return {
+        mapParentIdToTabFocus:getMapParentIdToTabFocus(subplotConfigForm),
+    }
+};
 
 function onChange(e) {
     console.log(`checked = ${e.target.checked}`);
 }
 
-export default class VirtualTable extends React.Component{
+class VirtualTable extends React.Component{
     constructor() {
         super();
         this.gridRef = createRef();
@@ -63,7 +68,7 @@ export default class VirtualTable extends React.Component{
         const gridRef = this.gridRef;
         gridRef.current.resetAfterIndices({
             columnIndex: 0,
-            shouldForceUpdate: false,
+            shouldForceUpdate: true,
         });
     };
 
@@ -161,3 +166,5 @@ export default class VirtualTable extends React.Component{
         );
     }
 }
+
+export default connect(mapStateToProps)(VirtualTable)
