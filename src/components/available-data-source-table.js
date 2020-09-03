@@ -1,5 +1,5 @@
 import {Input} from "formik-antd"
-import {Checkbox, Divider, Empty, Typography} from "antd"
+import {Menu, Checkbox, Divider, Empty, Typography} from "antd"
 import * as React from "react"
 import ComponentSelect from "./component-select";
 import {connect} from 'react-redux';
@@ -142,32 +142,14 @@ class AvailableDataSourceTable extends React.Component{
         let activeDataTable = this.getActiveDataTable();
         return (
             <div>
-                <div className={'table-title-label-container'}
-                    style={{width:this.props.size.width}}>
-                    <div
-                        className={'table-title-label'}
-                        style={{float:"left"}}
-                    >
-                        <Input
-                            style={{cursor: 'default'}}
-                            value={'Available data sources'}
-                            disabled={true}
-                            bordered={false}
-                        />
-
-                    </div>
-                    <div
-                        className={'table-title-component-select'}
-                        style={{float:"right"}}
-                    >
-                        <ComponentSelect
-                            id={this.props.id}
-                            bordered={false}
-                            components={this.props.components}
-                        />
-                    </div>
+                <div style={{width:this.props.size.width}}>
+                    <div/>
                 </div>
-                <Divider />
+                <div className={'horizontal-divider-container'}>
+                    <Divider orientation="left" plain>
+                        Available data sources
+                    </Divider>
+                </div>
                 <VirtualTable
                     name={`${this.props.id}-dataTables`}
                     rowKey={(row) => row.id}

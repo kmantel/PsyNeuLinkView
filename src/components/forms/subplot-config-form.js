@@ -2,15 +2,15 @@ import React from 'react'
 import {Formik} from 'formik'
 import {createId} from "../../state/util";
 import {ID_LEN, PNL_PREFIX} from "../../keywords";
-import {Form} from "formik-antd"
-import {Divider, message} from "antd"
+import {FormItem, Input, Form} from "formik-antd"
+import {Divider, Menu, message} from "antd"
 import SelectedDataSourceTable from "../selected-data-source-table";
-import {Tab, Tabs} from "@blueprintjs/core";
+import {Spinner, Tab, Tabs} from "@blueprintjs/core";
 import '../../css/paramform.css';
 import AvailableDataSourceTable from "../available-data-source-table";
 import {connect} from "react-redux";
-import {getMapParentIdToTabFocus} from "../../state/subplot-config-form/selectors";
-import {setTabFocus} from "../../state/subplot-config-form/actions";
+import {getMapParentIdToComponentFocus, getMapParentIdToTabFocus} from "../../state/subplot-config-form/selectors";
+import {setComponentFocus, setTabFocus} from "../../state/subplot-config-form/actions";
 import {registerComponent} from "../../state/psyneulink-components/actions";
 import {getPsyNeuLinkIdSet} from "../../state/psyneulink-registry/selectors";
 
@@ -21,6 +21,7 @@ const mapStateToProps = ({core, subplotConfigForm, psyNeuLinkRegistry}) => {
     return {
         psyNeuLinkIdSet: getPsyNeuLinkIdSet(psyNeuLinkRegistry),
         mapIdToTabFocus: getMapParentIdToTabFocus(subplotConfigForm),
+        mapIdToComponentFocus: getMapParentIdToComponentFocus(subplotConfigForm),
         activeComposition: core.activeComposition
     }
 };
@@ -28,7 +29,8 @@ const mapStateToProps = ({core, subplotConfigForm, psyNeuLinkRegistry}) => {
 const mapDispatchToProps = dispatch => (
     {
         registerComponent: ({id, name}) => dispatch(registerComponent({id, name})),
-        setTabFocus: ({parentId, tabKey})=>dispatch(setTabFocus({parentId, tabKey}))
+        setTabFocus: ({parentId, tabKey})=>dispatch(setTabFocus({parentId, tabKey})),
+        setComponentFocus: ({parentId, tabKey}) => dispatch(setComponentFocus({parentId, tabKey}))
     }
 );
 
@@ -95,8 +97,49 @@ class SubplotConfigForm extends React.Component{
 
     getDataForm(){
         var tableHeight = this.props.size.height - (this.props.padding * 2);
+        let {mapIdToComponentFocus, id} = this.props
+        let componentTabs =
+            this.state.components.length > 0 ?
+                <Menu
+                    style={{width:'100px'}}
+                    mode="inline"
+                    selectedKeys={[mapIdToComponentFocus[id] ?? null]}
+                    onSelect={
+                        ({key}) => {
+                            this.props.setComponentFocus({
+                                parentId:this.props.id,
+                                tabKey:key
+                            });
+                        }
+                    }
+                >
+                    {this.state.components.map(
+                        c =>
+                            <Menu.Item
+                                key={c}
+                                style={{
+                                    placeSelf: 'center'
+                                }}
+                            >
+                                {c}
+                            </Menu.Item>
+                    )}
+                </Menu>
+                :
+                <div
+                    style={{
+                        width:'100px',
+                        placeSelf:'center'
+                    }}
+                >
+                    <Spinner
+                        size = {Spinner.SIZE_SMALL}
+                        className={"graph_loading_spinner"}/>
+                </div>;
         return([
             <Divider type={'vertical'}/>,
+            componentTabs,
+            <div/>,
             <AvailableDataSourceTable
                 name={`${this.props.id}-available-data`}
                 id={this.props.id}
@@ -110,27 +153,68 @@ class SubplotConfigForm extends React.Component{
         ])
     }
 
-    getOptionsForm(){
-        return [<div/>,<div/>,<div/>,<div/>]
+    getOptionsForm() {
+        let metaDataDivider =
+        <div className={'horizontal-divider-container'}>
+            <Divider orientation="left" plain>
+                Metadata
+            </Divider>
+        </div>
+        let testFormItem = <FormItem
+            name="name"
+            label="name"
+            required={true}
+            validate={validateRequired}
+        >
+            <Input name="firstName" placeholder="Firstname" />
+        </FormItem>;
+        return [metaDataDivider]
     }
 
     getActiveForm(){
         let {id, mapIdToTabFocus} = this.props;
-        switch (mapIdToTabFocus[id]) {
-            case 'configure':
-                return this.getOptionsForm();
-            case 'data':
-                return this.getDataForm();
-            default:
-                return this.getOptionsForm();
-        }
-    }
-
-    render() {
-        var tabs = [
+        let tabs = [
             <Tab key={'configure'} id={'configure'} title= {'Configure'}/>,
             <Tab key={'data'} id={'data'} title= {'Data'}/>
         ];
+        let activeForm;
+        let columnLayout;
+        switch (mapIdToTabFocus[id]) {
+            case 'data':
+                columnLayout = "1fr 1fr 1fr 1fr 50fr 1fr 50fr";
+                activeForm = this.getDataForm();
+                break;
+            default:
+                columnLayout = "1fr 50fr";
+                activeForm = this.getOptionsForm();
+        }
+        let form =
+        <Form
+            style={{
+                padding:`${this.props.padding}px`,
+                display: "grid",
+                gridTemplateColumns: columnLayout,
+                height: this.props.size.height,
+                ...this.props.style
+            }}
+            // labelCol={{ m: 4 }}
+            // wrapperCol={{ m: 2 }}
+        >
+            <div className={'vertical-tab-container'}>
+                <Tabs id="param-tab-group"
+                      className={'vertical'}
+                      onChange={this.handleTabChange}
+                      selectedTabId={this.props.mapIdToTabFocus[this.props.id] ?? 'configure'}
+                      vertical={true}>
+                    {tabs}
+                </Tabs>
+            </div>
+            {activeForm}
+        </Form>;
+        return form
+    }
+
+    render() {
 
         return <Formik
             initialValues={{}}
@@ -141,28 +225,7 @@ class SubplotConfigForm extends React.Component{
                     actions.resetForm();
                 }
             }>
-                <Form
-                    style={{
-                        padding:`${this.props.padding}px`,
-                        display: "grid",
-                        gridTemplateColumns: "1fr 1fr 50fr 1fr 50fr",
-                        height: this.props.size.height,
-                        ...this.props.style
-                    }}
-                    labelCol={{ m: 4 }}
-                    wrapperCol={{ m: 2 }}
-                >
-                    <div className={'vertical-tab-container'}>
-                        <Tabs id="param-tab-group"
-                              className={'vertical'}
-                              onChange={this.handleTabChange}
-                              selectedTabId={this.props.mapIdToTabFocus[this.props.id] ?? 'configure'}
-                              vertical={true}>
-                            {tabs}
-                        </Tabs>
-                    </div>
-                    {this.getActiveForm()}
-                </Form>
+            {this.getActiveForm()}
         </Formik>;
     }
 }

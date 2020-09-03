@@ -1,7 +1,6 @@
 import React from 'react'
 import Layout from './layout'
 import SideBar from './sidebar'
-import PlotterSideBar from "./plotter-sidebar";
 import D3plotter from './plotter'
 import GraphView from './d3model'
 import ToolTipBox from './tooltip-box'
@@ -10,10 +9,9 @@ import ParameterControlBox from './configuration-panel'
 import SettingsPane from './settings'
 import ErrorDispatcher from "../utility/errors/dispatcher";
 import {connect} from "react-redux";
-import {setActiveView, setStyleSheet, setActiveComposition} from "../state/core/actions";
-import {store} from "../state/store";
-import { DndProvider } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
+import {setActiveComposition, setStyleSheet} from "../state/core/actions";
+import {DndProvider} from 'react-dnd';
+import {HTML5Backend} from 'react-dnd-html5-backend';
 
 const fs = window.interfaces.filesystem,
     interp = window.interfaces.interpreter,

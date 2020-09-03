@@ -9,6 +9,7 @@ import {getMapIdToDataSources} from "../state/subplots/selectors";
 import {getPsyNeuLinkMapIdToName} from "../state/psyneulink-registry/selectors";
 import {getPsyNeuLinkParameterMetadata} from "../state/psyneulink-parameters/selectors";
 import {removeDataSource} from "../state/subplots/actions";
+import ComponentSelect from "./component-select";
 
 const { Text } = Typography;
 
@@ -87,22 +88,14 @@ class SelectedDataSourceTable extends React.Component{
         const dataTable = this.buildDataTable();
         return (
                 <div>
-                    <div className={'table-title-label-container'}
-                         style={{width:this.props.size.width}}>
-                        <div
-                            className={'table-title-label'}
-                            style={{float:"left"}}
-                        >
-                            <Input
-                                style={{cursor: 'default'}}
-                                value={'Selected data sources'}
-                                disabled={true}
-                                bordered={false}
-                            />
-
-                        </div>
+                    <div style={{width:this.props.size.width}}>
+                        <div/>
                     </div>
-                    <Divider />
+                    <div className={'horizontal-divider-container'}>
+                        <Divider orientation="left" plain>
+                            Selected data sources
+                        </Divider>
+                    </div>
                     <VirtualTable
                         name={`${this.props.id}-dataTables`}
                         rowKey={(row) => row.id}

@@ -1,14 +1,13 @@
 import React from 'react'
 import '../css/d3model.css'
 import * as d3 from 'd3'
-import add_context_menu from '../utility/add_context_menu'
 import {Resizable} from 're-resizable'
 import {Spinner} from '@blueprintjs/core'
 import {Index} from '../utility/d3-helper/d3-helper'
 import * as _ from 'lodash'
 import {connect} from "react-redux";
 import {store} from "../state/store";
-import {setStyleSheet, setModelAspectRatio} from "../state/core/actions";
+import {setModelAspectRatio, setStyleSheet} from "../state/core/actions";
 
 const mapStateToProps = ({core}) => {
     return {
