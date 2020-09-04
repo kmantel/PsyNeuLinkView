@@ -110,17 +110,12 @@ class SubplotConfigForm extends React.Component{
                                 parentId:this.props.id,
                                 tabKey:key
                             });
-                        }
-                    }
-                >
+                }}>
                     {this.state.components.map(
                         c =>
                             <Menu.Item
                                 key={c}
-                                style={{
-                                    placeSelf: 'center'
-                                }}
-                            >
+                                style={{placeSelf: 'center'}}>
                                 {c}
                             </Menu.Item>
                     )}
@@ -130,14 +125,12 @@ class SubplotConfigForm extends React.Component{
                     style={{
                         width:'100px',
                         placeSelf:'center'
-                    }}
-                >
+                    }}>
                     <Spinner
                         size = {Spinner.SIZE_SMALL}
                         className={"graph_loading_spinner"}/>
                 </div>;
         return([
-            <Divider type={'vertical'}/>,
             componentTabs,
             <div/>,
             <AvailableDataSourceTable
@@ -168,24 +161,20 @@ class SubplotConfigForm extends React.Component{
         >
             <Input name="firstName" placeholder="Firstname" />
         </FormItem>;
-        return [metaDataDivider]
+        return [<div/>, metaDataDivider]
     }
 
     getActiveForm(){
         let {id, mapIdToTabFocus} = this.props;
-        let tabs = [
-            <Tab key={'configure'} id={'configure'} title= {'Configure'}/>,
-            <Tab key={'data'} id={'data'} title= {'Data'}/>
-        ];
         let activeForm;
         let columnLayout;
         switch (mapIdToTabFocus[id]) {
             case 'data':
-                columnLayout = "1fr 1fr 1fr 1fr 50fr 1fr 50fr";
+                columnLayout = "1fr 1fr 1fr 50fr 1fr 50fr";
                 activeForm = this.getDataForm();
                 break;
             default:
-                columnLayout = "1fr 50fr";
+                columnLayout = "1fr 1fr 50fr";
                 activeForm = this.getOptionsForm();
         }
         let form =
@@ -200,14 +189,25 @@ class SubplotConfigForm extends React.Component{
             // labelCol={{ m: 4 }}
             // wrapperCol={{ m: 2 }}
         >
+
             <div className={'vertical-tab-container'}>
-                <Tabs id="param-tab-group"
-                      className={'vertical'}
-                      onChange={this.handleTabChange}
-                      selectedTabId={this.props.mapIdToTabFocus[this.props.id] ?? 'configure'}
-                      vertical={true}>
-                    {tabs}
-                </Tabs>
+                <Menu
+                    style={{width:'110px', height:'100%'}}
+                    mode="inline"
+                    selectedKeys={[this.props.mapIdToTabFocus[this.props.id] ?? 'configure']}
+                    onSelect={
+                        ({key}) => {this.handleTabChange(key)}}>
+                    <Menu.Item
+                        key={'configure'}
+                        style={{placeSelf: 'center'}}>
+                        {'Configure'}
+                    </Menu.Item>
+                    <Menu.Item
+                        key={'data'}
+                        style={{placeSelf: 'center'}}>
+                        {'Data'}
+                    </Menu.Item>
+                </Menu>
             </div>
             {activeForm}
         </Form>;
