@@ -1,11 +1,9 @@
 import React from 'react'
-import {Formik} from 'formik'
 import {createId} from "../../state/util";
 import {ID_LEN, PNL_PREFIX} from "../../keywords";
-import {FormItem, Input, Form} from "formik-antd"
-import {Divider, Menu, message} from "antd"
+import {Divider, Form, Input, Menu, message} from "antd"
 import SelectedDataSourceTable from "../selected-data-source-table";
-import {Spinner, Tab, Tabs} from "@blueprintjs/core";
+import {Spinner} from "@blueprintjs/core";
 import '../../css/paramform.css';
 import AvailableDataSourceTable from "../available-data-source-table";
 import {connect} from "react-redux";
@@ -129,6 +127,7 @@ class SubplotConfigForm extends React.Component{
                     <Spinner
                         size = {Spinner.SIZE_SMALL}
                         className={"graph_loading_spinner"}/>
+                    <Divider type={'vertical'}/>,
                 </div>;
         return([
             componentTabs,
@@ -152,29 +151,51 @@ class SubplotConfigForm extends React.Component{
             <Divider orientation="left" plain>
                 Metadata
             </Divider>
-        </div>
-        let testFormItem = <FormItem
+        </div>;
+
+        let xAxisDivider =
+        <div className={'horizontal-divider-container'}>
+            <Divider orientation="left" plain>
+                x-Axis
+            </Divider>
+        </div>;
+
+        let yAxisDivider =
+        <div className={'horizontal-divider-container'}>
+            <Divider orientation="left" plain>
+                y-Axis
+            </Divider>
+        </div>;
+
+        let testFormItem = <Form.Item
             name="name"
             label="name"
             required={true}
             validate={validateRequired}
         >
             <Input name="firstName" placeholder="Firstname" />
-        </FormItem>;
-        return [<div/>, metaDataDivider]
+        </Form.Item>;
+        return [
+            <div/>, metaDataDivider,
+            <div/>, xAxisDivider,
+            <div/>, yAxisDivider,
+        ]
     }
 
     getActiveForm(){
         let {id, mapIdToTabFocus} = this.props;
         let activeForm;
-        let columnLayout;
+        let outerColumnLayout;
+        let innerColumnLayout;
         switch (mapIdToTabFocus[id]) {
             case 'data':
-                columnLayout = "1fr 1fr 1fr 50fr 1fr 50fr";
+                outerColumnLayout = "1fr 50fr";
+                innerColumnLayout = "1fr 1fr 50fr 1fr 50fr";
                 activeForm = this.getDataForm();
                 break;
             default:
-                columnLayout = "1fr 1fr 50fr";
+                outerColumnLayout = "1fr 100fr";
+                innerColumnLayout = "1fr 100fr";
                 activeForm = this.getOptionsForm();
         }
         let form =
@@ -182,14 +203,11 @@ class SubplotConfigForm extends React.Component{
             style={{
                 padding:`${this.props.padding}px`,
                 display: "grid",
-                gridTemplateColumns: columnLayout,
+                gridTemplateColumns: outerColumnLayout,
                 height: this.props.size.height,
                 ...this.props.style
             }}
-            // labelCol={{ m: 4 }}
-            // wrapperCol={{ m: 2 }}
         >
-
             <div className={'vertical-tab-container'}>
                 <Menu
                     style={{width:'110px', height:'100%'}}
@@ -209,24 +227,22 @@ class SubplotConfigForm extends React.Component{
                     </Menu.Item>
                 </Menu>
             </div>
-            {activeForm}
+            <div
+                style={{
+                    gridTemplateColumns: innerColumnLayout,
+                    display: "grid"
+                }}>
+                {activeForm}
+            </div>
         </Form>;
         return form
     }
 
     render() {
 
-        return <Formik
-            initialValues={{}}
-            onSubmit={
-                (values,actions)=>{
-                    message.info(JSON.stringify(values, null, 4));
-                    actions.setSubmitting(false);
-                    actions.resetForm();
-                }
-            }>
+        return <div>
             {this.getActiveForm()}
-        </Formik>;
+        </div>;
     }
 }
 

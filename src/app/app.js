@@ -1,7 +1,6 @@
 // import packages
 import React from 'react';
 
-import "formik-antd/"
 import "antd/dist/antd.css"
 
 // import redux provider and store

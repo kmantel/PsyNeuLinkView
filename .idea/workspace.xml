@@ -3,7 +3,13 @@
   <component name="ChangeListManager">
     <list default="true" id="0426a943-ef89-4391-a3a0-8152f91aa099" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/app.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/available-data-source-table.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/available-data-source-table.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/forms/composition-config-form.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/forms/composition-config-form.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/forms/subplot-config-form.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/forms/subplot-config-form.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/selected-data-source-table.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/selected-data-source-table.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/yarn.lock" beforeDir="false" afterPath="$PROJECT_DIR$/yarn.lock" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -220,7 +226,7 @@
       <workItem from="1598914862986" duration="500000" />
       <workItem from="1598915390871" duration="1266000" />
       <workItem from="1598935620072" duration="17286000" />
-      <workItem from="1599142724402" duration="13781000" />
+      <workItem from="1599142724402" duration="18492000" />
     </task>
     <task id="LOCAL-00001" summary="Enabled touchpad zoom gestures and windows ctrl shortcuts">
       <created>1581449946471</created>
@@ -425,7 +431,14 @@
       <option name="project" value="LOCAL" />
       <updated>1599176680911</updated>
     </task>
-    <option name="localTasksCounter" value="30" />
+    <task id="LOCAL-00030" summary="adjust config form to use ant menu instead of blueprint tabs">
+      <created>1599177824447</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1599177824447</updated>
+    </task>
+    <option name="localTasksCounter" value="31" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -446,7 +459,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
-    <MESSAGE value="Updated protos to support ndarrays" />
     <MESSAGE value="Added plot types to monitor view side panel" />
     <MESSAGE value="Enable drag and drop from side panel of plotter to main plotter workspace" />
     <MESSAGE value="fix import problem" />
@@ -471,7 +483,8 @@
     <MESSAGE value="fix bug causing components and parameters to be re-registered" />
     <MESSAGE value="force update on virtual table reset" />
     <MESSAGE value="moved component select to side panel" />
-    <option name="LAST_COMMIT_MESSAGE" value="moved component select to side panel" />
+    <MESSAGE value="adjust config form to use ant menu instead of blueprint tabs" />
+    <option name="LAST_COMMIT_MESSAGE" value="adjust config form to use ant menu instead of blueprint tabs" />
   </component>
   <component name="WindowStateProjectService">
     <state x="414" y="178" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1597713369456">
@@ -492,11 +505,11 @@
     </state>
     <state x="937" y="250" width="983" height="582" key="#xdebugger.evaluate/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598985071715" />
     <state x="942" y="234" width="889" height="580" key="#xdebugger.evaluate/0.0.1920.1040@0.0.1920.1040" timestamp="1599176317336" />
-    <state x="598" y="118" width="1168" height="803" key="CommitChangelistDialog2" timestamp="1599176679657">
+    <state x="598" y="118" width="1168" height="803" key="CommitChangelistDialog2" timestamp="1599177823461">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="493" y="140" width="1168" height="803" key="CommitChangelistDialog2/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1599143927767" />
-    <state x="598" y="118" key="CommitChangelistDialog2/0.0.1920.1040@0.0.1920.1040" timestamp="1599176679657" />
+    <state x="598" y="118" key="CommitChangelistDialog2/0.0.1920.1040@0.0.1920.1040" timestamp="1599177823461" />
     <state x="355" y="113" width="1536" height="860" key="DiffContextDialog" timestamp="1598904275815">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -597,11 +610,11 @@
     </state>
     <state x="463" y="165" key="SettingsEditor/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598038332815" />
     <state x="463" y="165" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1598821862583" />
-    <state x="552" y="256" key="Vcs.Push.Dialog.v2" timestamp="1599176687361">
+    <state x="552" y="256" key="Vcs.Push.Dialog.v2" timestamp="1599177831328">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="552" y="256" key="Vcs.Push.Dialog.v2/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1599143929734" />
-    <state x="552" y="256" key="Vcs.Push.Dialog.v2/0.0.1920.1040@0.0.1920.1040" timestamp="1599176687361" />
+    <state x="552" y="256" key="Vcs.Push.Dialog.v2/0.0.1920.1040@0.0.1920.1040" timestamp="1599177831328" />
     <state x="93" y="93" width="1733" height="853" key="com.intellij.history.integration.ui.views.DirectoryHistoryDialog" timestamp="1598904275815">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -641,11 +654,11 @@
       <screen x="-3840" y="0" width="1920" height="1060" />
     </state>
     <state x="-2533" y="292" width="1058" height="830" key="dock-window-3/-3840.0.1920.1060/0.0.1920.1040@-3840.0.1920.1060" timestamp="1597770570215" />
-    <state x="640" y="228" width="825" height="732" key="find.popup" timestamp="1599172269495">
+    <state x="640" y="228" width="825" height="732" key="find.popup" timestamp="1599236850463">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="910" y="146" width="828" height="732" key="find.popup/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598984654806" />
-    <state x="640" y="228" width="825" height="732" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1599172269495" />
+    <state x="640" y="228" width="825" height="732" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1599236850463" />
     <state x="586" y="292" width="672" height="677" key="run.anything.popup" timestamp="1599170826380">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>

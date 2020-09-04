@@ -1,7 +1,5 @@
-import {Input} from "formik-antd"
-import {Menu, Checkbox, Divider, Empty, Typography} from "antd"
+import {Checkbox, Divider, Empty, Typography} from "antd"
 import * as React from "react"
-import ComponentSelect from "./component-select";
 import {connect} from 'react-redux';
 import VirtualTable from "./virtual-table";
 import * as _ from "lodash";
@@ -15,10 +13,7 @@ import {
     getPsyNeuLinkMapIdToName,
     getPsyNeuLinkMapNameToId
 } from "../state/psyneulink-registry/selectors";
-import {
-    getMapParentIdToComponentFocus,
-    getMapParentIdToSelectedDataSources
-} from "../state/subplot-config-form/selectors";
+import {getMapParentIdToComponentFocus} from "../state/subplot-config-form/selectors";
 import {setComponentFocus} from "../state/subplot-config-form/actions";
 import {getComponentMapIdToParameterSet, getMapIdToName} from "../state/psyneulink-components/selectors";
 import {getMapIdToDataSources} from "../state/subplots/selectors";
@@ -147,7 +142,7 @@ class AvailableDataSourceTable extends React.Component{
                 </div>
                 <div className={'horizontal-divider-container'}>
                     <Divider orientation="left" plain>
-                        Available data sources
+                        Available
                     </Divider>
                 </div>
                 <VirtualTable

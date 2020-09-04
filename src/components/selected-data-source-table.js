@@ -1,4 +1,3 @@
-import {Input} from "formik-antd"
 import * as React from "react"
 import {DeleteOutlined} from "@ant-design/icons"
 import {Button, Divider, Empty, Typography} from "antd";
@@ -9,7 +8,6 @@ import {getMapIdToDataSources} from "../state/subplots/selectors";
 import {getPsyNeuLinkMapIdToName} from "../state/psyneulink-registry/selectors";
 import {getPsyNeuLinkParameterMetadata} from "../state/psyneulink-parameters/selectors";
 import {removeDataSource} from "../state/subplots/actions";
-import ComponentSelect from "./component-select";
 
 const { Text } = Typography;
 
@@ -93,7 +91,7 @@ class SelectedDataSourceTable extends React.Component{
                     </div>
                     <div className={'horizontal-divider-container'}>
                         <Divider orientation="left" plain>
-                            Selected data sources
+                            Selected
                         </Divider>
                     </div>
                     <VirtualTable
