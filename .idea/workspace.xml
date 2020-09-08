@@ -3,16 +3,11 @@
   <component name="ChangeListManager">
     <list default="true" id="0426a943-ef89-4391-a3a0-8152f91aa099" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/available-data-source-table.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/available-data-source-table.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/configuration-panel.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/configuration-panel.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/forms/subplot-config-form.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/forms/subplot-config-form.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/plotter.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/plotter.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/selected-data-source-table.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/selected-data-source-table.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/keywords.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/keywords.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/py/test/pnl_scripts/NeuroML Example.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/py/test/pnl_scripts/NeuroML Example.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/state/reducers.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/reducers.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/state/subplots/reducers.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/subplots/reducers.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/state/subplots/util.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/subplots/util.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/yarn.lock" beforeDir="false" afterPath="$PROJECT_DIR$/yarn.lock" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -65,19 +60,19 @@
     <property name="ts.external.directory.path" value="$APPLICATION_HOME_DIR$/plugins/JavaScriptLanguage/jsLanguageServicesImpl/external" />
   </component>
   <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\Dillo\WebstormProjects\PsyNeuLinkView\src\state\psyneulink-parameters" />
-      <recent name="C:\Users\Dillo\WebstormProjects\PsyNeuLinkView\src\state\psyneulink-components" />
-      <recent name="C:\Users\Dillo\WebstormProjects\PsyNeuLinkView\src\state\psyneulink-registry" />
-      <recent name="C:\Users\Dillo\WebstormProjects\PsyNeuLinkView\src\state" />
-      <recent name="C:\Users\Dillo\WebstormProjects\PsyNeuLinkView\src\state\configuration" />
-    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\Dillo\WebstormProjects\PsyNeuLinkView\src\state" />
       <recent name="C:\Users\Dillo\WebstormProjects\PsyNeuLinkView\src\state\root" />
       <recent name="C:\Users\Dillo\WebstormProjects\PsyNeuLinkView\src\state\core" />
       <recent name="C:\Users\Dillo\WebstormProjects\PsyNeuLinkView\src" />
       <recent name="C:\Users\Dillo\WebstormProjects\PsyNeuLinkView\src\app\redux\plotting\subplot" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Dillo\WebstormProjects\PsyNeuLinkView\src\state\psyneulink-parameters" />
+      <recent name="C:\Users\Dillo\WebstormProjects\PsyNeuLinkView\src\state\psyneulink-components" />
+      <recent name="C:\Users\Dillo\WebstormProjects\PsyNeuLinkView\src\state\psyneulink-registry" />
+      <recent name="C:\Users\Dillo\WebstormProjects\PsyNeuLinkView\src\state" />
+      <recent name="C:\Users\Dillo\WebstormProjects\PsyNeuLinkView\src\state\configuration" />
     </key>
   </component>
   <component name="RunManager" selected="Attach to Node.js/Chrome.Debug Render">
@@ -230,7 +225,9 @@
       <workItem from="1598915390871" duration="1266000" />
       <workItem from="1598935620072" duration="17286000" />
       <workItem from="1599142724402" duration="29203000" />
-      <workItem from="1599570195608" duration="4915000" />
+      <workItem from="1599570195608" duration="15395000" />
+      <workItem from="1599592708644" duration="5427000" />
+      <workItem from="1599602195229" duration="601000" />
     </task>
     <task id="LOCAL-00001" summary="Enabled touchpad zoom gestures and windows ctrl shortcuts">
       <created>1581449946471</created>
@@ -442,7 +439,14 @@
       <option name="project" value="LOCAL" />
       <updated>1599177824447</updated>
     </task>
-    <option name="localTasksCounter" value="31" />
+    <task id="LOCAL-00031" summary="added plot naming to options form">
+      <created>1599575204315</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1599575204315</updated>
+    </task>
+    <option name="localTasksCounter" value="32" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -463,7 +467,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
-    <MESSAGE value="Added plot types to monitor view side panel" />
     <MESSAGE value="Enable drag and drop from side panel of plotter to main plotter workspace" />
     <MESSAGE value="fix import problem" />
     <MESSAGE value="valid selection now colors the plotting interface light blue" />
@@ -488,7 +491,8 @@
     <MESSAGE value="force update on virtual table reset" />
     <MESSAGE value="moved component select to side panel" />
     <MESSAGE value="adjust config form to use ant menu instead of blueprint tabs" />
-    <option name="LAST_COMMIT_MESSAGE" value="adjust config form to use ant menu instead of blueprint tabs" />
+    <MESSAGE value="added plot naming to options form" />
+    <option name="LAST_COMMIT_MESSAGE" value="added plot naming to options form" />
   </component>
   <component name="WindowStateProjectService">
     <state x="414" y="178" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1597713369456">
@@ -509,10 +513,10 @@
     </state>
     <state x="847" y="340" width="983" height="582" key="#xdebugger.evaluate/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1599574332748" />
     <state x="942" y="234" width="889" height="580" key="#xdebugger.evaluate/0.0.1920.1040@0.0.1920.1040" timestamp="1599176317336" />
-    <state x="598" y="118" width="1168" height="803" key="CommitChangelistDialog2" timestamp="1599177823461">
+    <state x="493" y="140" width="1168" height="803" key="CommitChangelistDialog2" timestamp="1599575203551">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="493" y="140" width="1168" height="803" key="CommitChangelistDialog2/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1599143927767" />
+    <state x="493" y="140" width="1168" height="803" key="CommitChangelistDialog2/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1599575203551" />
     <state x="598" y="118" key="CommitChangelistDialog2/0.0.1920.1040@0.0.1920.1040" timestamp="1599177823461" />
     <state x="355" y="113" width="1536" height="860" key="DiffContextDialog" timestamp="1599240874776">
       <screen x="0" y="0" width="1920" height="1040" />
@@ -627,15 +631,15 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="93" y="93" width="1733" height="853" key="com.intellij.history.integration.ui.views.DirectoryHistoryDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1598904275815" />
-    <state x="184" y="121" width="1736" height="856" key="com.intellij.history.integration.ui.views.FileHistoryDialog" timestamp="1599571890665">
+    <state x="92" y="92" width="1736" height="856" key="com.intellij.history.integration.ui.views.FileHistoryDialog" timestamp="1599595735198">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="184" y="121" width="1736" height="856" key="com.intellij.history.integration.ui.views.FileHistoryDialog/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1599571890665" />
-    <state x="92" y="92" width="1736" height="856" key="com.intellij.history.integration.ui.views.FileHistoryDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1598904275815" />
-    <state x="92" y="92" width="1736" height="856" key="com.intellij.history.integration.ui.views.SelectionHistoryDialog" timestamp="1597945428516">
+    <state x="184" y="121" width="1736" height="856" key="com.intellij.history.integration.ui.views.FileHistoryDialog/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1599577234685" />
+    <state x="92" y="92" width="1736" height="856" key="com.intellij.history.integration.ui.views.FileHistoryDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1599595735198" />
+    <state x="92" y="92" width="1736" height="856" key="com.intellij.history.integration.ui.views.SelectionHistoryDialog" timestamp="1599577234685">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="92" y="92" width="1736" height="856" key="com.intellij.history.integration.ui.views.SelectionHistoryDialog/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1597945428516" />
+    <state x="92" y="92" width="1736" height="856" key="com.intellij.history.integration.ui.views.SelectionHistoryDialog/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1599577234685" />
     <state x="610" y="138" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser" timestamp="1598316600227">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -662,21 +666,21 @@
       <screen x="-3840" y="0" width="1920" height="1060" />
     </state>
     <state x="-2533" y="292" width="1058" height="830" key="dock-window-3/-3840.0.1920.1060/0.0.1920.1040@-3840.0.1920.1060" timestamp="1597770570215" />
-    <state x="910" y="146" width="828" height="732" key="find.popup" timestamp="1599573615827">
+    <state x="640" y="228" width="825" height="732" key="find.popup" timestamp="1599596944063">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="910" y="146" width="828" height="732" key="find.popup/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1599573615827" />
-    <state x="640" y="228" width="825" height="732" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1599236850463" />
-    <state x="586" y="292" width="672" height="677" key="run.anything.popup" timestamp="1599170826380">
+    <state x="640" y="228" width="825" height="732" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1599596944063" />
+    <state x="586" y="292" width="672" height="677" key="run.anything.popup" timestamp="1599596093038">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="583" y="290" width="672" height="677" key="run.anything.popup/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598371204866" />
-    <state x="586" y="292" width="672" height="677" key="run.anything.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1599170826380" />
-    <state x="608" y="231" width="672" height="678" key="search.everywhere.popup" timestamp="1599573593181">
+    <state x="586" y="292" width="672" height="677" key="run.anything.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1599596093038" />
+    <state x="608" y="231" width="672" height="678" key="search.everywhere.popup" timestamp="1599579991629">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="-3230" y="237" width="672" height="692" key="search.everywhere.popup/-3840.0.1920.1060/0.0.1920.1040@-3840.0.1920.1060" timestamp="1598065172325" />
-    <state x="608" y="231" width="672" height="678" key="search.everywhere.popup/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1599573593181" />
+    <state x="608" y="231" width="672" height="678" key="search.everywhere.popup/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1599579991629" />
     <state x="683" y="303" width="672" height="678" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1599176078764" />
   </component>
   <component name="XDebuggerManager">
@@ -685,25 +689,16 @@
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/components/forms/subplot-config-form.js</url>
           <line>155</line>
-          <properties lambdaOrdinal="-1" />
           <option name="timeStamp" value="9" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/state/subplots/util.js</url>
           <line>50</line>
-          <properties lambdaOrdinal="-1" />
           <option name="timeStamp" value="12" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/src/state/subplots/reducers.js</url>
-          <line>27</line>
-          <properties lambdaOrdinal="-1" />
-          <option name="timeStamp" value="13" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/state/subplots/util.js</url>
           <line>79</line>
-          <properties lambdaOrdinal="-1" />
           <option name="timeStamp" value="18" />
         </line-breakpoint>
       </breakpoints>

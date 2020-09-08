@@ -1,7 +1,7 @@
 import React from 'react'
 import {createId} from "../../state/util";
 import {ID_LEN, PNL_PREFIX} from "../../keywords";
-import {Divider, Form, Input, Menu, message} from "antd"
+import {Button, Divider, Form, Input, InputNumber, Menu, Select} from "antd"
 import SelectedDataSourceTable from "../selected-data-source-table";
 import {Spinner} from "@blueprintjs/core";
 import '../../css/paramform.css';
@@ -170,16 +170,33 @@ class SubplotConfigForm extends React.Component{
             </Divider>
         </div>;
 
+        let groupProportion = '25%';
+        let labelProportion = '28%';
+        let inputProportion = '72%';
+        let inputProportionWithButton = '47%';
+        let buttonProportion = '25%';
+        let inputMinRangeSpec = 'Fixed';
+        let inputMaxRangeSpec = 'Dynamic';
         let metaDataRowOne =
-        <div className={'metadata-row-one-container'}>
-            <Input
-                id={`metadata-name-${id}`}
-                value={initialName}
-                style={{width:"25%"}}
-                addonBefore={"Name"}
-                spellCheck={false}
-                onChange={this.editName}
-            />
+        <div className={'metadata-row-container'}>
+            <Input.Group
+            style={{
+                width:groupProportion,
+                marginRight:"10px",
+                display:"inline-block"
+            }}>
+                <Input
+                    disabled
+                    value={"Name"}
+                    style={{ width: labelProportion, color: 'rgba(0, 0, 0, 1)', cursor: 'auto' }} />
+                <Input
+                    id={`metadata-name-${id}`}
+                    value={initialName}
+                    style={{ width:inputProportion }}
+                    spellCheck={false}
+                    onChange={this.editName}
+                />
+            </Input.Group>
         </div>;
 
         let xAxisDivider =
@@ -189,6 +206,130 @@ class SubplotConfigForm extends React.Component{
             </Divider>
         </div>;
 
+        let xAxisOptions =
+            <div className={'xAxis-row-container'}>
+                <Input.Group
+                    style={{
+                        width:groupProportion,
+                        marginRight:"10px",
+                        display:"inline-block"
+                    }}>
+                    <Input
+                        disabled
+                        value={"Label"}
+                        style={{ width: labelProportion, color: 'rgba(0, 0, 0, 1)', cursor: 'auto' }} />
+                    <Input
+                        id={`metadata-name-${id}`}
+                        style={{ width:inputProportion }}
+                        spellCheck={false}
+                    />
+                </Input.Group>
+
+                <Input.Group
+                    style={{
+                        width:groupProportion,
+                        marginRight:"10px",
+                        display:"inline-block",
+                        verticalAlign:"top"
+                    }}>
+                    <Input
+                        disabled
+                        value={"Source"}
+                        style={{ width: labelProportion, color: 'rgba(0, 0, 0, 1)', cursor: 'auto' }} />
+                    <Select disabled
+                            defaultValue={"Trial #"}
+                            style={{ width: inputProportion }}>
+                        <Select.Option value="Trial #">Trial #</Select.Option>
+                    </Select>
+                </Input.Group>
+
+                <Input.Group
+                    style={{
+                        width:groupProportion,
+                        marginRight:"10px",
+                        display:"inline-block",
+                        verticalAlign:"top"
+                    }}>
+                    <Input
+                        disabled
+                        value={"Scale"}
+                        style={{ width: labelProportion, color: 'rgba(0, 0, 0, 1)', cursor: 'auto' }} />
+                    <Select disabled
+                            defaultValue={"linear"}
+                            style={{ width: inputProportion }}>
+                        <Select.Option value="linear">Linear</Select.Option>
+                    </Select>
+                </Input.Group>
+
+                <br/>
+
+                <Input.Group
+                    style={{
+                        width:groupProportion,
+                        marginRight:"10px",
+                        display:"inline-block",
+                        verticalAlign:"top"
+                    }}>
+                    <Input
+                        disabled
+                        value={"Minimum"}
+                        style={{ width: labelProportion, color: 'rgba(0, 0, 0, 1)', cursor: 'auto' }} />
+
+                    <InputNumber
+                        style={{ width: inputProportionWithButton, color: 'rgba(0, 0, 0, 1)', cursor: 'auto' }} />
+
+                    <Button
+                        style={{
+                            width: buttonProportion,
+                            bottom: "1px",
+                            background: inputMinRangeSpec === "Dynamic" ? "darkorange" : "",
+                            borderColor: inputMinRangeSpec === "Dynamic" ? "darkorange" : ""
+                        }}
+                        type={"primary"}>{inputMinRangeSpec}</Button>
+                </Input.Group>
+
+                <Input.Group
+                    style={{
+                        width:groupProportion,
+                        marginRight:"10px",
+                        display:"inline-block",
+                        verticalAlign:"top"
+                    }}>
+                    <Input
+                        disabled
+                        value={"Maximum"}
+                        style={{ width: labelProportion, color: 'rgba(0, 0, 0, 1)', cursor: 'auto' }} />
+
+                    <InputNumber
+                        style={{ width: inputProportionWithButton, color: 'rgba(0, 0, 0, 1)', cursor: 'auto' }} />
+
+                    <Button
+                        style={{
+                            width: buttonProportion,
+                            bottom: "1px",
+                            background: inputMaxRangeSpec === "Dynamic" ? "darkorange" : "",
+                            borderColor: inputMaxRangeSpec === "Dynamic" ? "darkorange" : ""
+                        }}
+                        type={"primary"}>{inputMaxRangeSpec}</Button>
+                </Input.Group>
+
+                <Input.Group
+                    style={{
+                        width:groupProportion,
+                        marginRight:"10px",
+                        display:"inline-block"
+                    }}>
+                    <Input
+                        disabled
+                        value={"Tick Marks"}
+                        style={{ width: labelProportion, color: 'rgba(0, 0, 0, 1)', cursor: 'auto' }} />
+                    <InputNumber
+                        min={0}
+                        style={{ width: inputProportion, color: 'rgba(0, 0, 0, 1)', cursor: 'auto' }} />
+                </Input.Group>
+
+            </div>;
+
         let yAxisDivider =
         <div className={'horizontal-divider-container'}>
             <Divider orientation="left" plain>
@@ -196,19 +337,20 @@ class SubplotConfigForm extends React.Component{
             </Divider>
         </div>;
 
-        let testFormItem = <Form.Item
-            name="name"
-            label="name"
-            required={true}
-            validate={validateRequired}
-        >
-            <Input name="firstName" placeholder="Firstname" />
-        </Form.Item>;
+        let dataViewTableDivider =
+        <div className={'horizontal-divider-container'}>
+            <Divider orientation="left" plain>
+                Data View
+            </Divider>
+        </div>;
+
         return [
             <div/>, metaDataDivider,
             <div/>, metaDataRowOne,
             <div/>, xAxisDivider,
+            <div/>, xAxisOptions,
             <div/>, yAxisDivider,
+            <div/>, dataViewTableDivider,
         ]
     }
 
