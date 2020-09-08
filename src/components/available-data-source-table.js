@@ -97,7 +97,7 @@ class AvailableDataSourceTable extends React.Component{
         this.handleParameterList = this.handleParameterList.bind(this);
     }
 
-    getActiveDataTable(source){
+    getActiveDataTable(){
         let {
             id: plotId,
             subplotMapIdToComponentFocus: mapIdToFocus,
@@ -109,7 +109,7 @@ class AvailableDataSourceTable extends React.Component{
         let componentFocus = mapIdToFocus[plotId];
         if (!componentFocus){return []}
         let componentId = mapNameToId[componentFocus];
-        let available = mapComponentIdToParameterIds[componentId];
+        let available = mapComponentIdToParameterIds[componentId] ?? [];
         selected = selected[plotId] ?? new Set();
         return [...available].map(
             parameterId => {

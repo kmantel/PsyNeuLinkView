@@ -64,7 +64,7 @@ pnlv_graphics_spec = {
         "yScroll": 0
     },
     "Graph Settings": {
-        "Scale": 3.77,
+        "Scale": 3.75,
         "Components": {
             "Nodes": {}
         }

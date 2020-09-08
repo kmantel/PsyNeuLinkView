@@ -11,6 +11,7 @@ import * as _ from 'lodash'
 import {getSubplotIdArr} from "../state/subplot-registry/selectors";
 import {getSubplotMetaData} from "../state/subplots/selectors";
 import {getGridLayout} from "../state/subplot-grid/selectors";
+import {parseLabelForEmptyName} from "../state/subplots/util";
 
 const mapStateToProps = ({subplotRegistry, subplots, subplotGrid}) => {
     return {
@@ -55,6 +56,10 @@ export class ConfigurationPanel extends React.Component {
     }
 
     getTab(id, label){
+        if (label.trim() === ""){
+            let plotType = this.props.subplotMetadata[id].plotType;
+            label = parseLabelForEmptyName(plotType);
+        }
         return <Tab key={id} id={id} title={label} panel={<div/>}/>
     }
 

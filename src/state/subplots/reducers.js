@@ -30,7 +30,7 @@ export function reducer(state = initialState, action) {
             return Object.assign({}, state, {
                 mapIdToName:{
                     ...state.mapIdToName,
-                    ...(name ? {[id]:name} : {})
+                    ...(name || name.trim() === "" ? {[id]:name} : {})
                 },
                 mapIdToPlotType:{
                     ...state.mapIdToPlotType,

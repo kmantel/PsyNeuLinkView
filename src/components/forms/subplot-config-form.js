@@ -11,15 +11,20 @@ import {getMapParentIdToComponentFocus, getMapParentIdToTabFocus} from "../../st
 import {setComponentFocus, setTabFocus} from "../../state/subplot-config-form/actions";
 import {registerComponent} from "../../state/psyneulink-components/actions";
 import {getPsyNeuLinkIdSet} from "../../state/psyneulink-registry/selectors";
+import {getSubplotMetaData} from "../../state/subplots/selectors";
+import {parseNameOnEdit} from "../../state/subplots/util";
+import {editSubplotMetaData} from "../../state/subplots/actions";
 
 function validateRequired(value) {
 }
 
-const mapStateToProps = ({core, subplotConfigForm, psyNeuLinkRegistry}) => {
+const mapStateToProps = ({core, subplots, subplotConfigForm, psyNeuLinkRegistry}) => {
     return {
         psyNeuLinkIdSet: getPsyNeuLinkIdSet(psyNeuLinkRegistry),
         mapIdToTabFocus: getMapParentIdToTabFocus(subplotConfigForm),
         mapIdToComponentFocus: getMapParentIdToComponentFocus(subplotConfigForm),
+        subplotMetaData: getSubplotMetaData(subplots),
+        subplotState: subplots,
         activeComposition: core.activeComposition
     }
 };
@@ -27,6 +32,7 @@ const mapStateToProps = ({core, subplotConfigForm, psyNeuLinkRegistry}) => {
 const mapDispatchToProps = dispatch => (
     {
         registerComponent: ({id, name}) => dispatch(registerComponent({id, name})),
+        editSubplotMetaData: ({id, plotType, name, dataSources}) => dispatch(editSubplotMetaData({id, plotType, name, dataSources})),
         setTabFocus: ({parentId, tabKey})=>dispatch(setTabFocus({parentId, tabKey})),
         setComponentFocus: ({parentId, tabKey}) => dispatch(setComponentFocus({parentId, tabKey}))
     }
@@ -58,6 +64,7 @@ class SubplotConfigForm extends React.Component{
         this.getDataForm = this.getDataForm.bind(this);
         this.getActiveForm = this.getActiveForm.bind(this);
         this.handleComponentList = this.handleComponentList.bind(this);
+        this.editName = this.editName.bind(this);
     }
 
     componentDidMount() {
@@ -145,12 +152,34 @@ class SubplotConfigForm extends React.Component{
         ])
     }
 
+    editName(e) {
+        let {id, subplotState, subplotMetaData, editSubplotMetaData} = this.props;
+        let name = e.target.value;
+        let plotType = subplotMetaData[id].plotType;
+        name = parseNameOnEdit(id, subplotState, plotType, name);
+        editSubplotMetaData({id: id, name: name})
+    }
+
     getOptionsForm() {
+        let {id, subplotMetaData} = this.props;
+        let initialName = subplotMetaData[id].name;
         let metaDataDivider =
         <div className={'horizontal-divider-container'}>
             <Divider orientation="left" plain>
                 Metadata
             </Divider>
+        </div>;
+
+        let metaDataRowOne =
+        <div className={'metadata-row-one-container'}>
+            <Input
+                id={`metadata-name-${id}`}
+                value={initialName}
+                style={{width:"25%"}}
+                addonBefore={"Name"}
+                spellCheck={false}
+                onChange={this.editName}
+            />
         </div>;
 
         let xAxisDivider =
@@ -177,6 +206,7 @@ class SubplotConfigForm extends React.Component{
         </Form.Item>;
         return [
             <div/>, metaDataDivider,
+            <div/>, metaDataRowOne,
             <div/>, xAxisDivider,
             <div/>, yAxisDivider,
         ]

@@ -168,21 +168,6 @@ class Plotter extends React.Component {
         return counter
     }
 
-    parseNameOnEdit(id, plotType, name){
-        /**
-         * checks if newly entered name differs from name currently in store. if so, passes it to parseName
-         */
-        // null value for name means no edit, so don't parse in that case
-        if (name){
-            let baseName = this.props.mapIdToName[id];
-            name = name.trim();
-            if (baseName!==name){
-                name = this.parseName(plotType, name)
-            }
-        }
-        return name
-    }
-
     parseDefaultNameCounterOnEdit(id, plotType, name){
         /**
          * checks if default name counter for `plotType` should be decremented due to a change in `name`

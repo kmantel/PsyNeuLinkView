@@ -7,6 +7,7 @@ import {reducer as subplotConfigForm} from "./subplot-config-form/reducers"
 import {reducer as subplotGrid} from "./subplot-grid/reducers"
 import {reducer as subplotRegistry} from "./subplot-registry/reducers"
 import {reducer as subplots} from "./subplots/reducers"
+import {reducer as forms} from 'redux-form'
 
 import {combineReducers} from 'redux'
 
@@ -20,6 +21,7 @@ export const rootReducer = combineReducers(
         subplotConfigForm: subplotConfigForm,
         subplotGrid: subplotGrid,
         subplotRegistry: subplotRegistry,
-        subplots: subplots
+        subplots: subplots,
+        forms: forms
     }
 );
