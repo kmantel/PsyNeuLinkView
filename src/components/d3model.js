@@ -443,7 +443,7 @@ class D3model extends React.Component {
         this.efferent_copies.push(efferent_copy);
         if (this.props.filepath) {
             store.dispatch(setStyleSheet(efferent_copy));
-            rpc_client.update_stylesheet(efferent_copy);
+            // rpc_client.update_stylesheet(efferent_copy);
         }
     }
 
@@ -1531,8 +1531,9 @@ class D3model extends React.Component {
     }
 
     redimension_viewbox() {
-        var svg = document.querySelector('svg'),
-            viewBox = svg.getAttribute('viewBox').split(','),
+        let svg = document.querySelector('svg');
+        if (!svg){return};
+        let viewBox = svg.getAttribute('viewBox').split(','),
             viewBox_w = parseInt(viewBox[2]),
             viewBox_h = parseInt(viewBox[3]),
             svg_w = Math.round(svg.getBoundingClientRect().width),
