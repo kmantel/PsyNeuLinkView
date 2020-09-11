@@ -15,7 +15,6 @@ const mapStateToProps = ({subplotConfigForm}) => {
 };
 
 function onChange(e) {
-    console.log(`checked = ${e.target.checked}`);
 }
 
 class VirtualTable extends React.Component{

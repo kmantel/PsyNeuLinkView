@@ -11,16 +11,17 @@ import {ID_LEN, PNL_PREFIX} from "../keywords";
 import {
     getPsyNeuLinkIdSet,
     getPsyNeuLinkMapIdToName,
-    getPsyNeuLinkMapNameToId
 } from "../state/psyneulink-registry/selectors";
 import {getMapParentIdToComponentFocus} from "../state/subplot-config-form/selectors";
 import {setComponentFocus} from "../state/subplot-config-form/actions";
-import {getComponentMapIdToParameterSet, getMapIdToName} from "../state/psyneulink-components/selectors";
+import {
+    getComponentMapIdToParameterSet,
+    getComponentMapNameToId,
+    getMapIdToName
+} from "../state/psyneulink-components/selectors";
 import {getMapIdToDataSources} from "../state/subplots/selectors";
 
 const { Text } = Typography;
-const electron = window.require('electron');
-const ipcRenderer  = electron.ipcRenderer;
 const rpc = window.interfaces.rpc;
 
 const mapStateToProps = ({core, psyNeuLinkRegistry, psyNeuLinkComponents, subplots, subplotConfigForm}) => {
@@ -28,8 +29,8 @@ const mapStateToProps = ({core, psyNeuLinkRegistry, psyNeuLinkComponents, subplo
         plotSpecs:core.plotSpecs,
         psyNeuLinkIdSet:getPsyNeuLinkIdSet(psyNeuLinkRegistry),
         psyNeuLinkMapIdToName:getPsyNeuLinkMapIdToName(psyNeuLinkRegistry),
-        psyNeuLinkMapNameToId:getPsyNeuLinkMapNameToId(psyNeuLinkRegistry),
         psyNeuLinkMapComponentIdToParameterIds:getComponentMapIdToParameterSet(psyNeuLinkComponents),
+        psyNeuLinkMapComponentNameToId:getComponentMapNameToId(psyNeuLinkComponents),
         psyNeuLinkMapComponentIdToName:getMapIdToName(psyNeuLinkComponents),
         subplotMapIdToComponentFocus:getMapParentIdToComponentFocus(subplotConfigForm),
         subplotMapIdToSelectedDataSources:getMapIdToDataSources(subplots)
@@ -56,7 +57,6 @@ class AvailableDataSourceTable extends React.Component{
         this.bindThisToFunctions = this.bindThisToFunctions.bind(this);
         this.bindThisToFunctions();
         if (this.props.components.length > 0){this.updateComponents()}
-        ipcRenderer.on('parameterList', this.handleParameterList);
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
@@ -66,35 +66,22 @@ class AvailableDataSourceTable extends React.Component{
     }
 
     updateComponents(){
-        const {psyNeuLinkMapNameToId: nameToId,
-            psyNeuLinkMapComponentIdToParameterIds: idToParameters} = this.props;
-        for (const component of this.props.components){
-            if (!(nameToId[component] in idToParameters)){
-                rpc.get_parameters(component)
-            }
-        }
+        // const {psyNeuLinkMapComponentNameToId: nameToId,
+        //     psyNeuLinkMapComponentIdToParameterIds: idToParameters} = this.props;
+        // for (const component of this.props.components){
+        //     if (!(nameToId[component] in idToParameters)){
+        //         rpc.get_parameters(component)
+        //     }
+        // }
     }
 
     updateDataTablesForId(id){
     }
 
-    handleParameterList(event, message) {
-        let idSet = new Set([...this.props.psyNeuLinkIdSet]);
-        let {ownerName, parameters} = message;
-        let ownerId = this.props.psyNeuLinkMapNameToId[ownerName];
-        let parameterSpecs = {};
-        parameters.forEach(p=>{
-            let id = createId(idSet, PNL_PREFIX, ID_LEN);
-            idSet.add(id);
-            parameterSpecs[id] = p
-        });
-        this.props.registerParameters({ownerId: ownerId, parameterSpecs: parameterSpecs})
-    }
-
     bindThisToFunctions(){
         this.render = this.render.bind(this);
         this.onChange = this.onChange.bind(this);
-        this.handleParameterList = this.handleParameterList.bind(this);
+        // this.handleParameterList = this.handleParameterList.bind(this);
     }
 
     getActiveDataTable(){
@@ -103,7 +90,7 @@ class AvailableDataSourceTable extends React.Component{
             subplotMapIdToComponentFocus: mapIdToFocus,
             subplotMapIdToSelectedDataSources: selected,
             psyNeuLinkMapComponentIdToParameterIds: mapComponentIdToParameterIds,
-            psyNeuLinkMapNameToId: mapNameToId,
+            psyNeuLinkMapComponentNameToId: mapNameToId,
             psyNeuLinkMapIdToName: idToName
             } = this.props;
         let componentFocus = mapIdToFocus[plotId];

@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import React from 'react'
 import Layout from './layout'
 import SideBar from './sidebar'
@@ -12,22 +13,36 @@ import {connect} from "react-redux";
 import {setActiveComposition, setStyleSheet} from "../state/core/actions";
 import {DndProvider} from 'react-dnd';
 import {HTML5Backend} from 'react-dnd-html5-backend';
+import {createId} from "../state/util";
+import {ID_LEN, PNL_PREFIX} from "../keywords";
+import {getPsyNeuLinkIdSet} from "../state/psyneulink-registry/selectors";
+import {getComponentMapIdToParameterSet, getComponentMapNameToId} from "../state/psyneulink-components/selectors";
+import {registerParameters} from "../state/psyneulink-parameters/actions";
+import {registerComponent} from "../state/psyneulink-components/actions";
 
 const fs = window.interfaces.filesystem,
     interp = window.interfaces.interpreter,
     rpc_client = window.interfaces.rpc;
 
-const mapStateToProps = ({core}) => {
+const mapStateToProps = ({core, psyNeuLinkRegistry, psyNeuLinkComponents}) => {
     return {
         activeView: core.activeView,
-        graph_style: core.stylesheet
+        graph_style: core.stylesheet,
+        psyNeuLinkIdSet:getPsyNeuLinkIdSet(psyNeuLinkRegistry),
+        componentMapNameToId:getComponentMapNameToId(psyNeuLinkComponents),
+        componentMapIdToParameterSet:getComponentMapIdToParameterSet(psyNeuLinkComponents)
     }
 };
 
 const mapDispatchToProps = dispatch => ({
     setStyleSheet: graphStyle => {dispatch(setStyleSheet(graphStyle))},
-    setActiveComposition: name => {dispatch(setActiveComposition(name))}
+    setActiveComposition: name => {dispatch(setActiveComposition(name))},
+    registerParameters: ({ownerId, parameterSpecs}) => dispatch(registerParameters({ownerId, parameterSpecs})),
+    registerComponent: ({id, name}) => dispatch(registerComponent({id, name}))
 });
+
+const electron = window.require('electron');
+const ipcRenderer  = electron.ipcRenderer;
 
 class WorkSpace extends React.PureComponent {
     constructor(props) {
@@ -59,6 +74,14 @@ class WorkSpace extends React.PureComponent {
         this.dispatcher = new ErrorDispatcher(this);
         this.container = {};
         // window.this = this;
+        this.bindThisToFunctions = this.bindThisToFunctions.bind(this);
+        this.bindThisToFunctions();
+        this.setMenu();
+        this.setupIpcEvents();
+        this.rpc_client = rpc_client;
+    }
+
+    bindThisToFunctions(){
         this.get_current_graph_style = this.get_current_graph_style.bind(this);
         this.get_reference_sizing_factors = this.get_reference_sizing_factors.bind(this);
         this.set_graph_size = this.set_graph_size.bind(this);
@@ -74,15 +97,43 @@ class WorkSpace extends React.PureComponent {
         this.handleErrors = this.handleErrors.bind(this);
         this.saveMouseData = this.saveMouseData.bind(this);
         this.set_active_component = this.set_active_component.bind(this);
-        this.setMenu();
-        this.rpc_client = rpc_client;
-    }
+        this.setupIpcEvents = this.setupIpcEvents.bind(this);
+        this.handleParameterList = this.handleParameterList.bind(this);
+        this.handleComponentList = this.handleComponentList.bind(this);
+    };
 
     componentDidMount() {
         var self = this,
             padding = 10
         this.get_initial_filepath();
+    }
 
+    setupIpcEvents() {
+        ipcRenderer.on('parameterList', this.handleParameterList);
+        ipcRenderer.on('componentList', this.handleComponentList);
+    }
+
+    handleParameterList(event, message) {
+        let idSet = new Set([...this.props.psyNeuLinkIdSet]);
+        let {ownerName, parameters} = message;
+        let ownerId = this.props.componentMapNameToId[ownerName];
+        let parameterSpecs = {};
+        parameters.forEach(p=>{
+            let id = createId(idSet, PNL_PREFIX, ID_LEN);
+            idSet.add(id);
+            parameterSpecs[id] = p
+        });
+        this.props.registerParameters({ownerId: ownerId, parameterSpecs: parameterSpecs})
+    }
+
+    handleComponentList(event, message) {
+        let idSet = new Set([...this.props.psyNeuLinkIdSet]);
+        message.forEach(m=>{
+            let id = createId(idSet, PNL_PREFIX, ID_LEN);
+            idSet.add(id);
+            this.props.registerComponent({id:id, name:m});
+        });
+        this.setState({components:message})
     }
 
     get_initial_filepath() {
@@ -249,6 +300,7 @@ class WorkSpace extends React.PureComponent {
                 } else {
                     var compositions = rpc_client.script_maintainer.compositions;
                     var composition = compositions[compositions.length - 1];
+                    rpc_client.get_components(composition);
                     this.filepath = filepath
                     rpc_client.get_json(composition, function (err) {
                         if (err) {
@@ -456,6 +508,15 @@ class WorkSpace extends React.PureComponent {
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
+        const {componentMapNameToId, componentMapIdToParameterSet} = this.props;
+        const registeredParameters = Object.keys(componentMapIdToParameterSet);
+        if (!(_.isEqual(prevProps.componentMapNameToId, componentMapNameToId))){
+            for (const [name, id] of Object.entries(componentMapNameToId)){
+                if (!(id in registeredParameters) && !(name in prevProps.componentMapNameToId)){
+                    rpc_client.get_parameters(name);
+                }
+            }
+        }
     }
 
     componentWillUnmount() {
@@ -498,7 +559,6 @@ class WorkSpace extends React.PureComponent {
     }
 
     render_log(message){
-        console.log(message);
     }
 
     render() {

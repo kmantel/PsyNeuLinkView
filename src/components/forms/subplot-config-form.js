@@ -14,24 +14,25 @@ import {getPsyNeuLinkIdSet} from "../../state/psyneulink-registry/selectors";
 import {getSubplotMetaData} from "../../state/subplots/selectors";
 import {parseNameOnEdit} from "../../state/subplots/util";
 import {editSubplotMetaData} from "../../state/subplots/actions";
+import {getComponentMapNameToId} from "../../state/psyneulink-components/selectors";
 
 function validateRequired(value) {
 }
 
-const mapStateToProps = ({core, subplots, subplotConfigForm, psyNeuLinkRegistry}) => {
+const mapStateToProps = ({core, subplots, subplotConfigForm, psyNeuLinkRegistry, psyNeuLinkComponents}) => {
     return {
         psyNeuLinkIdSet: getPsyNeuLinkIdSet(psyNeuLinkRegistry),
         mapIdToTabFocus: getMapParentIdToTabFocus(subplotConfigForm),
         mapIdToComponentFocus: getMapParentIdToComponentFocus(subplotConfigForm),
         subplotMetaData: getSubplotMetaData(subplots),
         subplotState: subplots,
-        activeComposition: core.activeComposition
+        activeComposition: core.activeComposition,
+        componentMapNameToId: getComponentMapNameToId(psyNeuLinkComponents)
     }
 };
 
 const mapDispatchToProps = dispatch => (
     {
-        registerComponent: ({id, name}) => dispatch(registerComponent({id, name})),
         editSubplotMetaData: (
             {id, plotType, name, dataSources,
                 xAxisSource, xAxisMinType, xAxisMin, xAxisMaxType, xAxisMax, xAxisTickCount, xAxisLabel, xAxisScale,
@@ -46,17 +47,12 @@ const mapDispatchToProps = dispatch => (
     }
 );
 
-const electron = window.require('electron');
-const ipcRenderer  = electron.ipcRenderer;
-const rpc = window.interfaces.rpc;
-
 class SubplotConfigForm extends React.Component{
 
     constructor(props) {
         super(props);
         this.bindThisToFunctions = this.bindThisToFunctions.bind(this);
         this.bindThisToFunctions();
-        ipcRenderer.on('componentList', this.handleComponentList);
         this.state = {
             activeTab:`${this.props.id}-data`,
             components:[]
@@ -71,7 +67,6 @@ class SubplotConfigForm extends React.Component{
         this.getOptionsForm = this.getOptionsForm.bind(this);
         this.getDataForm = this.getDataForm.bind(this);
         this.getActiveForm = this.getActiveForm.bind(this);
-        this.handleComponentList = this.handleComponentList.bind(this);
         this.editName = this.editName.bind(this);
     }
 
@@ -88,7 +83,9 @@ class SubplotConfigForm extends React.Component{
     }
 
     setComposition(){
-        if (this.props.activeComposition !== ''){rpc.get_components(this.props.activeComposition)}
+        if (this.props.activeComposition !== ''){
+            // rpc.get_components(this.props.activeComposition)
+        }
     }
 
 
@@ -98,21 +95,12 @@ class SubplotConfigForm extends React.Component{
         setTabFocus({parentId:id, tabKey:new_tab_id});
     }
 
-    handleComponentList(event, message) {
-        let idSet = new Set([...this.props.psyNeuLinkIdSet]);
-        message.forEach(m=>{
-            let id = createId(idSet, PNL_PREFIX, ID_LEN);
-            idSet.add(id);
-            this.props.registerComponent({id:id, name:m});
-        });
-        this.setState({components:message})
-    }
-
     getDataForm(){
         var tableHeight = this.props.size.height - (this.props.padding * 2);
-        let {mapIdToComponentFocus, id} = this.props
+        let {mapIdToComponentFocus, id, componentMapNameToId} = this.props;
+        let components = Object.keys(componentMapNameToId) ?? [];
         let componentTabs =
-            this.state.components.length > 0 ?
+            components.length > 0 ?
                 <Menu
                     style={{width:'100px'}}
                     mode="inline"
@@ -124,7 +112,7 @@ class SubplotConfigForm extends React.Component{
                                 tabKey:key
                             });
                 }}>
-                    {this.state.components.map(
+                    {components.map(
                         c =>
                             <Menu.Item
                                 key={c}

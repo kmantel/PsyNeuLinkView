@@ -42,12 +42,10 @@ export default class LinePlot extends Plot {
     }
 
     handleRightClick(){
-        console.log('right')
         this.toggleToolTip()
     }
 
     handleMouseMove(args){
-        console.log(args);
         // this.setState({hasMouse:true})
     }
 

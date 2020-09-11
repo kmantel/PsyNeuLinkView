@@ -19,8 +19,3 @@ export const getPsyNeuLinkMapIdToName = createSelector(
     getMapIdToName,
     idToName => idToName
 );
-
-export const getPsyNeuLinkMapNameToId = createSelector(
-    getMapIdToName,
-    idToName => _.invert(idToName)
-);

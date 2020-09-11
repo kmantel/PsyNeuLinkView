@@ -121,7 +121,6 @@ class Plotter extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        console.log('hi')
     }
 
     snakeCaseToUpperCamelCase(word) {
@@ -253,7 +252,6 @@ class Plotter extends React.Component {
             updatedGridLayout = {...gridLayout};
         newLayouts.forEach(
             (layout)=>{
-                console.log(12345)
             }
         )
     }
