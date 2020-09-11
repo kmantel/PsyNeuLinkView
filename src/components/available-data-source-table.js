@@ -140,11 +140,6 @@ class AvailableDataSourceTable extends React.Component{
                 <div style={{width:this.props.size.width}}>
                     <div/>
                 </div>
-                <div className={'horizontal-divider-container'}>
-                    <Divider orientation="left" plain>
-                        Available
-                    </Divider>
-                </div>
                 <VirtualTable
                     name={`${this.props.id}-dataTables`}
                     rowKey={(row) => row.id}

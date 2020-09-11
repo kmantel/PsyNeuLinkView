@@ -1,6 +1,6 @@
 import React from 'react'
 import {createId} from "../../state/util";
-import {ID_LEN, PNL_PREFIX} from "../../keywords";
+import {DYNAMIC, FIXED, ID_LEN, PNL_PREFIX} from "../../keywords";
 import {Button, Divider, Form, Input, InputNumber, Menu, Select} from "antd"
 import SelectedDataSourceTable from "../selected-data-source-table";
 import {Spinner} from "@blueprintjs/core";
@@ -32,8 +32,16 @@ const mapStateToProps = ({core, subplots, subplotConfigForm, psyNeuLinkRegistry}
 const mapDispatchToProps = dispatch => (
     {
         registerComponent: ({id, name}) => dispatch(registerComponent({id, name})),
-        editSubplotMetaData: ({id, plotType, name, dataSources}) => dispatch(editSubplotMetaData({id, plotType, name, dataSources})),
-        setTabFocus: ({parentId, tabKey})=>dispatch(setTabFocus({parentId, tabKey})),
+        editSubplotMetaData: (
+            {id, plotType, name, dataSources,
+                xAxisSource, xAxisMinType, xAxisMin, xAxisMaxType, xAxisMax, xAxisTickCount, xAxisLabel, xAxisScale,
+                yAxisSource, yAxisMinType, yAxisMin, yAxisMaxType, yAxisMax, yAxisTickCount, yAxisLabel, yAxisScale}
+        ) => dispatch(editSubplotMetaData(
+            {id, plotType, name, dataSources,
+                xAxisSource, xAxisMinType, xAxisMin, xAxisMaxType, xAxisMax, xAxisTickCount, xAxisLabel, xAxisScale,
+                yAxisSource, yAxisMinType, yAxisMin, yAxisMaxType, yAxisMax, yAxisTickCount, yAxisLabel, yAxisScale}
+        )),
+        setTabFocus: ({parentId, tabKey}) => dispatch(setTabFocus({parentId, tabKey})),
         setComponentFocus: ({parentId, tabKey}) => dispatch(setComponentFocus({parentId, tabKey}))
     }
 );
@@ -136,20 +144,29 @@ class SubplotConfigForm extends React.Component{
                         className={"graph_loading_spinner"}/>
                     <Divider type={'vertical'}/>,
                 </div>;
-        return([
-            componentTabs,
-            <div/>,
-            <AvailableDataSourceTable
-                name={`${this.props.id}-available-data`}
-                id={this.props.id}
-                components={this.state.components}
-                size={{height: tableHeight, width:"100%"}}/>,
-            <Divider type={'vertical'}/>,
-            <SelectedDataSourceTable
-                name={`${this.props.id}-selected-data`}
-                id={this.props.id}
-                size={{height: tableHeight, width:"100%"}}/>
-        ])
+
+        return (
+            <div
+                style={{
+                    gridTemplateColumns: "1fr 1fr 50fr 1fr 50fr",
+                    display: "grid",
+                }}>
+                {[
+                    componentTabs,
+                    <div/>,
+                    <AvailableDataSourceTable
+                        name={`${this.props.id}-available-data`}
+                        id={this.props.id}
+                        components={this.state.components}
+                        size={{height: tableHeight, width: "100%"}}/>,
+                    <Divider type={'vertical'}/>,
+                    <SelectedDataSourceTable
+                        name={`${this.props.id}-selected-data`}
+                        id={this.props.id}
+                        size={{height: tableHeight, width: "100%"}}/>
+                ]}
+            </div>
+        )
     }
 
     editName(e) {
@@ -160,9 +177,15 @@ class SubplotConfigForm extends React.Component{
         editSubplotMetaData({id: id, name: name})
     }
 
+    capitalize(str) {
+        return str.charAt(0).toUpperCase() + str.slice(1)
+    }
+
     getOptionsForm() {
-        let {id, subplotMetaData} = this.props;
-        let initialName = subplotMetaData[id].name;
+        let {id, subplotMetaData, editSubplotMetaData} = this.props;
+        let subplotName = subplotMetaData[id].name;
+        let xAxis = subplotMetaData[id].xAxis;
+        let yAxis = subplotMetaData[id].yAxis;
         let metaDataDivider =
         <div className={'horizontal-divider-container'}>
             <Divider orientation="left" plain>
@@ -175,8 +198,6 @@ class SubplotConfigForm extends React.Component{
         let inputProportion = '72%';
         let inputProportionWithButton = '47%';
         let buttonProportion = '25%';
-        let inputMinRangeSpec = 'Fixed';
-        let inputMaxRangeSpec = 'Dynamic';
         let metaDataRowOne =
         <div className={'metadata-row-container'}>
             <Input.Group
@@ -191,7 +212,7 @@ class SubplotConfigForm extends React.Component{
                     style={{ width: labelProportion, color: 'rgba(0, 0, 0, 1)', cursor: 'auto' }} />
                 <Input
                     id={`metadata-name-${id}`}
-                    value={initialName}
+                    value={subplotName}
                     style={{ width:inputProportion }}
                     spellCheck={false}
                     onChange={this.editName}
@@ -220,6 +241,12 @@ class SubplotConfigForm extends React.Component{
                         style={{ width: labelProportion, color: 'rgba(0, 0, 0, 1)', cursor: 'auto' }} />
                     <Input
                         id={`metadata-name-${id}`}
+                        value={xAxis.label}
+                        onChange={
+                            (e) => {
+                                editSubplotMetaData({id: id, xAxisLabel: e.target.value})
+                            }
+                        }
                         style={{ width:inputProportion }}
                         spellCheck={false}
                     />
@@ -276,16 +303,34 @@ class SubplotConfigForm extends React.Component{
                         style={{ width: labelProportion, color: 'rgba(0, 0, 0, 1)', cursor: 'auto' }} />
 
                     <InputNumber
-                        style={{ width: inputProportionWithButton, color: 'rgba(0, 0, 0, 1)', cursor: 'auto' }} />
+                        disabled={xAxis.minType == DYNAMIC}
+                        style={{
+                            width: inputProportionWithButton,
+                            color: xAxis.minType == DYNAMIC ? 'rgba(0, 0, 0, 0.25)' : 'rgba(0, 0, 0, 1)',
+                            cursor: 'auto'
+                        }}
+                        value={xAxis.minType == DYNAMIC ? "Dynamic" : xAxis.min}
+                        onChange={
+                            (num) => {
+                                editSubplotMetaData({id: id, xAxisMin: num})
+                            }
+                        }
+                    />
 
                     <Button
                         style={{
                             width: buttonProportion,
                             bottom: "1px",
-                            background: inputMinRangeSpec === "Dynamic" ? "darkorange" : "",
-                            borderColor: inputMinRangeSpec === "Dynamic" ? "darkorange" : ""
+                            background: xAxis.minType == DYNAMIC ? "darkorange" : "",
+                            borderColor: xAxis.minType == DYNAMIC ? "darkorange" : ""
                         }}
-                        type={"primary"}>{inputMinRangeSpec}</Button>
+                        onClick={()=>{editSubplotMetaData({
+                            id: id,
+                            xAxisMinType: xAxis.minType == DYNAMIC ? FIXED : DYNAMIC
+                        })}}
+                        type={"primary"}>{
+                            xAxis.minType.charAt(0).toUpperCase() + xAxis.minType.slice(1)
+                        }</Button>
                 </Input.Group>
 
                 <Input.Group
@@ -301,16 +346,35 @@ class SubplotConfigForm extends React.Component{
                         style={{ width: labelProportion, color: 'rgba(0, 0, 0, 1)', cursor: 'auto' }} />
 
                     <InputNumber
-                        style={{ width: inputProportionWithButton, color: 'rgba(0, 0, 0, 1)', cursor: 'auto' }} />
+                        style={{
+                            width: inputProportionWithButton,
+                            color: xAxis.maxType == DYNAMIC ? 'rgba(0, 0, 0, 0.25)' : 'rgba(0, 0, 0, 1)',
+                            cursor: 'auto'
+                        }}
+                        disabled={xAxis.maxType == DYNAMIC}
+                        value={xAxis.maxType == DYNAMIC ? "Dynamic" : xAxis.max}
+                        onChange={
+                            (num) => {
+                                editSubplotMetaData({id: id, xAxisMax: num})
+                            }
+                        }
+                    />
 
                     <Button
                         style={{
                             width: buttonProportion,
                             bottom: "1px",
-                            background: inputMaxRangeSpec === "Dynamic" ? "darkorange" : "",
-                            borderColor: inputMaxRangeSpec === "Dynamic" ? "darkorange" : ""
+                            background: xAxis.maxType == DYNAMIC ? "darkorange" : "",
+                            borderColor: xAxis.maxType == DYNAMIC ? "darkorange" : ""
                         }}
-                        type={"primary"}>{inputMaxRangeSpec}</Button>
+                        type={"primary"}
+                        onClick={()=>{editSubplotMetaData({
+                            id: id,
+                            xAxisMaxType: xAxis.maxType == DYNAMIC ? FIXED : DYNAMIC
+                        })}}
+                    >{
+                            xAxis.maxType.charAt(0).toUpperCase() + xAxis.maxType.slice(1)
+                    }</Button>
                 </Input.Group>
 
                 <Input.Group
@@ -325,7 +389,14 @@ class SubplotConfigForm extends React.Component{
                         style={{ width: labelProportion, color: 'rgba(0, 0, 0, 1)', cursor: 'auto' }} />
                     <InputNumber
                         min={0}
-                        style={{ width: inputProportion, color: 'rgba(0, 0, 0, 1)', cursor: 'auto' }} />
+                        value={xAxis.ticks}
+                        style={{ width: inputProportion, color: 'rgba(0, 0, 0, 1)', cursor: 'auto' }}
+                        onChange={
+                            (num) => {
+                                editSubplotMetaData({id: id, xAxisTickCount: num})
+                            }
+                        }
+                    />
                 </Input.Group>
 
             </div>;
@@ -336,6 +407,181 @@ class SubplotConfigForm extends React.Component{
                 y-Axis
             </Divider>
         </div>;
+
+        let yAxisOptions =
+            <div className={'yAxis-row-container'}>
+                <Input.Group
+                    style={{
+                        width:groupProportion,
+                        marginRight:"10px",
+                        display:"inline-block"
+                    }}>
+                    <Input
+                        disabled
+                        value={"Label"}
+                        style={{ width: labelProportion, color: 'rgba(0, 0, 0, 1)', cursor: 'auto' }} />
+                    <Input
+                        id={`metadata-name-${id}`}
+                        value={yAxis.label}
+                        onChange={
+                            (e) => {
+                                editSubplotMetaData({id: id, yAxisLabel: e.target.value})
+                            }
+                        }
+                        style={{ width:inputProportion }}
+                        spellCheck={false}
+                    />
+                </Input.Group>
+
+                <Input.Group
+                    style={{
+                        width:groupProportion,
+                        marginRight:"10px",
+                        display:"inline-block",
+                        verticalAlign:"top"
+                    }}>
+                    <Input
+                        disabled
+                        value={"Source"}
+                        style={{ width: labelProportion, color: 'rgba(0, 0, 0, 1)', cursor: 'auto' }} />
+                    <Select disabled
+                            defaultValue={"Trial #"}
+                            style={{ width: inputProportion }}>
+                        <Select.Option value="Trial #">Trial #</Select.Option>
+                    </Select>
+                </Input.Group>
+
+                <Input.Group
+                    style={{
+                        width:groupProportion,
+                        marginRight:"10px",
+                        display:"inline-block",
+                        verticalAlign:"top"
+                    }}>
+                    <Input
+                        disabled
+                        value={"Scale"}
+                        style={{ width: labelProportion, color: 'rgba(0, 0, 0, 1)', cursor: 'auto' }} />
+                    <Select disabled
+                            defaultValue={"linear"}
+                            style={{ width: inputProportion }}>
+                        <Select.Option value="linear">Linear</Select.Option>
+                    </Select>
+                </Input.Group>
+
+                <br/>
+
+                <Input.Group
+                    style={{
+                        width:groupProportion,
+                        marginRight:"10px",
+                        display:"inline-block",
+                        verticalAlign:"top"
+                    }}>
+                    <Input
+                        disabled
+                        value={"Minimum"}
+                        style={{ width: labelProportion, color: 'rgba(0, 0, 0, 1)', cursor: 'auto' }} />
+
+                    <InputNumber
+                        disabled={yAxis.minType == DYNAMIC}
+                        style={{
+                            width: inputProportionWithButton,
+                            color: yAxis.minType == DYNAMIC ? 'rgba(0, 0, 0, 0.25)' : 'rgba(0, 0, 0, 1)',
+                            cursor: 'auto'
+                        }}
+                        value={yAxis.minType == DYNAMIC ? "Dynamic" : yAxis.min}
+                        onChange={
+                            (num) => {
+                                editSubplotMetaData({id: id, yAxisMin: num})
+                            }
+                        }
+                    />
+
+                    <Button
+                        style={{
+                            width: buttonProportion,
+                            bottom: "1px",
+                            background: yAxis.minType == DYNAMIC ? "darkorange" : "",
+                            borderColor: yAxis.minType == DYNAMIC ? "darkorange" : ""
+                        }}
+                        onClick={()=>{editSubplotMetaData({
+                            id: id,
+                            yAxisMinType: yAxis.minType == DYNAMIC ? FIXED : DYNAMIC
+                        })}}
+                        type={"primary"}>{
+                        yAxis.minType.charAt(0).toUpperCase() + yAxis.minType.slice(1)
+                    }</Button>
+                </Input.Group>
+
+                <Input.Group
+                    style={{
+                        width:groupProportion,
+                        marginRight:"10px",
+                        display:"inline-block",
+                        verticalAlign:"top"
+                    }}>
+                    <Input
+                        disabled
+                        value={"Maximum"}
+                        style={{ width: labelProportion, color: 'rgba(0, 0, 0, 1)', cursor: 'auto' }} />
+
+                    <InputNumber
+                        style={{
+                            width: inputProportionWithButton,
+                            color: yAxis.maxType == DYNAMIC ? 'rgba(0, 0, 0, 0.25)' : 'rgba(0, 0, 0, 1)',
+                            cursor: 'auto'
+                        }}
+                        disabled={yAxis.maxType == DYNAMIC}
+                        value={yAxis.maxType == DYNAMIC ? "Dynamic" : yAxis.max}
+                        onChange={
+                            (num) => {
+                                editSubplotMetaData({id: id, yAxisMax: num})
+                            }
+                        }
+                    />
+
+                    <Button
+                        style={{
+                            width: buttonProportion,
+                            bottom: "1px",
+                            background: yAxis.maxType == DYNAMIC ? "darkorange" : "",
+                            borderColor: yAxis.maxType == DYNAMIC ? "darkorange" : ""
+                        }}
+                        type={"primary"}
+                        onClick={()=>{editSubplotMetaData({
+                            id: id,
+                            yAxisMaxType: yAxis.maxType == DYNAMIC ? FIXED : DYNAMIC
+                        })}}
+                    >{
+                        yAxis.maxType.charAt(0).toUpperCase() + yAxis.maxType.slice(1)
+                    }</Button>
+                </Input.Group>
+
+                <Input.Group
+                    style={{
+                        width:groupProportion,
+                        marginRight:"10px",
+                        display:"inline-block"
+                    }}>
+                    <Input
+                        disabled
+                        value={"Tick Marks"}
+                        style={{ width: labelProportion, color: 'rgba(0, 0, 0, 1)', cursor: 'auto' }} />
+                    <InputNumber
+                        min={0}
+                        value={xAxis.ticks}
+                        style={{ width: inputProportion, color: 'rgba(0, 0, 0, 1)', cursor: 'auto' }}
+                        onChange={
+                            (num) => {
+                                editSubplotMetaData({id: id, xAxisTickCount: num})
+                            }
+                        }
+                    />
+                </Input.Group>
+
+            </div>;
+
 
         let dataViewTableDivider =
         <div className={'horizontal-divider-container'}>
@@ -350,7 +596,9 @@ class SubplotConfigForm extends React.Component{
             <div/>, xAxisDivider,
             <div/>, xAxisOptions,
             <div/>, yAxisDivider,
+            <div/>, yAxisOptions,
             <div/>, dataViewTableDivider,
+            <div/>, this.getDataForm()
         ]
     }
 
@@ -366,7 +614,7 @@ class SubplotConfigForm extends React.Component{
                 activeForm = this.getDataForm();
                 break;
             default:
-                outerColumnLayout = "1fr 100fr";
+                outerColumnLayout = "1fr";
                 innerColumnLayout = "1fr 100fr";
                 activeForm = this.getOptionsForm();
         }
@@ -380,29 +628,11 @@ class SubplotConfigForm extends React.Component{
                 ...this.props.style
             }}
         >
-            <div className={'vertical-tab-container'}>
-                <Menu
-                    style={{width:'110px', height:'100%'}}
-                    mode="inline"
-                    selectedKeys={[this.props.mapIdToTabFocus[this.props.id] ?? 'configure']}
-                    onSelect={
-                        ({key}) => {this.handleTabChange(key)}}>
-                    <Menu.Item
-                        key={'configure'}
-                        style={{placeSelf: 'center'}}>
-                        {'Configure'}
-                    </Menu.Item>
-                    <Menu.Item
-                        key={'data'}
-                        style={{placeSelf: 'center'}}>
-                        {'Data'}
-                    </Menu.Item>
-                </Menu>
-            </div>
             <div
                 style={{
                     gridTemplateColumns: innerColumnLayout,
-                    display: "grid"
+                    display: "grid",
+                    marginBottom: "10px"
                 }}>
                 {activeForm}
             </div>

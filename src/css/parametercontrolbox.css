@@ -84,3 +84,12 @@
 .ant-table-filter-trigger-container{
     right: 0px;
 }
+
+.selected-data-source-table .ant-btn{
+    height: auto;
+    padding: inherit;
+}
+
+.selected-data-source-table .ant-btn-icon-only{
+    font-size: 8px;
+}

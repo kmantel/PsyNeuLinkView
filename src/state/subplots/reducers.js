@@ -15,7 +15,7 @@ export const initialState = {
     mapIdToXAxisMaxType:{},
     mapIdToXAxisMax:{},
     mapIdToXAxisTickCount:{},
-    mapIdTOXAxisLabel:{},
+    mapIdToXAxisLabel:{},
     mapIdToXAxisScale:{},
     mapIdToYAxisSource:{},
     mapIdToYAxisMinType:{},
@@ -23,7 +23,7 @@ export const initialState = {
     mapIdToYAxisMaxType:{},
     mapIdToYAxisMax:{},
     mapIdToYAxisTickCount:{},
-    mapIdTOYAxisLabel:{},
+    mapIdToYAxisLabel:{},
     mapIdToYAxisScale:{},
     mapPlotTypeToDefaultNameCounter:_.fromPairs(PLOT_TYPES.map( type => [type, 1] ))
 };
@@ -42,40 +42,106 @@ export function reducer(state = initialState, action) {
                 mapIdToXAxisSource: {...state.mapIdToXAxisSource, [id]:TRIAL_NUMBER},
                 mapIdToXAxisMinType: {...state.mapIdToXAxisMinType, [id]:FIXED},
                 mapIdToXAxisMin: {...state.mapIdToXAxisMin, [id]:0},
-                mapIdToXAxisMaxType:{...state.mapIdToXAxisMaxType, [id]:DYNAMIC},
-                mapIdToXAxisMax: {...state.mapIdToXAxisMax, [id]:DYNAMIC},
+                mapIdToXAxisMaxType:{...state.mapIdToXAxisMaxType, [id]:FIXED},
+                mapIdToXAxisMax: {...state.mapIdToXAxisMax, [id]:0},
                 mapIdToXAxisTickCount:  {...state.mapIdToXAxisTickCount, [id]:5},
-                mapIdTOXAxisLabel: {...state.mapIdToXAxisTickCount, [id]:""},
+                mapIdToXAxisLabel: {...state.mapIdToXAxisLabel, [id]:""},
                 mapIdToXAxisScale: {...state.mapIdToXAxisScale, [id]:"linear"},
                 mapIdToYAxisSource: {...state.mapIdToYAxisSource, [id]:VALUE},
                 mapIdToYAxisMinType: {...state.mapIdToYAxisMinType, [id]:FIXED},
                 mapIdToYAxisMin: {...state.mapIdToYAxisMin, [id]:0},
-                mapIdToYAxisMaxType: {...state.mapIdToYAxisMaxType, [id]:DYNAMIC},
-                mapIdToYAxisMax: {...state.mapIdToYAxisMax, [id]:DYNAMIC},
+                mapIdToYAxisMaxType: {...state.mapIdToYAxisMaxType, [id]:FIXED},
+                mapIdToYAxisMax: {...state.mapIdToYAxisMax, [id]:0},
                 mapIdToYAxisTickCount: {...state.mapIdToYAxisTickCount, [id]:5},
-                mapIdTOYAxisLabel: {...state.mapIdTOYAxisLabel, [id]:""},
+                mapIdToYAxisLabel: {...state.mapIdToYAxisLabel, [id]:""},
                 mapIdToYAxisScale: {...state.mapIdToYAxisScale, [id]:"linear"}
             });
 
         case atypes.SUBPLOT_EDIT_METADATA:
-            var {id, plotType, name, dataSources} = action,
+            var {id, plotType, name, dataSources,
+                    xAxisSource, xAxisMinType, xAxisMin, xAxisMaxType, xAxisMax, xAxisTickCount, xAxisLabel, xAxisScale,
+                    yAxisSource, yAxisMinType, yAxisMin, yAxisMaxType, yAxisMax, yAxisTickCount, yAxisLabel, yAxisScale} = action,
                 counter;
             return Object.assign({}, state, {
                 mapIdToName:{
                     ...state.mapIdToName,
-                    ...(name || name.trim() === "" ? {[id]:name} : {})
+                    ...(name !== undefined ? {[id]:name} : {})
                 },
                 mapIdToPlotType:{
                     ...state.mapIdToPlotType,
-                    ...(plotType ? {[id]:plotType} : {})
+                    ...(plotType !== undefined ? {[id]:plotType} : {})
                 },
                 mapIdToDataSources:{
                     ...state.mapIdToDataSources,
-                    ...(dataSources ? {[id]:dataSources} : {})
+                    ...(dataSources !== undefined ? {[id]:dataSources} : {})
                 },
                 mapPlotTypeToDefaultNameCounter: {
                     ...state.mapPlotTypeToDefaultNameCounter,
                     [plotType]:counter
+                },
+                mapIdToXAxisSource: {
+                    ...state.mapIdToXAxisSource,
+                    ...(xAxisSource !== undefined ? {[id]:xAxisSource} : {})
+                },
+                mapIdToXAxisMinType: {
+                    ...state.mapIdToXAxisMinType,
+                    ...(xAxisMinType !== undefined ? {[id]:xAxisMinType} : {})
+                },
+                mapIdToXAxisMin: {
+                    ...state.mapIdToXAxisMin,
+                    ...(xAxisMin !== undefined ? {[id]:xAxisMin} : {})
+                },
+                mapIdToXAxisMaxType: {
+                    ...state.mapIdToXAxisMaxType,
+                    ...(xAxisMaxType !== undefined ? {[id]:xAxisMaxType} : {})
+                },
+                mapIdToXAxisMax: {
+                    ...state.mapIdToXAxisMax,
+                    ...(xAxisMax !== undefined ? {[id]:xAxisMax} : {})
+                },
+                mapIdToXAxisTickCount: {
+                    ...state.mapIdToXAxisTickCount,
+                    ...(xAxisTickCount !== undefined ? {[id]:xAxisTickCount} : {})
+                },
+                mapIdToXAxisLabel: {
+                    ...state.mapIdToXAxisLabel,
+                    ...(xAxisLabel !== undefined ? {[id]:xAxisLabel} : {})
+                },
+                mapIdToXAxisScale: {
+                    ...state.mapIdToXAxisScale,
+                    ...(xAxisScale !== undefined ? {[id]:xAxisScale} : {})
+                },
+                mapIdToYAxisSource: {
+                    ...state.mapIdToYAxisSource,
+                    ...(yAxisSource !== undefined ? {[id]:yAxisSource} : {})
+                },
+                mapIdToYAxisMinType: {
+                    ...state.mapIdToYAxisMinType,
+                    ...(yAxisMinType !== undefined ? {[id]:yAxisMinType} : {})
+                },
+                mapIdToYAxisMin: {
+                    ...state.mapIdToYAxisMin,
+                    ...(yAxisMin !== undefined ? {[id]:yAxisMin} : {})
+                },
+                mapIdToYAxisMaxType: {
+                    ...state.mapIdToYAxisMaxType,
+                    ...(yAxisMaxType !== undefined ? {[id]:yAxisMaxType} : {})
+                },
+                mapIdToYAxisMax: {
+                    ...state.mapIdToYAxisMax,
+                    ...(yAxisMax !== undefined ? {[id]:yAxisMax} : {})
+                },
+                mapIdToYAxisTickCount: {
+                    ...state.mapIdToYAxisTickCount,
+                    ...(yAxisTickCount !== undefined ? {[id]:yAxisTickCount} : {})
+                },
+                mapIdToYAxisLabel: {
+                    ...state.mapIdToYAxisLabel,
+                    ...(yAxisLabel !== undefined ? {[id]:yAxisLabel} : {})
+                },
+                mapIdToYAxisScale: {
+                    ...state.mapIdToYAxisScale,
+                    ...(yAxisScale !== undefined ? {[id]:yAxisScale} : {})
                 }
             });
 

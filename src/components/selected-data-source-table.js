@@ -8,6 +8,8 @@ import {getMapIdToDataSources} from "../state/subplots/selectors";
 import {getPsyNeuLinkMapIdToName} from "../state/psyneulink-registry/selectors";
 import {getPsyNeuLinkParameterMetadata} from "../state/psyneulink-parameters/selectors";
 import {removeDataSource} from "../state/subplots/actions";
+import ColorPicker from "rc-color-picker";
+import 'rc-color-picker/assets/index.css';
 
 const { Text } = Typography;
 
@@ -42,11 +44,31 @@ class SelectedDataSourceTable extends React.Component{
         this.buildDataTable = this.buildDataTable.bind(this);
     }
 
-    getDeleteButton(mechanism, rowId){
-        return <Button
-                    style={{ border: "none" }}
-                    icon={<DeleteOutlined />}
-                    onClick={()=>{this.removeRecord(rowId)}}/>
+    getDeleteButton(mechanism, rowId) {
+        return (
+            <div style={{
+                textAlign: 'center'
+            }}>
+                <Button
+                    style={{border: "none"}}
+                    icon={<DeleteOutlined/>}
+                    onClick={() => {this.removeRecord(rowId)}}/>
+            </div>
+        )
+    }
+
+    getColorPicker(mechanism, rowId) {
+        return (
+            <div style={{
+                textAlign: 'left',
+                paddingLeft: '10px'
+            }}>
+                <ColorPicker
+                    animation="slide-up"
+                    color={'#36c'}
+                />
+            </div>
+        )
     }
 
     buildDataTable() {
@@ -70,6 +92,7 @@ class SelectedDataSourceTable extends React.Component{
                     id: parameterId,
                     mechanismName: mechanismName,
                     parameterName: parameterName,
+                    colorPicker: this.getColorPicker(mechanismName, parameterId),
                     button: this.getDeleteButton(mechanismName, parameterId)
                 }
             )
@@ -85,7 +108,8 @@ class SelectedDataSourceTable extends React.Component{
     render() {
         const dataTable = this.buildDataTable();
         return (
-                <div>
+                <div
+                    className={'selected-data-source-table'}>
                     <div style={{width:this.props.size.width}}>
                         <div/>
                     </div>
@@ -130,8 +154,22 @@ class SelectedDataSourceTable extends React.Component{
                                 ),
                             },
                             {
+                                title: <div className={'title-wrapper'}
+                                            style={{'marginLeft':'8px'}}>
+                                    <Text style={{width:"50px"}} className={'param-name-col-title'}>
+                                        Color
+                                    </Text>
+                                </div>,
+                                key: "colorPicker",
+                                render: (text, record, i) => (
+                                    <div className={'test-div'}>
+                                        {this.getColorPicker(dataTable[i].mechanismName, dataTable[i].id)}
+                                    </div>
+                                )
+                            },
+                            {
                                 key: "button",
-                                align: 'right'
+                                align: "right"
                             },
                         ]}
                         // dataSource={this.buildDataTable()}
