@@ -10,7 +10,7 @@ const style = {
     justifyContent: "center",
 };
 
-class Plot extends React.PureComponent{
+class Plot extends React.Component{
     constructor(props) {
         super(props);
         this.state = {

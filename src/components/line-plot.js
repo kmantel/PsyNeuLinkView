@@ -4,6 +4,11 @@ import {
     LineChart, Line, XAxis, YAxis, CartesianGrid, Label, Tooltip, Legend,
 } from 'recharts';
 import '../css/d3plotter.css'
+import {getMapIdToDataSources, getSubplotMetaData} from "../state/subplots/selectors";
+import {getMapIdToData} from "../state/psyneulink-parameters/selectors";
+import {connect} from 'react-redux';
+import * as _ from "lodash";
+import {getPsyNeuLinkMapIdToName} from "../state/psyneulink-registry/selectors";
 
 const style = {
     display: "flex",
@@ -11,7 +16,13 @@ const style = {
     justifyContent: "center",
 };
 
-export default class LinePlot extends Plot {
+const mapStateToProps = ({subplots, psyNeuLinkParameters, psyNeuLinkRegistry}) => ({
+    dataSourceIdToData: getMapIdToData(psyNeuLinkParameters),
+    psyNeuLinkIdToName: getPsyNeuLinkMapIdToName(psyNeuLinkRegistry),
+    subplotMetaData: getSubplotMetaData(subplots),
+});
+
+class LinePlot extends Plot {
     constructor(props) {
         super(props);
         this.state = {
@@ -29,6 +40,7 @@ export default class LinePlot extends Plot {
         this.handleRightClick = this.handleRightClick.bind(this);
         this.handleMouseMove = this.handleMouseMove.bind(this);
         this.getGraphBounds = this.getGraphBounds.bind(this);
+        this.getData = this.getData.bind(this);
         this.render = this.render.bind(this);
     }
 
@@ -66,8 +78,47 @@ export default class LinePlot extends Plot {
         return this.bounds
     }
 
+    getData(){
+        let {id, dataSourceIdToData, subplotMetaData, psyNeuLinkIdToName} = this.props;
+        let thisPlotMetaData = subplotMetaData[id];
+        let data = {};
+        let name;
+        for (const dataSource of thisPlotMetaData.dataSources){
+            name = psyNeuLinkIdToName[dataSource];
+            for (const datum of dataSourceIdToData[dataSource]){
+                if (!(datum.time in data)){
+                    data[datum.time] = {time: datum.time}
+                }
+                data[datum.time][dataSource] = datum.value.data[0]
+            }
+        }
+        data = _.sortBy(data, "time");
+        return data
+    }
+
+    getLines(){
+        let {id, subplotMetaData, psyNeuLinkIdToName} = this.props;
+        let thisPlotMetaData = subplotMetaData[id];
+        let lines = [];
+        let name;
+        for (const dataSource of thisPlotMetaData.dataSources){
+            name = psyNeuLinkIdToName[dataSource];
+            lines.push(
+                <Line
+                    connectNulls
+                    type="monotone"
+                    dataKey={dataSource}
+                    stroke="#8884d8"
+                    isAnimationActive={false}
+                />)
+        }
+        return lines
+    }
+
     render(){
-        var {id, data, width, height, name} = this.props;
+        var {id, width, height, name} = this.props;
+        let data = this.getData();
+        let lines = this.getLines();
         return(
             <div className={[['subplot', `${id}`], 'pnl-lineplot']}
                  onClick={() => {
@@ -78,10 +129,7 @@ export default class LinePlot extends Plot {
                     <LineChart
                         width={width}
                         height={height}
-                        data={data=[
-                            {'a': 100, 'b': 200, 'c': 300},
-                            {'a': 500, 'b': 600, 'c': 700},
-                        ]}
+                        data={data}
                         margin={{
                             top: 20, right: 30, left: 0, bottom: 0,
                         }}
@@ -96,8 +144,7 @@ export default class LinePlot extends Plot {
                             width={35}
                             />
                         {/*<Legend/>*/}
-                        <Line type="monotone" dataKey="b" stroke="#8884d8" isAnimationActive={false}/>
-                        <Line type="monotone" dataKey="c" stroke="#82ca9d" isAnimationActive={false}/>
+                        {lines}
                     </LineChart>
                 }
                 {super.render()}
@@ -105,3 +152,5 @@ export default class LinePlot extends Plot {
         );
     }
 }
+
+export default connect(mapStateToProps)(LinePlot)

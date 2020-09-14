@@ -4,6 +4,8 @@ import * as _ from 'lodash'
 const mapIdToName = state => state.mapIdToName;
 const mapIdToOwnerComponent = state => state.mapIdToOwnerComponent;
 
+export const getMapIdToData = state => state.mapIdToData;
+
 export const getPsyNeuLinkParameterMetadata = createSelector(
     mapIdToName,
     mapIdToOwnerComponent,

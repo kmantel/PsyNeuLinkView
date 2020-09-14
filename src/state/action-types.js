@@ -5,6 +5,7 @@ export const PSYNEULINK_REGISTER_COMPOSITION = 'psyneulink_register_composition'
 export const PSYNEULINK_REGISTER_MECHANISM = 'psyneulink_register_mechanism';
 export const PSYNEULINK_REGISTER_PARAMETERS = 'psyneulink_register_parameters';
 export const PSYNEULINK_REGISTER_PROJECTION = 'psyneulink_register_projection';
+export const PSYNEULINK_ADD_DATA = 'psyneulink_add_data';
 export const SUBPLOT_INITIALIZE = 'initialize_subplot_config_form';
 export const SUBPLOT_ADD_DATA_SOURCE = 'add_data_source';
 export const SUBPLOT_REMOVE_DATA_SOURCE = 'remove_data_source';

@@ -10,3 +10,14 @@ export function registerParameters({
         parameterSpecs: parameterSpecs
     }
 }
+
+export function addData({
+    id,
+    data
+}){
+    return {
+        type: atypes.PSYNEULINK_ADD_DATA,
+        id: id,
+        data: data
+    }
+}

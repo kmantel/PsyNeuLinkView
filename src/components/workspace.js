@@ -15,9 +15,9 @@ import {DndProvider} from 'react-dnd';
 import {HTML5Backend} from 'react-dnd-html5-backend';
 import {createId} from "../state/util";
 import {ID_LEN, PNL_PREFIX} from "../keywords";
-import {getPsyNeuLinkIdSet} from "../state/psyneulink-registry/selectors";
+import {getPsyNeuLinkIdSet, getPsyNeuLinkMapIdToName} from "../state/psyneulink-registry/selectors";
 import {getComponentMapIdToParameterSet, getComponentMapNameToId} from "../state/psyneulink-components/selectors";
-import {registerParameters} from "../state/psyneulink-parameters/actions";
+import {addData, registerParameters} from "../state/psyneulink-parameters/actions";
 import {registerComponent} from "../state/psyneulink-components/actions";
 
 const fs = window.interfaces.filesystem,
@@ -29,6 +29,7 @@ const mapStateToProps = ({core, psyNeuLinkRegistry, psyNeuLinkComponents}) => {
         activeView: core.activeView,
         graph_style: core.stylesheet,
         psyNeuLinkIdSet:getPsyNeuLinkIdSet(psyNeuLinkRegistry),
+        psyNeuLinkMapIdToName:getPsyNeuLinkMapIdToName(psyNeuLinkRegistry),
         componentMapNameToId:getComponentMapNameToId(psyNeuLinkComponents),
         componentMapIdToParameterSet:getComponentMapIdToParameterSet(psyNeuLinkComponents)
     }
@@ -38,7 +39,8 @@ const mapDispatchToProps = dispatch => ({
     setStyleSheet: graphStyle => {dispatch(setStyleSheet(graphStyle))},
     setActiveComposition: name => {dispatch(setActiveComposition(name))},
     registerParameters: ({ownerId, parameterSpecs}) => dispatch(registerParameters({ownerId, parameterSpecs})),
-    registerComponent: ({id, name}) => dispatch(registerComponent({id, name}))
+    registerComponent: ({id, name}) => dispatch(registerComponent({id, name})),
+    addData: ({id, data}) => dispatch(addData({id, data}))
 });
 
 const electron = window.require('electron');
@@ -100,6 +102,7 @@ class WorkSpace extends React.PureComponent {
         this.setupIpcEvents = this.setupIpcEvents.bind(this);
         this.handleParameterList = this.handleParameterList.bind(this);
         this.handleComponentList = this.handleComponentList.bind(this);
+        this.handleIncomingData = this.handleIncomingData.bind(this);
     };
 
     componentDidMount() {
@@ -111,7 +114,22 @@ class WorkSpace extends React.PureComponent {
     setupIpcEvents() {
         ipcRenderer.on('parameterList', this.handleParameterList);
         ipcRenderer.on('componentList', this.handleComponentList);
-        ipcRenderer.on('runData', (e, message)=>{console.log(message)})
+        ipcRenderer.on('runData', this.handleIncomingData);
+    }
+
+    handleIncomingData(event, message) {
+        let {componentMapIdToParameterSet: idToParameters,
+            componentMapNameToId: nameToId,
+            psyNeuLinkMapIdToName: idToName,
+            addData} = this.props;
+        let ownerName = message.componentName;
+        let ownerId = nameToId[ownerName];
+        let ownerParameters = idToParameters[ownerId];
+        for (const id of ownerParameters){
+            if (idToName[id] == message.parameterName){
+                addData({id: id, data: message})
+            }
+        }
     }
 
     handleParameterList(event, message) {
