@@ -1,5 +1,12 @@
 import * as atypes from './actionTypes'
 
+export function setInputFile(filepath){
+    return {
+        type: atypes.SET_INPUT_FILE,
+        filepath: filepath
+    }
+}
+
 export function setActiveView(id){
     return {
         type: atypes.SET_ACTIVE_VIEW,

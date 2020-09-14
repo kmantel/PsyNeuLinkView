@@ -111,6 +111,7 @@ class WorkSpace extends React.PureComponent {
     setupIpcEvents() {
         ipcRenderer.on('parameterList', this.handleParameterList);
         ipcRenderer.on('componentList', this.handleComponentList);
+        ipcRenderer.on('runData', (e, message)=>{console.log(message)})
     }
 
     handleParameterList(event, message) {

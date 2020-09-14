@@ -4,6 +4,7 @@ const initialState = {
     activeComposition:'',
     activeView: 'graphview',
     active_param_tab: 'composition',
+    inputFile: [],
     stylesheet: {},
     model_aspect_ratio: null,
     plots: {},
@@ -12,6 +13,12 @@ const initialState = {
 
 export function reducer(state = initialState, action) {
     switch (action.type) {
+        case atypes.SET_INPUT_FILE:
+            return Object.assign({}, state, {
+                    inputFile: action.filepath
+                }
+            );
+
         case atypes.SET_ACTIVE_VIEW:
             return Object.assign({}, state, {
                     activeView: action.view

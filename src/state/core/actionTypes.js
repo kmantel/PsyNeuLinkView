@@ -7,3 +7,5 @@ export const REMOVE_PLOT = 'REMOVE_PLOT';
 export const SET_ACTIVE_COMPOSITION = 'set_active_composition';
 export const SET_PLOT_SPECS = 'set_plot_specs';
 export const REMOVE_PLOT_SPEC = 'remove_plot_spec';
+
+export const SET_INPUT_FILE = 'set_input_file';

@@ -208,7 +208,7 @@ class RPCInterface{
             }
         );
         call.on('data', function (entry) {
-            console.log(entry);
+            efs.sendMessage('runData', entry);
             self.got_data = true
         })
 

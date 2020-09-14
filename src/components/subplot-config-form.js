@@ -1,20 +1,18 @@
 import React from 'react'
-import {createId} from "../../state/util";
-import {DYNAMIC, FIXED, ID_LEN, PNL_PREFIX} from "../../keywords";
+import {DYNAMIC, FIXED} from "../keywords";
 import {Button, Divider, Form, Input, InputNumber, Menu, Select} from "antd"
-import SelectedDataSourceTable from "../selected-data-source-table";
+import SelectedDataSourceTable from "./selected-data-source-table";
 import {Spinner} from "@blueprintjs/core";
-import '../../css/paramform.css';
-import AvailableDataSourceTable from "../available-data-source-table";
+import '../css/paramform.css';
+import AvailableDataSourceTable from "./available-data-source-table";
 import {connect} from "react-redux";
-import {getMapParentIdToComponentFocus, getMapParentIdToTabFocus} from "../../state/subplot-config-form/selectors";
-import {setComponentFocus, setTabFocus} from "../../state/subplot-config-form/actions";
-import {registerComponent} from "../../state/psyneulink-components/actions";
-import {getPsyNeuLinkIdSet} from "../../state/psyneulink-registry/selectors";
-import {getSubplotMetaData} from "../../state/subplots/selectors";
-import {parseNameOnEdit} from "../../state/subplots/util";
-import {editSubplotMetaData} from "../../state/subplots/actions";
-import {getComponentMapNameToId} from "../../state/psyneulink-components/selectors";
+import {getMapParentIdToComponentFocus, getMapParentIdToTabFocus} from "../state/subplot-config-form/selectors";
+import {setComponentFocus, setOuterScroll, setTabFocus} from "../state/subplot-config-form/actions";
+import {getPsyNeuLinkIdSet} from "../state/psyneulink-registry/selectors";
+import {getSubplotMetaData} from "../state/subplots/selectors";
+import {parseNameOnEdit} from "../state/subplots/util";
+import {editSubplotMetaData} from "../state/subplots/actions";
+import {getComponentMapNameToId} from "../state/psyneulink-components/selectors";
 
 function validateRequired(value) {
 }
@@ -43,7 +41,8 @@ const mapDispatchToProps = dispatch => (
                 yAxisSource, yAxisMinType, yAxisMin, yAxisMaxType, yAxisMax, yAxisTickCount, yAxisLabel, yAxisScale}
         )),
         setTabFocus: ({parentId, tabKey}) => dispatch(setTabFocus({parentId, tabKey})),
-        setComponentFocus: ({parentId, tabKey}) => dispatch(setComponentFocus({parentId, tabKey}))
+        setComponentFocus: ({parentId, tabKey}) => dispatch(setComponentFocus({parentId, tabKey})),
+        setOuterScroll: ({parentId, position}) => dispatch(setOuterScroll({parentId: parentId, position: position}))
     }
 );
 
@@ -433,9 +432,9 @@ class SubplotConfigForm extends React.Component{
                         value={"Source"}
                         style={{ width: labelProportion, color: 'rgba(0, 0, 0, 1)', cursor: 'auto' }} />
                     <Select disabled
-                            defaultValue={"Trial #"}
+                            defaultValue={"value"}
                             style={{ width: inputProportion }}>
-                        <Select.Option value="Trial #">Trial #</Select.Option>
+                        <Select.Option value="value">Value</Select.Option>
                     </Select>
                 </Input.Group>
 
@@ -591,7 +590,7 @@ class SubplotConfigForm extends React.Component{
     }
 
     getActiveForm(){
-        let {id, mapIdToTabFocus} = this.props;
+        let {id, mapIdToTabFocus, setOuterScroll} = this.props;
         let activeForm;
         let outerColumnLayout;
         let innerColumnLayout;
@@ -615,13 +614,16 @@ class SubplotConfigForm extends React.Component{
                 height: this.props.size.height,
                 ...this.props.style
             }}
+            onScroll={this.props.setOuterScroll}
         >
             <div
+                className={'scroll-test'}
                 style={{
                     gridTemplateColumns: innerColumnLayout,
                     display: "grid",
                     marginBottom: "10px"
-                }}>
+                }}
+            >
                 {activeForm}
             </div>
         </Form>;

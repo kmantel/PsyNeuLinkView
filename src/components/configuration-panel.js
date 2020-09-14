@@ -1,13 +1,11 @@
 import React from 'react'
 import '../css/parametercontrolbox.css'
-import { Resizable } from 're-resizable'
-import {Icon, Tab, Tabs} from "@blueprintjs/core"
+import {Resizable} from 're-resizable'
+import {Tab, Tabs} from "@blueprintjs/core"
 import {connect} from "react-redux";
 import {setActiveParamTab} from "../state/core/actions";
-import {store} from "../state/store";
-import MonitorParamForm from "./forms/subplot-config-form";
-import CompositionConfigForm from "./forms/composition-config-form";
-import * as _ from 'lodash'
+import SubplotConfigForm from "./subplot-config-form";
+import CompositionConfigForm from "./composition-config-form";
 import {getSubplotIdArr} from "../state/subplot-registry/selectors";
 import {getSubplotMetaData} from "../state/subplots/selectors";
 import {getGridLayout} from "../state/subplot-grid/selectors";
@@ -20,6 +18,10 @@ const mapStateToProps = ({subplotRegistry, subplots, subplotGrid}) => {
         gridLayout : getGridLayout(subplotGrid)
     };
 };
+
+const mapDispatchToProps = dispatch => ({
+    setActiveParamTab: (id)=>dispatch(setActiveParamTab(id))
+});
 
 const style = {
     display: "flex",
@@ -52,7 +54,7 @@ export class ConfigurationPanel extends React.Component {
 
     handleTabChange(new_tab_id, prev_tab_id, e) {
         this.setState({activeTabId:new_tab_id});
-        store.dispatch(setActiveParamTab(new_tab_id))
+        this.props.setActiveParamTab(new_tab_id)
     }
 
     getTab(id, label){
@@ -80,9 +82,11 @@ export class ConfigurationPanel extends React.Component {
             return <CompositionConfigForm id={'composition'}/>
         }
         else {
-            return <MonitorParamForm id={id}
-                              size={{height:this.props.size.height-30}}
-                              padding={10}/>
+            return <SubplotConfigForm
+                id={id}
+                size={{height: this.props.size.height - 30}}
+                padding={10}
+            />
         }
     }
 
@@ -141,4 +145,4 @@ export class ConfigurationPanel extends React.Component {
     };
 }
 
-export default connect(mapStateToProps, {setActiveParamTab})(ConfigurationPanel)
+export default connect(mapStateToProps, mapDispatchToProps)(ConfigurationPanel)

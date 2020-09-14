@@ -16,7 +16,7 @@ export function initializeSubplot({id, plotType, name, dataSources, position, co
 
 export function editSubplotMetaData(
     {
-        id, plotType, name, dataSources,
+        id, plotType, name, dataSources, dataSourceColors,
         xAxisSource, xAxisMinType, xAxisMin, xAxisMaxType, xAxisMax, xAxisTickCount, xAxisLabel, xAxisScale,
         yAxisSource, yAxisMinType, yAxisMin, yAxisMaxType, yAxisMax, yAxisTickCount, yAxisLabel, yAxisScale
     }){
@@ -50,6 +50,15 @@ export function addDataSource({id, dataSourceId}){
         type: atypes.SUBPLOT_ADD_DATA_SOURCE,
         id: id,
         dataSourceId: dataSourceId
+    }
+}
+
+export function editDataSourceColor({id, dataSourceId, color}){
+    return {
+        type: atypes.SUBPLOT_EDIT_DATA_SOURCE_COLOR,
+        id: id,
+        dataSourceId: dataSourceId,
+        color: color
     }
 }
 

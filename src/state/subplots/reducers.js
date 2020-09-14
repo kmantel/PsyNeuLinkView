@@ -9,6 +9,7 @@ export const initialState = {
     mapIdToName:{},
     mapIdToPlotType:{},
     mapIdToDataSources:{},
+    mapIdToDataSourceColors:{},
     mapIdToXAxisSource:{},
     mapIdToXAxisMinType:{},
     mapIdToXAxisMin:{},
@@ -38,6 +39,7 @@ export function reducer(state = initialState, action) {
                 mapIdToName: {...state.mapIdToName, [id]:name},
                 mapIdToPlotType: {...state.mapIdToPlotType, [id]:plotType},
                 mapIdToDataSources: {...state.mapIdToDataSources, [id]:dataSources},
+                mapIdToDataSourceColors: {...state.mapIdToDataSourceColors, [id]:{}},
                 mapPlotTypeToDefaultNameCounter: {...state.mapPlotTypeToDefaultNameCounter, [plotType]:counter},
                 mapIdToXAxisSource: {...state.mapIdToXAxisSource, [id]:TRIAL_NUMBER},
                 mapIdToXAxisMinType: {...state.mapIdToXAxisMinType, [id]:FIXED},
@@ -58,7 +60,7 @@ export function reducer(state = initialState, action) {
             });
 
         case atypes.SUBPLOT_EDIT_METADATA:
-            var {id, plotType, name, dataSources,
+            var {id, plotType, name, dataSources, dataSourceColors,
                     xAxisSource, xAxisMinType, xAxisMin, xAxisMaxType, xAxisMax, xAxisTickCount, xAxisLabel, xAxisScale,
                     yAxisSource, yAxisMinType, yAxisMin, yAxisMaxType, yAxisMax, yAxisTickCount, yAxisLabel, yAxisScale} = action,
                 counter;
@@ -73,6 +75,10 @@ export function reducer(state = initialState, action) {
                 },
                 mapIdToDataSources:{
                     ...state.mapIdToDataSources,
+                    ...(dataSources !== undefined ? {[id]:dataSources} : {})
+                },
+                mapIdToDataSourceColors:{
+                    ...state.mapIdToDataSourceColors,
                     ...(dataSources !== undefined ? {[id]:dataSources} : {})
                 },
                 mapPlotTypeToDefaultNameCounter: {
@@ -149,15 +155,43 @@ export function reducer(state = initialState, action) {
             var {id, dataSourceId} = action;
             var dataSources = new Set([...state.mapIdToDataSources[id], dataSourceId]);
             return Object.assign({}, state, {
-                mapIdToDataSources: {...state.mapIdToDataSources, [id]: dataSources}
+                mapIdToDataSources: {...state.mapIdToDataSources, [id]: dataSources},
+                mapIdToDataSourceColors: {
+                    ...state.mapIdToDataSourceColors,
+                    [id]:{
+                        ...state.mapIdToDataSourceColors[id],
+                        [dataSourceId]:"#1f77b4"
+                    }
+                }
             });
 
         case atypes.SUBPLOT_REMOVE_DATA_SOURCE:
             var {id, dataSourceId} = action;
             var dataSources = new Set([...state.mapIdToDataSources[id]]);
             dataSources.delete(dataSourceId);
+            var dataSourceColors = {
+                ...state.mapIdToDataSourceColors,
+                [id]:{
+                    ...state.mapIdToDataSourceColors[id],
+                }
+            };
+            delete dataSourceColors[id][dataSourceId];
             return Object.assign({}, state, {
-                mapIdToDataSources: {...state.mapIdToDataSources, [id]:dataSources}
+                mapIdToDataSources: {...state.mapIdToDataSources, [id]:dataSources},
+                mapIdToDataSourceColors: dataSourceColors
+            });
+
+        case atypes.SUBPLOT_EDIT_DATA_SOURCE_COLOR:
+            var {id, dataSourceId, color} = action;
+            var dataSourceColors = {
+                ...state.mapIdToDataSourceColors,
+                [id]:{
+                    ...state.mapIdToDataSourceColors[id],
+                    [dataSourceId]:color
+                }
+            };
+            return Object.assign({}, state, {
+                mapIdToDataSourceColors: dataSourceColors
             });
 
         default:

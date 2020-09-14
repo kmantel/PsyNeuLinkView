@@ -5,9 +5,18 @@ import { setActiveView } from "../state/core/actions";
 import {Icon, Tab, Tabs} from "@blueprintjs/core"
 import '../css/controlstrip.css'
 
-const mapStateToProps = ({core}) => {
-    return { activeView: core.activeView }
-}
+const mapStateToProps = ({core, psyNeuLinkParameters, psyNeuLinkComponents, subplots}) => {
+    return {
+        activeView: core.activeView,
+        inputFile: core.inputFile,
+        parameters: psyNeuLinkParameters,
+        components: psyNeuLinkComponents,
+        subplots: subplots
+    }
+};
+
+const fs = window.interfaces.filesystem;
+const rpc = window.interfaces.rpc;
 
 class ControlStrip extends React.Component {
     constructor(props){
@@ -17,6 +26,34 @@ class ControlStrip extends React.Component {
 
     handleTabChange(new_tab_id, prev_tab_id, e){
         store.dispatch(setActiveView(new_tab_id));
+    }
+
+    parseInputFile(filePath){
+        let {mapIdToDataSources} = this.props;
+        if (filePath.length > 0){
+            let inputs = JSON.parse(fs.read(filePath[0]))
+            let loggedDataIds = new Set();
+            for (const val of Object.values(this.props.subplots.mapIdToDataSources)){
+                for (const source of val){
+                    loggedDataIds.add(source)
+                }
+            }
+            let deliveryConditions = [...loggedDataIds].map(
+                id => {
+                    let ownerComponent = this.props.parameters.mapIdToOwnerComponent[id];
+                    let ownerComponentName = this.props.components.mapIdToName[ownerComponent];
+                    let parameterName = this.props.parameters.mapIdToName[id];
+                    return {
+                        componentName: ownerComponentName,
+                        parameterName: parameterName,
+                        condition: 2
+                    }
+                }
+            );
+            rpc.run_composition(
+                inputs, deliveryConditions
+            );
+        }
     }
 
     render() {
@@ -46,6 +83,7 @@ class ControlStrip extends React.Component {
                                     cursor: 'pointer'
                                 }
                             }
+                            onClick= {()=>{this.parseInputFile(this.props.inputFile)}}
                             />
                         <Icon
                             icon={"stop"}

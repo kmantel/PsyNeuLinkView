@@ -4,12 +4,13 @@ import {Button, Divider, Empty, Typography} from "antd";
 import {connect} from 'react-redux'
 import {setPlotSpecs} from "../state/core/actions";
 import VirtualTable from "./virtual-table";
-import {getMapIdToDataSources} from "../state/subplots/selectors";
+import {getMapIdToDataSourceColors, getMapIdToDataSources} from "../state/subplots/selectors";
 import {getPsyNeuLinkMapIdToName} from "../state/psyneulink-registry/selectors";
 import {getPsyNeuLinkParameterMetadata} from "../state/psyneulink-parameters/selectors";
-import {removeDataSource} from "../state/subplots/actions";
+import {editDataSourceColor, removeDataSource} from "../state/subplots/actions";
 import ColorPicker from "rc-color-picker";
 import 'rc-color-picker/assets/index.css';
+import {row} from "mathjs";
 
 const { Text } = Typography;
 
@@ -17,6 +18,7 @@ const mapStateToProps = ({core, subplots, psyNeuLinkParameters, psyNeuLinkRegist
     return {
         plotSpecs:core.plotSpecs,
         subplotMapIdToSelectedDataSources:getMapIdToDataSources(subplots),
+        subplotMapIdToSelectedDataSourceColors:getMapIdToDataSourceColors(subplots),
         psyNeuLinkParameterMetadata:getPsyNeuLinkParameterMetadata(psyNeuLinkParameters),
         psyNeuLinkMapIdToName:getPsyNeuLinkMapIdToName(psyNeuLinkRegistry),
     }
@@ -24,7 +26,8 @@ const mapStateToProps = ({core, subplots, psyNeuLinkParameters, psyNeuLinkRegist
 
 const mapDispatchToProps = dispatch => ({
     setPlotSpecs: (id, plotSpecs) => dispatch(setPlotSpecs(id, plotSpecs)),
-    removeDataSource: ({id, dataSourceId}) => dispatch(removeDataSource({id, dataSourceId}))
+    removeDataSource: ({id, dataSourceId}) => dispatch(removeDataSource({id, dataSourceId})),
+    editDataSourceColor: ({id, dataSourceId, color}) => dispatch(editDataSourceColor({id, dataSourceId, color}))
 });
 
 class SelectedDataSourceTable extends React.Component{
@@ -58,6 +61,8 @@ class SelectedDataSourceTable extends React.Component{
     }
 
     getColorPicker(mechanism, rowId) {
+        let {id, subplotMapIdToSelectedDataSourceColors: idToColors, editDataSourceColor} = this.props;
+        let color = idToColors[id][rowId];
         return (
             <div style={{
                 textAlign: 'left',
@@ -65,7 +70,14 @@ class SelectedDataSourceTable extends React.Component{
             }}>
                 <ColorPicker
                     animation="slide-up"
-                    color={'#36c'}
+                    color={color}
+                    onClose={
+                        (e)=>{
+                            editDataSourceColor(
+                                {id: id, dataSourceId: rowId, color: e.color}
+                            )
+                        }
+                    }
                 />
             </div>
         )

@@ -4,6 +4,7 @@ import { LINE_PLOT } from './constants';
 export const getMapIdToName = state => state.mapIdToName;
 export const getMapIdToPlotType = state => state.mapIdToPlotType;
 export const getMapIdToDataSources = state => state.mapIdToDataSources;
+export const getMapIdToDataSourceColors = state => state.mapIdToDataSourceColors;
 export const getMapPlotTypeToDefaultNameCounter = state => state.mapPlotTypeToDefaultNameCounter;
 export const getMapIdToXAxisSource = state => state.mapIdToXAxisSource;
 export const getMapIdToXAxisMinType = state => state.mapIdToXAxisMinType;
@@ -26,6 +27,7 @@ export const getSubplotMetaData = createSelector(
     getMapIdToName,
     getMapIdToPlotType,
     getMapIdToDataSources,
+    getMapIdToDataSourceColors,
     getMapIdToXAxisSource,
     getMapIdToXAxisMinType,
     getMapIdToXAxisMin,
@@ -42,7 +44,7 @@ export const getSubplotMetaData = createSelector(
     getMapIdToYAxisTickCount,
     getMapIdToYAxisLabel,
     getMapIdToYAxisScale,
-    (name, plotType, dataSources,
+    (name, plotType, dataSources, dataSourceColors,
      xSource, xMinType, xMin, xMaxType, xMax, xTickCount, xLabel, xScale,
      ySource, yMinType, yMin, yMaxType, yMax, yTickCount, yLabel, yScale) => {
         const ids = Object.keys(name),
@@ -52,6 +54,7 @@ export const getSubplotMetaData = createSelector(
                 name:name[id],
                 plotType:plotType[id],
                 dataSources:dataSources[id],
+                dataSourceColors: dataSourceColors[id],
                 xAxis:{
                     source: xSource[id],
                     minType: xMinType[id],
