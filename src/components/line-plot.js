@@ -100,16 +100,17 @@ class LinePlot extends Plot {
         let {id, subplotMetaData, psyNeuLinkIdToName} = this.props;
         let thisPlotMetaData = subplotMetaData[id];
         let lines = [];
-        let name;
+        let name, color;
         for (const dataSource of thisPlotMetaData.dataSources){
             name = psyNeuLinkIdToName[dataSource];
+            color = subplotMetaData[id]['dataSourceColors'][dataSource];
             lines.push(
                 <Line
                     connectNulls
                     type="monotone"
                     dataKey={dataSource}
-                    stroke="#8884d8"
-                    isAnimationActive={false}
+                    stroke={color}
+                    isAnimationActive={true}
                 />)
         }
         return lines
@@ -125,28 +126,21 @@ class LinePlot extends Plot {
                  }}
                  onContextMenu={this.handleRightClick}
             >
-                {
-                    <LineChart
-                        width={width}
-                        height={height}
-                        data={data}
-                        margin={{
-                            top: 20, right: 30, left: 0, bottom: 0,
-                        }}
-                    >
-                        <CartesianGrid strokeDasharray="3 3"/>
-                        <XAxis
-                            tick={false}>
-                            <Label value={name} offset={0} position="insideBottom" />
-                        </XAxis>
-                        <YAxis
-                            tick={false}
-                            width={35}
-                            />
-                        {/*<Legend/>*/}
-                        {lines}
-                    </LineChart>
-                }
+                <LineChart
+                    width={width}
+                    height={height}
+                    data={this.getData()}
+                    margin={{
+                        top: 20, right: 30, left: 0, bottom: 0,
+                    }}
+                >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="time" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    {this.getLines()}
+                </LineChart>
                 {super.render()}
             </div>
         );
