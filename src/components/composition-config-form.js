@@ -1,4 +1,5 @@
 import React from 'react'
+import '../css/paramform.css';
 import {Divider, Input, Upload, Button} from "antd"
 import {UploadOutlined} from "@ant-design/icons";
 import {connect} from "react-redux";
@@ -21,9 +22,9 @@ class CompositionConfigForm extends React.Component {
 
     render() {
         var id = this.props.id;
-        let groupProportion = '25%';
-        let labelProportion = '28%';
-        let inputProportion = '72%';
+        let groupProportion = '50%';
+        let labelProportion = '14%';
+        let inputProportion = '36%';
         const fileList = this.props.inputFile.length > 0 ? [
             {
                 uid: '-1',
@@ -62,7 +63,8 @@ class CompositionConfigForm extends React.Component {
                     name={'file'}
                     fileList={fileList}
                 >
-                    <Button icon={<UploadOutlined />}
+                    <Button
+                        icon={<UploadOutlined />}
                         onClick={
                             ()=>{
                                 window.dialog.showOpenDialog(
@@ -79,10 +81,6 @@ class CompositionConfigForm extends React.Component {
                                 )
                             }
                         }>
-                        <span
-                            style={{margin:0}}>
-                            Upload
-                        </span>
                     </Button>
                 </Upload>
             </Input.Group>

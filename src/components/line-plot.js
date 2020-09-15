@@ -31,6 +31,7 @@ class LinePlot extends Plot {
             activeBoundary: null
         };
         this.cursorSignal = props.cursorSignal;
+        this.getData = _.throttle(this.getData, 10);
         this.bindThisToFunctions = this.bindThisToFunctions.bind(this);
         this.bindThisToFunctions();
     }
@@ -110,7 +111,7 @@ class LinePlot extends Plot {
                     type="monotone"
                     dataKey={dataSource}
                     stroke={color}
-                    isAnimationActive={true}
+                    isAnimationActive={false}
                 />)
         }
         return lines
@@ -118,18 +119,12 @@ class LinePlot extends Plot {
 
     render(){
         var {id, width, height, name} = this.props;
-        let data = this.getData();
-        let lines = this.getLines();
         return(
-            <div className={[['subplot', `${id}`], 'pnl-lineplot']}
-                 onClick={() => {
-                 }}
-                 onContextMenu={this.handleRightClick}
-            >
+            <div>
                 <LineChart
                     width={width}
                     height={height}
-                    data={this.getData()}
+                    data={this.getData() || []}
                     margin={{
                         top: 20, right: 30, left: 0, bottom: 0,
                     }}
@@ -138,7 +133,6 @@ class LinePlot extends Plot {
                     <XAxis dataKey="time" />
                     <YAxis />
                     <Tooltip />
-                    <Legend />
                     {this.getLines()}
                 </LineChart>
                 {super.render()}
