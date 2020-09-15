@@ -11,6 +11,7 @@
     "@blueprintjs/core": "^3.19.1",
     "@grpc/grpc-js": "^1.1.5",
     "@grpc/proto-loader": "^0.5.2",
+    "@nivo/line": "^0.62.0",
     "antd": "^4.5.4",
     "compare-versions": "^3.6.0",
     "electron-is-dev": "^1.1.0",
