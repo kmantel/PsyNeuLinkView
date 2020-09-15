@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="0426a943-ef89-4391-a3a0-8152f91aa099" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/composition-config-form.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/composition-config-form.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/line-plot.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/line-plot.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -228,7 +227,7 @@
       <workItem from="1599626088899" duration="2000" />
       <workItem from="1599672011264" duration="22376000" />
       <workItem from="1600093527145" duration="28823000" />
-      <workItem from="1600129131674" duration="2877000" />
+      <workItem from="1600129131674" duration="4063000" />
     </task>
     <task id="LOCAL-00001" summary="Enabled touchpad zoom gestures and windows ctrl shortcuts">
       <created>1581449946471</created>
@@ -496,7 +495,14 @@
       <option name="project" value="LOCAL" />
       <updated>1600125562885</updated>
     </task>
-    <option name="localTasksCounter" value="39" />
+    <task id="LOCAL-00039" summary="throttle getData to slightly improve performance">
+      <created>1600132184631</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1600132184631</updated>
+    </task>
+    <option name="localTasksCounter" value="40" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -517,7 +523,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
-    <MESSAGE value="implemented virtual table - significant speedups" />
     <MESSAGE value="somewhat polished the data table interface" />
     <MESSAGE value="Offloading state management to be handled solely by redux - in progress" />
     <MESSAGE value="finished refactoring plotter to use only redux state" />
@@ -542,7 +547,8 @@
     <MESSAGE value="rpc set up for running comps using json input" />
     <MESSAGE value="basic line plot now working" />
     <MESSAGE value="color specification working on subplot lines" />
-    <option name="LAST_COMMIT_MESSAGE" value="color specification working on subplot lines" />
+    <MESSAGE value="throttle getData to slightly improve performance" />
+    <option name="LAST_COMMIT_MESSAGE" value="throttle getData to slightly improve performance" />
   </component>
   <component name="WindowStateProjectService">
     <state x="414" y="178" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1597713369456">
@@ -563,11 +569,11 @@
     </state>
     <state x="937" y="313" width="983" height="582" key="#xdebugger.evaluate/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1599855022350" />
     <state x="1031" y="201" width="889" height="580" key="#xdebugger.evaluate/0.0.1920.1040@0.0.1920.1040" timestamp="1600125480259" />
-    <state x="598" y="118" width="1168" height="803" key="CommitChangelistDialog2" timestamp="1600125562301">
+    <state x="598" y="118" width="1168" height="803" key="CommitChangelistDialog2" timestamp="1600132184019">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="493" y="140" width="1168" height="803" key="CommitChangelistDialog2/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1599855102252" />
-    <state x="598" y="118" key="CommitChangelistDialog2/0.0.1920.1040@0.0.1920.1040" timestamp="1600125562301" />
+    <state x="598" y="118" key="CommitChangelistDialog2/0.0.1920.1040@0.0.1920.1040" timestamp="1600132184019" />
     <state x="236" y="107" width="1536" height="860" key="DiffContextDialog" timestamp="1599852212345">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -672,11 +678,11 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="815" y="442" key="VCS.ChangelistChooser/0.0.1920.1040@0.0.1920.1040" timestamp="1599240828843" />
-    <state x="552" y="256" key="Vcs.Push.Dialog.v2" timestamp="1600125564321">
+    <state x="552" y="256" key="Vcs.Push.Dialog.v2" timestamp="1600132186215">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="552" y="256" key="Vcs.Push.Dialog.v2/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1599855104697" />
-    <state x="552" y="256" key="Vcs.Push.Dialog.v2/0.0.1920.1040@0.0.1920.1040" timestamp="1600125564321" />
+    <state x="552" y="256" key="Vcs.Push.Dialog.v2/0.0.1920.1040@0.0.1920.1040" timestamp="1600132186215" />
     <state x="93" y="93" width="1733" height="853" key="com.intellij.history.integration.ui.views.DirectoryHistoryDialog" timestamp="1599852212345">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>

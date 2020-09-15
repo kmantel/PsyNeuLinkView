@@ -31,7 +31,7 @@ class LinePlot extends Plot {
             activeBoundary: null
         };
         this.cursorSignal = props.cursorSignal;
-        this.getData = _.throttle(this.getData, 10);
+        this.getPlotProps = _.throttle(this.getPlotProps, 10);
         this.bindThisToFunctions = this.bindThisToFunctions.bind(this);
         this.bindThisToFunctions();
     }
@@ -117,14 +117,22 @@ class LinePlot extends Plot {
         return lines
     }
 
+    getPlotProps(){
+        return {
+            data: this.getData(),
+            lines: this.getLines()
+        }
+    }
+
     render(){
         var {id, width, height, name} = this.props;
+        let {data, lines} = this.getPlotProps();
         return(
             <div>
                 <LineChart
                     width={width}
                     height={height}
-                    data={this.getData() || []}
+                    data={data}
                     margin={{
                         top: 20, right: 30, left: 0, bottom: 0,
                     }}
@@ -133,7 +141,7 @@ class LinePlot extends Plot {
                     <XAxis dataKey="time" />
                     <YAxis />
                     <Tooltip />
-                    {this.getLines()}
+                    {lines}
                 </LineChart>
                 {super.render()}
             </div>
