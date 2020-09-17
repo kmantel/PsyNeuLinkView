@@ -9,7 +9,7 @@ import {getMapIdToData, getMapIdToOwnerComponent} from "../state/psyneulink-para
 import {connect} from 'react-redux';
 import * as _ from "lodash";
 import {getPsyNeuLinkMapIdToName} from "../state/psyneulink-registry/selectors";
-import { ResponsiveLine } from '@nivo/line'
+import { ResponsiveLineCanvas } from '@nivo/line';
 
 const style = {
     display: "flex",
@@ -179,10 +179,10 @@ class LinePlot extends Plot {
         return (
             <div
                 style={{width:width, height:height, color:'black'}}>
-                <ResponsiveLine
+                <ResponsiveLineCanvas
                     data={data}
                     margin={{ top: 50, right: 110, bottom: 50, left: 60 }}
-                    xScale={{ type: 'point', stacked: true }}
+                    xScale={{ type: 'linear', min: 'auto', max: 'auto' }}
                     yScale={{ type: 'linear', min: 'auto', max: 'auto' }}
                     axisTop={null}
                     axisRight={null}
