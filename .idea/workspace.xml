@@ -3,7 +3,16 @@
   <component name="ChangeListManager">
     <list default="true" id="0426a943-ef89-4391-a3a0-8152f91aa099" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/line-plot.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/line-plot.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/plot-boundary.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/plot-boundary.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/plot.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/plot.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/subplot-config-form.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/subplot-config-form.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/workspace.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/workspace.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/state/subplots/actions.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/subplots/actions.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/state/subplots/reducers.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/subplots/reducers.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/state/subplots/selectors.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/subplots/selectors.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/yarn.lock" beforeDir="false" afterPath="$PROJECT_DIR$/yarn.lock" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -692,11 +701,11 @@
     </state>
     <state x="552" y="256" key="Vcs.Push.Dialog.v2/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1600186824868" />
     <state x="552" y="256" key="Vcs.Push.Dialog.v2/0.0.1920.1040@0.0.1920.1040" timestamp="1600132186215" />
-    <state x="93" y="93" width="1733" height="853" key="com.intellij.history.integration.ui.views.DirectoryHistoryDialog" timestamp="1599852212345">
+    <state x="93" y="93" width="1733" height="853" key="com.intellij.history.integration.ui.views.DirectoryHistoryDialog" timestamp="1606151199408">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="93" y="93" width="1733" height="853" key="com.intellij.history.integration.ui.views.DirectoryHistoryDialog/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1599852212345" />
-    <state x="93" y="93" width="1733" height="853" key="com.intellij.history.integration.ui.views.DirectoryHistoryDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1598904275815" />
+    <state x="93" y="93" width="1733" height="853" key="com.intellij.history.integration.ui.views.DirectoryHistoryDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1606151199408" />
     <state x="137" y="123" width="1736" height="856" key="com.intellij.history.integration.ui.views.FileHistoryDialog" timestamp="1600184777995">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>

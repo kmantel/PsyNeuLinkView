@@ -31,6 +31,7 @@ const PlotSpec = {
     },
     hover(props, monitor, component){
         var { isOver, canDrop } = component.props;
+        console.log('isOver', isOver, 'canDrop', canDrop);
         component.setState({ isActive: isOver && canDrop });
     }
 };

@@ -154,7 +154,10 @@ def handle_serve_prefs(composition, servePrefs):
 def run_composition(composition, inputs, servePrefs):
     formatted_inputs = {}
     handle_serve_prefs(composition, servePrefs)
-    con = pnl.Context(rpc_pipeline = pnl_container.shared_queue)
+    con = pnl.Context(
+        execution_id = None,
+        rpc_pipeline = pnl_container.shared_queue
+    )
     comp = get_current_composition()
     for key in inputs.keys():
         rows = inputs[key].rows

@@ -12,6 +12,7 @@ export const getMapIdToXAxisMin = state => state.mapIdToXAxisMin;
 export const getMapIdToXAxisMaxType = state => state.mapIdToXAxisMaxType;
 export const getMapIdToXAxisMax = state => state.mapIdToXAxisMax;
 export const getMapIdToXAxisTickCount = state => state.mapIdToXAxisTickCount;
+export const getMapIdToXAxisTickType = state => state.mapIdToXAxisTickType;
 export const getMapIdToXAxisLabel = state => state.mapIdToXAxisLabel;
 export const getMapIdToXAxisScale = state => state.mapIdToXAxisScale;
 export const getMapIdToYAxisSource = state => state.mapIdToYAxisSource;
@@ -20,6 +21,7 @@ export const getMapIdToYAxisMin = state => state.mapIdToYAxisMin;
 export const getMapIdToYAxisMaxType = state => state.mapIdToYAxisMaxType;
 export const getMapIdToYAxisMax = state => state.mapIdToYAxisMax;
 export const getMapIdToYAxisTickCount = state => state.mapIdToYAxisTickCount;
+export const getMapIdToYAxisTickType = state => state.mapIdToYAxisTickType;
 export const getMapIdToYAxisLabel = state => state.mapIdToYAxisLabel;
 export const getMapIdToYAxisScale = state => state.mapIdToYAxisScale;
 
@@ -34,6 +36,7 @@ export const getSubplotMetaData = createSelector(
     getMapIdToXAxisMaxType,
     getMapIdToXAxisMax,
     getMapIdToXAxisTickCount,
+    getMapIdToXAxisTickType,
     getMapIdToXAxisLabel,
     getMapIdToXAxisScale,
     getMapIdToYAxisSource,
@@ -42,11 +45,12 @@ export const getSubplotMetaData = createSelector(
     getMapIdToYAxisMaxType,
     getMapIdToYAxisMax,
     getMapIdToYAxisTickCount,
+    getMapIdToYAxisTickType,
     getMapIdToYAxisLabel,
     getMapIdToYAxisScale,
     (name, plotType, dataSources, dataSourceColors,
-     xSource, xMinType, xMin, xMaxType, xMax, xTickCount, xLabel, xScale,
-     ySource, yMinType, yMin, yMaxType, yMax, yTickCount, yLabel, yScale) => {
+     xSource, xMinType, xMin, xMaxType, xMax, xTickCount, xTickType, xLabel, xScale,
+     ySource, yMinType, yMin, yMaxType, yMax, yTickCount, yTickType, yLabel, yScale) => {
         const ids = Object.keys(name),
             metaData = {};
         ids.forEach( (id)=>{
@@ -62,6 +66,7 @@ export const getSubplotMetaData = createSelector(
                     maxType: xMaxType[id],
                     max: xMax[id],
                     ticks: xTickCount[id],
+                    tickType: xTickType[id],
                     label: xLabel[id],
                     scale: xScale[id]
                 },
@@ -72,6 +77,7 @@ export const getSubplotMetaData = createSelector(
                     maxType: yMaxType[id],
                     max: yMax[id],
                     ticks: yTickCount[id],
+                    tickType: yTickType[id],
                     label: yLabel[id],
                     scale: yScale[id]
                 },
