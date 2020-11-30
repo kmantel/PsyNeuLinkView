@@ -45,9 +45,52 @@ class LinePlot extends Plot {
 
                 ]
             };
+
+            let staggeredTimeCounter = {};
+
             for (const datum of dataSourceIdToData[dataSource]){
+                let time = datum.time.split(':');
+                let run = time[0];
+                let trial = time[1];
+                let pass = time[2];
+                let timestep = time[3];
+                if (!(run in staggeredTimeCounter)) {
+                    staggeredTimeCounter[run] = {
+                        [trial]:{
+                            [pass]:{
+                                [timestep]:1
+                            }
+                        }
+                    }
+                }
+                else if (!(trial in staggeredTimeCounter[run])) {
+                    staggeredTimeCounter[run][trial] = {
+                        [pass]:{
+                            [timestep]:1
+                        }
+                    }
+                }
+                else if (!(pass in staggeredTimeCounter[run][trial])) {
+                    staggeredTimeCounter[run][trial][pass] = {
+                        [timestep]:1
+                    }
+                }
+                else if (!(timestep in staggeredTimeCounter[run][trial][pass])) {
+                    staggeredTimeCounter[run][trial][pass][timestep] = 1
+                }
+            }
+
+            console.log(staggeredTimeCounter);
+
+            for (const datum of dataSourceIdToData[dataSource]){
+                let time = datum.time.split(':');
+                let run = parseInt(time[0]);
+                let trial = parseInt(time[1]);
+                for (var i = run-1; i >= 0; i--){
+                    trial += Object.keys(staggeredTimeCounter[i]).length
+                }
                 datumObj.data.push({
-                    x: parseInt(datum.time.split(':').slice(0,2).join('')),
+                    x: trial,
                     y: datum.value.data[0]
                 });
             }
