@@ -80,8 +80,6 @@ class LinePlot extends Plot {
                 }
             }
 
-            console.log(staggeredTimeCounter);
-
             for (const datum of dataSourceIdToData[dataSource]){
                 let time = datum.time.split(':');
                 let run = parseInt(time[0]);
