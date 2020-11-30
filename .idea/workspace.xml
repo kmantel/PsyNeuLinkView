@@ -3,7 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="0426a943-ef89-4391-a3a0-8152f91aa099" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/line-plot.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/line-plot.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/d3model.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/d3model.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/interfaces/rpc.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/interfaces/rpc.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -231,7 +232,7 @@
       <workItem from="1600279555230" duration="4000" />
       <workItem from="1600295117764" duration="1149000" />
       <workItem from="1606228226617" duration="5214000" />
-      <workItem from="1606746139943" duration="8600000" />
+      <workItem from="1606746139943" duration="15523000" />
     </task>
     <task id="LOCAL-00001" summary="Enabled touchpad zoom gestures and windows ctrl shortcuts">
       <created>1581449946471</created>
@@ -580,11 +581,11 @@
     </state>
     <state x="493" y="140" width="1168" height="803" key="CommitChangelistDialog2/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1600186822119" />
     <state x="598" y="118" key="CommitChangelistDialog2/0.0.1920.1040@0.0.1920.1040" timestamp="1600132184019" />
-    <state x="355" y="113" width="1536" height="860" key="DiffContextDialog" timestamp="1606231003118">
+    <state x="355" y="113" width="1536" height="860" key="DiffContextDialog" timestamp="1606767581126">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="236" y="107" width="1536" height="860" key="DiffContextDialog/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1599852212345" />
-    <state x="355" y="113" width="1536" height="860" key="DiffContextDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1606231003118" />
+    <state x="355" y="113" width="1536" height="860" key="DiffContextDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1606767581126" />
     <state x="740" y="275" key="FileChooserDialogImpl" timestamp="1598821670790">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -666,10 +667,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1900" height="307" key="GridCell.Tab.3.right/0.0.1920.1040@0.0.1920.1040" timestamp="1598596420375" />
-    <state x="920" y="261" key="RollbackChangesDialog" timestamp="1606231004148">
+    <state x="920" y="261" key="RollbackChangesDialog" timestamp="1606762676898">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="920" y="261" key="RollbackChangesDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1606231004148" />
+    <state x="920" y="261" key="RollbackChangesDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1606762676898" />
     <state x="463" y="165" key="SettingsEditor" timestamp="1598821862583">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -688,15 +689,16 @@
     </state>
     <state x="93" y="93" width="1733" height="853" key="com.intellij.history.integration.ui.views.DirectoryHistoryDialog/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1599852212345" />
     <state x="93" y="93" width="1733" height="853" key="com.intellij.history.integration.ui.views.DirectoryHistoryDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1606151199408" />
-    <state x="137" y="123" width="1736" height="856" key="com.intellij.history.integration.ui.views.FileHistoryDialog" timestamp="1600184777995">
+    <state x="92" y="92" width="1736" height="856" key="com.intellij.history.integration.ui.views.FileHistoryDialog" timestamp="1606767835622">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="137" y="123" width="1736" height="856" key="com.intellij.history.integration.ui.views.FileHistoryDialog/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1600184777995" />
-    <state x="92" y="92" width="1736" height="856" key="com.intellij.history.integration.ui.views.FileHistoryDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1600129317525" />
-    <state x="92" y="92" width="1736" height="856" key="com.intellij.history.integration.ui.views.SelectionHistoryDialog" timestamp="1599852500625">
+    <state x="92" y="92" width="1736" height="856" key="com.intellij.history.integration.ui.views.FileHistoryDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1606767835622" />
+    <state x="92" y="92" width="1736" height="856" key="com.intellij.history.integration.ui.views.SelectionHistoryDialog" timestamp="1606767835622">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="92" y="92" width="1736" height="856" key="com.intellij.history.integration.ui.views.SelectionHistoryDialog/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1599852500625" />
+    <state x="92" y="92" width="1736" height="856" key="com.intellij.history.integration.ui.views.SelectionHistoryDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1606767835622" />
     <state x="610" y="138" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser" timestamp="1598316600227">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -720,23 +722,13 @@
     </state>
     <state x="583" y="290" width="672" height="677" key="run.anything.popup/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1599854201083" />
     <state x="588" y="294" width="672" height="677" key="run.anything.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1606756140904" />
-    <state x="693" y="313" width="672" height="678" key="search.everywhere.popup" timestamp="1606750879834">
+    <state x="694" y="314" width="672" height="678" key="search.everywhere.popup" timestamp="1606767348983">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="608" y="231" width="672" height="678" key="search.everywhere.popup/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1599854203293" />
-    <state x="693" y="313" width="672" height="678" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1606750879834" />
+    <state x="694" y="314" width="672" height="678" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1606767348983" />
   </component>
   <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/src/components/line-plot.js</url>
-          <line>91</line>
-          <properties lambdaOrdinal="-1" />
-          <option name="timeStamp" value="21" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
     <watches-manager>
       <configuration name="ChromiumRemoteDebugType">
         <watch expression="data" />

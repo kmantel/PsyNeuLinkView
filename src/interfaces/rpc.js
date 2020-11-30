@@ -144,7 +144,7 @@ class RPCInterface{
 
     update_stylesheet(stylesheet, callback = () => {}) {
         var writeToFile;
-        if (!this.stylesheet_writer){
+        if (this.stylesheet_writer === null){
             this.stylesheet_writer = this.instantiate_stylesheet_writer(callback)
         }
         if (typeof stylesheet === 'object' && stylesheet !== null) {

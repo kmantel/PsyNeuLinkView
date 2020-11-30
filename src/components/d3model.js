@@ -80,29 +80,29 @@ class D3model extends React.Component {
                 this.setGraph();
             }
         }
-        // var size_updated = (!_.isEqual(this.props.size, prevProps.size) && this.svg);
-        // // viewbox must be redimensioned before node positioning is set
-        // if (size_updated) {
-        //     this.redimension_viewbox();
-        // }
-        // if (this.flags.reload_locations) {
-        //     this.set_node_positioning_from_stylesheet();
-        //     this.flags.reload_locations = false;
-        // }
-        // if (this.flags.update_locations) {
-        //     this.commit_all_nodes_to_stylesheet();
-        //     this.update_script();
-        //     this.flags.update_locations = false;
-        // }
-        // this.update_graph_from_stylesheet(prevProps);
+        var size_updated = (!_.isEqual(this.props.size, prevProps.size) && this.svg);
+        // viewbox must be redimensioned before node positioning is set
+        if (size_updated) {
+            this.redimension_viewbox();
+        }
+        if (this.flags.reload_locations) {
+            this.set_node_positioning_from_stylesheet();
+            this.flags.reload_locations = false;
+        }
+        if (this.flags.update_locations) {
+            this.commit_all_nodes_to_stylesheet();
+            this.update_script();
+            this.flags.update_locations = false;
+        }
+        this.update_graph_from_stylesheet(prevProps);
     }
 
     componentWillUnmount() {
-        // window.removeEventListener('resize', this.on_resize);
-        // window.removeEventListener('wheel', this.on_mouse_wheel);
-        // window.removeEventListener('keydown', this.on_key_down);
-        // window.removeEventListener('keyup', this.on_key_up);
-        // window.removeEventListener('mousemove', this.mouse_move);
+        window.removeEventListener('resize', this.on_resize);
+        window.removeEventListener('wheel', this.on_mouse_wheel);
+        window.removeEventListener('keydown', this.on_key_down);
+        window.removeEventListener('keyup', this.on_key_up);
+        window.removeEventListener('mousemove', this.mouse_move);
         var win = document.querySelector('.graph-view');
         if (win) {
             win.removeEventListener('scroll', this.update_scroll);
@@ -113,11 +113,11 @@ class D3model extends React.Component {
     }
 
     componentDidMount() {
-        // window.addEventListener('mousemove', this.mouse_move)
-        // window.addEventListener('resize', this.on_resize);
-        // window.addEventListener('wheel', this.on_mouse_wheel, {passive: false});
-        // window.addEventListener('keydown', this.on_key_down);
-        // window.addEventListener('keyup', this.on_key_up);
+        window.addEventListener('mousemove', this.mouse_move)
+        window.addEventListener('resize', this.on_resize);
+        window.addEventListener('wheel', this.on_mouse_wheel, {passive: false});
+        window.addEventListener('keydown', this.on_key_down);
+        window.addEventListener('keyup', this.on_key_up);
         if (!(this.state.mounted)) {
             if (this.props.graph === "loading") {
                 d3.selectAll('svg').remove();
@@ -388,48 +388,52 @@ class D3model extends React.Component {
     }
 
     on_key_down(e) {
-        if (e.metaKey || e.ctrlKey) {
-            if (e.key === '+' || e.key === '=') {
-                this.nudge_graph_larger();
-            } else if (e.key === '-') {
-                this.nudge_graph_smaller();
+        if (this.state.mounted){
+            if (e.metaKey || e.ctrlKey) {
+                if (e.key === '+' || e.key === '=') {
+                    this.nudge_graph_larger();
+                } else if (e.key === '-') {
+                    this.nudge_graph_smaller();
+                }
+                if (e.key === 'r') {
+                    this.reset_graph()
+                }
+                if (e.key === 'a') {
+                    this.index.nodes.forEach(
+                        (node) => {
+                            this.select_node(node)
+                        }
+                    )
+                }
             }
-            if (e.key === 'r') {
-                this.reset_graph()
+            if (e.key.includes('Arrow') && this.selected.size > 0) {
+                var increment;
+                var self = this;
+                e.preventDefault();
+                increment = (e.metaKey || e.ctrlKey ? 25 : 1);
+                if (e.key === 'ArrowUp') {
+                    this.move_nodes(0, -increment);
+                }
+                if (e.key === 'ArrowDown') {
+                    this.move_nodes(0, increment);
+                }
+                if (e.key === 'ArrowRight') {
+                    this.move_nodes(increment, 0);
+                }
+                if (e.key === 'ArrowLeft') {
+                    this.move_nodes(-increment, 0);
+                }
             }
-            if (e.key === 'a') {
-                this.index.nodes.forEach(
-                    (node) => {
-                        this.select_node(node)
-                    }
-                )
+            if (e.key === 'Escape') {
+                this.unselect_all()
             }
-        }
-        if (e.key.includes('Arrow') && this.selected.size > 0) {
-            var increment;
-            var self = this;
-            e.preventDefault();
-            increment = (e.metaKey || e.ctrlKey ? 25 : 1);
-            if (e.key === 'ArrowUp') {
-                this.move_nodes(0, -increment);
-            }
-            if (e.key === 'ArrowDown') {
-                this.move_nodes(0, increment);
-            }
-            if (e.key === 'ArrowRight') {
-                this.move_nodes(increment, 0);
-            }
-            if (e.key === 'ArrowLeft') {
-                this.move_nodes(-increment, 0);
-            }
-        }
-        if (e.key === 'Escape') {
-            this.unselect_all()
         }
     }
 
-    on_key_up(e) {
-        // this.update_script();
+    on_key_up() {
+        if (this.state.mounted) {
+            this.update_script();
+        }
     }
 
     on_scroll_end(e) {
@@ -443,7 +447,7 @@ class D3model extends React.Component {
         this.efferent_copies.push(efferent_copy);
         if (this.props.filepath) {
             store.dispatch(setStyleSheet(efferent_copy));
-            // rpc_client.update_stylesheet(efferent_copy);
+            rpc_client.update_stylesheet(efferent_copy);
         }
     }
 
@@ -1085,6 +1089,7 @@ class D3model extends React.Component {
         this.commit_node_to_stylesheet(node);
         this.move_label_to_corresponding_node(node);
         this.refresh_edges_for_node(node);
+        this.commit_to_stylesheet_and_update_script()
     }
 
     drag_selected(origin) {
@@ -1580,7 +1585,7 @@ class D3model extends React.Component {
         this.set_non_react_state();
         this.set_index();
         this.draw_elements();
-        this.parse_stylesheet();
+        // this.parse_stylesheet();
         this.setState({mounted: true});
         window.this = this
     }
