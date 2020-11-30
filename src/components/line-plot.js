@@ -78,6 +78,7 @@ class LinePlot extends Plot {
         return (
             <div
                 style={{width:width, height:height, color:'black'}}
+                className={`${id} plot`}
                 onMouseMove={e => {
                 }}>
                 <span
@@ -91,7 +92,6 @@ class LinePlot extends Plot {
                 >
                     {name}
                 </span>
-                {super.render()}
                 <ResponsiveLineCanvas
                     data={data}
                     margin={{ top: 50, right: 110, bottom: 50, left: 60 }}
@@ -157,11 +157,13 @@ class LinePlot extends Plot {
                             ]
                         }
                     ]}/>
+                {super.render()}
             </div>
         )
     }
 
     render(){
+        console.log(1);
         return(
             <div>
                 {this.getLinePlot()}

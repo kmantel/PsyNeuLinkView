@@ -97,7 +97,7 @@ export class ConfigurationPanel extends React.Component {
                 style={style}
                 onResize={this.props.onResize}
                 onResizeStart={this.props.onResizeStart}
-                onResizeStop={()=>{}}
+                onResizeStop={this.props.onResizeStop}
                 enable={{
                     top:true,
                     right:false,

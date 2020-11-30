@@ -4,14 +4,11 @@
     <list default="true" id="0426a943-ef89-4391-a3a0-8152f91aa099" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/electron.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/electron.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/configuration-panel.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/configuration-panel.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/line-plot.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/line-plot.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/plot-boundary.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/plot-boundary.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/plot.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/plot.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/subplot-config-form.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/subplot-config-form.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/workspace.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/workspace.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/state/subplots/actions.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/subplots/actions.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/state/subplots/reducers.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/subplots/reducers.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/state/subplots/selectors.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/state/subplots/selectors.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/yarn.lock" beforeDir="false" afterPath="$PROJECT_DIR$/yarn.lock" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -239,6 +236,8 @@
       <workItem from="1600129131674" duration="4063000" />
       <workItem from="1600279555230" duration="4000" />
       <workItem from="1600295117764" duration="1149000" />
+      <workItem from="1606228226617" duration="5214000" />
+      <workItem from="1606746139943" duration="2978000" />
     </task>
     <task id="LOCAL-00001" summary="Enabled touchpad zoom gestures and windows ctrl shortcuts">
       <created>1581449946471</created>
@@ -569,14 +568,9 @@
     <option name="LAST_COMMIT_MESSAGE" value="basic implementation of nivo line plot" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="414" y="178" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1597713369456">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="414" y="178" key="#com.intellij.execution.impl.EditConfigurationsDialog/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1597713369456" />
     <state x="710" y="330" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1598831512771">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="710" y="330" key="#com.intellij.fileTypes.FileTypeChooser/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598040614855" />
     <state x="710" y="330" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1920.1040@0.0.1920.1040" timestamp="1598831512771" />
     <state x="765" y="236" key="#com.intellij.ide.util.MemberChooser" timestamp="1598555539579">
       <screen x="0" y="0" width="1920" height="1040" />
@@ -592,11 +586,11 @@
     </state>
     <state x="493" y="140" width="1168" height="803" key="CommitChangelistDialog2/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1600186822119" />
     <state x="598" y="118" key="CommitChangelistDialog2/0.0.1920.1040@0.0.1920.1040" timestamp="1600132184019" />
-    <state x="236" y="107" width="1536" height="860" key="DiffContextDialog" timestamp="1599852212345">
+    <state x="355" y="113" width="1536" height="860" key="DiffContextDialog" timestamp="1606231003118">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="236" y="107" width="1536" height="860" key="DiffContextDialog/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1599852212345" />
-    <state x="355" y="113" width="1536" height="860" key="DiffContextDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1599240874776" />
+    <state x="355" y="113" width="1536" height="860" key="DiffContextDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1606231003118" />
     <state x="740" y="275" key="FileChooserDialogImpl" timestamp="1598821670790">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -665,32 +659,26 @@
     <state width="1900" height="307" key="GridCell.Tab.3.bottom" timestamp="1598596420375">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1370" height="370" key="GridCell.Tab.3.bottom/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1597765893088" />
     <state width="1900" height="307" key="GridCell.Tab.3.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1598596420375" />
     <state width="1900" height="307" key="GridCell.Tab.3.center" timestamp="1598596420375">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1370" height="370" key="GridCell.Tab.3.center/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1597765893088" />
     <state width="1900" height="307" key="GridCell.Tab.3.center/0.0.1920.1040@0.0.1920.1040" timestamp="1598596420375" />
     <state width="1900" height="307" key="GridCell.Tab.3.left" timestamp="1598596420375">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1370" height="370" key="GridCell.Tab.3.left/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1597765893088" />
     <state width="1900" height="307" key="GridCell.Tab.3.left/0.0.1920.1040@0.0.1920.1040" timestamp="1598596420375" />
     <state width="1900" height="307" key="GridCell.Tab.3.right" timestamp="1598596420375">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1370" height="370" key="GridCell.Tab.3.right/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1597765893088" />
     <state width="1900" height="307" key="GridCell.Tab.3.right/0.0.1920.1040@0.0.1920.1040" timestamp="1598596420375" />
-    <state x="920" y="261" key="RollbackChangesDialog" timestamp="1598597173363">
+    <state x="920" y="261" key="RollbackChangesDialog" timestamp="1606231004148">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="920" y="261" key="RollbackChangesDialog/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1597851384558" />
-    <state x="920" y="261" key="RollbackChangesDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1598597173363" />
+    <state x="920" y="261" key="RollbackChangesDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1606231004148" />
     <state x="463" y="165" key="SettingsEditor" timestamp="1598821862583">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="463" y="165" key="SettingsEditor/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1598038332815" />
     <state x="463" y="165" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1598821862583" />
     <state x="815" y="442" key="VCS.ChangelistChooser" timestamp="1599240828843">
       <screen x="0" y="0" width="1920" height="1040" />
@@ -728,35 +716,21 @@
     </state>
     <state x="722" y="290" width="1079" height="750" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1600184116641" />
     <state x="603" y="460" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/0.0.1920.1040@0.0.1920.1040" timestamp="1600125382550" />
-    <state x="-2855" y="590" width="825" height="575" key="dock-window-1" timestamp="1597770570215">
-      <screen x="-3840" y="0" width="1920" height="1060" />
-    </state>
-    <state x="-2855" y="590" width="825" height="575" key="dock-window-1/-3840.0.1920.1060/0.0.1920.1040@-3840.0.1920.1060" timestamp="1597770570215" />
-    <state x="-3084" y="95" width="825" height="575" key="dock-window-1/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1597761702853" />
-    <state x="656" y="75" width="1062" height="832" key="dock-window-2" timestamp="1597767043880">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="656" y="75" width="1062" height="832" key="dock-window-2/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1597767043880" />
-    <state x="-2533" y="292" width="1058" height="830" key="dock-window-3" timestamp="1597770570215">
-      <screen x="-3840" y="0" width="1920" height="1060" />
-    </state>
-    <state x="-2533" y="292" width="1058" height="830" key="dock-window-3/-3840.0.1920.1060/0.0.1920.1040@-3840.0.1920.1060" timestamp="1597770570215" />
-    <state x="840" y="136" width="825" height="732" key="find.popup" timestamp="1600123948427">
+    <state x="840" y="136" width="825" height="732" key="find.popup" timestamp="1606169683496">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="910" y="146" width="842" height="732" key="find.popup/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1599852204126" />
-    <state x="840" y="136" width="825" height="732" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1600123948427" />
+    <state x="840" y="136" width="825" height="732" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1606169683496" />
     <state x="587" y="293" width="672" height="677" key="run.anything.popup" timestamp="1600109143702">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="583" y="290" width="672" height="677" key="run.anything.popup/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1599854201083" />
     <state x="587" y="293" width="672" height="677" key="run.anything.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1600109143702" />
-    <state x="690" y="310" width="672" height="678" key="search.everywhere.popup" timestamp="1600120971992">
+    <state x="693" y="313" width="672" height="678" key="search.everywhere.popup" timestamp="1606750879834">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="-3230" y="237" width="672" height="692" key="search.everywhere.popup/-3840.0.1920.1060/0.0.1920.1040@-3840.0.1920.1060" timestamp="1598065172325" />
     <state x="608" y="231" width="672" height="678" key="search.everywhere.popup/-3840.0.1920.1060/0.0.1920.1040@0.0.1920.1040" timestamp="1599854203293" />
-    <state x="690" y="310" width="672" height="678" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1600120971992" />
+    <state x="693" y="313" width="672" height="678" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1606750879834" />
   </component>
   <component name="XDebuggerManager">
     <watches-manager>

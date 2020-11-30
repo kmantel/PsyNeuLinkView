@@ -56,7 +56,7 @@ function createWindow() {
     );
     mainWindow.setTitle('PsyNeuLinkView');
     mainWindow.webContents.send('appPath', adjusted_app_path);
-    mainWindow.webContents.session.loadExtension(path.join(os.homedir(), 'AppData/Local/Google/Chrome/User Data/Profile 1/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.8.2_0')).then(()=>{})
+    mainWindow.webContents.session.loadExtension(path.join(os.homedir(), 'AppData/Local/Google/Chrome/User Data/Profile 1/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.10.0_0')).then(()=>{})
     windows['renderMain'] = mainWindow;
 }
 

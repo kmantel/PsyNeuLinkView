@@ -791,6 +791,7 @@ class WorkSpace extends React.PureComponent {
                     }
                     onResizeStop={
                         (e, dir, ref, delta)=>{
+                            console.log('stop')
                             this.setState(
                                 {
                                     baseline_row_two_h:this.state.baseline_row_two_h - delta.width,
