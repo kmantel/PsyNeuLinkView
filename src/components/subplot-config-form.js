@@ -14,9 +14,6 @@ import {parseNameOnEdit} from "../state/subplots/util";
 import {editSubplotMetaData} from "../state/subplots/actions";
 import {getComponentMapNameToId} from "../state/psyneulink-components/selectors";
 
-function validateRequired(value) {
-}
-
 const mapStateToProps = ({core, subplots, subplotConfigForm, psyNeuLinkRegistry, psyNeuLinkComponents}) => {
     return {
         psyNeuLinkIdSet: getPsyNeuLinkIdSet(psyNeuLinkRegistry),
@@ -33,12 +30,12 @@ const mapDispatchToProps = dispatch => (
     {
         editSubplotMetaData: (
             {id, plotType, name, dataSources,
-                xAxisSource, xAxisMinType, xAxisMin, xAxisMaxType, xAxisMax, xAxisTickCount, xAxisLabel, xAxisScale,
-                yAxisSource, yAxisMinType, yAxisMin, yAxisMaxType, yAxisMax, yAxisTickCount, yAxisLabel, yAxisScale}
+                xAxisSource, xAxisMinType, xAxisMin, xAxisMaxType, xAxisMax, xAxisTickCount, xAxisTickType, xAxisLabel, xAxisScale,
+                yAxisSource, yAxisMinType, yAxisMin, yAxisMaxType, yAxisMax, yAxisTickCount, yAxisTickType, yAxisLabel, yAxisScale}
         ) => dispatch(editSubplotMetaData(
             {id, plotType, name, dataSources,
-                xAxisSource, xAxisMinType, xAxisMin, xAxisMaxType, xAxisMax, xAxisTickCount, xAxisLabel, xAxisScale,
-                yAxisSource, yAxisMinType, yAxisMin, yAxisMaxType, yAxisMax, yAxisTickCount, yAxisLabel, yAxisScale}
+                xAxisSource, xAxisMinType, xAxisMin, xAxisMaxType, xAxisMax, xAxisTickCount, xAxisTickType, xAxisLabel, xAxisScale,
+                yAxisSource, yAxisMinType, yAxisMin, yAxisMaxType, yAxisMax, yAxisTickCount, yAxisTickType, yAxisLabel, yAxisScale}
         )),
         setTabFocus: ({parentId, tabKey}) => dispatch(setTabFocus({parentId, tabKey})),
         setComponentFocus: ({parentId, tabKey}) => dispatch(setComponentFocus({parentId, tabKey})),
@@ -375,200 +372,218 @@ class SubplotConfigForm extends React.Component{
                         value={"Tick Marks"}
                         style={{ width: labelProportion, color: 'rgba(0, 0, 0, 1)', cursor: 'auto' }} />
                     <InputNumber
+                        disabled={xAxis.tickType == DYNAMIC}
                         min={0}
-                        value={xAxis.ticks}
-                        style={{ width: inputProportion, color: 'rgba(0, 0, 0, 1)', cursor: 'auto' }}
+                        value={xAxis.tickType == DYNAMIC ? "Dynamic" : xAxis.ticks}
+                        style={{ width: inputProportionWithButton,
+                            color: xAxis.tickType == DYNAMIC ? 'rgba(0, 0, 0, 0.25)' : 'rgba(0, 0, 0, 1)',
+                            cursor: 'auto' }}
                         onChange={
                             (num) => {
-                                editSubplotMetaData({id: id, xAxisTickCount: num})
+                                editSubplotMetaData({id: id, xAxisTickCount: num || 0})
                             }
                         }
                     />
-                </Input.Group>
-
-            </div>;
-
-        let yAxisDivider =
-        <div className={'horizontal-divider-container'}>
-            <Divider orientation="left" plain>
-                y-Axis
-            </Divider>
-        </div>;
-
-        let yAxisOptions =
-            <div className={'yAxis-row-container'}>
-                <Input.Group
-                    style={{
-                        width:groupProportion,
-                        marginRight:"10px",
-                        display:"inline-block"
-                    }}>
-                    <Input
-                        disabled
-                        value={"Label"}
-                        style={{ width: labelProportion, color: 'rgba(0, 0, 0, 1)', cursor: 'auto' }} />
-                    <Input
-                        id={`metadata-name-${id}`}
-                        value={yAxis.label}
-                        onChange={
-                            (e) => {
-                                editSubplotMetaData({id: id, yAxisLabel: e.target.value})
-                            }
-                        }
-                        style={{ width:inputProportion }}
-                        spellCheck={false}
-                    />
-                </Input.Group>
-
-                <Input.Group
-                    style={{
-                        width:groupProportion,
-                        marginRight:"10px",
-                        display:"inline-block",
-                        verticalAlign:"top"
-                    }}>
-                    <Input
-                        disabled
-                        value={"Source"}
-                        style={{ width: labelProportion, color: 'rgba(0, 0, 0, 1)', cursor: 'auto' }} />
-                    <Select disabled
-                            defaultValue={"value"}
-                            style={{ width: inputProportion }}>
-                        <Select.Option value="value">Value</Select.Option>
-                    </Select>
-                </Input.Group>
-
-                <Input.Group
-                    style={{
-                        width:groupProportion,
-                        marginRight:"10px",
-                        display:"inline-block",
-                        verticalAlign:"top"
-                    }}>
-                    <Input
-                        disabled
-                        value={"Scale"}
-                        style={{ width: labelProportion, color: 'rgba(0, 0, 0, 1)', cursor: 'auto' }} />
-                    <Select disabled
-                            defaultValue={"linear"}
-                            style={{ width: inputProportion }}>
-                        <Select.Option value="linear">Linear</Select.Option>
-                    </Select>
-                </Input.Group>
-
-                <br/>
-
-                <Input.Group
-                    style={{
-                        width:groupProportion,
-                        marginRight:"10px",
-                        display:"inline-block",
-                        verticalAlign:"top"
-                    }}>
-                    <Input
-                        disabled
-                        value={"Minimum"}
-                        style={{ width: labelProportion, color: 'rgba(0, 0, 0, 1)', cursor: 'auto' }} />
-
-                    <InputNumber
-                        disabled={yAxis.minType == DYNAMIC}
-                        style={{
-                            width: inputProportionWithButton,
-                            color: yAxis.minType == DYNAMIC ? 'rgba(0, 0, 0, 0.25)' : 'rgba(0, 0, 0, 1)',
-                            cursor: 'auto'
-                        }}
-                        value={yAxis.minType == DYNAMIC ? "Dynamic" : yAxis.min}
-                        onChange={
-                            (num) => {
-                                editSubplotMetaData({id: id, yAxisMin: num})
-                            }
-                        }
-                    />
-
                     <Button
                         style={{
                             width: buttonProportion,
                             bottom: "1px",
-                            background: yAxis.minType == DYNAMIC ? "darkorange" : "",
-                            borderColor: yAxis.minType == DYNAMIC ? "darkorange" : ""
-                        }}
-                        onClick={()=>{editSubplotMetaData({
-                            id: id,
-                            yAxisMinType: yAxis.minType == DYNAMIC ? FIXED : DYNAMIC
-                        })}}
-                        type={"primary"}>{
-                        yAxis.minType.charAt(0).toUpperCase() + yAxis.minType.slice(1)
-                    }</Button>
-                </Input.Group>
-
-                <Input.Group
-                    style={{
-                        width:groupProportion,
-                        marginRight:"10px",
-                        display:"inline-block",
-                        verticalAlign:"top"
-                    }}>
-                    <Input
-                        disabled
-                        value={"Maximum"}
-                        style={{ width: labelProportion, color: 'rgba(0, 0, 0, 1)', cursor: 'auto' }} />
-
-                    <InputNumber
-                        style={{
-                            width: inputProportionWithButton,
-                            color: yAxis.maxType == DYNAMIC ? 'rgba(0, 0, 0, 0.25)' : 'rgba(0, 0, 0, 1)',
-                            cursor: 'auto'
-                        }}
-                        disabled={yAxis.maxType == DYNAMIC}
-                        value={yAxis.maxType == DYNAMIC ? "Dynamic" : yAxis.max}
-                        onChange={
-                            (num) => {
-                                editSubplotMetaData({id: id, yAxisMax: num})
-                            }
-                        }
-                    />
-
-                    <Button
-                        style={{
-                            width: buttonProportion,
-                            bottom: "1px",
-                            background: yAxis.maxType == DYNAMIC ? "darkorange" : "",
-                            borderColor: yAxis.maxType == DYNAMIC ? "darkorange" : ""
+                            background: xAxis.tickType == DYNAMIC ? "darkorange" : "",
+                            borderColor: xAxis.tickType == DYNAMIC ? "darkorange" : ""
                         }}
                         type={"primary"}
                         onClick={()=>{editSubplotMetaData({
                             id: id,
-                            yAxisMaxType: yAxis.maxType == DYNAMIC ? FIXED : DYNAMIC
+                            xAxisTickType: xAxis.tickType == DYNAMIC ? FIXED : DYNAMIC
                         })}}
                     >{
-                        yAxis.maxType.charAt(0).toUpperCase() + yAxis.maxType.slice(1)
+                        xAxis.tickType.charAt(0).toUpperCase() + xAxis.tickType.slice(1)
                     }</Button>
-                </Input.Group>
-
-                <Input.Group
-                    style={{
-                        width:groupProportion,
-                        marginRight:"10px",
-                        display:"inline-block"
-                    }}>
-                    <Input
-                        disabled
-                        value={"Tick Marks"}
-                        style={{ width: labelProportion, color: 'rgba(0, 0, 0, 1)', cursor: 'auto' }} />
-                    <InputNumber
-                        min={0}
-                        value={xAxis.ticks}
-                        style={{ width: inputProportion, color: 'rgba(0, 0, 0, 1)', cursor: 'auto' }}
-                        onChange={
-                            (num) => {
-                                editSubplotMetaData({id: id, xAxisTickCount: num})
-                            }
-                        }
-                    />
                 </Input.Group>
 
             </div>;
 
+        // let yAxisDivider =
+        // <div className={'horizontal-divider-container'}>
+        //     <Divider orientation="left" plain>
+        //         y-Axis
+        //     </Divider>
+        // </div>;
+        //
+        // let yAxisOptions =
+        //     <div className={'yAxis-row-container'}>
+        //         <Input.Group
+        //             style={{
+        //                 width:groupProportion,
+        //                 marginRight:"10px",
+        //                 display:"inline-block"
+        //             }}>
+        //             <Input
+        //                 disabled
+        //                 value={"Label"}
+        //                 style={{ width: labelProportion, color: 'rgba(0, 0, 0, 1)', cursor: 'auto' }} />
+        //             <Input
+        //                 id={`metadata-name-${id}`}
+        //                 value={yAxis.label}
+        //                 onChange={
+        //                     (e) => {
+        //                         editSubplotMetaData({id: id, yAxisLabel: e.target.value})
+        //                     }
+        //                 }
+        //                 style={{ width:inputProportion }}
+        //                 spellCheck={false}
+        //             />
+        //         </Input.Group>
+        //
+        //         <Input.Group
+        //             style={{
+        //                 width:groupProportion,
+        //                 marginRight:"10px",
+        //                 display:"inline-block",
+        //                 verticalAlign:"top"
+        //             }}>
+        //             <Input
+        //                 disabled
+        //                 value={"Source"}
+        //                 style={{ width: labelProportion, color: 'rgba(0, 0, 0, 1)', cursor: 'auto' }} />
+        //             <Select disabled
+        //                     defaultValue={"value"}
+        //                     style={{ width: inputProportion }}>
+        //                 <Select.Option value="value">Value</Select.Option>
+        //             </Select>
+        //         </Input.Group>
+        //
+        //         <Input.Group
+        //             style={{
+        //                 width:groupProportion,
+        //                 marginRight:"10px",
+        //                 display:"inline-block",
+        //                 verticalAlign:"top"
+        //             }}>
+        //             <Input
+        //                 disabled
+        //                 value={"Scale"}
+        //                 style={{ width: labelProportion, color: 'rgba(0, 0, 0, 1)', cursor: 'auto' }} />
+        //             <Select disabled
+        //                     defaultValue={"linear"}
+        //                     style={{ width: inputProportion }}>
+        //                 <Select.Option value="linear">Linear</Select.Option>
+        //             </Select>
+        //         </Input.Group>
+        //
+        //         <br/>
+        //
+        //         <Input.Group
+        //             style={{
+        //                 width:groupProportion,
+        //                 marginRight:"10px",
+        //                 display:"inline-block",
+        //                 verticalAlign:"top"
+        //             }}>
+        //             <Input
+        //                 disabled
+        //                 value={"Minimum"}
+        //                 style={{ width: labelProportion, color: 'rgba(0, 0, 0, 1)', cursor: 'auto' }} />
+        //
+        //             <InputNumber
+        //                 disabled={yAxis.minType == DYNAMIC}
+        //                 style={{
+        //                     width: inputProportionWithButton,
+        //                     color: yAxis.minType == DYNAMIC ? 'rgba(0, 0, 0, 0.25)' : 'rgba(0, 0, 0, 1)',
+        //                     cursor: 'auto'
+        //                 }}
+        //                 value={yAxis.minType == DYNAMIC ? "Dynamic" : yAxis.min}
+        //                 onChange={
+        //                     (num) => {
+        //                         editSubplotMetaData({id: id, yAxisMin: num})
+        //                     }
+        //                 }
+        //             />
+        //
+        //             <Button
+        //                 style={{
+        //                     width: buttonProportion,
+        //                     bottom: "1px",
+        //                     background: yAxis.minType == DYNAMIC ? "darkorange" : "",
+        //                     borderColor: yAxis.minType == DYNAMIC ? "darkorange" : ""
+        //                 }}
+        //                 onClick={()=>{editSubplotMetaData({
+        //                     id: id,
+        //                     yAxisMinType: yAxis.minType == DYNAMIC ? FIXED : DYNAMIC
+        //                 })}}
+        //                 type={"primary"}>{
+        //                 yAxis.minType.charAt(0).toUpperCase() + yAxis.minType.slice(1)
+        //             }</Button>
+        //         </Input.Group>
+        //
+        //         <Input.Group
+        //             style={{
+        //                 width:groupProportion,
+        //                 marginRight:"10px",
+        //                 display:"inline-block",
+        //                 verticalAlign:"top"
+        //             }}>
+        //             <Input
+        //                 disabled
+        //                 value={"Maximum"}
+        //                 style={{ width: labelProportion, color: 'rgba(0, 0, 0, 1)', cursor: 'auto' }} />
+        //
+        //             <InputNumber
+        //                 style={{
+        //                     width: inputProportionWithButton,
+        //                     color: yAxis.maxType == DYNAMIC ? 'rgba(0, 0, 0, 0.25)' : 'rgba(0, 0, 0, 1)',
+        //                     cursor: 'auto'
+        //                 }}
+        //                 disabled={yAxis.maxType == DYNAMIC}
+        //                 value={yAxis.maxType == DYNAMIC ? "Dynamic" : yAxis.max}
+        //                 onChange={
+        //                     (num) => {
+        //                         editSubplotMetaData({id: id, yAxisMax: num})
+        //                     }
+        //                 }
+        //             />
+        //
+        //             <Button
+        //                 style={{
+        //                     width: buttonProportion,
+        //                     bottom: "1px",
+        //                     background: yAxis.maxType == DYNAMIC ? "darkorange" : "",
+        //                     borderColor: yAxis.maxType == DYNAMIC ? "darkorange" : ""
+        //                 }}
+        //                 type={"primary"}
+        //                 onClick={()=>{editSubplotMetaData({
+        //                     id: id,
+        //                     yAxisMaxType: yAxis.maxType == DYNAMIC ? FIXED : DYNAMIC
+        //                 })}}
+        //             >{
+        //                 yAxis.maxType.charAt(0).toUpperCase() + yAxis.maxType.slice(1)
+        //             }</Button>
+        //         </Input.Group>
+        //
+        //         <Input.Group
+        //             style={{
+        //                 width:groupProportion,
+        //                 marginRight:"10px",
+        //                 display:"inline-block"
+        //             }}>
+        //             <Input
+        //                 disabled
+        //                 value={"Tick Marks"}
+        //                 style={{ width: labelProportion, color: 'rgba(0, 0, 0, 1)', cursor: 'auto' }} />
+        //             <InputNumber
+        //                 min={0}
+        //                 value={xAxis.ticks}
+        //                 style={{ width: inputProportion, color: 'rgba(0, 0, 0, 1)', cursor: 'auto' }}
+        //                 onChange={
+        //                     (num) => {
+        //                         editSubplotMetaData({id: id, xAxisTickCount: num})
+        //                     }
+        //                 }
+        //             />
+        //         </Input.Group>
+        //
+        //     </div>;
+        //
 
         let dataViewTableDivider =
         <div className={'horizontal-divider-container'}>
@@ -582,8 +597,8 @@ class SubplotConfigForm extends React.Component{
             <div/>, metaDataRowOne,
             <div/>, xAxisDivider,
             <div/>, xAxisOptions,
-            <div/>, yAxisDivider,
-            <div/>, yAxisOptions,
+            // <div/>, yAxisDivider,
+            // <div/>, yAxisOptions,
             <div/>, dataViewTableDivider,
             <div/>, this.getDataForm()
         ]
@@ -631,10 +646,11 @@ class SubplotConfigForm extends React.Component{
     }
 
     render() {
-
-        return <div>
-            {this.getActiveForm()}
-        </div>;
+        return (
+            <div>
+                {this.getActiveForm()}
+            </div>
+        );
     }
 }
 

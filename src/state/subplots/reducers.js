@@ -16,6 +16,7 @@ export const initialState = {
     mapIdToXAxisMaxType:{},
     mapIdToXAxisMax:{},
     mapIdToXAxisTickCount:{},
+    mapIdToXAxisTickType:{},
     mapIdToXAxisLabel:{},
     mapIdToXAxisScale:{},
     mapIdToYAxisSource:{},
@@ -24,6 +25,7 @@ export const initialState = {
     mapIdToYAxisMaxType:{},
     mapIdToYAxisMax:{},
     mapIdToYAxisTickCount:{},
+    mapIdToYAxisTickType:{},
     mapIdToYAxisLabel:{},
     mapIdToYAxisScale:{},
     mapPlotTypeToDefaultNameCounter:_.fromPairs(PLOT_TYPES.map( type => [type, 1] ))
@@ -42,27 +44,29 @@ export function reducer(state = initialState, action) {
                 mapIdToDataSourceColors: {...state.mapIdToDataSourceColors, [id]:{}},
                 mapPlotTypeToDefaultNameCounter: {...state.mapPlotTypeToDefaultNameCounter, [plotType]:counter},
                 mapIdToXAxisSource: {...state.mapIdToXAxisSource, [id]:TRIAL_NUMBER},
-                mapIdToXAxisMinType: {...state.mapIdToXAxisMinType, [id]:FIXED},
+                mapIdToXAxisMinType: {...state.mapIdToXAxisMinType, [id]:DYNAMIC},
                 mapIdToXAxisMin: {...state.mapIdToXAxisMin, [id]:0},
-                mapIdToXAxisMaxType:{...state.mapIdToXAxisMaxType, [id]:FIXED},
+                mapIdToXAxisMaxType:{...state.mapIdToXAxisMaxType, [id]:DYNAMIC},
                 mapIdToXAxisMax: {...state.mapIdToXAxisMax, [id]:0},
                 mapIdToXAxisTickCount:  {...state.mapIdToXAxisTickCount, [id]:5},
-                mapIdToXAxisLabel: {...state.mapIdToXAxisLabel, [id]:""},
+                mapIdToXAxisTickType: {...state.mapIdToXAxisTickType, [id]:DYNAMIC},
+                mapIdToXAxisLabel: {...state.mapIdToXAxisLabel, [id]:"Trial"},
                 mapIdToXAxisScale: {...state.mapIdToXAxisScale, [id]:"linear"},
                 mapIdToYAxisSource: {...state.mapIdToYAxisSource, [id]:VALUE},
-                mapIdToYAxisMinType: {...state.mapIdToYAxisMinType, [id]:FIXED},
+                mapIdToYAxisMinType: {...state.mapIdToYAxisMinType, [id]:DYNAMIC},
                 mapIdToYAxisMin: {...state.mapIdToYAxisMin, [id]:0},
-                mapIdToYAxisMaxType: {...state.mapIdToYAxisMaxType, [id]:FIXED},
+                mapIdToYAxisMaxType: {...state.mapIdToYAxisMaxType, [id]:DYNAMIC},
                 mapIdToYAxisMax: {...state.mapIdToYAxisMax, [id]:0},
                 mapIdToYAxisTickCount: {...state.mapIdToYAxisTickCount, [id]:5},
-                mapIdToYAxisLabel: {...state.mapIdToYAxisLabel, [id]:""},
+                mapIdToYAxisTickType: {...state.mapIdToXAxisTickType, [id]:DYNAMIC},
+                mapIdToYAxisLabel: {...state.mapIdToYAxisLabel, [id]:"Value"},
                 mapIdToYAxisScale: {...state.mapIdToYAxisScale, [id]:"linear"}
             });
 
         case atypes.SUBPLOT_EDIT_METADATA:
             var {id, plotType, name, dataSources, dataSourceColors,
-                    xAxisSource, xAxisMinType, xAxisMin, xAxisMaxType, xAxisMax, xAxisTickCount, xAxisLabel, xAxisScale,
-                    yAxisSource, yAxisMinType, yAxisMin, yAxisMaxType, yAxisMax, yAxisTickCount, yAxisLabel, yAxisScale} = action,
+                    xAxisSource, xAxisMinType, xAxisMin, xAxisMaxType, xAxisMax, xAxisTickCount, xAxisTickType, xAxisLabel, xAxisScale,
+                    yAxisSource, yAxisMinType, yAxisMin, yAxisMaxType, yAxisMax, yAxisTickCount, yAxisTickType, yAxisLabel, yAxisScale} = action,
                 counter;
             return Object.assign({}, state, {
                 mapIdToName:{
@@ -108,6 +112,10 @@ export function reducer(state = initialState, action) {
                 mapIdToXAxisTickCount: {
                     ...state.mapIdToXAxisTickCount,
                     ...(xAxisTickCount !== undefined ? {[id]:xAxisTickCount} : {})
+                },
+                mapIdToXAxisTickType: {
+                    ...state.mapIdToXAxisTickType,
+                    ...(xAxisTickType !== undefined ? {[id]:xAxisTickType} : {})
                 },
                 mapIdToXAxisLabel: {
                     ...state.mapIdToXAxisLabel,

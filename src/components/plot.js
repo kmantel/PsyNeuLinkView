@@ -10,7 +10,7 @@ const style = {
     justifyContent: "center",
 };
 
-class Plot extends React.PureComponent{
+class Plot extends React.Component{
     constructor(props) {
         super(props);
         this.state = {
@@ -22,6 +22,8 @@ class Plot extends React.PureComponent{
     render() {
         return <PlotBoundaries
             id={this.props.id}
+            className={`${this.props.id}-plot-boundaries`}
+            style={{width:this.props.width, height:this.props.height}}
             cursorSignal={this.props.cursorSignal}/>
     }
 }

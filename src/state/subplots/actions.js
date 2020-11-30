@@ -17,8 +17,8 @@ export function initializeSubplot({id, plotType, name, dataSources, position, co
 export function editSubplotMetaData(
     {
         id, plotType, name, dataSources, dataSourceColors,
-        xAxisSource, xAxisMinType, xAxisMin, xAxisMaxType, xAxisMax, xAxisTickCount, xAxisLabel, xAxisScale,
-        yAxisSource, yAxisMinType, yAxisMin, yAxisMaxType, yAxisMax, yAxisTickCount, yAxisLabel, yAxisScale
+        xAxisSource, xAxisMinType, xAxisMin, xAxisMaxType, xAxisMax, xAxisTickCount, xAxisTickType, xAxisLabel, xAxisScale,
+        yAxisSource, yAxisMinType, yAxisMin, yAxisMaxType, yAxisMax, yAxisTickCount, yAxisTickType, yAxisLabel, yAxisScale
     }){
     return {
         type: atypes.SUBPLOT_EDIT_METADATA,
@@ -32,6 +32,7 @@ export function editSubplotMetaData(
         xAxisMaxType: xAxisMaxType,
         xAxisMax: xAxisMax,
         xAxisTickCount: xAxisTickCount,
+        xAxisTickType: xAxisTickType,
         xAxisLabel: xAxisLabel,
         xAxisScale: xAxisScale,
         yAxisSource: yAxisSource,
@@ -40,6 +41,7 @@ export function editSubplotMetaData(
         yAxisMaxType: yAxisMaxType,
         yAxisMax: yAxisMax,
         yAxisTickCount: yAxisTickCount,
+        yAxisTickType: yAxisTickType,
         yAxisLabel: yAxisLabel,
         yAxisScale: yAxisScale
     }

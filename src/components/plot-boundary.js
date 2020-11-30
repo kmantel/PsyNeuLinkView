@@ -5,6 +5,7 @@ import {setGridDropFocus} from "../state/subplot-grid/actions";
 import {getGridDropFocus} from "../state/subplot-grid/selectors";
 import {connect} from "react-redux";
 import * as _ from 'lodash';
+import $ from 'jquery';
 
 const mapStateToProps = ({subplotGrid}) => {
     return {
@@ -31,6 +32,7 @@ const PlotSpec = {
     },
     hover(props, monitor, component){
         var { isOver, canDrop } = component.props;
+        console.log('isOver', isOver, 'canDrop', canDrop);
         component.setState({ isActive: isOver && canDrop });
     }
 };
@@ -81,9 +83,21 @@ class PlotBoundaries extends React.Component {
         super(props);
     }
 
+    componentDidMount() {
+        const {id} = this.props;
+
+    }
+
     render() {
         var id = this.props.id;
-        return <div id={`${id}-boundaries`} className={'subplot_boundaries'}>
+        return <div
+            id={`${id}-boundaries`}
+            className={'subplot_boundaries'}
+            onMouseMove={(e)=>{
+                // console.log($(`.${id}.plot`), e)
+                // $(`.${id}.plot`).parent().mousemove(e.nativeEvent)
+            }
+            }>
             <PlotBoundary
                 id={id}
                 direction={'left'}

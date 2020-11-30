@@ -468,22 +468,28 @@ class WorkSpace extends React.PureComponent {
     }
 
     window_resize() {
-        // var old_x_res = this.state.x_res;
-        // var old_y_res = this.state.y_res;
-        // var old_r1_h_factor = this.state.row_one_horizontal_factor;
-        // var old_r2_h_factor = this.state.row_two_horizontal_factor;
-        // var old_v_factor = this.state.vertical_factor;
-        // var w = window.innerWidth;
-        // var h = window.innerHeight;
-        // this.setState({
-        //     x_res: w,
-        //     y_res: h,
-        //     row_one_horizontal_factor: (old_r1_h_factor / old_x_res) * w,
-        //     row_two_horizontal_factor: (old_r2_h_factor / old_x_res) * w,
-        //     vertical_factor: (old_v_factor / old_y_res) * h,
-        //     test_width: 500
-        // });
-        // this.forceUpdate()
+        var old_x_res = this.state.x_res;
+        var old_y_res = this.state.y_res;
+        var old_r1_h_factor = this.state.row_one_horizontal_factor;
+        var old_r2_h_factor = this.state.row_two_horizontal_factor;
+        var old_v_factor = this.state.vertical_factor;
+        var w = window.innerWidth;
+        var h = window.innerHeight;
+        var new_r1_h_factor = (old_r1_h_factor / old_x_res) * w;
+        var new_r2_h_factor = (old_r2_h_factor / old_x_res) * w;
+        var new_v_factor = (old_v_factor / old_y_res) * h;
+        this.setState({
+            x_res: w,
+            y_res: h,
+            row_one_horizontal_factor: (old_r1_h_factor / old_x_res) * w,
+            row_two_horizontal_factor: (old_r2_h_factor / old_x_res) * w,
+            vertical_factor: (old_v_factor / old_y_res) * h,
+            baseline_row_one_h: new_r1_h_factor,
+            baseline_row_two_h: new_r2_h_factor,
+            baseline_vertical: new_v_factor,
+            test_width: 500
+        });
+        this.forceUpdate()
     }
 
     panel_resize(e, direction, ref, d) {
@@ -540,13 +546,13 @@ class WorkSpace extends React.PureComponent {
 
     componentWillUnmount() {
         // window.removeEventListener('mousemove', this.saveMouseData);
-        // window.removeEventListener('resize', this.window_resize);
+        window.removeEventListener('resize', this.window_resize);
         // window.removeEventListener('change', this.on_change)
     }
 
     componentWillMount() {
         // window.addEventListener('mousemove', this.saveMouseData);
-        // window.addEventListener('resize', this.window_resize);
+        window.addEventListener('resize', this.window_resize);
         // window.addEventListener('change', this.on_change)
     }
 
@@ -595,6 +601,7 @@ class WorkSpace extends React.PureComponent {
                     onResize={
                         // self.panel_resize
                         (e, dir, ref, delta)=>{
+                            console.log("it's resizing");
                             this.setState(
                                 {
                                     row_one_horizontal_factor:this.state.baseline_row_one_h + delta.width,
@@ -784,6 +791,7 @@ class WorkSpace extends React.PureComponent {
                     }
                     onResizeStop={
                         (e, dir, ref, delta)=>{
+                            console.log('stop')
                             this.setState(
                                 {
                                     baseline_row_two_h:this.state.baseline_row_two_h - delta.width,
