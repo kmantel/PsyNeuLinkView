@@ -38,7 +38,7 @@ To install PsyneuLinkView, either:
 After installing:
 
 1. Open the config.ini file in the top level of the PsyNeuLinkView directory.
-2. In the interpreter_path field, enter the path to the binary of the python 
+2. In the interpreterPath field, enter the path to the binary of the python 
 interpreter used with PsyNeuLink.
 
 **The following instruction only applies if you use PsyNeuLink without having installed 

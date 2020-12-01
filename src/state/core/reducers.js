@@ -3,10 +3,10 @@ import * as atypes from './actionTypes';
 const initialState = {
     activeComposition:'',
     activeView: 'graphview',
-    active_param_tab: 'composition',
+    activeParamTab: 'composition',
     inputFile: [],
     stylesheet: {},
-    model_aspect_ratio: null,
+    modelAspectRatio: null,
     plots: {},
     plotSpecs: {},
 };
@@ -33,13 +33,13 @@ export function reducer(state = initialState, action) {
 
         case atypes.SET_MODEL_ASPECT_RATIO:
             return Object.assign({}, state, {
-                    model_aspect_ratio: action.ratio
+                    modelAspectRatio: action.ratio
                 }
             );
 
         case atypes.SET_ACTIVE_PARAM_TAB:
             return Object.assign( {}, state, {
-                    active_param_tab: action.id
+                    activeParamTab: action.id
                 }
             );
 

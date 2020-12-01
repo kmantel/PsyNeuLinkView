@@ -9,7 +9,7 @@ class FileSystemInterface {
 
     constructor() {
         this.filewatchers = {};
-        this.initialize_config();
+        this.initializeConfig();
     }
 
     /**
@@ -75,71 +75,71 @@ class FileSystemInterface {
     /**
      * Returns the system-dependent path of the PsyNeuLinkView config file
      */
-    get_config_path(){
-        var config_filedir,
-            config_filepath;
+    getConfigPath(){
+        var configFileDir,
+            configFilePath;
         isWin ?
-            config_filedir = path.join(os.homedir(), 'AppData', 'Roaming', 'PsyNeuLinkView')
+            configFileDir = path.join(os.homedir(), 'AppData', 'Roaming', 'PsyNeuLinkView')
             :
-            config_filedir = path.join(os.homedir(), 'Library', 'Preferences', 'PsyNeuLinkView');
-        config_filepath = path.join(config_filedir, 'config.json');
-        return config_filepath
+            configFileDir = path.join(os.homedir(), 'Library', 'Preferences', 'PsyNeuLinkView');
+        configFilePath = path.join(configFileDir, 'config.json');
+        return configFilePath
     }
 
     /**
      * Convenience method that returns an object containing the PsyNeuLinkView config file
      */
-    get_config(){
-        return JSON.parse(this.read(this.get_config_path()));
+    getConfig(){
+        return JSON.parse(this.read(this.getConfigPath()));
     }
 
     /**
      * Convenience method that writes an object to the PsyNeuLinkView config file
      */
-    set_config(content){
+    setConfig(content){
         var writeToFile = Object.assign({}, content);
         if (typeof content === 'string' || content instanceof String) {
             writeToFile = JSON.parse(content);
         }
-        this.write(this.get_config_path(), writeToFile);
+        this.write(this.getConfigPath(), writeToFile);
     }
 
-    get_application_path(){
+    getApplicationPath(){
         return this.appPath ? this.appPath : false
     }
 
     /**
      * Loads config file from local environment. Makes one if one does not exist. If one does exist, but is missing
-     * keys that are present in the config_template file, the missing keys are copied to the local config file.
+     * keys that are present in the config-template file, the missing keys are copied to the local config file.
      */
-    initialize_config() {
-        function keyCopy(template_obj, user_obj) {
-            Object.keys(template_obj).forEach(
+    initializeConfig() {
+        function keyCopy(templateObj, userObj) {
+            Object.keys(templateObj).forEach(
                 (key) => {
-                    if (!(key in user_obj)) {
-                        user_obj[key] = {...template_obj[key]};
+                    if (!(key in userObj)) {
+                        userObj[key] = {...templateObj[key]};
                     }
                 }
             );
-            Object.keys(template_obj).forEach(
+            Object.keys(templateObj).forEach(
                 (key) => {
-                    keyCopy(template_obj[key], user_obj[key])
+                    keyCopy(templateObj[key], userObj[key])
                 }
             );
-            return user_obj
+            return userObj
         }
-        var config_path = this.get_config_path(),
-            config_dir = path.join(config_path, '..');
-        if (!fs.existsSync(this.get_config_path())){
-            if (!fs.existsSync(config_dir)){
-                fs.mkdirSync(config_dir)
+        var configPath = this.getConfigPath(),
+            configDir = path.join(configPath, '..');
+        if (!fs.existsSync(this.getConfigPath())){
+            if (!fs.existsSync(configDir)){
+                fs.mkdirSync(configDir)
             }
-            this.set_config({})
+            this.setConfig({})
         }
-        var config = this.get_config(),
-            config_template = JSON.parse(this.read(path.join(__dirname ,'../resources/config_template.json'))),
-            config = keyCopy(config_template, config)
-        this.set_config(config)
+        var config = this.getConfig(),
+            configTemplate = JSON.parse(this.read(path.join(__dirname ,'../resources/config-template.json'))),
+            config = keyCopy(configTemplate, config)
+        this.setConfig(config)
     }
 }
 

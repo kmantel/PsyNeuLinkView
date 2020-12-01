@@ -11,13 +11,13 @@ import {setModelAspectRatio, setStyleSheet} from "../state/core/actions";
 
 const mapStateToProps = ({core}) => {
     return {
-        graph_style: core.stylesheet,
-        stylesheet: core.stylesheet,
-        aspect_ratio: core.model_aspect_ratio
+        graphStyle: core.stylesheet,
+        styleSheet: core.stylesheet,
+        aspectRatio: core.modelAspectRatio
     }
 };
 
-const context_menu = [
+const contextMenu = [
     {
         onClick: {},
         text: 'Placeholder 1'
@@ -36,7 +36,7 @@ const style = {
 
 var fs = window.interfaces.filesystem,
     interp = window.interfaces.interpreter,
-    rpc_client = window.interfaces.rpc;
+    rpcClient = window.interfaces.rpc;
 
 class D3model extends React.Component {
     constructor(props) {
@@ -44,26 +44,26 @@ class D3model extends React.Component {
         this.state = {
             class: `graph-view ${this.props.className}`,
             mounted: false,
-            node_width: 20,
-            node_height: 15,
+            nodeWidth: 20,
+            nodeHeight: 15,
             graph: this.props.graph,
-            spinner_visible: false
+            spinnerVisible: false
         };
-        this.bind_this_to_functions = this.bind_this_to_functions.bind(this);
-        this.bind_this_to_functions();
-        this.debounce_functions();
-        this.set_aspect_ratio();
+        this.bindThisToFunctions = this.bindThisToFunctions.bind(this);
+        this.bindThisToFunctions();
+        this.debounceFunctions();
+        this.setAspectRatio();
         this.flags = {
             dirty: false,
-            reload_locations: false,
-            update_locations: false
+            reloadLoactions: false,
+            updateLocations: false
         };
     }
 
-    debounce_functions(){
-        this.update_script = _.debounce(this.update_script, 100)
-        this.set_dirty_flag_to_false = _.debounce(this.set_dirty_flag_to_false, 200)
-        this.on_resize = _.debounce(this.on_resize, 100)
+    debounceFunctions(){
+        this.updateScript = _.debounce(this.updateScript, 100)
+        this.setDirtyFlagToFalse = _.debounce(this.setDirtyFlagToFalse, 200)
+        this.onResize = _.debounce(this.onResize, 100)
     }
 
     // lifecycle methods
@@ -72,210 +72,192 @@ class D3model extends React.Component {
         if (!(this.props.graph === prevProps.graph)) {
             if (this.props.graph === "loading") {
                 d3.selectAll('svg').remove();
-                this.setState({"spinner_visible": true})
+                this.setState({"spinnerVisible": true})
             } else if (!(this.props.graph === null)) {
                 d3.selectAll('svg').remove();
-                this.setState({"spinner_visible": false});
+                this.setState({"spinnerVisible": false});
                 this.stylesheet = null;
                 this.setGraph();
             }
         }
-        var size_updated = (!_.isEqual(this.props.size, prevProps.size) && this.svg);
+        var sizeUpdated = (!_.isEqual(this.props.size, prevProps.size) && this.svg);
         // viewbox must be redimensioned before node positioning is set
-        if (size_updated) {
-            this.redimension_viewbox();
+        if (sizeUpdated) {
+            this.reDimensionViewbox();
         }
-        if (this.flags.reload_locations) {
-            this.set_node_positioning_from_stylesheet();
-            this.flags.reload_locations = false;
+        if (this.flags.reloadLoactions) {
+            this.setNodePositioningFromStylesheet();
+            this.flags.reloadLoactions = false;
         }
-        if (this.flags.update_locations) {
-            this.commit_all_nodes_to_stylesheet();
-            this.update_script();
-            this.flags.update_locations = false;
+        if (this.flags.updateLocations) {
+            this.commitAllNodesToStylesheet();
+            this.updateScript();
+            this.flags.updateLocations = false;
         }
-        this.update_graph_from_stylesheet(prevProps);
+        this.updateGraphFromStylesheet(prevProps);
     }
 
     componentWillUnmount() {
-        window.removeEventListener('resize', this.on_resize);
-        window.removeEventListener('wheel', this.on_mouse_wheel);
-        window.removeEventListener('keydown', this.on_key_down);
-        window.removeEventListener('keyup', this.on_key_up);
-        window.removeEventListener('mousemove', this.mouse_move);
+        window.removeEventListener('resize', this.onResize);
+        window.removeEventListener('wheel', this.onMouseWheel);
+        window.removeEventListener('keydown', this.onKeyDown);
+        window.removeEventListener('keyup', this.onKeyUp);
+        window.removeEventListener('mousemove', this.mouseMove);
         var win = document.querySelector('.graph-view');
         if (win) {
-            win.removeEventListener('scroll', this.update_scroll);
+            win.removeEventListener('scroll', this.updateScroll);
         }
         this.setState({mounted: false})
-        this.update_script();
-        this.efferent_copies = [];
+        this.updateScript();
+        this.efferentCopies = [];
     }
 
     componentDidMount() {
-        window.addEventListener('mousemove', this.mouse_move)
-        window.addEventListener('resize', this.on_resize);
-        window.addEventListener('wheel', this.on_mouse_wheel, {passive: false});
-        window.addEventListener('keydown', this.on_key_down);
-        window.addEventListener('keyup', this.on_key_up);
+        window.addEventListener('mousemove', this.mouseMove)
+        window.addEventListener('resize', this.onResize);
+        window.addEventListener('wheel', this.onMouseWheel, {passive: false});
+        window.addEventListener('keydown', this.onKeyDown);
+        window.addEventListener('keyup', this.onKeyUp);
         if (!(this.state.mounted)) {
             if (this.props.graph === "loading") {
                 d3.selectAll('svg').remove();
-                this.setState({"spinner_visible": true})
+                this.setState({"spinnerVisible": true})
             } else if (!(this.props.graph === null)) {
                 d3.selectAll('svg').remove();
-                this.setState({"spinner_visible": false});
+                this.setState({"spinnerVisible": false});
                 this.stylesheet = null;
                 this.setGraph();
             }
         }
-        this.efferent_copies = [];
+        this.efferentCopies = [];
     }
 
-    mouse_move(e) {
+    mouseMove(e) {
         e.preventDefault();
     }
 
-    set_non_react_state() {
+    setNonReactState() {
         this.index = new Index();
         this.selected = new Set();
-        this.mouse_offset = {x: 0, y: 0};
-        this.scaling_factor = 1;
-        this.fill_proportion = 1;
+        this.mouseOffset = {x: 0, y: 0};
+        this.scalingFactor = 1;
+        this.fillProportion = 1;
     }
 
-    bind_this_to_functions() {
-        this.debounce_functions = this.debounce_functions.bind(this);
-        this.update_graph_from_stylesheet = this.update_graph_from_stylesheet.bind(this);
-        this.redimension_viewbox = this.redimension_viewbox.bind(this);
-        this.set_aspect_ratio = this.set_aspect_ratio.bind(this);
-        this.commit_all_nodes_to_stylesheet = this.commit_all_nodes_to_stylesheet.bind(this);
-        this.validate_stylesheet = this.validate_stylesheet.bind(this);
-        this.set_canvas_state_from_stylesheet = this.set_canvas_state_from_stylesheet.bind(this);
-        this.set_node_positioning_from_stylesheet = this.set_node_positioning_from_stylesheet.bind(this);
-        this.commit_to_stylesheet_and_update_script = this.commit_to_stylesheet_and_update_script.bind(this);
-        this.on_resize = this.on_resize.bind(this);
-        this.set_non_react_state = this.set_non_react_state.bind(this);
-        this.center_graph = this.center_graph.bind(this);
+    bindThisToFunctions() {
+        this.debounceFunctions = this.debounceFunctions.bind(this);
+        this.updateGraphFromStylesheet = this.updateGraphFromStylesheet.bind(this);
+        this.reDimensionViewbox = this.reDimensionViewbox.bind(this);
+        this.setAspectRatio = this.setAspectRatio.bind(this);
+        this.commitAllNodesToStylesheet = this.commitAllNodesToStylesheet.bind(this);
+        this.validateStylesheet = this.validateStylesheet.bind(this);
+        this.setCanvasStateFromStylesheet = this.setCanvasStateFromStylesheet.bind(this);
+        this.setNodePositioningFromStylesheet = this.setNodePositioningFromStylesheet.bind(this);
+        this.commitToStylesheetAndUpdateScript = this.commitToStylesheetAndUpdateScript.bind(this);
+        this.onResize = this.onResize.bind(this);
+        this.setNonReactState = this.setNonReactState.bind(this);
+        this.centerGraph = this.centerGraph.bind(this);
         this.setGraph = this.setGraph.bind(this);
-        this.on_key_down = this.on_key_down.bind(this);
-        this.on_key_up = this.on_key_up.bind(this);
-        this.scale_graph = this.scale_graph.bind(this);
-        this.scale_graph_in_place = this.scale_graph_in_place.bind(this);
-        this.scale_graph_to_fit = this.scale_graph_to_fit.bind(this);
-        this.on_mouse_wheel = this.on_mouse_wheel.bind(this);
+        this.onKeyDown = this.onKeyDown.bind(this);
+        this.onKeyUp = this.onKeyUp.bind(this);
+        this.scaleGraph = this.scaleGraph.bind(this);
+        this.scaleGraphInPlace = this.scaleGraphInPlace.bind(this);
+        this.scaleGraphToFit = this.scaleGraphToFit.bind(this);
+        this.onMouseWheel = this.onMouseWheel.bind(this);
         this.componentDidUpdate = this.componentDidUpdate.bind(this);
         this.componentDidMount = this.componentDidMount.bind(this);
         this.componentWillUnmount = this.componentWillUnmount.bind(this);
-        this.update_scroll = this.update_scroll.bind(this);
-        this.update_script = this.update_script.bind(this);
-        this.move_node = this.move_node.bind(this);
-        this.on_zoom = this.on_zoom.bind(this);
-        this.move_graph = this.move_graph.bind(this);
-        this.refresh_edges_for_node = this.refresh_edges_for_node.bind(this);
-        this.move_label_to_corresponding_node = this.move_label_to_corresponding_node.bind(this);
-        this.handle_style_diff = this.handle_style_diff.bind(this);
-        this.handle_dimension_diff = this.handle_dimension_diff.bind(this);
-        this.handle_style_diff = this.handle_style_diff.bind(this);
-        this.handle_scale_diff = this.handle_scale_diff.bind(this);
-        this.handle_zoom_diff = this.handle_zoom_diff.bind(this);
-        this.handle_node_diff = this.handle_node_diff.bind(this);
+        this.updateScroll = this.updateScroll.bind(this);
+        this.updateScript = this.updateScript.bind(this);
+        this.moveNode = this.moveNode.bind(this);
+        this.onZoom = this.onZoom.bind(this);
+        this.moveGraph = this.moveGraph.bind(this);
+        this.refreshEdgesForNode = this.refreshEdgesForNode.bind(this);
+        this.moveLabelToCorrespondingNode = this.moveLabelToCorrespondingNode.bind(this);
+        this.handleStyleDiff = this.handleStyleDiff.bind(this);
+        this.handleDimensionDiff = this.handleDimensionDiff.bind(this);
+        this.handleStyleDiff = this.handleStyleDiff.bind(this);
+        this.handleScaleDiff = this.handleScaleDiff.bind(this);
+        this.handleZoomDiff = this.handleZoomDiff.bind(this);
+        this.handleNodeDiff = this.handleNodeDiff.bind(this);
         this.associateVisualInformationWithGraphEdges = this.associateVisualInformationWithGraphEdges.bind(this);
         this.associateVisualInformationWithGraphNodes = this.associateVisualInformationWithGraphNodes.bind(this);
     }
-
-    match_exists_in_efferent_copies(stylesheet) {
-        var matching_copy, idx, efferent;
-        for (var i = 0; i < this.efferent_copies.length; i++){
-            efferent = this.efferent_copies[i]
-            if (_.isEqual(stylesheet, efferent)){
-                matching_copy = efferent;
-                idx = i;
-            }
-        }
-        if (matching_copy){
-            this.efferent_copies.splice(idx, 1)
-            return true
-        }
-        else {
-            return false
-        }
-    }
-
-    commit_to_stylesheet_and_update_script(callback = () => {
+    
+    commitToStylesheetAndUpdateScript(callback = () => {
     }) {
-        window.removeEventListener('mouseup', this.commit_to_stylesheet_and_update_script);
-        this.redimension_viewbox();
-        this.commit_all_nodes_to_stylesheet();
-        this.commit_canvas_size_to_stylesheet();
-        this.commit_zoom_to_stylesheet();
-        this.update_script();
+        window.removeEventListener('mouseup', this.commitToStylesheetAndUpdateScript);
+        this.reDimensionViewbox();
+        this.commitAllNodesToStylesheet();
+        this.commitCanvasSizeToStylesheet();
+        this.commitZoomToStylesheet();
+        this.updateScript();
     }
 
-    on_resize() {
+    onResize() {
         if (![null, 'loading'].includes(this.props.graph)) {
-            this.commit_to_stylesheet_and_update_script()
+            this.commitToStylesheetAndUpdateScript()
         }
     }
 
-    update_graph_from_stylesheet(prevProps) {
-        var style_updated = (!(_.isEqual(this.props.graph_style, prevProps.graph_style))),
-            prev_and_current_style_exist = (!_.isEmpty(prevProps.graph_style) && !_.isEmpty(this.props.graph_style));
+    updateGraphFromStylesheet(prevProps) {
+        var styleUpdated = (!(_.isEqual(this.props.graphStyle, prevProps.graphStyle))),
+            prevAndCurrentStyleExist = (!_.isEmpty(prevProps.graphStyle) && !_.isEmpty(this.props.graphStyle));
 
-        if (prev_and_current_style_exist) {
-            var style_diff = this.difference(this.props.graph_style, prevProps.graph_style);
-            if (!_.isEmpty(style_diff) &&
+        if (prevAndCurrentStyleExist) {
+            var styleDiff = this.difference(this.props.graphStyle, prevProps.graphStyle);
+            if (!_.isEmpty(styleDiff) &&
                 !document.hasFocus() &&
                 !this.flags.dirty
             ) {
-                this.handle_style_diff(style_diff)
+                this.handleStyleDiff(styleDiff)
             }
         }
     }
 
-    handle_style_diff(style_diff) {
-        this.handle_dimension_diff(style_diff);
-        this.handle_scale_diff(style_diff);
-        this.handle_zoom_diff(style_diff);
-        this.handle_scroll_diff(style_diff);
-        this.handle_node_diff(style_diff);
+    handleStyleDiff(styleDiff) {
+        this.handleDimensionDiff(styleDiff);
+        this.handleScaleDiff(styleDiff);
+        this.handleZoomDiff(styleDiff);
+        this.handleScrollDiff(styleDiff);
+        this.handleNodeDiff(styleDiff);
     }
 
-    handle_dimension_diff(style_diff) {
+    handleDimensionDiff(styleDiff) {
         var self = this,
-            canvas_ss = self.stylesheet['Canvas Settings']
-        if ('Canvas Settings' in style_diff) {
-            var canvas_sd = style_diff['Canvas Settings'],
-                width_sd = canvas_sd['Width'],
-                width_ss = canvas_ss['Width'],
-                height_sd = canvas_sd['Height'],
-                height_ss = canvas_ss['Height'];
-            if ((width_sd && !(width_sd === width_ss))
-                || (height_sd && !(height_sd === height_ss))) {
-                var width = width_sd ? width_sd : width_ss,
-                    height = height_sd ? height_sd : height_ss;
-                canvas_ss['Width'] = width;
-                canvas_ss['Height'] = height;
-                this.props.graph_size_fx(width, height, () => {
-                    self.flags.update_locations = true;
+            canvasSS = self.stylesheet['Canvas Settings']
+        if ('Canvas Settings' in styleDiff) {
+            var canvasSD = styleDiff['Canvas Settings'],
+                widthSD = canvasSD['Width'],
+                widthSS = canvasSS['Width'],
+                heightSD = canvasSD['Height'],
+                heightSS = canvasSS['Height'];
+            if ((widthSD && !(widthSD === widthSS))
+                || (heightSD && !(heightSD === heightSS))) {
+                var width = widthSD ? widthSD : widthSS,
+                    height = heightSD ? heightSD : heightSS;
+                canvasSS['Width'] = width;
+                canvasSS['Height'] = height;
+                this.props.graphSizeFx(width, height, () => {
+                    self.flags.updateLocations = true;
                     self.forceUpdate();
                 });
             }
         }
     }
 
-    handle_scale_diff(style_diff) {
-        if ('Graph Settings' in style_diff) {
-            if ('Scale' in style_diff['Graph Settings']) {
-                var graph_sd = style_diff['Graph Settings'],
-                    graph_ss = this.stylesheet['Graph Settings'],
-                    zoom_ss = this.stylesheet['Canvas Settings']['Zoom'] / 100,
-                    scale_sd = graph_sd['Scale'];
-                if (scale_sd) {
-                    var scale_diff = (scale_sd * zoom_ss) / (this.scaling_factor * zoom_ss);
-                    this.scale_graph_in_place(scale_diff);
-                    graph_ss['Scale'] = scale_sd;
-                    this.flags.update_locations = true;
+    handleScaleDiff(styleDiff) {
+        if ('Graph Settings' in styleDiff) {
+            if ('Scale' in styleDiff['Graph Settings']) {
+                var graphSD = styleDiff['Graph Settings'],
+                    graphSS = this.stylesheet['Graph Settings'],
+                    zoomSS = this.stylesheet['Canvas Settings']['Zoom'] / 100,
+                    scaleSD = graphSD['Scale'];
+                if (scaleSD) {
+                    var scaleDiff = (scaleSD * zoomSS) / (this.scalingFactor * zoomSS);
+                    this.scaleGraphInPlace(scaleDiff);
+                    graphSS['Scale'] = scaleSD;
+                    this.flags.updateLocations = true;
                     this.forceUpdate()
                 }
                 ;
@@ -283,53 +265,53 @@ class D3model extends React.Component {
         }
     }
 
-    handle_zoom_diff(style_diff) {
+    handleZoomDiff(styleDiff) {
         var self = this,
-            canvas_ss = self.stylesheet['Canvas Settings'];
-        if ('Canvas Settings' in style_diff) {
-            if ('Zoom' in style_diff['Canvas Settings']) {
-                var zoom = style_diff['Canvas Settings']['Zoom'] / 100;
-                canvas_ss['Zoom'] = Math.round(zoom * 100);
-                this.update_script();
-                var xScroll_ss = canvas_ss['xScroll'],
-                    yScroll_ss = canvas_ss['yScroll'];
+            canvasSS = self.stylesheet['Canvas Settings'];
+        if ('Canvas Settings' in styleDiff) {
+            if ('Zoom' in styleDiff['Canvas Settings']) {
+                var zoom = styleDiff['Canvas Settings']['Zoom'] / 100;
+                canvasSS['Zoom'] = Math.round(zoom * 100);
+                this.updateScript();
+                var xScrollSS = canvasSS['xScroll'],
+                    yScrollSS = canvasSS['yScroll'];
                 this.svg.call(this.zoom.scaleTo, zoom);
-                var scroll_bounds = this.get_scroll_bounds(),
+                var scrollBounds = this.getScrollBounds(),
                     win = document.querySelector('.graph-view');
                 win.scrollTo(
-                    scroll_bounds.x * (xScroll_ss / 100),
-                    scroll_bounds.y * (yScroll_ss / 100)
+                    scrollBounds.x * (xScrollSS / 100),
+                    scrollBounds.y * (yScrollSS / 100)
                 )
             }
         }
     }
 
-    handle_scroll_diff(style_diff) {
+    handleScrollDiff(styleDiff) {
         var self = this,
-            canvas_ss = self.stylesheet['Canvas Settings'],
-            scroll_bounds = this.get_scroll_bounds(),
+            canvasSS = self.stylesheet['Canvas Settings'],
+            scrollBounds = this.getScrollBounds(),
             win = document.querySelector('.graph-view');
-        if ('Canvas Settings' in style_diff) {
-            if ('xScroll' in style_diff['Canvas Settings']) {
-                var xScroll_sd = style_diff['Canvas Settings']['xScroll'];
-                canvas_ss['xScroll'] = xScroll_sd;
-                win.scrollTo(scroll_bounds.x * (xScroll_sd / 100), win.scrollTop)
+        if ('Canvas Settings' in styleDiff) {
+            if ('xScroll' in styleDiff['Canvas Settings']) {
+                var xScrollSD = styleDiff['Canvas Settings']['xScroll'];
+                canvasSS['xScroll'] = xScrollSD;
+                win.scrollTo(scrollBounds.x * (xScrollSD / 100), win.scrollTop)
             }
-            if ('yScroll' in style_diff['Canvas Settings']) {
-                var yScroll_sd = style_diff['Canvas Settings']['yScroll'];
-                canvas_ss['yScroll'] = yScroll_sd;
-                win.scrollTo(win.scrollLeft, scroll_bounds.y * (yScroll_sd / 100))
+            if ('yScroll' in styleDiff['Canvas Settings']) {
+                var yScrollSD = styleDiff['Canvas Settings']['yScroll'];
+                canvasSS['yScroll'] = yScrollSD;
+                win.scrollTo(win.scrollLeft, scrollBounds.y * (yScrollSD / 100))
             }
         }
     }
 
-    handle_node_diff(style_diff) {
-        var graph_ss = this.stylesheet['Graph Settings'],
-            components_props = this.props.graph_style['Graph Settings']['Components'];
-        if ('Graph Settings' in style_diff) {
-            if ('Components' in style_diff['Graph Settings']) {
-                graph_ss['Components'] = components_props;
-                this.set_node_positioning_from_stylesheet();
+    handleNodeDiff(styleDiff) {
+        var graphSS = this.stylesheet['Graph Settings'],
+            componentsProps = this.props.graphStyle['Graph Settings']['Components'];
+        if ('Graph Settings' in styleDiff) {
+            if ('Components' in styleDiff['Graph Settings']) {
+                graphSS['Components'] = componentsProps;
+                this.setNodePositioningFromStylesheet();
             }
         }
     }
@@ -346,9 +328,9 @@ class D3model extends React.Component {
         return changes(object, base);
     }
 
-    validate_stylesheet() {
+    validateStylesheet() {
         if (!(this.stylesheet)) {
-            this.stylesheet = _.cloneDeep(this.props.graph_style)
+            this.stylesheet = _.cloneDeep(this.props.graphStyle)
         }
         if (!(this.stylesheet)) {
             this.stylesheet = {}
@@ -368,7 +350,7 @@ class D3model extends React.Component {
                 xScroll: 0,
                 yScroll: 0
             };
-            this.commit_canvas_size_to_stylesheet();
+            this.commitCanvasSizeToStylesheet();
         }
 
         if (!('Graph Settings' in this.stylesheet)) {
@@ -376,7 +358,7 @@ class D3model extends React.Component {
         }
 
         if (!('Scale' in this.stylesheet['Graph Settings'])) {
-            this.stylesheet['Graph Settings']['Scale'] = this.scaling_factor
+            this.stylesheet['Graph Settings']['Scale'] = this.scalingFactor
         }
 
         if (!('Components' in this.stylesheet['Graph Settings'])) {
@@ -387,21 +369,21 @@ class D3model extends React.Component {
         }
     }
 
-    on_key_down(e) {
+    onKeyDown(e) {
         if (this.state.mounted){
             if (e.metaKey || e.ctrlKey) {
                 if (e.key === '+' || e.key === '=') {
-                    this.nudge_graph_larger();
+                    this.nudgeGraphLarger();
                 } else if (e.key === '-') {
-                    this.nudge_graph_smaller();
+                    this.nudgeGraphSmaller();
                 }
                 if (e.key === 'r') {
-                    this.reset_graph()
+                    this.resetGraph()
                 }
                 if (e.key === 'a') {
                     this.index.nodes.forEach(
                         (node) => {
-                            this.select_node(node)
+                            this.selectNode(node)
                         }
                     )
                 }
@@ -412,52 +394,52 @@ class D3model extends React.Component {
                 e.preventDefault();
                 increment = (e.metaKey || e.ctrlKey ? 25 : 1);
                 if (e.key === 'ArrowUp') {
-                    this.move_nodes(0, -increment);
+                    this.moveNodes(0, -increment);
                 }
                 if (e.key === 'ArrowDown') {
-                    this.move_nodes(0, increment);
+                    this.moveNodes(0, increment);
                 }
                 if (e.key === 'ArrowRight') {
-                    this.move_nodes(increment, 0);
+                    this.moveNodes(increment, 0);
                 }
                 if (e.key === 'ArrowLeft') {
-                    this.move_nodes(-increment, 0);
+                    this.moveNodes(-increment, 0);
                 }
             }
             if (e.key === 'Escape') {
-                this.unselect_all()
+                this.unselectAll()
             }
         }
     }
 
-    on_key_up() {
+    onKeyUp() {
         if (this.state.mounted) {
-            this.update_script();
+            this.updateScript();
         }
     }
 
-    on_scroll_end(e) {
-        window.removeEventListener('mouseup', this.on_scroll_end)
-        this.commit_to_stylesheet_and_update_script();
+    onScrollEnd(e) {
+        window.removeEventListener('mouseup', this.onScrollEnd)
+        this.commitToStylesheetAndUpdateScript();
     }
 
-    update_script(callback = () => {}) {
+    updateScript(callback = () => {}) {
         var self = this;
-        var efferent_copy = {...this.stylesheet}
-        this.efferent_copies.push(efferent_copy);
+        var efferentCopy = {...this.stylesheet}
+        this.efferentCopies.push(efferentCopy);
         if (this.props.filepath) {
-            store.dispatch(setStyleSheet(efferent_copy));
-            rpc_client.update_stylesheet(efferent_copy);
+            store.dispatch(setStyleSheet(efferentCopy));
+            rpcClient.updateStylesheet(efferentCopy);
         }
     }
 
-    reset_graph() {
+    resetGraph() {
         this.svg.call(this.zoom.transform, d3.zoomIdentity);
     }
 
-    on_mouse_wheel(e) {
+    onMouseWheel(e) {
         if (e.metaKey || e.ctrlKey) {
-            this.mouse_offset = {
+            this.mouseOffset = {
                 x: e.offsetX,
                 y: e.offsetY
             };
@@ -470,11 +452,11 @@ class D3model extends React.Component {
         }
     }
 
-    mouse_inside_canvas_bounds(e) {
-        var canvas_bounds = this.get_canvas_bounding_box();
+    mouseInsideCanvasBounds(e) {
+        var canvasBounds = this.getCanvasBoundingBox();
         if (
-            e.clientX >= canvas_bounds.x && e.clientX <= canvas_bounds.x + canvas_bounds.width &&
-            e.clientY >= canvas_bounds.y && e.clientY <= canvas_bounds.y + canvas_bounds.height
+            e.clientX >= canvasBounds.x && e.clientX <= canvasBounds.x + canvasBounds.width &&
+            e.clientY >= canvasBounds.y && e.clientY <= canvasBounds.y + canvasBounds.height
         ) {
             return true
         } else {
@@ -482,11 +464,11 @@ class D3model extends React.Component {
         }
     }
 
-    mouse_inside_graph_bounds(e) {
-        var graph_bounds = this.get_graph_bounding_box();
+    mouseInsideGraphBounds(e) {
+        var graphBounds = this.getGraphBoundingBox();
         if (
-            e.offsetX >= graph_bounds.x && e.offsetX <= graph_bounds.x + graph_bounds.width &&
-            e.offsetY >= graph_bounds.y && e.offsetY <= graph_bounds.y + graph_bounds.height
+            e.offsetX >= graphBounds.x && e.offsetX <= graphBounds.x + graphBounds.width &&
+            e.offsetY >= graphBounds.y && e.offsetY <= graphBounds.y + graphBounds.height
         ) {
             return true
         } else {
@@ -494,33 +476,33 @@ class D3model extends React.Component {
         }
     }
 
-    nudge_graph_larger() {
-        this.scale_graph_in_place(1.02);
-        this.commit_to_stylesheet_and_update_script();
-        this.update_script();
+    nudgeGraphLarger() {
+        this.scaleGraphInPlace(1.02);
+        this.commitToStylesheetAndUpdateScript();
+        this.updateScript();
     }
 
-    nudge_graph_smaller() {
-        this.scale_graph_in_place(.98);
-        this.commit_to_stylesheet_and_update_script();
-        this.update_script();
+    nudgeGraphSmaller() {
+        this.scaleGraphInPlace(.98);
+        this.commitToStylesheetAndUpdateScript();
+        this.updateScript();
     }
 
     createSVG() {
-        var svg, svg_rect, container;
+        var svg, svgRect, container;
         svg = d3.select('.graph-view')
             .append('svg')
             .attr('class', 'graph')
             .attr('height', '100%')
             .attr('width', '100%')
             .attr('preserveAspectRatio', 'xMidYMid');
-        svg_rect = document.querySelector('svg').getBoundingClientRect();
+        svgRect = document.querySelector('svg').getBoundingClientRect();
         svg
-            .attr("viewBox", [0, 0, svg_rect.width, svg_rect.height]);
+            .attr("viewBox", [0, 0, svgRect.width, svgRect.height]);
         this.appendDefs(svg);
-        this.apply_select_boxes(svg);
-        this.apply_zoom(svg);
-        this.bind_scroll_updating();
+        this.applySelectBoxes(svg);
+        this.applyZoom(svg);
+        this.bindScrollUpdating();
         this.svg = svg;
         container = this.createContainer(svg);
         return container
@@ -559,9 +541,9 @@ class D3model extends React.Component {
                 if ('ellipse' in d) {
                     d.color = d.ellipse.stroke;
                     if ('stroke-width' in d.ellipse) {
-                        d.stroke_width = parseInt(d.ellipse['stroke-width'])
+                        d.strokeWidth = parseInt(d.ellipse['stroke-width'])
                     } else {
-                        d.stroke_width = 1
+                        d.strokeWidth = 1
                     }
                 } else {
                     d.color = d.polygon.stroke;
@@ -574,8 +556,8 @@ class D3model extends React.Component {
     associateVisualInformationWithGraphEdges() {
         var self = this;
         this.props.graph.edges.forEach(function (d) {
-            d.tail_node = self.props.graph.objects[d.tail];
-            d.head_node = self.props.graph.objects[d.head];
+            d.tailNode = self.props.graph.objects[d.tail];
+            d.headNode = self.props.graph.objects[d.head];
             d.color = d.path.stroke;
         });
     }
@@ -595,16 +577,16 @@ class D3model extends React.Component {
                 return `p${id - 1}`
             })
             .attr('x1', function (d) {
-                return d.tail_node.x
+                return d.tailNode.x
             })
             .attr('y1', function (d) {
-                return d.tail_node.y
+                return d.tailNode.y
             })
             .attr('x2', function (d) {
-                return d.head_node.x
+                return d.headNode.x
             })
             .attr('y2', function (d) {
-                return d.head_node.y
+                return d.headNode.y
             })
             .attr('stroke-width', 1)
             .attr('stroke', function (d) {
@@ -612,33 +594,33 @@ class D3model extends React.Component {
             })
             .attr('marker-end', function (d) {
                 var color = d.color;
-                var color_map = {
+                var colorMap = {
                     '#000000': 'black',
                     '#ffa500': 'orange',
                     '#0000ff': 'blue'
                 };
-                color = color in color_map ? color_map[color] : color;
+                color = color in colorMap ? colorMap[color] : color;
                 return `url(#triangle_${color})`;
             });
-        this.index.add_d3_group(edge, 'projection');
+        this.index.addD3Group(edge, 'projection');
         this.edge = edge;
         this.drawRecurrentProjections(container);
     }
 
     drawRecurrentProjections(container) {
         var self = this;
-        var recurrent_projs = [];
+        var recurrentProjs = [];
         var id = 0;
         d3.selectAll('g.edge line')
             .each(function (e) {
-                if (e.head_node === e.tail_node) {
-                    recurrent_projs.push(e);
+                if (e.headNode === e.tailNode) {
+                    recurrentProjs.push(e);
                 }
             });
         var recurrent = container.append('g')
             .attr('class', 'recurrent')
             .selectAll('path')
-            .data(recurrent_projs)
+            .data(recurrentProjs)
             .enter()
             .append('path')
             .attr('id', function (d) {
@@ -653,13 +635,13 @@ class D3model extends React.Component {
             .attr('stroke', 'black')
             .attr('stroke-width', 1);
         self.recurrent = recurrent;
-        self.index.add_d3_group(recurrent, 'projection');
+        self.index.addD3Group(recurrent, 'projection');
     }
 
     drawNodes(container, nodeDragFunction) {
         var self = this;
-        var nodeWidth = self.state.node_width;
-        var nodeHeight = self.state.node_height;
+        var nodeWidth = self.state.nodeWidth;
+        var nodeHeight = self.state.nodeHeight;
         self.associateVisualInformationWithGraphNodes();
         var id = 0;
         var node = container.append('g')
@@ -688,8 +670,8 @@ class D3model extends React.Component {
             })
             .attr('fill', 'white')
             .attr('stroke-width', function (d) {
-                d.stroke_width = d.stroke_width ? d.stroke_width : 1;
-                return d.stroke_width
+                d.strokeWidth = d.strokeWidth ? d.strokeWidth : 1;
+                return d.strokeWidth
             })
             .attr('stroke', function (d) {
                 return d.color
@@ -699,20 +681,20 @@ class D3model extends React.Component {
             .call(d3.drag()
                 .on('drag', nodeDragFunction)
                 .on('end', () => {
-                    self.update_script()
+                    self.updateScript()
                 })
             )
             .on('click', (d) => {
-                this.unselect_all();
-                this.select_node(this.index.lookup(d))
+                this.unselectAll();
+                this.selectNode(this.index.lookup(d))
             });
-        this.index.add_d3_group(node, 'node');
+        this.index.addD3Group(node, 'node');
         this.node = node
     }
 
     drawLabels(container, labelDragFunction) {
         var self = this;
-        var offset_from_top_of_node = 3;
+        var offsetFromTopOfNode = 3;
         var label = container.append('g')
             .attr('class', 'label')
             .selectAll('text')
@@ -724,7 +706,7 @@ class D3model extends React.Component {
                 return d.x
             })
             .attr('y', function (d) {
-                return d.y + offset_from_top_of_node
+                return d.y + offsetFromTopOfNode
             })
             .attr('font-size', function (d) {
                 d.text['font-size'] = 10;
@@ -736,45 +718,45 @@ class D3model extends React.Component {
             .call(d3.drag()
                 .on('drag', labelDragFunction)
                 .on('end', () => {
-                    self.update_script()
+                    self.updateScript()
                 })
             )
             .on('click', (d) => {
-                this.unselect_all();
-                this.select_node(this.index.lookup(d))
+                this.unselectAll();
+                this.selectNode(this.index.lookup(d))
             });
         this.label = label;
-        this.index.add_d3_group(label, 'label');
+        this.index.addD3Group(label, 'label');
     }
 
-    get_offset_between_ellipses(x1, y1, x2, y2, nodeXRad, nodeYRad, strokeWidth) {
+    getOffsetBetweenEllipses(x1, y1, x2, y2, nodeXRad, nodeYRad, strokeWidth) {
         if (!strokeWidth) {
             strokeWidth = 1
         }
-        var adjusted_x = x2 - x1;
-        var adjusted_y = y2 - y1;
-        var dist_between_centers = Math.sqrt(adjusted_x ** 2 + adjusted_y ** 2);
-        var phi = Math.atan2(adjusted_y, adjusted_x);
+        var adjustedX = x2 - x1;
+        var adjustedY = y2 - y1;
+        var distBetweenCenters = Math.sqrt(adjustedX ** 2 + adjustedY ** 2);
+        var phi = Math.atan2(adjustedY, adjustedX);
         var a = parseFloat(nodeXRad) + Math.round(strokeWidth / 2);
         var b = parseFloat(nodeYRad) + Math.round(strokeWidth / 2);
-        var radius_at_point = a * b / Math.sqrt(a ** 2 * Math.sin(phi) ** 2 + b ** 2 * Math.cos(phi) ** 2);
-        var e_radius = dist_between_centers - radius_at_point - nodeYRad / 4;
-        var new_x = (e_radius * Math.cos(phi) + x1);
-        var new_y = (e_radius * Math.sin(phi) + y1);
+        var radiusAtPoint = a * b / Math.sqrt(a ** 2 * Math.sin(phi) ** 2 + b ** 2 * Math.cos(phi) ** 2);
+        var eRadius = distBetweenCenters - radiusAtPoint - nodeYRad / 4;
+        var newX = (eRadius * Math.cos(phi) + x1);
+        var newY = (eRadius * Math.sin(phi) + y1);
         return {
-            x: new_x,
-            y: new_y
+            x: newX,
+            y: newY
         }
     }
 
-    fit_graph_to_workspace() {
+    fitGraphToWorkspace() {
         var self = this;
-        var view_rect = document.querySelector('.graph-view')
+        var viewRect = document.querySelector('.graph-view')
             .getBoundingClientRect();
         this.index.nodes.forEach(
             function (node) {
-                node.data.x = (view_rect.width * 0.95) * (node.data.x / (self.props.graph.max_x));
-                node.data.y += (view_rect.height * 0.95) * (node.data.y / (self.props.graph.max_y));
+                node.data.x = (viewRect.width * 0.95) * (node.data.x / (self.props.graph.maxX));
+                node.data.y += (viewRect.height * 0.95) * (node.data.y / (self.props.graph.maxY));
                 node.selection
                     .attr('cx', node.data.x)
                     .attr('cy', node.data.y);
@@ -782,8 +764,8 @@ class D3model extends React.Component {
         );
     }
 
-    move_graph(dx = 0, dy = 0) {
-        // var stylesheet, graph_rect;
+    moveGraph(dx = 0, dy = 0) {
+        // var styleSheet, graph_rect;
         this.index.nodes.forEach(
             (node) => {
                 node.data.x += dx;
@@ -791,28 +773,28 @@ class D3model extends React.Component {
                 node.selection
                     .attr('cx', node.data.x)
                     .attr('cy', node.data.y);
-                this.move_label_to_corresponding_node(node);
-                this.refresh_edges_for_node(node);
+                this.moveLabelToCorrespondingNode(node);
+                this.refreshEdgesForNode(node);
             }
         );
     }
 
-    resize_nodes_to_label_text() {
+    resizeNodesToLabelText() {
         this.index.nodes.forEach(
             (node) => {
-                var label_radius = Math.floor((node.label.dom.getBoundingClientRect().width / 2) + 10);
-                node.data.rx = label_radius;
-                node.selection.attr('rx', label_radius);
+                var labelRadius = Math.floor((node.label.dom.getBoundingClientRect().width / 2) + 10);
+                node.data.rx = labelRadius;
+                node.selection.attr('rx', labelRadius);
             }
         );
     }
 
-    update_scroll() {
+    updateScroll() {
         var win = document.querySelector('.graph-view');
         // this.set_zoom_config(null,win.scrollLeft,win.scrollTop);
     }
 
-    apply_select_boxes() {
+    applySelectBoxes() {
         var self = this;
         var svg = d3.select('svg');
         //TODO: On select, save rect of selected nodes for more efficient collision detection when dragging
@@ -820,84 +802,84 @@ class D3model extends React.Component {
             .on('mousedown', function () {
                     // don't fire if command is pressed. command unlocks different options
                     if (!(d3.event.metaKey || d3.event.ctrlKey)) {
-                        var anchor_pt = d3.mouse(this);
-                        var processed_anchor_pt = [
-                            {anchor: {x: anchor_pt[0], y: anchor_pt[1]}}
+                        var anchorPt = d3.mouse(this);
+                        var processedAnchorPt = [
+                            {anchor: {x: anchorPt[0], y: anchorPt[1]}}
                         ];
-                        self.unselect_all();
+                        self.unselectAll();
                         svg.append('rect')
                             .attr('rx', 6)
                             .attr('ry', 6)
                             .attr('class', 'selection')
-                            .data(processed_anchor_pt);
+                            .data(processedAnchorPt);
                     }
                 }
             )
             .on("mousemove", function () {
-                var anchor_x, anchor_y, current_x, current_y,
+                var anchorX, anchorY, currentX, currentY,
                     s = svg.select("rect.selection"),
-                    current_pt = d3.mouse(this),
+                    currentPt = d3.mouse(this),
                     e = d3.event;
                 e.preventDefault();
                 s
                     .attr('x', (d) => {
-                        anchor_x = d.anchor.x;
-                        current_x = current_pt[0];
-                        if (current_x > anchor_x) {
-                            return anchor_x
+                        anchorX = d.anchor.x;
+                        currentX = currentPt[0];
+                        if (currentX > anchorX) {
+                            return anchorX
                         } else {
-                            return current_x
+                            return currentX
                         }
                     })
                     .attr('y', (d) => {
-                        anchor_y = d.anchor.y;
-                        current_y = current_pt[1];
-                        if (current_y > anchor_y) {
-                            return anchor_y
+                        anchorY = d.anchor.y;
+                        currentY = currentPt[1];
+                        if (currentY > anchorY) {
+                            return anchorY
                         } else {
-                            return current_y
+                            return currentY
                         }
                     })
                     .attr('width', (d) => {
-                        anchor_x = d.anchor.x;
-                        current_x = current_pt[0];
-                        return Math.abs(anchor_x - current_x)
+                        anchorX = d.anchor.x;
+                        currentX = currentPt[0];
+                        return Math.abs(anchorX - currentX)
                     })
                     .attr('height', (d) => {
-                        anchor_y = d.anchor.y;
-                        current_y = current_pt[1];
-                        return Math.abs(anchor_y - current_y)
+                        anchorY = d.anchor.y;
+                        currentY = currentPt[1];
+                        return Math.abs(anchorY - currentY)
                     });
-                var selection_box = document.querySelector('rect.selection');
-                if (selection_box) {
-                    var selection_box_bounding_rect = selection_box.getBoundingClientRect();
-                    var sel_x1, sel_y1, sel_x2, sel_y2;
-                    sel_x1 = selection_box_bounding_rect.x;
-                    sel_y1 = selection_box_bounding_rect.y;
-                    sel_x2 = sel_x1 + selection_box_bounding_rect.width;
-                    sel_y2 = sel_y1 + selection_box_bounding_rect.height;
+                var selectionBox = document.querySelector('rect.selection');
+                if (selectionBox) {
+                    var selectionBoxBoundingRect = selectionBox.getBoundingClientRect();
+                    var selX1, selY1, selX2, selY2;
+                    selX1 = selectionBoxBoundingRect.x;
+                    selY1 = selectionBoxBoundingRect.y;
+                    selX2 = selX1 + selectionBoxBoundingRect.width;
+                    selY2 = selY1 + selectionBoxBoundingRect.height;
                     self.index.nodes.forEach((node) => {
-                        var node_rect = node.dom.getBoundingClientRect();
-                        var node_x1, node_x2, node_y1, node_y2;
-                        node_x1 = node_rect.x;
-                        node_x2 = node_x1 + node_rect.width;
-                        node_y1 = node_rect.y;
-                        node_y2 = node_y1 + node_rect.height;
-                        var sel_ul, sel_lr, node_ul, node_lr;
-                        sel_ul = {x: sel_x1, y: sel_y1};
-                        sel_lr = {x: sel_x2, y: sel_y2};
-                        node_ul = {x: node_x1, y: node_y1};
-                        node_lr = {x: node_x2, y: node_y2};
+                        var nodeRect = node.dom.getBoundingClientRect();
+                        var nodeX1, nodeX2, nodeY1, nodeY2;
+                        nodeX1 = nodeRect.x;
+                        nodeX2 = nodeX1 + nodeRect.width;
+                        nodeY1 = nodeRect.y;
+                        nodeY2 = nodeY1 + nodeRect.height;
+                        var selUl, selLr, nodeUl, nodeLr;
+                        selUl = {x: selX1, y: selY1};
+                        selLr = {x: selX2, y: selY2};
+                        nodeUl = {x: nodeX1, y: nodeY1};
+                        nodeLr = {x: nodeX2, y: nodeY2};
                         if (
-                            sel_lr.x < node_ul.x ||
-                            node_lr.x < sel_ul.x ||
-                            sel_lr.y < node_ul.y ||
-                            node_lr.y < sel_ul.y
+                            selLr.x < nodeUl.x ||
+                            nodeLr.x < selUl.x ||
+                            selLr.y < nodeUl.y ||
+                            nodeLr.y < selUl.y
 
                         ) {
-                            self.unselect_node(node)
+                            self.unselectNode(node)
                         } else {
-                            self.select_node(node)
+                            self.selectNode(node)
                         }
                     })
 
@@ -918,17 +900,17 @@ class D3model extends React.Component {
             })
     }
 
-    select_node(node) {
+    selectNode(node) {
         this.selected.add(node);
         node.selection.classed('selected', true);
     }
 
-    unselect_node(node) {
+    unselectNode(node) {
         this.selected.delete(node);
         node.selection.classed('selected', false);
     }
 
-    unselect_all() {
+    unselectAll() {
         this.index.nodes.forEach(
             (n) => {
                 n.selection.classed('selected', false)
@@ -937,62 +919,62 @@ class D3model extends React.Component {
         this.selected = new Set()
     }
 
-    correct_projection_lengths_for_ellipse_sizes() {
-        var offset_pt, self;
+    correctProjectionLengthsForEllipseSizes() {
+        var offsetPt, self;
         self = this;
         this.index.projections.forEach(
             (projection) => {
-                offset_pt = self.get_offset_points_for_projection(projection);
+                offsetPt = self.getOffsetPointsForProjection(projection);
                 projection.selection
-                    .attr('x2', offset_pt.x)
-                    .attr('y2', offset_pt.y)
+                    .attr('x2', offsetPt.x)
+                    .attr('y2', offsetPt.y)
             }
         )
     }
 
-    get_offset_points_for_projection(projection) {
-        return this.get_offset_between_ellipses(
-            projection.tail_node.data.x,
-            projection.tail_node.data.y,
-            projection.head_node.data.x,
-            projection.head_node.data.y,
-            projection.head_node.data.rx,
-            projection.head_node.data.ry,
-            projection.head_node.data.stroke_width)
+    getOffsetPointsForProjection(projection) {
+        return this.getOffsetBetweenEllipses(
+            projection.tailNode.data.x,
+            projection.tailNode.data.y,
+            projection.headNode.data.x,
+            projection.headNode.data.y,
+            projection.headNode.data.rx,
+            projection.headNode.data.ry,
+            projection.headNode.data.strokeWidth)
     }
 
-    get_viewport_offset() {
-        var viewbox = this.get_viewBox(),
-            canvasbox = this.get_canvas_bounding_box()
+    getViewportOffset() {
+        var viewbox = this.getViewBox(),
+            canvasbox = this.getCanvasBoundingBox()
         return {
             x: (canvasbox.width - viewbox.width),
             y: (canvasbox.height - viewbox.height)
         }
     }
 
-    adjust_node_movement(node, dx, dy) {
-        var canvasbox = this.get_canvas_bounding_box(),
-            viewport_offset = this.get_viewport_offset(),
-            w_correction = viewport_offset.x / 2,
-            h_correction = viewport_offset.y / 2,
-            min_bound_w = -Math.abs(w_correction),
-            min_bound_h = -Math.abs(h_correction),
-            max_bound_w = canvasbox.width - w_correction,
-            max_bound_h = canvasbox.height - h_correction,
-            node_left_x = node.data.x - node.data.rx - node.data.stroke_width / 2,
-            node_top_y = node.data.y - node.data.ry - node.data.stroke_width / 2,
-            node_right_x = node.data.x + node.data.rx + node.data.stroke_width / 2,
-            node_bottom_y = node.data.y + node.data.ry + node.data.stroke_width / 2;
-        if ((dx < 0) && (node_left_x + dx < min_bound_w)) {
-            dx = min_bound_w - node_left_x
-        } else if ((dx > 0) && (node_right_x + dx > max_bound_w)) {
-            dx = max_bound_w - node_right_x
+    adjustNodeMovement(node, dx, dy) {
+        var canvasbox = this.getCanvasBoundingBox(),
+            viewportOffset = this.getViewportOffset(),
+            wCorrection = viewportOffset.x / 2,
+            hCorrection = viewportOffset.y / 2,
+            minBoundW = -Math.abs(wCorrection),
+            minBoundH = -Math.abs(hCorrection),
+            maxBoundW = canvasbox.width - wCorrection,
+            maxBoundH = canvasbox.height - hCorrection,
+            nodeLeftX = node.data.x - node.data.rx - node.data.strokeWidth / 2,
+            nodeTopY = node.data.y - node.data.ry - node.data.strokeWidth / 2,
+            nodeRightX = node.data.x + node.data.rx + node.data.strokeWidth / 2,
+            nodeBottomY = node.data.y + node.data.ry + node.data.strokeWidth / 2;
+        if ((dx < 0) && (nodeLeftX + dx < minBoundW)) {
+            dx = minBoundW - nodeLeftX
+        } else if ((dx > 0) && (nodeRightX + dx > maxBoundW)) {
+            dx = maxBoundW - nodeRightX
         }
 
-        if ((dy < 0) && (node_top_y + dy < min_bound_h)) {
-            dy = min_bound_h - node_top_y
-        } else if ((dy > 0) && (node_bottom_y + dy > max_bound_h)) {
-            dy = max_bound_h - node_bottom_y
+        if ((dy < 0) && (nodeTopY + dy < minBoundH)) {
+            dy = minBoundH - nodeTopY
+        } else if ((dy > 0) && (nodeBottomY + dy > maxBoundH)) {
+            dy = maxBoundH - nodeBottomY
         }
         return (
             {
@@ -1002,44 +984,44 @@ class D3model extends React.Component {
         );
     };
 
-    node_movement_within_canvas_bounds(node, dx, dy) {
-        var canvasbox = this.get_canvas_bounding_box(),
-            viewport_offset = this.get_viewport_offset(),
-            w_correction = viewport_offset.x / 2,
-            h_correction = viewport_offset.y / 2,
-            min_bound_w = 0 - w_correction,
-            min_bound_h = 0 - h_correction,
-            max_bound_w = canvasbox.width - w_correction,
-            max_bound_h = canvasbox.height - h_correction;
+    nodeMovementWithinCanvasBounds(node, dx, dy) {
+        var canvasbox = this.getCanvasBoundingBox(),
+            viewportOffset = this.getViewportOffset(),
+            wCorrection = viewportOffset.x / 2,
+            hCorrection = viewportOffset.y / 2,
+            minBoundW = 0 - wCorrection,
+            minBoundH = 0 - hCorrection,
+            maxBoundW = canvasbox.width - wCorrection,
+            maxBoundH = canvasbox.height - hCorrection;
         return (
             {
-                x: (node.data.x - node.data.rx - node.data.stroke_width / 2 + dx >= min_bound_w &&
-                    node.data.x + node.data.rx + node.data.stroke_width / 2 + dx <= max_bound_w),
-                y: (node.data.y - node.data.ry - node.data.stroke_width / 2 + dy >= min_bound_h &&
-                    node.data.y + node.data.ry + node.data.stroke_width / 2 + dy <= max_bound_h),
+                x: (node.data.x - node.data.rx - node.data.strokeWidth / 2 + dx >= minBoundW &&
+                    node.data.x + node.data.rx + node.data.strokeWidth / 2 + dx <= maxBoundW),
+                y: (node.data.y - node.data.ry - node.data.strokeWidth / 2 + dy >= minBoundH &&
+                    node.data.y + node.data.ry + node.data.strokeWidth / 2 + dy <= maxBoundH),
             }
         );
     }
 
-    move_nodes(dx, dy) {
-        var adjusted_movement;
+    moveNodes(dx, dy) {
+        var adjustedMovement;
         var self = this;
         self.selected.forEach(
             (s) => {
-                adjusted_movement = self.adjust_node_movement(s, dx, dy)
-                dx = adjusted_movement.dx;
-                dy = adjusted_movement.dy;
+                adjustedMovement = self.adjustNodeMovement(s, dx, dy)
+                dx = adjustedMovement.dx;
+                dy = adjustedMovement.dy;
             }
         );
         self.selected.forEach(
             (s) => {
-                self.move_node(s, dx, dy)
+                self.moveNode(s, dx, dy)
             }
         );
-        this.update_script();
+        this.updateScript();
     }
 
-    get_viewBox() {
+    getViewBox() {
         var svg = document.querySelector('svg'),
             viewBox = svg.getAttribute('viewBox').split(',');
         return {
@@ -1050,35 +1032,35 @@ class D3model extends React.Component {
         }
     }
 
-    commit_canvas_size_to_stylesheet() {
-        var full_canvas_rect = document.querySelector('.graphview').getBoundingClientRect(),
-            x_res = window.innerWidth,
-            y_res = window.innerHeight;
-        this.stylesheet['Canvas Settings']['Width'] = parseFloat((full_canvas_rect.width / x_res * 100).toFixed(2));
-        this.stylesheet['Canvas Settings']['Height'] = parseFloat((full_canvas_rect.height / y_res * 100).toFixed(2));
+    commitCanvasSizeToStylesheet() {
+        var fullCanvasRect = document.querySelector('.graphview').getBoundingClientRect(),
+            xRes = window.innerWidth,
+            yRes = window.innerHeight;
+        this.stylesheet['Canvas Settings']['Width'] = parseFloat((fullCanvasRect.width / xRes * 100).toFixed(2));
+        this.stylesheet['Canvas Settings']['Height'] = parseFloat((fullCanvasRect.height / yRes * 100).toFixed(2));
     }
 
-    commit_all_nodes_to_stylesheet() {
+    commitAllNodesToStylesheet() {
         this.index.nodes.forEach(
             (node) => {
-                this.commit_node_to_stylesheet(node);
+                this.commitNodeToStylesheet(node);
             }
         )
     }
 
-    commit_node_to_stylesheet(node) {
-        var viewbox = this.get_viewBox(),
-            viewport_offset = this.get_viewport_offset(),
-            w_correction = viewport_offset.x,
-            h_correction = viewport_offset.y;
+    commitNodeToStylesheet(node) {
+        var viewbox = this.getViewBox(),
+            viewportOffset = this.getViewportOffset(),
+            wCorrection = viewportOffset.x,
+            hCorrection = viewportOffset.y;
         this.stylesheet['Graph Settings']['Components']['Nodes'][node.name] =
             {
-                'x': +(((node.data.x - node.data.rx - (node.data.stroke_width * this.scaling_factor / 2) + w_correction / 2) / (viewbox.width + w_correction)) * 100).toFixed(2),
-                'y': +(((node.data.y - node.data.ry - node.data.stroke_width * this.scaling_factor / 2 + h_correction / 2) / (viewbox.height + h_correction)) * 100).toFixed(2)
+                'x': +(((node.data.x - node.data.rx - (node.data.strokeWidth * this.scalingFactor / 2) + wCorrection / 2) / (viewbox.width + wCorrection)) * 100).toFixed(2),
+                'y': +(((node.data.y - node.data.ry - node.data.strokeWidth * this.scalingFactor / 2 + hCorrection / 2) / (viewbox.height + hCorrection)) * 100).toFixed(2)
             };
     }
 
-    move_node(node, dx, dy) {
+    moveNode(node, dx, dy) {
         node.data.x += dx;
         node.data.y += dy;
         node.data.x = +(node.data.x).toFixed(0);
@@ -1086,31 +1068,31 @@ class D3model extends React.Component {
         node.selection
             .attr('cx', node.data.x)
             .attr('cy', node.data.y);
-        this.commit_node_to_stylesheet(node);
-        this.move_label_to_corresponding_node(node);
-        this.refresh_edges_for_node(node);
-        this.commit_to_stylesheet_and_update_script()
+        this.commitNodeToStylesheet(node);
+        this.moveLabelToCorrespondingNode(node);
+        this.refreshEdgesForNode(node);
+        this.commitToStylesheetAndUpdateScript()
     }
 
-    drag_selected(origin) {
-        var origin_drag_node = this.index.lookup(origin),
+    dragSelected(origin) {
+        var originDragNode = this.index.lookup(origin),
             self = this;
-        if (!self.selected.has(origin_drag_node)) {
-            self.unselect_all();
-            self.select_node(origin_drag_node);
+        if (!self.selected.has(originDragNode)) {
+            self.unselectAll();
+            self.selectNode(originDragNode);
         }
         var dx = d3.event.dx,
             dy = d3.event.dy;
-        self.move_nodes(dx, dy);
+        self.moveNodes(dx, dy);
     }
 
-    move_label_to_corresponding_node(node) {
+    moveLabelToCorrespondingNode(node) {
         node.label.selection
             .attr('x', node.data.x)
             .attr('y', node.data.y + node.data.ry / 5);
     }
 
-    gen_arc(phi1, phi2, innerRad, outerRad) {
+    genArc(phi1, phi2, innerRad, outerRad) {
         return d3.arc()
             .startAngle(phi1)
             .endAngle(phi2)
@@ -1118,7 +1100,7 @@ class D3model extends React.Component {
             .outerRadius(outerRad)()
     }
 
-    CalculateCircleCenter(A, B, C) {
+    calculateCircleCenter(A, B, C) {
         var ax = (A.x + B.x) / 2,
             ay = (A.y + B.y) / 2,
             ux = (A.y - B.y),
@@ -1140,185 +1122,184 @@ class D3model extends React.Component {
         return center;
     }
 
-    refresh_edges_for_node(node) {
-        var self, offset_pt, recurrent_projs;
-        recurrent_projs = new Set();
+    refreshEdgesForNode(node) {
+        var self, offsetPt, recurrentProjs;
+        recurrentProjs = new Set();
         self = this;
         node.efferents.forEach(
             (projection) => {
-                offset_pt = self.get_offset_points_for_projection(projection);
+                offsetPt = self.getOffsetPointsForProjection(projection);
                 projection.selection
-                    .attr('x1', projection.data.tail_node.x)
-                    .attr('y1', projection.data.tail_node.y)
-                    .attr('x2', offset_pt.x)
-                    .attr('y2', offset_pt.y);
-                if (projection.is_recurrent()) {
-                    recurrent_projs.add(projection)
+                    .attr('x1', projection.data.tailNode.x)
+                    .attr('y1', projection.data.tailNode.y)
+                    .attr('x2', offsetPt.x)
+                    .attr('y2', offsetPt.y);
+                if (projection.isRecurrent()) {
+                    recurrentProjs.add(projection)
                 }
             }
         );
         node.afferents.forEach(
             (projection) => {
-                offset_pt = self.get_offset_points_for_projection(projection);
+                offsetPt = self.getOffsetPointsForProjection(projection);
                 projection.selection
-                    .attr('x2', offset_pt.x)
-                    .attr('y2', offset_pt.y);
-                if (projection.is_recurrent()) {
-                    recurrent_projs.add(projection)
+                    .attr('x2', offsetPt.x)
+                    .attr('y2', offsetPt.y);
+                if (projection.isRecurrent()) {
+                    recurrentProjs.add(projection)
                 }
             }
         );
-        recurrent_projs.forEach(
+        recurrentProjs.forEach(
             (projection) => {
-                var start_phi = -2.5;
-                var xrad = projection.head_node.data.rx;
-                var yrad = projection.head_node.data.ry;
-                var radius_at_point = xrad * yrad / Math.sqrt(xrad ** 2 * Math.sin(start_phi) ** 2 + yrad ** 2 * Math.cos(start_phi) ** 2);
-                radius_at_point += projection.head_node.data.stroke_width / 2;
+                var startPhi = -2.5;
+                var xrad = projection.headNode.data.rx;
+                var yrad = projection.headNode.data.ry;
+                var radiusAtPoint = xrad * yrad / Math.sqrt(xrad ** 2 * Math.sin(startPhi) ** 2 + yrad ** 2 * Math.cos(startPhi) ** 2);
+                radiusAtPoint += projection.headNode.data.strokeWidth / 2;
                 var stpt = {
-                    x: radius_at_point * Math.cos(start_phi),
-                    y: radius_at_point * Math.sin(start_phi)
+                    x: radiusAtPoint * Math.cos(startPhi),
+                    y: radiusAtPoint * Math.sin(startPhi)
                 };
                 var endpt = {
                     x: stpt.x,
                     y: stpt.y * -1
                 };
-                var lftedge_offset = projection.head_node.dom.getBoundingClientRect().height / 2
+                var lftedgeOffset = projection.headNode.dom.getBoundingClientRect().height / 2
                 var lftedge = {
-                    x: -projection.head_node.data.rx - lftedge_offset - projection.head_node.data.stroke_width,
+                    x: -projection.headNode.data.rx - lftedgeOffset - projection.headNode.data.strokeWidth,
                     y: 0
                 };
-                var ctpt = this.CalculateCircleCenter(stpt, endpt, lftedge);
+                var ctpt = this.calculateCircleCenter(stpt, endpt, lftedge);
                 var radius = ctpt.x - lftedge.x;
                 if (projection.dom.constructor.name === 'SVGPathElement') {
-                    var arc_start_angle = Math.atan2(stpt.y - ctpt.y, stpt.x - ctpt.x);
-                    var arc_end_angle = Math.atan2(endpt.y - ctpt.y, endpt.x - ctpt.x);
-                    var test_arc = this.gen_arc(arc_end_angle, 2 * Math.PI + arc_start_angle, radius, radius)
-                    var path = test_arc.toString()
+                    var arcStartAngle = Math.atan2(stpt.y - ctpt.y, stpt.x - ctpt.x);
+                    var arcEndAngle = Math.atan2(endpt.y - ctpt.y, endpt.x - ctpt.x);
+                    var testArc = this.genArc(arcEndAngle, 2 * Math.PI + arcStartAngle, radius, radius)
+                    var path = testArc.toString()
                     projection.selection.attr('d', path);
                     projection.selection
-                        .attr('transform', `translate(${projection.data.head_node.x + ctpt.x},${projection.data.head_node.y}) rotate(90)`)
+                        .attr('transform', `translate(${projection.data.headNode.x + ctpt.x},${projection.data.headNode.y}) rotate(90)`)
                 } else {
                     var circ = 2 * Math.PI * radius;
-                    var rad_per_px = 2 * Math.PI / circ;
-                    var adjustment = projection.data.head_node.ry / 4.2;
-                    var arc_end_angle = Math.atan2(stpt.y - ctpt.y, stpt.x - ctpt.x) - (rad_per_px * adjustment);
-                    var x1 = (radius * Math.cos(arc_end_angle - 0.01));
-                    var y1 = (radius * Math.sin(arc_end_angle - 0.01));
-                    var x2 = (radius * Math.cos(arc_end_angle));
-                    var y2 = (radius * Math.sin(arc_end_angle));
+                    var radPerPx = 2 * Math.PI / circ;
+                    var adjustment = projection.data.headNode.ry / 4.2;
+                    var arcEndAngle = Math.atan2(stpt.y - ctpt.y, stpt.x - ctpt.x) - (radPerPx * adjustment);
+                    var x1 = (radius * Math.cos(arcEndAngle - 0.01));
+                    var y1 = (radius * Math.sin(arcEndAngle - 0.01));
+                    var x2 = (radius * Math.cos(arcEndAngle));
+                    var y2 = (radius * Math.sin(arcEndAngle));
                     projection.selection
-                        .attr('x1', projection.data.head_node.x + ctpt.x + x1)
-                        .attr('y1', projection.data.head_node.y - y1)
-                        .attr('x2', projection.data.head_node.x + ctpt.x + x2)
-                        .attr('y2', projection.data.head_node.y - y2)
+                        .attr('x1', projection.data.headNode.x + ctpt.x + x1)
+                        .attr('y1', projection.data.headNode.y - y1)
+                        .attr('x2', projection.data.headNode.x + ctpt.x + x2)
+                        .attr('y2', projection.data.headNode.y - y2)
                 }
             }
         );
     }
 
-    scroll_graph_into_view() {
-        var horizontal_offset, vertical_offset, graph_bounding_box;
-        graph_bounding_box = this.get_graph_bounding_box();
-        if (graph_bounding_box.x < 0) {
-            horizontal_offset = Math.abs(0 - graph_bounding_box.x)
+    scrollGraphIntoView() {
+        var horizontalOffset, verticalOffset, graphBoundingBox;
+        graphBoundingBox = this.getGraphBoundingBox();
+        if (graphBoundingBox.x < 0) {
+            horizontalOffset = Math.abs(0 - graphBoundingBox.x)
         } else {
-            horizontal_offset = 0
+            horizontalOffset = 0
         }
-        if (graph_bounding_box.y < 0) {
-            vertical_offset = Math.abs(0 - graph_bounding_box.y)
+        if (graphBoundingBox.y < 0) {
+            verticalOffset = Math.abs(0 - graphBoundingBox.y)
         } else {
-            vertical_offset = 0
+            verticalOffset = 0
         }
-        this.move_graph(horizontal_offset, vertical_offset)
+        this.moveGraph(horizontalOffset, verticalOffset)
     }
 
-    scale_graph(scale_by) {
-        this.scaling_factor *= scale_by;
-        this.validate_stylesheet();
-        var zoom_factor = this.stylesheet['Canvas Settings']['Zoom'] / 100;
-        this.stylesheet['Graph Settings']['Scale'] = +(this.scaling_factor).toFixed(2);
+    scaleGraph(scaleBy) {
+        this.scalingFactor *= scaleBy;
+        this.validateStylesheet();
+        this.stylesheet['Graph Settings']['Scale'] = +(this.scalingFactor).toFixed(2);
         var self = this;
         this.index.nodes.forEach(
             (node) => {
-                var cx = node.selection.attr('cx') * scale_by,
-                    cy = node.selection.attr('cy') * scale_by,
-                    rx = node.selection.attr('rx') * scale_by,
-                    ry = node.selection.attr('ry') * scale_by,
-                    stroke_width = node.selection.attr('stroke-width') * scale_by,
-                    font_size = node.label.data.text['font-size'] * scale_by;
+                var cx = node.selection.attr('cx') * scaleBy,
+                    cy = node.selection.attr('cy') * scaleBy,
+                    rx = node.selection.attr('rx') * scaleBy,
+                    ry = node.selection.attr('ry') * scaleBy,
+                    strokeWidth = node.selection.attr('stroke-width') * scaleBy,
+                    fontSize = node.label.data.text['font-size'] * scaleBy;
                 node.data.x = cx;
                 node.data.y = cy;
                 node.data.rx = rx;
                 node.data.ry = ry;
-                node.data.stroke_width = stroke_width;
+                node.data.strokeWidth = strokeWidth;
                 node.selection.attr('cx', cx);
                 node.selection.attr('cy', cy);
                 node.selection.attr('rx', rx);
                 node.selection.attr('ry', ry);
-                node.selection.attr('stroke-width', stroke_width);
-                node.label.data.text['font-size'] = font_size;
-                node.label.selection.attr('font-size', font_size);
-                self.move_label_to_corresponding_node(node);
-                self.refresh_edges_for_node(node);
+                node.selection.attr('stroke-width', strokeWidth);
+                node.label.data.text['font-size'] = fontSize;
+                node.label.selection.attr('font-size', fontSize);
+                self.moveLabelToCorrespondingNode(node);
+                self.refreshEdgesForNode(node);
             }
         );
         this.index.projections.forEach(
             (projection) => {
-                var stroke_width = projection.dom.getAttribute('stroke-width') * scale_by;
-                projection.data.stroke_width = stroke_width
-                projection.selection.attr('stroke-width', stroke_width);
+                var strokeWidth = projection.dom.getAttribute('stroke-width') * scaleBy;
+                projection.data.strokeWidth = strokeWidth
+                projection.selection.attr('stroke-width', strokeWidth);
             }
         );
     }
 
-    scale_graph_in_place(scaling_factor) {
-        var pre_scale_graph_rect = document.querySelector('g.container').getBoundingClientRect(),
-            pre_scale_centerpoint = {
-                x: (pre_scale_graph_rect.x + pre_scale_graph_rect.width / 2),
-                y: (pre_scale_graph_rect.y + pre_scale_graph_rect.height / 2)
+    scaleGraphInPlace(scalingFactor) {
+        var preScaleGraphRect = document.querySelector('g.container').getBoundingClientRect(),
+            preScaleCenterpoint = {
+                x: (preScaleGraphRect.x + preScaleGraphRect.width / 2),
+                y: (preScaleGraphRect.y + preScaleGraphRect.height / 2)
             };
-        this.scale_graph(scaling_factor);
-        var post_scale_graph_rect = document.querySelector('g.container').getBoundingClientRect(),
-            post_scale_centerpoint = {
-                x: (post_scale_graph_rect.x + post_scale_graph_rect.width / 2),
-                y: (post_scale_graph_rect.y + post_scale_graph_rect.height / 2)
+        this.scaleGraph(scalingFactor);
+        var postScaleGraphRect = document.querySelector('g.container').getBoundingClientRect(),
+            postScaleCenterpoint = {
+                x: (postScaleGraphRect.x + postScaleGraphRect.width / 2),
+                y: (postScaleGraphRect.y + postScaleGraphRect.height / 2)
             },
-            dx = pre_scale_centerpoint.x - post_scale_centerpoint.x,
-            dy = pre_scale_centerpoint.y - post_scale_centerpoint.y;
-        this.move_graph(dx, dy)
+            dx = preScaleCenterpoint.x - postScaleCenterpoint.x,
+            dy = preScaleCenterpoint.y - postScaleCenterpoint.y;
+        this.moveGraph(dx, dy)
     }
 
-    scale_graph_to_fit(proportion) {
-        var canvas_bounding_box, graph_bounding_box, target_width, target_height, scaling_factor;
-        this.fill_proportion = proportion;
-        this.scale_graph(1);
-        canvas_bounding_box = this.get_canvas_bounding_box();
-        graph_bounding_box = this.get_graph_bounding_box();
-        target_width = Math.floor(canvas_bounding_box.width * proportion * .99);
-        target_height = Math.floor(canvas_bounding_box.height * proportion * .99);
-        scaling_factor = Math.min(
-            Math.floor(((target_width / graph_bounding_box.width) * 100)) / 100,
-            Math.floor(((target_height / graph_bounding_box.height) * 100)) / 100,
+    scaleGraphToFit(proportion) {
+        var canvasBoundingBox, graphBoundingBox, targetWidth, targetHeight, scalingFactor;
+        this.fillProportion = proportion;
+        this.scaleGraph(1);
+        canvasBoundingBox = this.getCanvasBoundingBox();
+        graphBoundingBox = this.getGraphBoundingBox();
+        targetWidth = Math.floor(canvasBoundingBox.width * proportion * .99);
+        targetHeight = Math.floor(canvasBoundingBox.height * proportion * .99);
+        scalingFactor = Math.min(
+            Math.floor(((targetWidth / graphBoundingBox.width) * 100)) / 100,
+            Math.floor(((targetHeight / graphBoundingBox.height) * 100)) / 100,
         );
-        this.scale_graph(scaling_factor);
+        this.scaleGraph(scalingFactor);
     }
 
-    get_canvas_bounding_box() {
-        var canvas_rect = document.querySelector('.graph').getBoundingClientRect();
-        return canvas_rect;
+    getCanvasBoundingBox() {
+        var canvasRect = document.querySelector('.graph').getBoundingClientRect();
+        return canvasRect;
     }
 
-    get_graph_bounding_box() {
-        var g_container, graph_rect, canvas_rect, x, y, width, height, centerpoint;
-        g_container = document.querySelector('g.container');
-        graph_rect = g_container.getBoundingClientRect();
-        canvas_rect = this.get_canvas_bounding_box()
-        x = graph_rect.x - canvas_rect.x;
-        y = graph_rect.y - canvas_rect.y;
-        width = graph_rect.width;
-        height = graph_rect.height;
-        centerpoint = {
+    getGraphBoundingBox() {
+        var gContainer, graphRect, canvasRect, x, y, width, height, centerPoint;
+        gContainer = document.querySelector('g.container');
+        graphRect = gContainer.getBoundingClientRect();
+        canvasRect = this.getCanvasBoundingBox()
+        x = graphRect.x - canvasRect.x;
+        y = graphRect.y - canvasRect.y;
+        width = graphRect.width;
+        height = graphRect.height;
+        centerPoint = {
             x: width / 2 + x,
             y: height / 2 + y
         };
@@ -1327,25 +1308,25 @@ class D3model extends React.Component {
             y: y,
             width: width,
             height: height,
-            centerpoint: centerpoint
+            centerpoint: centerPoint
         }
     }
 
-    center_graph() {
-        var centerpoint, graph_bounding_box, canvas_bounding_box, vertical_offset, horizontal_offset;
-        graph_bounding_box = this.get_graph_bounding_box();
-        canvas_bounding_box = this.get_canvas_bounding_box();
-        centerpoint = {x: canvas_bounding_box.width / 2, y: canvas_bounding_box.height / 2};
-        horizontal_offset = centerpoint.x - graph_bounding_box.centerpoint.x;
-        vertical_offset = centerpoint.y - graph_bounding_box.centerpoint.y;
-        this.move_graph(horizontal_offset, vertical_offset)
+    centerGraph() {
+        var centerPoint, graphBoundingBox, canvasBoundingBox, verticalOffset, horizontalOffset;
+        graphBoundingBox = this.getGraphBoundingBox();
+        canvasBoundingBox = this.getCanvasBoundingBox();
+        centerPoint = {x: canvasBoundingBox.width / 2, y: canvasBoundingBox.height / 2};
+        horizontalOffset = centerPoint.x - graphBoundingBox.centerpoint.x;
+        verticalOffset = centerPoint.y - graphBoundingBox.centerpoint.y;
+        this.moveGraph(horizontalOffset, verticalOffset)
     }
 
-    set_dirty_flag_to_false() {
+    setDirtyFlagToFalse() {
         this.flags.dirty = false;
     }
 
-    on_zoom() {
+    onZoom() {
         this.flags.dirty = true;
         var d3e = d3.select('svg.graph');
         var win = document.querySelector('.graph-view')
@@ -1358,35 +1339,35 @@ class D3model extends React.Component {
                 var yScroll = win.scrollTop;
             }
         } else {
-            var full_g_pre = document.querySelector('svg.graph');
-            var full_g_box_pre = full_g_pre.getBoundingClientRect();
-            var pre_scale_x_proportion = this.mouse_offset.x / full_g_box_pre.width;
-            var pre_scale_y_proportion = this.mouse_offset.y / full_g_box_pre.height;
-            var new_scale = 100 * d3.event.transform.k;
+            var fullGPre = document.querySelector('svg.graph');
+            var fullGBoxPre = fullGPre.getBoundingClientRect();
+            var preScaleXProportion = this.mouseOffset.x / fullGBoxPre.width;
+            var preScaleYProportion = this.mouseOffset.y / fullGBoxPre.height;
+            var newScale = 100 * d3.event.transform.k;
             d3e
-                .attr('width', `${new_scale}%`)
-                .attr('height', `${new_scale}%`);
-            var full_g_post = document.querySelector('svg.graph');
-            var full_g_box_post = full_g_post.getBoundingClientRect();
-            var xscroll_offset = full_g_box_post.width * pre_scale_x_proportion - this.mouse_offset.x;
-            var xscroll = win.scrollLeft + xscroll_offset;
-            var yscroll_offset = full_g_box_post.height * pre_scale_y_proportion - this.mouse_offset.y;
-            var yscroll = win.scrollTop + yscroll_offset;
+                .attr('width', `${newScale}%`)
+                .attr('height', `${newScale}%`);
+            var fullGPost = document.querySelector('svg.graph');
+            var fullGBoxPost = fullGPost.getBoundingClientRect();
+            var xScrollOffset = fullGBoxPost.width * preScaleXProportion - this.mouseOffset.x;
+            var xScroll = win.scrollLeft + xScrollOffset;
+            var yScrollOffset = fullGBoxPost.height * preScaleYProportion - this.mouseOffset.y;
+            var yScroll = win.scrollTop + yScrollOffset;
         }
-        if (xscroll < 0) {
-            xscroll = 0
-        }
-        ;
-        if (yscroll < 0) {
-            yscroll = 0
+        if (xScroll < 0) {
+            xScroll = 0
         }
         ;
-        win.scrollTo(xscroll, yscroll);
-        this.redimension_viewbox();
-        this.set_dirty_flag_to_false();
+        if (yScroll < 0) {
+            yScroll = 0
+        }
+        ;
+        win.scrollTo(xScroll, yScroll);
+        this.reDimensionViewbox();
+        this.setDirtyFlagToFalse();
     }
 
-    get_scroll_bounds() {
+    getScrollBounds() {
         var win = document.querySelector('.graph-view'),
             xmax = win.scrollWidth - win.clientWidth,
             ymax = win.scrollHeight - win.clientHeight
@@ -1396,28 +1377,28 @@ class D3model extends React.Component {
         }
     }
 
-    commit_zoom_to_stylesheet() {
+    commitZoomToStylesheet() {
         var win = document.querySelector('.graph-view'),
             svg = document.querySelector('svg'),
             k = parseInt(svg.getAttribute('width')),
-            scroll_bounds = this.get_scroll_bounds(),
-            xscroll = win.scrollLeft,
-            xmax = scroll_bounds.x,
-            xpro = Math.round(xscroll / xmax * 100),
-            xpro = isNaN(xpro) ? 0 : xpro,
-            yscroll = win.scrollTop,
-            ymax = scroll_bounds.y,
-            ypro = Math.round(yscroll / ymax * 100),
-            ypro = isNaN(ypro) ? 0 : ypro,
-            // scale = parseFloat((this.scaling_factor/(k/100)).toFixed(2));
-            scale = +this.scaling_factor.toFixed(2);
+            scrollBounds = this.getScrollBounds(),
+            xScroll = win.scrollLeft,
+            xMax = scrollBounds.x,
+            xPro = Math.round(xScroll / xMax * 100),
+            xPro = isNaN(xPro) ? 0 : xPro,
+            yScroll = win.scrollTop,
+            yMax = scrollBounds.y,
+            yPro = Math.round(yScroll / yMax * 100),
+            yPro = isNaN(yPro) ? 0 : yPro,
+            // scale = parseFloat((this.scalingFactor/(k/100)).toFixed(2));
+            scale = +this.scalingFactor.toFixed(2);
         this.stylesheet['Canvas Settings']['Zoom'] = k;
         this.stylesheet['Graph Settings']['Scale'] = scale;
-        this.stylesheet['Canvas Settings']['xScroll'] = xpro;
-        this.stylesheet['Canvas Settings']['yScroll'] = ypro;
+        this.stylesheet['Canvas Settings']['xScroll'] = xPro;
+        this.stylesheet['Canvas Settings']['yScroll'] = yPro;
     }
 
-    apply_zoom(svg) {
+    applyZoom() {
         var zoom = d3.zoom();
         this.zoom = zoom
             .scaleExtent([1, 3])
@@ -1431,11 +1412,11 @@ class D3model extends React.Component {
             });
         var d3e = d3.select('svg.graph');
         d3e.call(this.zoom
-            .on("zoom", this.on_zoom)
+            .on("zoom", this.onZoom)
         );
     }
 
-    bind_scroll_updating() {
+    bindScrollUpdating() {
         var win = document.querySelector('.graph-view');
         var self = this;
         var delayedExec = function (after, fn) {
@@ -1446,146 +1427,146 @@ class D3model extends React.Component {
             };
         };
         var scrollStopper = delayedExec(500, function () {
-            self.commit_to_stylesheet_and_update_script();
+            self.commitToStylesheetAndUpdateScript();
         });
         win.addEventListener('scroll', scrollStopper);
     }
 
-    parse_stylesheet() {
+    parseStylesheet() {
         var self, stylesheet;
         self = this;
-        self.validate_stylesheet();
-        self.set_canvas_state_from_stylesheet();
+        self.validateStylesheet();
+        self.setCanvasStateFromStylesheet();
     }
 
-    set_canvas_state_from_stylesheet() {
+    setCanvasStateFromStylesheet() {
         var self = this,
             width = self.stylesheet['Canvas Settings']['Width'],
             height = self.stylesheet['Canvas Settings']['Height'],
             zoom = self.stylesheet['Canvas Settings']['Zoom'],
             win = document.querySelector('.graph-view');
         this.svg.call(this.zoom.scaleTo, zoom / 100);
-        self.props.graph_size_fx(width, height, () => {
-            self.flags.reload_locations = true;
-            var scroll_bounds = self.get_scroll_bounds(),
+        self.props.graphSizeFx(width, height, () => {
+            self.flags.reloadLoactions = true;
+            var scrollBounds = self.getScrollBounds(),
                 xScroll = self.stylesheet['Canvas Settings']['xScroll'],
                 yScroll = self.stylesheet['Canvas Settings']['yScroll'];
-            win.scrollTo(scroll_bounds.x * (xScroll / 100), scroll_bounds.y * (yScroll / 100));
+            win.scrollTo(scrollBounds.x * (xScroll / 100), scrollBounds.y * (yScroll / 100));
             self.forceUpdate();
         });
     }
 
-    set_node_positioning_from_stylesheet() {
+    setNodePositioningFromStylesheet() {
         var self = this,
             stylesheet = self.stylesheet,
-            pnlv_node, nodes, cx, cy, scale, zoom;
-        if (Object.keys(self.props.graph_style).length > 0) {
+            pnlvNode, nodes, cx, cy, scale, zoom;
+        if (Object.keys(self.props.graphStyle).length > 0) {
             nodes = Object.keys(stylesheet['Graph Settings']['Components']['Nodes']);
             zoom = stylesheet['Canvas Settings']['Zoom'];
-            scale = self.props.graph_style['Graph Settings']['Scale']
+            scale = self.props.graphStyle['Graph Settings']['Scale']
             // *(zoom/100);
-            this.scale_graph_in_place(scale / this.scaling_factor);
-            var viewbox = this.get_viewBox(),
-                viewbox_w = viewbox.width,
-                viewbox_h = viewbox.height,
-                viewport_offset = this.get_viewport_offset(),
-                w_correction = viewport_offset.x,
-                h_correction = viewport_offset.y;
+            this.scaleGraphInPlace(scale / this.scalingFactor);
+            var viewbox = this.getViewBox(),
+                viewboxW = viewbox.width,
+                viewboxH = viewbox.height,
+                viewportOffset = this.getViewportOffset(),
+                wCorrection = viewportOffset.x,
+                hCorrection = viewportOffset.y;
             nodes.forEach(
                 (node) => {
-                    pnlv_node = self.index.lookup(node);
+                    pnlvNode = self.index.lookup(node);
                     cx =
-                        stylesheet['Graph Settings']['Components']['Nodes'][node].x * (viewbox_w + w_correction) / 100
-                        + pnlv_node.data.rx
-                        + pnlv_node.data.stroke_width / 2
-                        - w_correction / 2;
+                        stylesheet['Graph Settings']['Components']['Nodes'][node].x * (viewboxW + wCorrection) / 100
+                        + pnlvNode.data.rx
+                        + pnlvNode.data.strokeWidth / 2
+                        - wCorrection / 2;
                     cy =
-                        stylesheet['Graph Settings']['Components']['Nodes'][node].y * (viewbox_h + h_correction) / 100
-                        + pnlv_node.data.ry
-                        + pnlv_node.data.stroke_width / 2
-                        - h_correction / 2;
-                    pnlv_node.data.x = cx;
-                    pnlv_node.data.y = cy;
-                    pnlv_node.selection
-                        .attr('cx', pnlv_node.data.x)
-                        .attr('cy', pnlv_node.data.y);
-                    self.move_label_to_corresponding_node(pnlv_node);
-                    self.refresh_edges_for_node(pnlv_node);
+                        stylesheet['Graph Settings']['Components']['Nodes'][node].y * (viewboxH + hCorrection) / 100
+                        + pnlvNode.data.ry
+                        + pnlvNode.data.strokeWidth / 2
+                        - hCorrection / 2;
+                    pnlvNode.data.x = cx;
+                    pnlvNode.data.y = cy;
+                    pnlvNode.selection
+                        .attr('cx', pnlvNode.data.x)
+                        .attr('cy', pnlvNode.data.y);
+                    self.moveLabelToCorrespondingNode(pnlvNode);
+                    self.refreshEdgesForNode(pnlvNode);
                 }
             );
         }
     }
 
-    set_index() {
+    setIndex() {
         this.index = new Index();
         return this.index;
     }
 
-    draw_elements() {
+    drawElements() {
         var container = this.createSVG(),
             self = this;
-        this.set_aspect_ratio();
+        this.setAspectRatio();
         this.drawProjections(container);
         this.drawNodes(container, (node) => {
-            self.drag_selected(node)
+            self.dragSelected(node)
         });
         this.drawLabels(container, (label) => {
-            self.drag_selected(label)
+            self.dragSelected(label)
         });
-        this.postprocess();
+        this.postProcess();
     }
 
-    redimension_viewbox() {
+    reDimensionViewbox() {
         let svg = document.querySelector('svg');
         if (!svg){return};
         let viewBox = svg.getAttribute('viewBox').split(','),
-            viewBox_w = parseInt(viewBox[2]),
-            viewBox_h = parseInt(viewBox[3]),
-            svg_w = Math.round(svg.getBoundingClientRect().width),
-            svg_h = Math.round(svg.getBoundingClientRect().height),
-            aspect_ratio = this.props.aspect_ratio,
-            w_difference = svg_w - viewBox_w,
-            h_difference = svg_h - viewBox_h,
-            viewBox_w_mod,
-            viewBox_h_mod,
+            viewBoxW = parseInt(viewBox[2]),
+            viewBoxH = parseInt(viewBox[3]),
+            svgW = Math.round(svg.getBoundingClientRect().width),
+            svgH = Math.round(svg.getBoundingClientRect().height),
+            aspectRatio = this.props.aspectRatio,
+            wDifference = svgW - viewBoxW,
+            hDifference = svgH - viewBoxH,
+            viewBoxWMod,
+            viewBoxHMod,
             proportion;
-        if (svg_w !== viewBox_w || svg_h !== viewBox_h) {
-            if (w_difference < h_difference) {
-                viewBox_w_mod = svg_w;
-                viewBox_h_mod = svg_w / aspect_ratio;
+        if (svgW !== viewBoxW || svgH !== viewBoxH) {
+            if (wDifference < hDifference) {
+                viewBoxWMod = svgW;
+                viewBoxHMod = svgW / aspectRatio;
             } else {
-                viewBox_h_mod = svg_h;
-                viewBox_w_mod = svg_h * aspect_ratio;
+                viewBoxHMod = svgH;
+                viewBoxWMod = svgH * aspectRatio;
             }
-            var w_proportion = viewBox_w_mod / viewBox_w,
-                h_proportion = viewBox_h_mod / viewBox_h;
-            proportion = Math.min(w_proportion, h_proportion);
-            svg.setAttribute('viewBox', [0, 0, viewBox_w_mod, viewBox_h_mod]);
-            this.scale_graph(proportion);
+            var wProportion = viewBoxWMod / viewBoxW,
+                hProportion = viewBoxHMod / viewBoxH;
+            proportion = Math.min(wProportion, hProportion);
+            svg.setAttribute('viewBox', [0, 0, viewBoxWMod, viewBoxHMod]);
+            this.scaleGraph(proportion);
             this.forceUpdate();
         }
     }
 
-    postprocess() {
-        this.validate_stylesheet();
-        this.resize_nodes_to_label_text();
-        this.correct_projection_lengths_for_ellipse_sizes();
-        this.scale_graph_to_fit(this.fill_proportion);
-        this.center_graph();
-        this.set_aspect_ratio();
+    postProcess() {
+        this.validateStylesheet();
+        this.resizeNodesToLabelText();
+        this.correctProjectionLengthsForEllipseSizes();
+        this.scaleGraphToFit(this.fillProportion);
+        this.centerGraph();
+        this.setAspectRatio();
     }
 
-    set_aspect_ratio() {
-        if (!this.props.aspect_ratio){
+    setAspectRatio() {
+        if (!this.props.aspectRatio){
             store.dispatch(setModelAspectRatio(this.props.size.width / this.props.size.height));
         }
     }
 
     setGraph() {
-        this.set_non_react_state();
-        this.set_index();
-        this.draw_elements();
-        // this.parse_stylesheet();
+        this.setNonReactState();
+        this.setIndex();
+        this.drawElements();
+        // this.parseStylesheet();
         this.setState({mounted: true});
         window.this = this
     }
@@ -1636,7 +1617,7 @@ class D3model extends React.Component {
                      }
                 >
                     {
-                        this.state.spinner_visible ?
+                        this.state.spinnerVisible ?
                             <Spinner
                                 className={"graph_loading_spinner"}/> :
                             <div/>

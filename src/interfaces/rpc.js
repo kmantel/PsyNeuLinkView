@@ -8,7 +8,7 @@ const log = require('electron-log'),
 
 class RPCInterface{
     constructor() {
-        const PROTO_PATH = path.join(ifs.get_config()['Python']['PsyNeuLink Path'], 'psyneulink/core/rpc/graph.proto');
+        const PROTO_PATH = path.join(ifs.getConfig()['Python']['PsyNeuLink Path'], 'psyneulink/core/rpc/graph.proto');
         this.packageDefinition = protoloader.loadSync(
             PROTO_PATH,
             {
@@ -142,7 +142,7 @@ class RPCInterface{
         return client.UpdateStylesheet(callback)
     }
 
-    update_stylesheet(stylesheet, callback = () => {}) {
+    updateStylesheet(stylesheet, callback = () => {}) {
         var writeToFile;
         if (this.stylesheet_writer === null){
             this.stylesheet_writer = this.instantiate_stylesheet_writer(callback)
@@ -154,7 +154,7 @@ class RPCInterface{
             writeToFile = stylesheet;
         }
         else {
-            throw "stylesheet arg of update_stylesheet must be a stylesheet object or a stringified JSON"
+            throw "styleSheet arg of updateStylesheet must be a styleSheet object or a stringified JSON"
         }
         this.stylesheet_writer.write({styleJSON:writeToFile}, callback)
     }

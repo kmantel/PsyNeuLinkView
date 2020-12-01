@@ -85,10 +85,10 @@ class SubplotConfigForm extends React.Component{
     }
 
 
-    handleTabChange(new_tab_id, prev_tab_id, e) {
+    handleTabChange(newTabId, prevTabId, e) {
         let {id, setTabFocus} = this.props;
-        this.setState({activeTab:new_tab_id});
-        setTabFocus({parentId:id, tabKey:new_tab_id});
+        this.setState({activeTab:newTabId});
+        setTabFocus({parentId:id, tabKey:newTabId});
     }
 
     getDataForm(){

@@ -52,9 +52,9 @@ export class ConfigurationPanel extends React.Component {
         this.setState({ text: newText })
     }
 
-    handleTabChange(new_tab_id, prev_tab_id, e) {
-        this.setState({activeTabId:new_tab_id});
-        this.props.setActiveParamTab(new_tab_id)
+    handleTabChange(newTabId, prevTabId, e) {
+        this.setState({activeTabId:newTabId});
+        this.props.setActiveParamTab(newTabId)
     }
 
     getTab(id, label){

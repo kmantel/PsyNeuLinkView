@@ -4,7 +4,7 @@ import Layout from './layout'
 import SideBar from './sidebar'
 import D3plotter from './plotter'
 import GraphView from './d3model'
-import ToolTipBox from './tooltip-box'
+import ToolTipBox from './tool-tip-box'
 import ControlStrip from "./control-strip";
 import ParameterControlBox from './configuration-panel'
 import SettingsPane from './settings'
@@ -22,7 +22,7 @@ import {registerComponent} from "../state/psyneulink-components/actions";
 
 const fs = window.interfaces.filesystem,
     interp = window.interfaces.interpreter,
-    rpc_client = window.interfaces.rpc;
+    rpcClient = window.interfaces.rpc;
 
 const mapStateToProps = ({core, psyNeuLinkRegistry, psyNeuLinkComponents}) => {
     return {
@@ -51,27 +51,27 @@ class WorkSpace extends React.PureComponent {
         super(props);
         var w = window.innerWidth;
         var h = window.innerHeight;
-        var sizing_factors = this.get_initial_sizing_factors();
+        var sizingFactors = this.getInitialSizingFactors();
         this.state = {
-            active_tooltip: '',
-            x_res: w,
-            y_res: h,
-            row_one_horizontal_factor: sizing_factors.row_one_horizontal_factor,
-            row_two_horizontal_factor: sizing_factors.row_two_horizontal_factor,
-            vertical_factor: sizing_factors.vertical_factor,
-            baseline_row_one_h:sizing_factors.row_one_horizontal_factor,
-            baseline_row_two_h:sizing_factors.row_two_horizontal_factor,
-            baseline_vertical:sizing_factors.vertical_factor,
+            activeToolTip: '',
+            xRes: w,
+            yRes: h,
+            rowOneHorizontalFactor: sizingFactors.rowOneHorizontalFactor,
+            rowTwoHorizontalFactor: sizingFactors.rowTwoHorizontalFactor,
+            verticalFactor: sizingFactors.verticalFactor,
+            baselineRowOneH:sizingFactors.rowOneHorizontalFactor,
+            baselineRowTwoH:sizingFactors.rowTwoHorizontalFactor,
+            baselineVertical:sizingFactors.verticalFactor,
             graph: null,
-            graph_style:null,
-            show_settings: false,
+            graphStyle:null,
+            showSettings: false,
             mouse:null,
             filepath: null,
-            active_component: 'graphview'
+            activeComponent: 'graphview'
         };
-        this.panel_padding = 10;
-        this.panel_max_width = window.innerWidth - this.panel_padding * 7;
-        this.panel_max_height = window.innerHeight - this.panel_padding * 7;
+        this.panelPadding = 10;
+        this.panelMaxWidth = window.innerWidth - this.panelPadding * 7;
+        this.panelMaxHeight = window.innerHeight - this.panelPadding * 7;
         this.name = 'workspace';
         this.dispatcher = new ErrorDispatcher(this);
         this.container = {};
@@ -80,25 +80,25 @@ class WorkSpace extends React.PureComponent {
         this.bindThisToFunctions();
         this.setMenu();
         this.setupIpcEvents();
-        this.rpc_client = rpc_client;
+        this.rpcClient = rpcClient;
     }
 
     bindThisToFunctions(){
-        this.get_current_graph_style = this.get_current_graph_style.bind(this);
-        this.get_reference_sizing_factors = this.get_reference_sizing_factors.bind(this);
-        this.set_graph_size = this.set_graph_size.bind(this);
-        this.choose_composition = this.choose_composition.bind(this);
+        this.getCurrentGraphStyle = this.getCurrentGraphStyle.bind(this);
+        this.getReferenceSizingFactors = this.getReferenceSizingFactors.bind(this);
+        this.setGraphSize = this.setGraphSize.bind(this);
+        this.chooseComposition = this.chooseComposition.bind(this);
         this.componentWillMount = this.componentWillMount.bind(this);
-        this.panel_resize = this.panel_resize.bind(this);
-        this.get_mouse_initial = this.get_mouse_initial.bind(this);
-        this.set_tool_tip = this.set_tool_tip.bind(this);
-        this.window_resize = this.window_resize.bind(this);
+        this.panelResize = this.panelResize.bind(this);
+        this.getMouseInitial = this.getMouseInitial.bind(this);
+        this.setToolTip = this.setToolTip.bind(this);
+        this.windowResize = this.windowResize.bind(this);
         this.componentDidMount = this.componentDidMount.bind(this);
         this.componentDidUpdate = this.componentDidUpdate.bind(this);
-        this.validate_server_status_and_load_script = this.validate_server_status_and_load_script.bind(this);
+        this.validateServerStatusAndLoadScript = this.validateServerStatusAndLoadScript.bind(this);
         this.handleErrors = this.handleErrors.bind(this);
         this.saveMouseData = this.saveMouseData.bind(this);
-        this.set_active_component = this.set_active_component.bind(this);
+        this.setActiveComponent = this.setActiveComponent.bind(this);
         this.setupIpcEvents = this.setupIpcEvents.bind(this);
         this.handleParameterList = this.handleParameterList.bind(this);
         this.handleComponentList = this.handleComponentList.bind(this);
@@ -108,7 +108,7 @@ class WorkSpace extends React.PureComponent {
     componentDidMount() {
         var self = this,
             padding = 10
-        this.get_initial_filepath();
+        this.getInitialFilepath();
     }
 
     setupIpcEvents() {
@@ -155,11 +155,11 @@ class WorkSpace extends React.PureComponent {
         this.setState({components:message})
     }
 
-    get_initial_filepath() {
-        var config = fs.get_config(),
+    getInitialFilepath() {
+        var config = fs.getConfig(),
             filepath = config.env.filepath;
         if (filepath){
-            this.validate_server_status_and_load_script(filepath);
+            this.validateServerStatusAndLoadScript(filepath);
         }
     }
 
@@ -195,7 +195,7 @@ class WorkSpace extends React.PureComponent {
                         label: 'Open',
                         accelerator: 'CmdOrCtrl+o',
                         click(e) {
-                            self.file_selection_dialog()
+                            self.fileSelectionDialog()
                         }
                     },
                     isMac ? {role: 'close'} : {role: 'quit'}
@@ -256,14 +256,14 @@ class WorkSpace extends React.PureComponent {
                         label: 'Open Debug Log',
                         accelerator: 'CmdOrCtrl+L',
                         click() {
-                            window.electron_root.open_log_file();
+                            window.electronRoot.open_log_file();
                         }
                     },
                     {
                         label: 'Show Debug Log in Finder',
                         accelerator: 'CmdOrCtrl+Shift+L',
                         click() {
-                            window.electron_root.open_log_folder();
+                            window.electronRoot.open_log_folder();
                         }
                     }
                 ]
@@ -280,7 +280,7 @@ class WorkSpace extends React.PureComponent {
         })
     }
 
-    file_selection_dialog() {
+    fileSelectionDialog() {
         var self = this;
         var filepath = window.dialog.showOpenDialog(
             window.getCurrentWindow(),
@@ -293,18 +293,18 @@ class WorkSpace extends React.PureComponent {
                 var pathArray = paths.filePaths;
                 if (pathArray.length > 0) {
                     self.setState({'filepath':pathArray[0]});
-                    self.validate_server_status_and_load_script(pathArray[0]);
+                    self.validateServerStatusAndLoadScript(pathArray[0]);
                 }
             }
         )
     }
 
-    load_script(filepath) {
+    loadScript(filepath) {
         var win;
         var self = this;
         win = window.remote.getCurrentWindow();
         self.setState({'filepath':filepath});
-        rpc_client.load_script(filepath, (err) => {
+        rpcClient.load_script(filepath, (err) => {
                 if (err) {
                     self.dispatcher.capture({
                             error: "Python interpreter crashed while loading script. ",
@@ -317,11 +317,11 @@ class WorkSpace extends React.PureComponent {
                         {graph: null}
                     )
                 } else {
-                    var compositions = rpc_client.script_maintainer.compositions;
+                    var compositions = rpcClient.script_maintainer.compositions;
                     var composition = compositions[compositions.length - 1];
-                    rpc_client.get_components(composition);
+                    rpcClient.get_components(composition);
                     this.filepath = filepath
-                    rpc_client.get_json(composition, function (err) {
+                    rpcClient.get_json(composition, function (err) {
                         if (err) {
                             self.dispatcher.capture({
                                     error: "Python interpreter crashed while loading script.",
@@ -335,7 +335,7 @@ class WorkSpace extends React.PureComponent {
                             );
                             return false
                         }
-                        self.set_state_from_rpc_client()
+                        self.setStateFromRpcClient()
                         }
                     )
                 }
@@ -343,20 +343,20 @@ class WorkSpace extends React.PureComponent {
         );
     }
 
-    set_state_from_rpc_client(){
+    setStateFromRpcClient(){
         var self = this,
             filepath = this.filepath,
-            compositions = rpc_client.script_maintainer.compositions,
+            compositions = rpcClient.script_maintainer.compositions,
             composition = compositions[compositions.length - 1],
-            new_graph = Object.assign({}, JSON.parse(JSON.stringify(rpc_client.script_maintainer.gv))),
-            new_graph_style = Object.assign({}, JSON.parse(JSON.stringify(rpc_client.script_maintainer.style))),
-            cf = Object.assign({}, fs.get_config());
+            newGraph = Object.assign({}, JSON.parse(JSON.stringify(rpcClient.script_maintainer.gv))),
+            newGraphStyle = Object.assign({}, JSON.parse(JSON.stringify(rpcClient.script_maintainer.style))),
+            cf = Object.assign({}, fs.getConfig());
         cf.env.filepath = filepath;
-        fs.set_config(cf);
-        this.props.setStyleSheet(new_graph_style);
+        fs.setConfig(cf);
+        this.props.setStyleSheet(newGraphStyle);
         this.props.setActiveComposition(composition);
         self.setState({
-            graph: new_graph,
+            graph: newGraph,
             filepath: filepath,
         });
         var homedir = window.remote.app.getPath('home');
@@ -365,54 +365,54 @@ class WorkSpace extends React.PureComponent {
         }
         fs.watch(filepath, (e)=>{
             window.dispatchEvent(new Event(e));
-            self.get_current_graph_style()
+            self.getCurrentGraphStyle()
         });
         window.remote.getCurrentWindow().setTitle(`${composition} \u2014 ${filepath}`)
     }
 
-    async validate_server_status_and_load_script(filepath) {
+    async validateServerStatusAndLoadScript(filepath) {
         var self, previous_title, win;
         self = this;
         win = window.remote.getCurrentWindow();
         self.filepath = filepath;
         self.setState({graph: "loading"}, ()=>{win.setTitle('PsyNeuLinkView')});
-        window.electron_root.addRecentDocument(filepath);
-        // self.load_script(filepath)
-        interp.restart_rpc_server(
+        window.electronRoot.addRecentDocument(filepath);
+        // self.loadScript(filepath)
+        interp.restartRPCServer(
             ()=>{
-                self.load_script(filepath)
+                self.loadScript(filepath)
             },
         );
     }
 
-    get_initial_sizing_factors() {
+    getInitialSizingFactors() {
         var w = window.innerWidth,
             h = window.innerHeight,
-            row_one_h = null,
-            row_two_h = null,
+            rowOneH = null,
+            rowTwoH = null,
             v = null;
-        if (!row_one_h) {
-            row_one_h = Math.ceil(w * 0.2)
+        if (!rowOneH) {
+            rowOneH = Math.ceil(w * 0.2)
         }
-        if (!row_two_h) {
-            row_two_h = Math.ceil(w * 0.2)
+        if (!rowTwoH) {
+            rowTwoH = Math.ceil(w * 0.2)
         }
         if (!v) {
             v = Math.ceil(h * 0.7)
         }
         return(
             {
-                row_one_horizontal_factor: row_one_h,
-                row_two_horizontal_factor: row_two_h,
-                vertical_factor: v
+                rowOneHorizontalFactor: rowOneH,
+                rowTwoHorizontalFactor: rowTwoH,
+                verticalFactor: v
             }
         )
     }
 
 
-    get_current_graph_style(){
+    getCurrentGraphStyle(){
         var self = this;
-        this.rpc_client.get_style(self.filepath, function (err) {
+        this.rpcClient.get_style(self.filepath, function (err) {
             if (err) {
                 self.dispatcher.capture({
                         error: "Python interpreter crashed while loading script.",
@@ -427,7 +427,7 @@ class WorkSpace extends React.PureComponent {
                 return false
             }
             try {
-                var new_graph_style = JSON.parse(JSON.stringify(rpc_client.script_maintainer.style));
+                var new_graph_style = JSON.parse(JSON.stringify(rpcClient.script_maintainer.style));
             } catch {
                 var new_graph_style = {};
             }
@@ -436,29 +436,29 @@ class WorkSpace extends React.PureComponent {
     }
 
 
-    choose_composition() {
+    chooseComposition() {
         var compositions = this.container.json.compositions;
-        var chosen_composition = null;
+        var chosenComposition = null;
         if (compositions.length === 0) {
         } else if (compositions.length === 1) {
-            chosen_composition = compositions[0]
+            chosenComposition = compositions[0]
         } else {
             //TODO: add handling for multiple compositions
         }
-        return chosen_composition
+        return chosenComposition
     }
 
-    set_tool_tip(text) {
+    setToolTip(text) {
         var stateWithNewText = {...this.state.active_tooltip};
         stateWithNewText = text;
         this.setState({active_tooltip: stateWithNewText})
     }
 
-    get_mouse_initial() {
+    getMouseInitial() {
         this.mouse_initial = this.state.mouse
     }
 
-    get_reference_sizing_factors(horizontal, vertical){
+    getReferenceSizingFactors(horizontal, vertical){
         // this.reference_factors = {
         //     horizontal_key:horizontal,
         //     horizontal_value:this.state[horizontal],
@@ -467,32 +467,31 @@ class WorkSpace extends React.PureComponent {
         // }
     }
 
-    window_resize() {
-        var old_x_res = this.state.x_res;
-        var old_y_res = this.state.y_res;
-        var old_r1_h_factor = this.state.row_one_horizontal_factor;
-        var old_r2_h_factor = this.state.row_two_horizontal_factor;
-        var old_v_factor = this.state.vertical_factor;
+    windowResize() {
+        var oldXRes = this.state.xRes;
+        var oldYRes = this.state.yRes;
+        var oldR1HFactor = this.state.rowOneHorizontalFactor;
+        var oldR2HFactor = this.state.rowTwoHorizontalFactor;
+        var oldVFactor = this.state.verticalFactor;
         var w = window.innerWidth;
         var h = window.innerHeight;
-        var new_r1_h_factor = (old_r1_h_factor / old_x_res) * w;
-        var new_r2_h_factor = (old_r2_h_factor / old_x_res) * w;
-        var new_v_factor = (old_v_factor / old_y_res) * h;
+        var newR1HFactor = (oldR1HFactor / oldXRes) * w;
+        var newR2HFactor = (oldR2HFactor / oldXRes) * w;
+        var newVFactor = (oldVFactor / oldYRes) * h;
         this.setState({
-            x_res: w,
-            y_res: h,
-            row_one_horizontal_factor: (old_r1_h_factor / old_x_res) * w,
-            row_two_horizontal_factor: (old_r2_h_factor / old_x_res) * w,
-            vertical_factor: (old_v_factor / old_y_res) * h,
-            baseline_row_one_h: new_r1_h_factor,
-            baseline_row_two_h: new_r2_h_factor,
-            baseline_vertical: new_v_factor,
-            test_width: 500
+            xRes: w,
+            yRes: h,
+            rowOneHorizontalFactor: (oldR1HFactor / oldXRes) * w,
+            rowTwoHorizontalFactor: (oldR2HFactor / oldXRes) * w,
+            verticalFactor: (oldVFactor / oldYRes) * h,
+            baselineRowOneH: newR1HFactor,
+            baselineRowTwoH: newR2HFactor,
+            baselineVertical: newVFactor
         });
         this.forceUpdate()
     }
 
-    panel_resize(e, direction, ref, d) {
+    panelResize(e, direction, ref, d) {
         // var h_key = this.reference_factors.horizontal_key,
         //     h_val = this.reference_factors.horizontal_value,
         //     v_key = this.reference_factors.vertical_key,
@@ -510,9 +509,9 @@ class WorkSpace extends React.PureComponent {
         // window.dispatchEvent(new Event('resize'));
     }
 
-    set_graph_size(width=this.state.row_one_horizontal_factor,
-                   height=this.state.vertical_factor,
-                   callback=()=>{}){
+    setGraphSize(width=this.state.rowOneHorizontalFactor,
+                 height=this.state.verticalFactor,
+                 callback=()=>{}){
         // This is a hook to allow child element graphview to set its own size.
         // Current horizontal factor attribute is set with respect to the first element in row.
         //  We subtract from one here so that calls to this method refer to the size of the actual
@@ -520,13 +519,13 @@ class WorkSpace extends React.PureComponent {
         //
         // Args are passed in percents, so we need to convert them to fractions.
 
-        var padding = this.panel_padding,
-            new_h_factor = window.innerWidth-((window.innerWidth)*(width/100)+padding*2)-1,
-            new_v_factor = (window.innerHeight)*(height/100)+padding;
+        var padding = this.panelPadding,
+            newHFactor = window.innerWidth-((window.innerWidth)*(width/100)+padding*2)-1,
+            newVFactor = (window.innerHeight)*(height/100)+padding;
         this.setState(
             {
-                row_one_horizontal_factor:new_h_factor,
-                vertical_factor:new_v_factor
+                rowOneHorizontalFactor:newHFactor,
+                verticalFactor:newVFactor
             },
             callback
         );
@@ -538,7 +537,7 @@ class WorkSpace extends React.PureComponent {
         if (!(_.isEqual(prevProps.componentMapNameToId, componentMapNameToId))){
             for (const [name, id] of Object.entries(componentMapNameToId)){
                 if (!(id in registeredParameters) && !(name in prevProps.componentMapNameToId)){
-                    rpc_client.get_parameters(name);
+                    rpcClient.get_parameters(name);
                 }
             }
         }
@@ -546,13 +545,13 @@ class WorkSpace extends React.PureComponent {
 
     componentWillUnmount() {
         // window.removeEventListener('mousemove', this.saveMouseData);
-        window.removeEventListener('resize', this.window_resize);
+        window.removeEventListener('resize', this.windowResize);
         // window.removeEventListener('change', this.on_change)
     }
 
     componentWillMount() {
         // window.addEventListener('mousemove', this.saveMouseData);
-        window.addEventListener('resize', this.window_resize);
+        window.addEventListener('resize', this.windowResize);
         // window.addEventListener('change', this.on_change)
     }
 
@@ -564,8 +563,8 @@ class WorkSpace extends React.PureComponent {
     }
 
     toggleDialog = () => {
-        var interpreter_path_is_blank = !fs.get_config()['Python']['Interpreter Path'];
-        if (!interpreter_path_is_blank) {
+        var interpreterPath_is_blank = !fs.getConfig()['Python']['Interpreter Path'];
+        if (!interpreterPath_is_blank) {
             this.setState({show_settings: !this.state.show_settings});
         }
     };
@@ -574,38 +573,38 @@ class WorkSpace extends React.PureComponent {
         this.dispatcher.emit()
     }
 
-    on_resize(e, direction, ref, d) {
-        // this.panel_resize('row_one_horizontal_factor', 'vertical_factor', e, direction, ref, d)
+    onResize(e, direction, ref, d) {
+        // this.panelResize('rowOneHorizontalFactor', 'verticalFactor', e, direction, ref, d)
         // window.dispatchEvent(new Event('resize'));
     }
 
-    set_active_component(component, callback=()=>{}){
-        // this.setState({'active_component':component}, callback)
+    setActiveComponent(component, callback=()=>{}){
+        // this.setState({'activeComponent':component}, callback)
     }
 
-    render_log(message){
+    renderLog(message){
     }
 
     render() {
-        // var interpreter_path_is_blank = !fs.get_config()['Python']['Interpreter Path'];
-        // var interpreter_path_is_blank = false;
-        // if (!this.state.show_settings && interpreter_path_is_blank) {
-        //     this.setState({show_settings: true})
+        // var interpreterPath_is_blank = !fs.getConfig()['Python']['Interpreter Path'];
+        // var interpreterPath_is_blank = false;
+        // if (!this.state.showSettings && interpreterPath_is_blank) {
+        //     this.setState({showSettings: true})
         // }
         var self = this;
         var padding = 10,
             sidebar = <div key="sidebar">
                 <SideBar
-                    hover={() => this.set_tool_tip('sidebar')}
+                    hover={() => this.setToolTip('sidebar')}
                     className='pnl-panel'
                     onResize={
-                        // self.panel_resize
+                        // self.panelResize
                         (e, dir, ref, delta)=>{
                             console.log("it's resizing");
                             this.setState(
                                 {
-                                    row_one_horizontal_factor:this.state.baseline_row_one_h + delta.width,
-                                    vertical_factor:this.state.baseline_vertical + delta.height
+                                    rowOneHorizontalFactor:this.state.baselineRowOneH + delta.width,
+                                    verticalFactor:this.state.baselineVertical + delta.height
                                 }
                             )
                         }
@@ -614,8 +613,8 @@ class WorkSpace extends React.PureComponent {
                         (e, dir, ref, delta)=>{
                             this.setState(
                                 {
-                                    baseline_row_one_h:this.state.baseline_row_one_h + delta.width,
-                                    baseline_vertical:this.state.baseline_vertical + delta.height
+                                    baselineRowOneH:this.state.baselineRowOneH + delta.width,
+                                    baselineVertical:this.state.baselineVertical + delta.height
                                 },
                                 this.forceUpdate
                             )
@@ -623,15 +622,15 @@ class WorkSpace extends React.PureComponent {
                     }
                     size={
                         {
-                            height: this.state.vertical_factor - padding,
-                            width: this.state.row_one_horizontal_factor - padding
+                            height: this.state.verticalFactor - padding,
+                            width: this.state.rowOneHorizontalFactor - padding
                         }
                     }
                     maxWidth = {
-                        this.panel_max_width
+                        this.panelMaxWidth
                     }
                     maxHeight = {
-                        this.panel_max_height
+                        this.panelMaxHeight
                     }
                 />
             </div>,
@@ -639,12 +638,12 @@ class WorkSpace extends React.PureComponent {
                 <GraphView
                     className='pnl-panel'
                     onResize={
-                        // self.panel_resize
+                        // self.panelResize
                         (e, dir, ref, delta)=>{
                             this.setState(
                                 {
-                                    row_one_horizontal_factor:this.state.baseline_row_one_h - delta.width,
-                                    vertical_factor:this.state.baseline_vertical + delta.height
+                                    rowOneHorizontalFactor:this.state.baselineRowOneH - delta.width,
+                                    verticalFactor:this.state.baselineVertical + delta.height
                                 }
                             )
                         }
@@ -653,8 +652,8 @@ class WorkSpace extends React.PureComponent {
                         (e, dir, ref, delta)=>{
                             this.setState(
                                 {
-                                    baseline_row_one_h:this.state.baseline_row_one_h - delta.width,
-                                    baseline_vertical:this.state.baseline_vertical + delta.height
+                                    baselineRowOneH:this.state.baselineRowOneH - delta.width,
+                                    baselineVertical:this.state.baselineVertical + delta.height
                                 },
                                 this.forceUpdate
                             )
@@ -662,38 +661,38 @@ class WorkSpace extends React.PureComponent {
                     }
                     size={
                         {
-                            height: this.state.vertical_factor - padding,
-                            width: this.state.x_res - this.state.row_one_horizontal_factor - padding * 2
+                            height: this.state.verticalFactor - padding,
+                            width: this.state.xRes - this.state.rowOneHorizontalFactor - padding * 2
                         }
                     }
                     maxWidth = {
-                        this.panel_max_width
+                        this.panelMaxWidth
                     }
                     maxHeight = {
-                        this.panel_max_height
+                        this.panelMaxHeight
                     }
                     location = {
                         {
-                            x:this.state.row_one_horizontal_factor,
+                            x:this.state.rowOneHorizontalFactor,
                             y:0
                         }
                     }
                     graph={this.state.graph}
-                    // graph_style = {this.state.graph_style}
+                    // graphStyle = {this.state.graphStyle}
                     filepath = {this.state.filepath}
-                    graph_size_fx = {this.set_graph_size}
+                    graph_size_fx = {this.setGraphSize}
                 />
             </div>,
             plotter =  <div key="plotter">
                 <D3plotter
                     className='pnl-panel'
                     onResize={
-                        // self.panel_resize
+                        // self.panelResize
                         (e, dir, ref, delta)=>{
                             this.setState(
                                 {
-                                    row_one_horizontal_factor:this.state.baseline_row_one_h - delta.width,
-                                    vertical_factor:this.state.baseline_vertical + delta.height
+                                    rowOneHorizontalFactor:this.state.baselineRowOneH - delta.width,
+                                    verticalFactor:this.state.baselineVertical + delta.height
                                 }
                             )
                         }
@@ -702,8 +701,8 @@ class WorkSpace extends React.PureComponent {
                         (e, dir, ref, delta)=>{
                             this.setState(
                                 {
-                                    baseline_row_one_h:this.state.baseline_row_one_h - delta.width,
-                                    baseline_vertical:this.state.baseline_vertical + delta.height
+                                    baselineRowOneH:this.state.baselineRowOneH - delta.width,
+                                    baselineVertical:this.state.baselineVertical + delta.height
                                 },
                                 this.forceUpdate
                             )
@@ -711,19 +710,19 @@ class WorkSpace extends React.PureComponent {
                     }
                     size={
                         {
-                            height: this.state.vertical_factor - padding,
-                            width: this.state.x_res - this.state.row_one_horizontal_factor - padding * 2
+                            height: this.state.verticalFactor - padding,
+                            width: this.state.xRes - this.state.rowOneHorizontalFactor - padding * 2
                         }
                     }
                     maxWidth = {
-                        this.panel_max_width
+                        this.panelMaxWidth
                     }
                     maxHeight = {
-                        this.panel_max_height
+                        this.panelMaxHeight
                     }
                     location = {
                         {
-                            x:this.state.row_one_horizontal_factor - padding,
+                            x:this.state.rowOneHorizontalFactor - padding,
                             y:0
                         }
                     }
@@ -737,12 +736,12 @@ class WorkSpace extends React.PureComponent {
                     text={this.state.active_tooltip}
                     className='pnl-panel'
                     onResize={
-                        // self.panel_resize
+                        // self.panelResize
                         (e, dir, ref, delta)=>{
                             this.setState(
                                 {
-                                    row_two_horizontal_factor:this.state.baseline_row_two_h + delta.width,
-                                    vertical_factor:this.state.baseline_vertical - delta.height
+                                    rowTwoHorizontalFactor:this.state.baselineRowTwoH + delta.width,
+                                    verticalFactor:this.state.baselineVertical - delta.height
                                 }
                             )
                         }
@@ -751,8 +750,8 @@ class WorkSpace extends React.PureComponent {
                         (e, dir, ref, delta)=>{
                             this.setState(
                                 {
-                                    baseline_row_two_h:this.state.baseline_row_two_h + delta.width,
-                                    baseline_vertical:this.state.baseline_vertical - delta.height
+                                    baselineRowTwoH:this.state.baselineRowTwoH + delta.width,
+                                    baselineVertical:this.state.baselineVertical - delta.height
                                 },
                                 this.forceUpdate
                             )
@@ -760,15 +759,15 @@ class WorkSpace extends React.PureComponent {
                     }
                     size={
                         {
-                            height: this.state.y_res - this.state.vertical_factor - padding * 6,
-                            width: this.state.row_two_horizontal_factor - padding
+                            height: this.state.yRes - this.state.verticalFactor - padding * 6,
+                            width: this.state.rowTwoHorizontalFactor - padding
                         }
                     }
                     maxWidth = {
-                        this.panel_max_width
+                        this.panelMaxWidth
                     }
                     maxHeight = {
-                        this.panel_max_height
+                        this.panelMaxHeight
                     }
                 />
 
@@ -779,12 +778,12 @@ class WorkSpace extends React.PureComponent {
                     text={this.state.active_tooltip}
                     className='pnl-panel'
                     onResize={
-                        // self.panel_resize
+                        // self.panelResize
                         (e, dir, ref, delta)=>{
                             this.setState(
                                 {
-                                    row_two_horizontal_factor:this.state.baseline_row_two_h - delta.width,
-                                    vertical_factor:this.state.baseline_vertical - delta.height
+                                    rowTwoHorizontalFactor:this.state.baselineRowTwoH - delta.width,
+                                    verticalFactor:this.state.baselineVertical - delta.height
                                 }
                             )
                         }
@@ -794,8 +793,8 @@ class WorkSpace extends React.PureComponent {
                             console.log('stop')
                             this.setState(
                                 {
-                                    baseline_row_two_h:this.state.baseline_row_two_h - delta.width,
-                                    baseline_vertical:this.state.baseline_vertical - delta.height
+                                    baselineRowTwoH:this.state.baselineRowTwoH - delta.width,
+                                    baselineVertical:this.state.baselineVertical - delta.height
                                 },
                                 this.forceUpdate
                             )
@@ -803,15 +802,15 @@ class WorkSpace extends React.PureComponent {
                     }
                     size={
                         {
-                            height: this.state.y_res - this.state.vertical_factor - padding * 6,
-                            width: this.state.x_res - this.state.row_two_horizontal_factor - padding * 2
+                            height: this.state.yRes - this.state.verticalFactor - padding * 6,
+                            width: this.state.xRes - this.state.rowTwoHorizontalFactor - padding * 2
                         }
                     }
                     maxWidth = {
-                        this.panel_max_width
+                        this.panelMaxWidth
                     }
                     maxHeight = {
-                        this.panel_max_height
+                        this.panelMaxHeight
                     }
                 />
             </div>;
@@ -838,8 +837,8 @@ class WorkSpace extends React.PureComponent {
         return (
             <div>
                 <ControlStrip
-                    width={window.innerWidth-this.panel_padding*2}
-                    activePanelControl={this.set_active_component}
+                    width={window.innerWidth-this.panelPadding*2}
+                    activePanelControl={this.setActiveComponent}
                 />
                 <SettingsPane
                     isOpen={false}
@@ -855,36 +854,36 @@ class WorkSpace extends React.PureComponent {
                                 i: 'sidebar',
                                 x: 0,
                                 y: 0,
-                                w: this.state.row_one_horizontal_factor,
-                                h: this.state.vertical_factor
+                                w: this.state.rowOneHorizontalFactor,
+                                h: this.state.verticalFactor
                             },
                             {
                                 i: this.props.activeView,
-                                x: this.state.row_one_horizontal_factor,
+                                x: this.state.rowOneHorizontalFactor,
                                 y: 0,
-                                w: this.state.x_res - this.state.row_one_horizontal_factor - this.panel_padding,
-                                h: this.state.vertical_factor
+                                w: this.state.xRes - this.state.rowOneHorizontalFactor - this.panelPadding,
+                                h: this.state.verticalFactor
                             },
                             {
                                 i: 'tipbox',
                                 x: 0,
-                                y: this.state.vertical_factor,
-                                w: this.state.row_two_horizontal_factor,
-                                h: this.state.y_res - this.state.vertical_factor - this.panel_padding * 6
+                                y: this.state.verticalFactor,
+                                w: this.state.rowTwoHorizontalFactor,
+                                h: this.state.yRes - this.state.verticalFactor - this.panelPadding * 6
                             },
                             {
                                 i: 'paramcontrol',
-                                x: this.state.row_two_horizontal_factor,
-                                y: this.state.vertical_factor,
-                                w: this.state.x_res - this.state.row_two_horizontal_factor,
-                                h: this.state.y_res - this.state.vertical_factor - this.panel_padding * 6
+                                x: this.state.rowTwoHorizontalFactor,
+                                y: this.state.verticalFactor,
+                                w: this.state.xRes - this.state.rowTwoHorizontalFactor,
+                                h: this.state.yRes - this.state.verticalFactor - this.panelPadding * 6
                             }
                         ]}
                         rowHeight={1}
-                        cols={this.state.x_res}
-                        width={this.state.x_res}
-                        // cols={this.state.x_res}
-                        // width={this.state.x_res}
+                        cols={this.state.xRes}
+                        width={this.state.xRes}
+                        // cols={this.state.xRes}
+                        // width={this.state.xRes}
                         components={components}
                     />
                 </DndProvider>

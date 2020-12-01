@@ -8,7 +8,7 @@ const style = {
   justifyContent: "center",
 };
 
-export default class Tooltipbox extends React.Component{
+export default class ToolTipBox extends React.Component{
   constructor(props){
     super(props)
     this.state = {

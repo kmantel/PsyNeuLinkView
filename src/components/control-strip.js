@@ -24,8 +24,8 @@ class ControlStrip extends React.Component {
         this.handleTabChange = this.handleTabChange.bind(this)
     }
 
-    handleTabChange(new_tab_id, prev_tab_id, e){
-        store.dispatch(setActiveView(new_tab_id));
+    handleTabChange(newTabId, prevTabId, e){
+        store.dispatch(setActiveView(newTabId));
     }
 
     parseInputFile(filePath){

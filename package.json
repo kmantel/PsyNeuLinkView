@@ -80,7 +80,7 @@
       "build/**/*",
       "node_modules/**/*",
       "src/**/*",
-      "config_template.json"
+      "config-template.json"
     ],
     "directories": {
       "buildResources": "assets"
@@ -92,7 +92,7 @@
     "asarUnpack": [
       "build/**/*",
       "src/**/*",
-      "config_template.json"
+      "config-template.json"
     ]
   },
   "homepage": "./"

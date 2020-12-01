@@ -12,7 +12,7 @@ B = TransferMechanism(function=Logistic(gain=user_specified_gain), name='B')
 LC = LCControlMechanism(
     modulated_mechanisms=[A, B],
     base_level_gain=G,
-    scaling_factor_gain=k,
+    scalingFactor_gain=k,
     objective_mechanism=ObjectiveMechanism(
         function=Linear,
         monitor=[B],

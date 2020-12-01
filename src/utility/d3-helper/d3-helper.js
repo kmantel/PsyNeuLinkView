@@ -41,7 +41,7 @@ export class Index {
         return min_node;
     }
 
-    add_d3_group(d3_group, type) {
+    addD3Group(d3_group, type) {
         if (!['node', 'label', 'projection'].includes(type)) {
             throw 'must specify group type when adding d3 group to index'
         }
@@ -88,14 +88,14 @@ export class Index {
         this.nodes.add(pnlv_node);
         this.projections.forEach(
             (projection)=>{
-                if (projection.data.head_node===pnlv_node.data){
-                    afferent = this.lookup(projection.data.head_node);
-                    projection.head_node = pnlv_node;
+                if (projection.data.headNode===pnlv_node.data){
+                    afferent = this.lookup(projection.data.headNode);
+                    projection.headNode = pnlv_node;
                     pnlv_node.afferents.add(projection);
                 }
-                if (projection.data.tail_node===pnlv_node.data){
-                    efferent = this.lookup(projection.data.tail_node);
-                    projection.tail_node = pnlv_node;
+                if (projection.data.tailNode===pnlv_node.data){
+                    efferent = this.lookup(projection.data.tailNode);
+                    projection.tailNode = pnlv_node;
                     pnlv_node.efferents.add(projection);
                 }
             }
@@ -107,16 +107,16 @@ export class Index {
         pnlv_projection = projection._is_pnlv_obj ? projection : new Projection(projection);
         this.add_to_elements(pnlv_projection);
         this.add_to_lookup(pnlv_projection);
-        head = this.lookup(pnlv_projection.data.head_node);
+        head = this.lookup(pnlv_projection.data.headNode);
         if (head){
-            pnlv_projection.head_node = head
+            pnlv_projection.headNode = head
         }
-        tail = this.lookup(pnlv_projection.data.tail_node);
+        tail = this.lookup(pnlv_projection.data.tailNode);
         if (tail){
-            pnlv_projection.tail_node = tail
+            pnlv_projection.tailNode = tail
         }
         this.projections.add(pnlv_projection);
-        if (pnlv_projection.is_recurrent()){
+        if (pnlv_projection.isRecurrent()){
             this.recurrent_projections.add(pnlv_projection)
         }
     }
@@ -178,12 +178,12 @@ export class Projection extends GraphElement {
     constructor(svg_element) {
         super(svg_element);
         this.element_type = 'projection';
-        this.head_node = null;
-        this.tail_node = null;
+        this.headNode = null;
+        this.tailNode = null;
     }
 
-    is_recurrent(){
-        return this.data.head_node===this.data.tail_node
+    isRecurrent(){
+        return this.data.headNode===this.data.tailNode
     }
 }
 

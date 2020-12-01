@@ -76,7 +76,7 @@ class GraphServer(graph_pb2_grpc.ServeGraphServicer):
 
     def LoadScript(self, request, context):
         filepath = request.path
-        load_script(filepath)
+        loadScript(filepath)
         return graph_pb2.ScriptCompositions(compositions=pnl_container.hashable_pnl_objects['compositions'])
 
     def GetCompositions(self, request, context):
@@ -190,7 +190,7 @@ def load_style(filepath):
     else:
         pnl_container.graphics_spec = {}
 
-def load_script(filepath):
+def loadScript(filepath):
     pnl_container.filepath = filepath
     pnl_container.AST = open(filepath, 'r').read()
     dg = ast_parse.DependencyGraph(pnl_container.AST, pnl)
@@ -200,10 +200,10 @@ def load_script(filepath):
     get_graphics_dict(namespace)
     return pnl_container.hashable_pnl_objects['compositions']
 
-def update_graphics_dict(stylesheet):
+def update_graphics_dict(styleSheet):
     ast = redbaron.RedBaron(pnl_container.AST)
     gdict = ast.find('assign',lambda x: x.find('name','pnlv_graphics_spec'))
-    stylesheet_str = json.dumps(stylesheet, indent=4)
+    stylesheet_str = json.dumps(styleSheet, indent=4)
     if gdict:
         gdict.value = stylesheet_str
         ast = ast.dumps()
@@ -276,8 +276,8 @@ def get_gv_json(name):
     gv_svg_dict = etree_to_dict(fromstring(gv_svg.decode()))
     correct_dict(gv_svg_dict)
     gv_d = parse_corrected_dict(gv_svg_dict)
-    gv_d['max_x'] = float(gv_svg_dict['svg']['width'].replace('pt',''))
-    gv_d['max_y'] = float(gv_svg_dict['svg']['height'].replace('pt', ''))
+    gv_d['maxX'] = float(gv_svg_dict['svg']['width'].replace('pt',''))
+    gv_d['maxY'] = float(gv_svg_dict['svg']['height'].replace('pt', ''))
     return gv_d
 
 def serve():

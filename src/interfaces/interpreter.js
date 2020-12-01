@@ -9,55 +9,55 @@ const path = require('path'),
 
 class InterpreterInterface{
     constructor(){
-        this.validate_interpreter_path = this.validate_interpreter_path.bind(this);
-        this.start_server = this.start_server.bind(this);
-        this.check_conda = this.check_conda.bind(this);
-        this.find_conda_binary = this.find_conda_binary.bind(this);
-        this.find_env_name = this.find_env_name.bind(this);
-        this.construct_prefix = this.construct_prefix.bind(this);
-        this.execute_validation_script = this.execute_validation_script.bind(this);
-        this.spawn_rpc_server = this.spawn_rpc_server.bind(this);
-        this.kill_rpc_server = this.kill_rpc_server.bind(this);
-        this.restart_rpc_server = this.restart_rpc_server.bind(this);
-        this.child_procs = [];
+        this.validateInterpreterPath = this.validateInterpreterPath.bind(this);
+        this.startServer = this.startServer.bind(this);
+        this.checkConda = this.checkConda.bind(this);
+        this.findCondaBinary = this.findCondaBinary.bind(this);
+        this.findEnvName = this.findEnvName.bind(this);
+        this.constructPrefix = this.constructPrefix.bind(this);
+        this.executeValidationScript = this.executeValidationScript.bind(this);
+        this.spawnRPCServer = this.spawnRPCServer.bind(this);
+        this.killRPCServer = this.killRPCServer.bind(this);
+        this.restartRPCServer = this.restartRPCServer.bind(this);
+        this.childProcs = [];
     }
 
-    get_child_procs(){
-        return this.child_procs
+    getChildProcs(){
+        return this.childProcs
     }
 
-    start_server(prefix = '', interpreter_path, callback, errorhandler) {
+    startServer(prefix = '', interpreterPath, callback, errorHandler) {
         var callback = callback,
-            config = ifs.get_config(),
-            pnl_path = config['Python']['PsyNeuLink Path'],
+            config = ifs.getConfig(),
+            pnlPath = config['Python']['PsyNeuLink Path'],
             self = this,
-            appPath = ifs.get_application_path();
-        pnl_path = pnl_path ? pnl_path : '';
+            appPath = ifs.getApplicationPath();
+        pnlPath = pnlPath ? pnlPath : '';
         log.debug('' +
             'execute_script' +
             '\n ' +
             '\n' +
             `prefix: ${prefix}` +
             '\n' +
-            `interpreter_path: ${interpreter_path}` +
+            `interpreterPath: ${interpreterPath}` +
             '\n' +
-            `pnl_path: ${pnl_path}` +
+            `pnlPath: ${pnlPath}` +
             '\n' +
             `full command: ${
-                [prefix + interpreter_path,
+                [prefix + interpreterPath,
                     [
                         '-u -W ignore',
                         `"${path.join(appPath, 'src', 'py', 'rpc_server.py')}"`,
-                        `"${pnl_path}"`
+                        `"${pnlPath}"`
                     ]
                 ]
             }`
         );
-        var child_proc = spawn(prefix + interpreter_path,
+        var childProc = spawn(prefix + interpreterPath,
             [
                 '-u -W ignore',
                 `"${path.join(appPath, 'src', 'py', 'rpc_server.py')}"`,
-                `"${pnl_path}"`
+                `"${pnlPath}"`
             ],
             {
                 shell: true,
@@ -65,11 +65,11 @@ class InterpreterInterface{
             }
         );
 
-        child_proc.on('error', function (err) {
+        childProc.on('error', function (err) {
             log.debug('py stdout:' + err)
         });
-        child_proc.stdout.setEncoding('utf8');
-        child_proc.stdout.on('data', function (data) {
+        childProc.stdout.setEncoding('utf8');
+        childProc.stdout.on('data', function (data) {
             if (data.trim() === 'PYTHON SERVER READY'){
                 if (callback){
                     log.debug('py stdout:' + data);
@@ -77,34 +77,34 @@ class InterpreterInterface{
                 }
             }
         });
-        child_proc.stderr.setEncoding('utf8');
-        child_proc.stderr.on('data', function (data) {
-            if (errorhandler){
-                errorhandler()
+        childProc.stderr.setEncoding('utf8');
+        childProc.stderr.on('data', function (data) {
+            if (errorHandler){
+                errorHandler()
             }
             log.debug('py stderr:' + data);
         });
-        this.child_proc = child_proc
+        this.childProc = childProc
     }
 
-    validate_interpreter_path(filepath, callback) {
-        var py_int_path = filepath;
-        this.check_conda(py_int_path,
-            (err, stat, interpreter_path) => {
+    validateInterpreterPath(filepath, callback) {
+        var pyIntPath = filepath;
+        this.checkConda(pyIntPath,
+            (err, stat, interpreterPath) => {
                 if (!stat) {
-                    this.execute_validation_script('', interpreter_path, callback)
+                    this.executeValidationScript('', interpreterPath, callback)
                 } else {
-                    this.find_conda_binary(
-                        interpreter_path,
-                        (err, stat, one_level_up, path_to_check, original_interpreter_path, possible_conda_binary) => {
-                            if (one_level_up === path_to_check) {
-                                this.execute_validation_script('', interpreter_path, callback)
+                    this.findCondaBinary(
+                        interpreterPath,
+                        (err, stat, oneLevelUp, pathToCheck, originalInterpreterPath, possibleCondaBinary) => {
+                            if (oneLevelUp === pathToCheck) {
+                                this.executeValidationScript('', interpreterPath, callback)
                             } else {
-                                this.find_env_name(original_interpreter_path, possible_conda_binary,
-                                    (err, stdout, stderr, env_name, binary_path, interpreter_path) => {
-                                        this.construct_prefix(env_name, binary_path, interpreter_path,
-                                            (conda_prefix, interpreter_path) => {
-                                                this.execute_validation_script(conda_prefix, interpreter_path, callback)
+                                this.findEnvName(originalInterpreterPath, possibleCondaBinary,
+                                    (err, stdout, stderr, envName, binaryPath, interpreterPath) => {
+                                        this.constructPrefix(envName, binaryPath, interpreterPath,
+                                            (condaPrefix, interpreterPath) => {
+                                                this.executeValidationScript(condaPrefix, interpreterPath, callback)
                                             }
                                         );
                                     }
@@ -117,93 +117,93 @@ class InterpreterInterface{
         );
     }
 
-    check_conda(interpreter_path, callback) {
-        var interpreter_dir = path.dirname(interpreter_path);
-        var path_to_check;
+    checkConda(interpreterPath, callback) {
+        var interpreterDir = path.dirname(interpreterPath);
+        var pathToCheck;
         if (isWin) {
-            path_to_check = path.join(interpreter_dir, 'conda-meta')
+            pathToCheck = path.join(interpreterDir, 'conda-meta')
         } else {
-            path_to_check = path.join(interpreter_dir, '..', 'conda-meta')
+            pathToCheck = path.join(interpreterDir, '..', 'conda-meta')
         }
 
         log.debug('' +
-            'check_conda' +
+            'checkConda' +
             '\n ' +
             '\n' +
-            `interpreter_dir: ${interpreter_dir}` +
+            `interpreterDir: ${interpreterDir}` +
             '\n' +
-            `interpreter_dir: ${path_to_check}`
+            `interpreterDir: ${pathToCheck}`
         );
 
-        fs.stat(path_to_check,
+        fs.stat(pathToCheck,
             (err, stat) => {
-                callback(err, stat, interpreter_path);
+                callback(err, stat, interpreterPath);
             });
         return false
     }
 
-    find_conda_binary(original_interpreter_path, callback, path_to_check = '') {
-        if (!path_to_check) {
-            path_to_check = path.join(original_interpreter_path, '..');
+    findCondaBinary(originalInterpreterPath, callback, pathToCheck = '') {
+        if (!pathToCheck) {
+            pathToCheck = path.join(originalInterpreterPath, '..');
         }
-        var one_level_up = path.join(path_to_check, '..');
-        var possible_conda_binary = path.join(path_to_check, 'activate');
+        var oneLevelUp = path.join(pathToCheck, '..');
+        var possibleCondaBinary = path.join(pathToCheck, 'activate');
 
         log.debug('' +
-            'find_conda_binary' +
+            'findCondaBinary' +
             '\n ' +
             '\n' +
-            `original_interpreter_path: ${original_interpreter_path}` +
+            `originalInterpreterPath: ${originalInterpreterPath}` +
             '\n' +
-            `path_to_check: ${path_to_check}` +
+            `pathToCheck: ${pathToCheck}` +
             '\n' +
-            `one_level_up: ${one_level_up}` +
+            `oneLevelUp: ${oneLevelUp}` +
             '\n' +
-            `possible_conda_binary: ${possible_conda_binary}`
+            `possibleCondaBinary: ${possibleCondaBinary}`
         );
 
-        fs.stat(possible_conda_binary,
+        fs.stat(possibleCondaBinary,
             (err, stat) => {
-                if (!stat && !(one_level_up === path_to_check)) {
-                    if (!(one_level_up === path_to_check)) {
-                        this.find_conda_binary(original_interpreter_path, callback, one_level_up)
+                if (!stat && !(oneLevelUp === pathToCheck)) {
+                    if (!(oneLevelUp === pathToCheck)) {
+                        this.findCondaBinary(originalInterpreterPath, callback, oneLevelUp)
                     }
                 } else {
-                    callback(err, stat, one_level_up, path_to_check, original_interpreter_path, possible_conda_binary);
+                    callback(err, stat, oneLevelUp, pathToCheck, originalInterpreterPath, possibleCondaBinary);
                 }
             })
     }
 
-    find_env_name(interpreter_path, binary_path, callback) {
-        var interpreter_dir = path.dirname(interpreter_path);
-        var path_to_check = path.join(interpreter_dir, '..');
-        var env_path_len = path_to_check.length;
-        var binary_path = binary_path;
+    findEnvName(interpreterPath, binaryPath, callback) {
+        var interpreterDir = path.dirname(interpreterPath);
+        var pathToCheck = path.join(interpreterDir, '..');
+        var envPathLen = pathToCheck.length;
+        var binaryPath = binaryPath;
 
         log.debug('' +
-            'find_env_name' +
+            'findEnvName' +
             '\n ' +
             '\n' +
-            `interpreter_dir: ${interpreter_dir}` +
+            `interpreterDir: ${interpreterDir}` +
             '\n' +
-            `path_to_check: ${path_to_check}` +
+            `pathToCheck: ${pathToCheck}` +
             '\n' +
-            `env_path_len: ${env_path_len}` +
+            `envPathLen: ${envPathLen}` +
             '\n' +
-            `binary_path: ${binary_path}`
+            `binaryPath: ${binaryPath}`
         );
 
 
-        exec(`source ${binary_path} && conda env list`,
+        exec(`source ${binaryPath} && conda env list`,
             (err, stdout, stderr) => {
                 var envs = stdout.split('\n');
                 for (var i in envs) {
-                    var i_len = envs[i].length;
-                    if (i_len >= env_path_len) {
-                        if (envs[i].slice(i_len - env_path_len - 1, i_len) == ` ${path_to_check}`) {
-                            var env_name_re = new RegExp(/\w*/);
-                            var env_name = envs[i].match(env_name_re)[0];
-                            callback(err, stdout, stderr, env_name, binary_path, interpreter_path);
+                    var iLen = envs[i].length;
+                    if (iLen >= envPathLen) {
+                        if (envs[i].slice(iLen - envPathLen - 1, iLen) == ` ${pathToCheck}`) {
+                            var envNameRe = new RegExp(/\w*/);
+                            var envName = envs[i].match(envNameRe)[0];
+                            callback(err, stdout, stderr, envName, binaryPath, interpreterPath);
                         }
                     }
                 }
@@ -211,61 +211,61 @@ class InterpreterInterface{
         )
     }
 
-    construct_prefix(env_name, binary_path, interpreter_path, callback) {
-        var interpreter_path = interpreter_path;
-        exec(`source "${binary_path}" && conda --version`,
+    constructPrefix(envName, binaryPath, interpreterPath, callback) {
+        var interpreterPath = interpreterPath;
+        exec(`source "${binaryPath}" && conda --version`,
             (err, stdout, stderr) => {
-                var activation_command;
+                var activationCommand;
                 if (compareVersions(stdout.replace('conda','').trim(),'4.6.0') >= 0){
-                    activation_command = 'conda activate'
+                    activationCommand = 'conda activate'
                 }
                 else {
-                    activation_command = 'source activate'
+                    activationCommand = 'source activate'
                 }
-                log.debug('ACTIVATION COMMAND', activation_command);
-                var conda_prefix = '' +
-                    `source "${binary_path}" && ` +
-                    `${activation_command} ${env_name} && `;
+                log.debug('ACTIVATION COMMAND', activationCommand);
+                var condaPrefix = '' +
+                    `source "${binaryPath}" && ` +
+                    `${activationCommand} ${envName} && `;
                 log.debug('' +
-                    'construct_prefix' +
+                    'constructPrefix' +
                     '\n ' +
                     '\n' +
-                    `interpreter_path: ${interpreter_path}` +
+                    `interpreterPath: ${interpreterPath}` +
                     '\n' +
-                    `conda_prefix: ${conda_prefix}`
+                    `condaPrefix: ${condaPrefix}`
                 );
-                callback(conda_prefix, interpreter_path);
+                callback(condaPrefix, interpreterPath);
             }
         );
     }
 
-    execute_validation_script(prefix = '', interpreter_path, callback){
-        var config = ifs.get_config();
-        var pnl_path = config['Python']['PsyNeuLink Path'];
-        pnl_path = pnl_path ? pnl_path : '';
+    executeValidationScript(prefix = '', interpreterPath, callback){
+        var config = ifs.getConfig();
+        var pnlPath = config['Python']['PsyNeuLink Path'];
+        pnlPath = pnlPath ? pnlPath : '';
         log.debug('' +
-            'execute_validation_script' +
+            'executeValidationScript' +
             '\n ' +
             '\n' +
             `prefix: ${prefix}` +
             '\n' +
-            `interpreter_path: ${interpreter_path}` +
+            `interpreterPath: ${interpreterPath}` +
             '\n' +
-            `pnl_path: ${pnl_path}` +
+            `pnlPath: ${pnlPath}` +
             '\n' +
             `full command: ${
-                [prefix + `"${interpreter_path}"`,
+                [prefix + `"${interpreterPath}"`,
                     [
                         '-u',
-                        `${path.join(ifs.get_application_path(), 'src', 'py', 'validate_interpreter.py')}`,
-                        `${pnl_path}`
+                        `${path.join(ifs.getApplicationPath(), 'src', 'py', 'validate_interpreter.py')}`,
+                        `${pnlPath}`
                     ]
                 ]
             }`
         );
 
-        var launch_interpreter_validater_cmd = `${prefix} "${interpreter_path}" -u "${path.join(ifs.get_application_path(), 'src', 'py', 'validate_interpreter.py')}" "${pnl_path}"`;
-        exec(launch_interpreter_validater_cmd,
+        var launchInterpreterValidatorCmd = `${prefix} "${interpreterPath}" -u "${path.join(ifs.getApplicationPath(), 'src', 'py', 'validate_interpreter.py')}" "${pnlPath}"`;
+        exec(launchInterpreterValidatorCmd,
             {
                 shell: true,
                 detached: true
@@ -276,25 +276,25 @@ class InterpreterInterface{
         );
     }
 
-    spawn_rpc_server(callback, errorhandler) {
-        var config = ifs.get_config();
-        var py_int_path = config.Python['Interpreter Path'];
-        this.check_conda(py_int_path,
-            (err, stat, interpreter_path) => {
+    spawnRPCServer(callback, errorhandler) {
+        var config = ifs.getConfig();
+        var pyIntPath = config.Python['Interpreter Path'];
+        this.checkConda(pyIntPath,
+            (err, stat, interpreterPath) => {
                 if (!stat) {
-                    this.start_server('', interpreter_path, callback, errorhandler)
+                    this.startServer('', interpreterPath, callback, errorhandler)
                 } else {
-                    this.find_conda_binary(
-                        interpreter_path,
-                        (err, stat, one_level_up, path_to_check, original_interpreter_path, possible_conda_binary) => {
-                            if (one_level_up === path_to_check) {
-                                this.start_server('', original_interpreter_path, callback, errorhandler)
+                    this.findCondaBinary(
+                        interpreterPath,
+                        (err, stat, oneLevelUp, pathToCheck, originalInterpreterPath, possibleCondaBinary) => {
+                            if (oneLevelUp === pathToCheck) {
+                                this.startServer('', originalInterpreterPath, callback, errorhandler)
                             } else {
-                                this.find_env_name(original_interpreter_path, possible_conda_binary,
-                                    (err, stdout, stderr, env_name, binary_path, interpreter_path) => {
-                                        this.construct_prefix(env_name, binary_path, interpreter_path,
-                                            (conda_prefix, interpreter_path) => {
-                                                this.start_server(conda_prefix, interpreter_path, callback, errorhandler)
+                                this.findEnvName(originalInterpreterPath, possibleCondaBinary,
+                                    (err, stdout, stderr, envName, binaryPath, interpreterPath) => {
+                                        this.constructPrefix(envName, binaryPath, interpreterPath,
+                                            (condaPrefix, interpreterPath) => {
+                                                this.startServer(condaPrefix, interpreterPath, callback, errorhandler)
                                             }
                                         );
                                     }
@@ -307,19 +307,19 @@ class InterpreterInterface{
         );
     }
 
-    kill_rpc_server() {
-        if (this.child_proc) {
+    killRPCServer() {
+        if (this.childProc) {
             try {
                 if (isWin) {
                     spawnSync("taskkill", [
-                            "/PID", this.child_proc.pid, '/F', '/T'
+                            "/PID", this.childProc.pid, '/F', '/T'
                         ],
                     );
-                    this.child_proc = null
+                    this.childProc = null
                 } else {
-                    process.kill(-this.child_proc.pid);
-                    // this.child_proc.kill();
-                    this.child_proc = null;
+                    process.kill(-this.childProc.pid);
+                    // this.childProc.kill();
+                    this.childProc = null;
                 }
             }
             catch (e) {
@@ -328,9 +328,9 @@ class InterpreterInterface{
         }
     }
 
-    restart_rpc_server(callback, errorhandler) {
-        this.kill_rpc_server();
-        this.spawn_rpc_server(callback, errorhandler);
+    restartRPCServer(callback, errorhandler) {
+        this.killRPCServer();
+        this.spawnRPCServer(callback, errorhandler);
     }
 }
 
@@ -340,33 +340,33 @@ class InterpreterInterface{
  * */
 class DebugInterpreterInterface{
     constructor(){}
-    get_child_procs(){}
-    start_server(prefix = '', interpreter_path, callback, errorhandler){
+    getChildProcs(){}
+    startServer(prefix = '', interpreterPath, callback, errorhandler){
         callback()
     }
-    validate_interpreter_path(filepath, callback){
+    validateInterpreterPath(filepath, callback){
         callback()
     }
-    check_conda(interpreter_path, callback) {
+    checkConda(interpreterPath, callback) {
         callback()
     }
-    find_conda_binary(nal_interpreter_path, callback, path_to_check) {
+    findCondaBinary(nal_interpreterPath, callback, pathToCheck) {
         callback()
     }
-    find_env_name(interpreter_path, binary_path, callback) {
+    findEnvName(interpreterPath, binaryPath, callback) {
         callback()
     }
-    construct_prefix(env_name, binary_path, interpreter_path, callback) {
+    constructPrefix(envName, binaryPath, interpreterPath, callback) {
         callback()
     }
-    execute_validation_script(prefix = '', interpreter_path, callback){
+    executeValidationScript(prefix = '', interpreterPath, callback){
         callback()
     }
-    spawn_rpc_server(callback, errorhandler) {
+    spawnRPCServer(callback, errorhandler) {
         callback()
     }
-    kill_rpc_server() {}
-    restart_rpc_server(callback, errorhandler) {
+    killRPCServer() {}
+    restartRPCServer(callback, errorhandler) {
         callback()
     }
 }

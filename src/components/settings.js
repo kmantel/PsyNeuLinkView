@@ -12,29 +12,28 @@ const style = {
     justifyContent: "center",
 };
 
-const config_client = window.config_client;
 const fs = window.interfaces.filesystem,
       interp = window.interfaces.interpreter,
-      validate_interpreter_path = interp.validate_interpreter_path;
+      validateInterpreterPath = interp.validateInterpreterPath;
 // console.log(window.interfaces)
 
 class SettingsPane extends React.PureComponent {
     constructor(props) {
         super();
-        var id_counter = 0;
-        var config = fs.get_config();
+        var idCounter = 0;
+        var config = fs.getConfig();
         var categories = Object.keys(config);
         var nodes = [];
         for (var i in categories) {
             nodes.push(
                 {
-                    id: id_counter,
+                    id: idCounter,
                     hasCaret: false,
                     label: categories[i],
                     isSelected: i == 0
                 }
             );
-            id_counter += 1;
+            idCounter += 1;
         }
         this.state = {
             isOpen: props.isOpen,
@@ -96,7 +95,7 @@ class SettingsPane extends React.PureComponent {
         else{
             self.setState({interpreterPathStatus:'loading'});
             self.forceUpdate();
-            validate_interpreter_path(
+            validateInterpreterPath(
                 filepath,
                 (err, stdout, stderr) => {
                     if(err){
@@ -132,8 +131,8 @@ class SettingsPane extends React.PureComponent {
             'pnlPathIndicator': '7'
         };
 
-        var current_config = {...this.state.config};
-        var categories = Object.keys(current_config);
+        var currentConfig = {...this.state.config};
+        var categories = Object.keys(currentConfig);
         categories['Python'] = {
             'components': [
                 <div key={keys.interpreterPathLabel}>
@@ -143,13 +142,13 @@ class SettingsPane extends React.PureComponent {
                     <div className={'sizer'}>
                         <EditableText
                             placeholder={'location of Python interpreter executable file'}
-                            defaultValue={current_config['Python']['Interpreter Path']}
-                            value={current_config['Python']['Interpreter Path']}
+                            defaultValue={currentConfig['Python']['Interpreter Path']}
+                            value={currentConfig['Python']['Interpreter Path']}
                             onChange={
-                                (new_value) => {
-                                    current_config['Python']['Interpreter Path'] = new_value;
-                                    self.setState({config: current_config});
-                                    self.checkInterpreterPath(new_value);
+                                (newValue) => {
+                                    currentConfig['Python']['Interpreter Path'] = newValue;
+                                    self.setState({config: currentConfig});
+                                    self.checkInterpreterPath(newValue);
                                 }
                             }
                         />
@@ -171,9 +170,9 @@ class SettingsPane extends React.PureComponent {
                             ).then((paths) => {
                                 var pathArray = paths.filePaths;
                                 if (pathArray.length > 0) {
-                                    current_config['Python']['Interpreter Path'] = paths.filePaths[0];
-                                    self.setState({config: current_config});
-                                    self.checkInterpreterPath(current_config['Python']['Interpreter Path'])
+                                    currentConfig['Python']['Interpreter Path'] = paths.filePaths[0];
+                                    self.setState({config: currentConfig});
+                                    self.checkInterpreterPath(currentConfig['Python']['Interpreter Path'])
                                 }
                             })
                         }}
@@ -191,12 +190,12 @@ class SettingsPane extends React.PureComponent {
                     <div className={'sizer'}>
                         <EditableText
                             placeholder={'location of PsyNeuLink directory (if not in Python site packages)'}
-                            defaultValue={current_config['Python']['PsyNeuLink Path']}
-                            value={current_config['Python']['PsyNeuLink Path']}
+                            defaultValue={currentConfig['Python']['PsyNeuLink Path']}
+                            value={currentConfig['Python']['PsyNeuLink Path']}
                             onChange={
-                                (new_value) => {
-                                    current_config['Python']['Interpreter Path'] = new_value;
-                                    this.setState({config: current_config});
+                                (newValue) => {
+                                    currentConfig['Python']['Interpreter Path'] = newValue;
+                                    this.setState({config: currentConfig});
                                 }
                             }
                         />
@@ -218,8 +217,8 @@ class SettingsPane extends React.PureComponent {
                             ).then((paths) => {
                                 var pathArray = paths.filePaths;
                                 if (pathArray.length > 0) {
-                                    current_config['Python']['PsyNeuLink Path'] = paths.filePaths[0];
-                                    self.setState({config: current_config});
+                                    currentConfig['Python']['PsyNeuLink Path'] = paths.filePaths[0];
+                                    self.setState({config: currentConfig});
                                 }
                             })
                         }}
@@ -286,9 +285,9 @@ class SettingsPane extends React.PureComponent {
 
     render() {
         var self = this;
-        var components_and_layout = this.generateSettingsPage(this.state.nodes[this.state.selectedCat]['label']);
-        var components = components_and_layout['components'];
-        var layout = components_and_layout['layout'];
+        var componentsAndLayout = this.generateSettingsPage(this.state.nodes[this.state.selectedCat]['label']);
+        var components = componentsAndLayout['components'];
+        var layout = componentsAndLayout['layout'];
         components = [
             <div key="a">
                 <Tree
@@ -357,7 +356,7 @@ class SettingsPane extends React.PureComponent {
                         className={"settings_button"}
                         onClick={
                             function () {
-                                fs.set_config(self.state.config);
+                                fs.setConfig(self.state.config);
                                 self.props.toggleDialog();
                             }
                         }
@@ -368,7 +367,7 @@ class SettingsPane extends React.PureComponent {
                         className={"settings_button"}
                         onClick={
                             function () {
-                                fs.set_config(self.state.config);
+                                fs.setConfig(self.state.config);
                             }
                         }
                     >
@@ -378,8 +377,8 @@ class SettingsPane extends React.PureComponent {
                         className={"settings_button"}
                         onClick={
                             function () {
-                                fs.set_config(self.state.config);
-                                self.setState({config: fs.get_config()})
+                                fs.setConfig(self.state.config);
+                                self.setState({config: fs.getConfig()})
                             }
                         }
                     >

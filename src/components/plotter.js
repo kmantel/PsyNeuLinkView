@@ -108,11 +108,11 @@ const PlotSpec = {
 class Plotter extends React.Component {
     constructor(props) {
         super(props);
-        this.bind_this_to_functions = this.bind_this_to_functions.bind(this);
-        this.bind_this_to_functions();
+        this.bindThisToFunctions = this.bindThisToFunctions.bind(this);
+        this.bindThisToFunctions();
     }
 
-    bind_this_to_functions(){
+    bindThisToFunctions(){
         this.render = this.render.bind(this);
         this.getSinglePlotSize = this.getSinglePlotSize.bind(this);
         this.insertSubPlot = this.insertSubPlot.bind(this);
@@ -241,9 +241,9 @@ class Plotter extends React.Component {
     }
 
     getSinglePlotSize(rows, cols){
-        var component_height = (this.props.size.height-30)/(rows ? rows: 1),
-            component_width = (this.props.size.width-30)/(cols ? cols: 1);
-        return {width: component_width, height: component_height}
+        var componentHeight = (this.props.size.height-30)/(rows ? rows: 1),
+            componentWidth = (this.props.size.width-30)/(cols ? cols: 1);
+        return {width: componentWidth, height: componentHeight}
     }
 
     _handleNewLayout(newLayouts){
@@ -290,13 +290,13 @@ class Plotter extends React.Component {
         const {connectDropTarget, isOver, canDrop, gridShape} = this.props,
             {rows, cols} = gridShape,
             isEmpty = _.isEqual(gridShape, [0, 0]),
-            empty_valid_drag_hover = isOver && canDrop && isEmpty,
+            emptyValidDragHover = isOver && canDrop && isEmpty,
             components = this.getPlots(),
             layout = this.getLayout(),
             plotSize = this.getSinglePlotSize(rows, cols);
 
         return connectDropTarget (
-            <div class={empty_valid_drag_hover ? "valid-drag-hover": ""}>
+            <div class={emptyValidDragHover ? "valid-drag-hover": ""}>
             <Resizable
                     style={style}
                     onResize={this.props.onResize}

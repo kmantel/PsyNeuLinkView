@@ -14,7 +14,7 @@ c.add_linear_processing_pathway([
 
 pnlv_graphics_spec = {
     'graph': {
-        'fill_proportion':1,
+        'fillProportion':1,
         'components': {
             't1':{
                 'x':0,
