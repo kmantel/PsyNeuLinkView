@@ -1276,8 +1276,8 @@ class D3model extends React.Component {
         this.scaleGraph(1);
         canvasBoundingBox = this.getCanvasBoundingBox();
         graphBoundingBox = this.getGraphBoundingBox();
-        targetWidth = Math.floor(canvasBoundingBox.width * proportion * .99);
-        targetHeight = Math.floor(canvasBoundingBox.height * proportion * .99);
+        targetWidth = Math.floor(canvasBoundingBox.width * proportion * .97);
+        targetHeight = Math.floor(canvasBoundingBox.height * proportion * .97);
         scalingFactor = Math.min(
             Math.floor(((targetWidth / graphBoundingBox.width) * 100)) / 100,
             Math.floor(((targetHeight / graphBoundingBox.height) * 100)) / 100,
