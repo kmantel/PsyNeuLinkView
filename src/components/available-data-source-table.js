@@ -70,7 +70,7 @@ class AvailableDataSourceTable extends React.Component{
         //     psyNeuLinkMapComponentIdToParameterIds: idToParameters} = this.props;
         // for (const component of this.props.components){
         //     if (!(nameToId[component] in idToParameters)){
-        //         rpc.get_parameters(component)
+        //         rpc.getParameters(component)
         //     }
         // }
     }

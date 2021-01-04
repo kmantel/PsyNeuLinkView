@@ -80,7 +80,7 @@ class SubplotConfigForm extends React.Component{
 
     setComposition(){
         if (this.props.activeComposition !== ''){
-            // rpc.get_components(this.props.activeComposition)
+            // rpc.getComponents(this.props.activeComposition)
         }
     }
 

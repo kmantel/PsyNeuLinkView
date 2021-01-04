@@ -1,3 +1,9 @@
+/*
+If DEBUG_MODE is true, PNLV will not spawn its own python interpreter, thus allowing a developer to run and debug their
+own instance in an interactive shell. This can be used, e.g., to step through the python RPC server methods in a debugger.
+*/
+const DEBUG_MODE = false;
+
 const path = require('path'),
     fs = require('fs'),
     ifs = require('./filesystem').fileSystemInterface,
@@ -371,5 +377,9 @@ class DebugInterpreterInterface{
     }
 }
 
-exports.debugInterpreterInterface = new DebugInterpreterInterface();
-exports.interpreterInterface = new InterpreterInterface();
+if (DEBUG_MODE){
+    exports.interpreterInterface = new DebugInterpreterInterface();
+}
+else {
+    exports.interpreterInterface = new InterpreterInterface();
+}

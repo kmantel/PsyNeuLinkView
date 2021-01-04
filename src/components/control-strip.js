@@ -31,7 +31,7 @@ class ControlStrip extends React.Component {
     parseInputFile(filePath){
         let {mapIdToDataSources} = this.props;
         if (filePath.length > 0){
-            let inputs = JSON.parse(fs.read(filePath[0]))
+            let inputs = JSON.parse(fs.read(filePath[0]));
             let loggedDataIds = new Set();
             for (const val of Object.values(this.props.subplots.mapIdToDataSources)){
                 for (const source of val){
@@ -50,7 +50,7 @@ class ControlStrip extends React.Component {
                     }
                 }
             );
-            rpc.run_composition(
+            rpc.runComposition(
                 inputs, deliveryConditions
             );
         }
