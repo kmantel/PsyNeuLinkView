@@ -3,12 +3,9 @@
   <component name="ChangeListManager">
     <list default="true" id="0426a943-ef89-4391-a3a0-8152f91aa099" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/available-data-source-table.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/available-data-source-table.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/control-strip.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/control-strip.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/subplot-config-form.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/subplot-config-form.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/interfaces/interpreter.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/interfaces/interpreter.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/py/ast_parse.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/py/ast_parse.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/py/rpc_server.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/py/rpc_server.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/install.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/start.sh" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
