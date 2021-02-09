@@ -78,10 +78,14 @@ class FileSystemInterface {
     getConfigPath(){
         var configFileDir,
             configFilePath;
-        isWin ?
+        if (isWin) {
             configFileDir = path.join(os.homedir(), 'AppData', 'Roaming', 'PsyNeuLinkView')
-            :
+        } else if (os.platform() === 'darwin') {
             configFileDir = path.join(os.homedir(), 'Library', 'Preferences', 'PsyNeuLinkView');
+        } else {
+            configFileDir = path.join(os.homedir(), '.config', 'PsyNeuLinkView');
+        }
+
         configFilePath = path.join(configFileDir, 'config.json');
         return configFilePath
     }
